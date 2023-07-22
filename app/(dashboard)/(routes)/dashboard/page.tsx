@@ -1,9 +1,11 @@
-// import { Button } from "@/components/ui/button";
-
 type Props = {};
 
 const DashboardPage = (props: Props) => {
-  return <div>Dashboard (Protected)</div>;
+  return (
+    <div>
+      <p>Dashboard</p>
+    </div>
+  );
 };
 
 export default DashboardPage;
