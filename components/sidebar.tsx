@@ -18,7 +18,7 @@ import { usePathname } from "next/navigation";
 
 type Props = {};
 
-const montserrat = Montserrat({
+const poppins = Montserrat({
   weight: "600",
   subsets: ["latin"],
 });
@@ -74,11 +74,9 @@ const Sidebar = (props: Props) => {
       <div className="px-3 py-2 flex-1">
         <Link href="/dashboard" className="flex items-center pl-3 mb-14">
           <div className="relative w-8 h-8 mr-4">
-            <Image fill alt="Logo" src="/logo.png" />
+            <Image fill alt="Logo" src="/genio.png" />
           </div>
-          <h1 className={cn("text-2xl text-bold", montserrat.className)}>
-            Genio
-          </h1>
+          <h1 className={cn("text-2xl font-bold", poppins.className)}>Genio</h1>
         </Link>
         <div className="space-y-1">
           {routes.map((route) => (
