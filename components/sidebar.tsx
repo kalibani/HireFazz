@@ -80,7 +80,7 @@ const Sidebar = (props: Props) => {
             Genio
           </h1>
         </Link>
-        <div className="space-y-4">
+        <div className="space-y-1">
           {routes.map((route) => (
             <Link
               href={route.href}
