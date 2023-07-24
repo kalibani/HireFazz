@@ -2,9 +2,7 @@ import { useUser } from "@clerk/nextjs";
 import { Avatar } from "./ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
-type Props = {};
-
-const UserAvatar = (props: Props) => {
+const UserAvatar = () => {
   const { user } = useUser();
 
   return (

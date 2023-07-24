@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Montserrat } from "next/font/google";
-import { cn } from "@/lib/utils";
 import {
   Code,
   ImageIcon,
@@ -14,9 +14,7 @@ import {
   VideoIcon,
 } from "lucide-react";
 
-import { usePathname } from "next/navigation";
-
-type Props = {};
+import { cn } from "@/lib/utils";
 
 const poppins = Montserrat({
   weight: "600",
@@ -67,7 +65,7 @@ const routes = [
   },
 ];
 
-const Sidebar = (props: Props) => {
+const Sidebar = () => {
   const pathname = usePathname();
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
