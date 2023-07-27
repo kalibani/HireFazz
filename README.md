@@ -1,5 +1,5 @@
 # GENIO: Image, Video, Music, and Code Generation Application 
-## This application is built using Next.js, TypeScript, OpenAI, and Stripe to provide a platform for generating images, videos, code, and music. With a user-friendly interface and advanced algorithms, users can create content in various formats effortlessly. 
+## This application is built using Next.js, TypeScript, OpenAI, Prisma and Stripe to provide a platform for generating images, videos, code, and music. With a user-friendly interface and advanced algorithms, users can create content in various formats effortlessly. 
 
 ![Image1](https://github.com/kalibani/Genio/blob/main/public/Screenshot-project.png)
 
