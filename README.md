@@ -14,9 +14,13 @@
 - **Next.js**: A JavaScript framework for building efficient and powerful web applications. 
 - **TypeScript**: A strongly typed programming language that enhances code quality and scalability. 
 - **OpenAI**: Utilizes OpenAI's models and APIs to generate images, videos, code, and music.
-- **Stripe**: Integrates Stripe's secure payment processing system to facilitate subscription-based access to advanced features. 
+- **Stripe**: Integrates Stripe's secure payment processing system to facilitate subscription-based access to advanced features.
+- Clerk: Clerk provides authentication and user management functionalities to ensure a secure and customized user experience. 
+- Prisma: Prisma acts as the database toolkit for connecting to and interacting with the application’s data storage.
+
 ## Getting Started: Follow the instructions below to run this application on your local machine: 
-1. **Prerequisites**: - Ensure you have [Node.js](https://nodejs.org) installed. - Sign up for an account on [Stripe](https://stripe.com) to obtain a Stripe API key. 
+1. **Prerequisites**: - Ensure you have [Node.js](https://nodejs.org) installed. 
+- Sign up for an account on [Stripe](https://stripe.com) to obtain a Stripe API key. 
 2. **Installation**: - Clone this repository to your local machine. - Open a terminal and navigate to the project directory. - Run `npm install` to install the required dependencies.
 3. **Configuration**: - Create a `.env` file in the root directory of the project. - Add your Stripe API key to the `.env` file: `STRIPE_API_KEY=<your_stripe_api_key>`. 
 4. **Starting the Application**: - Run `npm run dev` in the terminal to start the application in development mode. - Open your web browser and navigate to `http://localhost:3000` to access the application. 
