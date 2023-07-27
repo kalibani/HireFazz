@@ -5,10 +5,11 @@
 
 
 ## Features: 
-### 1. Image Generation: - Users can generate unique and custom images using AI-powered algorithms. - Various styles and themes are available to choose from, offering a wide range of creative possibilities. - Images can be saved in common file formats like JPEG and PNG. 
-### 2. Video Generation: - Users can create visually appealing videos with the help of AI algorithms. - Options to add effects, animations, and transitions to enhance visual engagement. - Videos can be exported in commonly supported formats such as MP4. 
+### 1. Question Answering: - The application utilizes OpenAI's powerful language models to answer questions in a conversational manner.
+### 2. Image Generation: - Users can generate unique and custom images using AI-powered algorithms. - Various styles and themes are available to choose from, offering a wide range of creative possibilities. - Images can be saved in common file formats like JPEG and PNG. 
+### 3. Video Generation: - Users can create visually appealing videos with the help of AI algorithms. - Options to add effects, animations, and transitions to enhance visual engagement. - Videos can be exported in commonly supported formats such as MP4. 
 ### 3. Code Generation: - Developers can leverage AI-generated code snippets to enhance their productivity and efficiency. - Users can specify their programming language preferences and receive optimized code samples accordingly. - Support for popular programming languages like JavaScript, Python, and Java. 
-### 4. Music Generation: - Users can compose unique melodies and rhythms using AI-generated music patterns. - Different genres and moods to choose from, enabling users to create music that suits their style. - Export music compositions in widely used audio formats like MP3 and WAV. 
+### 5. Music Generation: - Users can compose unique melodies and rhythms using AI-generated music patterns. - Different genres and moods to choose from, enabling users to create music that suits their style. - Export music compositions in widely used audio formats like MP3 and WAV. 
 ## Technologies Used: 
 - **Next.js**: A JavaScript framework for building efficient and powerful web applications. 
 - **TypeScript**: A strongly typed programming language that enhances code quality and scalability. 
