@@ -20,5 +20,5 @@
 - Select the desired option and follow the prompts to customize and generate the content. 
 - Once generated, users can save or export the content in their desired file format. 
 ## License: This project is licensed under the [MIT](LICENSE) license. Feel free to contribute, report issues, or suggest enhancements to make this application even better! 
-## Contact: For any inquiries or feedback, please reach out to the project maintainer at [kalibani.ka@gmail.com](kalibani.ka@gmail.com)
+## Contact: For any inquiries or feedback, please reach out to the project maintainer at [kalibani.ka@gmail.com](maito:kalibani.ka@gmail.com)
 
