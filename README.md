@@ -19,12 +19,21 @@
 - Prisma: Prisma acts as the database toolkit for connecting to and interacting with the application’s data storage.
 
 ## Getting Started: Follow the instructions below to run this application on your local machine: 
-1. **Prerequisites**: - Ensure you have [Node.js](https://nodejs.org) installed. 
+1. **Prerequisites**: 
+- Ensure you have [Node.js](https://nodejs.org) installed. 
 - Sign up for an account on [Stripe](https://stripe.com) to obtain a Stripe API key. 
-2. **Installation**: - Clone this repository to your local machine. - Open a terminal and navigate to the project directory. - Run `npm install` to install the required dependencies.
-3. **Configuration**: - Create a `.env` file in the root directory of the project. - Add your Stripe API key to the `.env` file: `STRIPE_API_KEY=<your_stripe_api_key>`. 
-4. **Starting the Application**: - Run `npm run dev` in the terminal to start the application in development mode. - Open your web browser and navigate to `http://localhost:3000` to access the application. 
-## Usage: - Upon launching the application, users can sign up for an account or log in if they already have one. 
+2. **Installation**:
+- Clone this repository to your local machine. 
+- Open a terminal and navigate to the project directory. 
+- Run `npm install` to install the required dependencies.
+3. **Configuration**: 
+- Create a `.env` file in the root directory of the project. 
+- Add your Stripe API key to the `.env` file: `STRIPE_API_KEY=<your_stripe_api_key>`. 
+4. **Starting the Application**: 
+- Run `npm run dev` in the terminal to start the application in development mode. 
+- Open your web browser and navigate to `http://localhost:3000` to access the application. 
+## Usage: 
+- Upon launching the application, users can sign up for an account or log in if they already have one. 
 - Users can browse the different content generation options: Images, Videos, Code, and Music.
 - Select the desired option and follow the prompts to customize and generate the content. 
 - Once generated, users can save or export the content in their desired file format. 
