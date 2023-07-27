@@ -1,5 +1,9 @@
 # GENIO: Image, Video, Music, and Code Generation Application 
 ## This application is built using Next.js, TypeScript, OpenAI, and Stripe to provide a platform for generating images, videos, code, and music. With a user-friendly interface and advanced algorithms, users can create content in various formats effortlessly. 
+
+![Image1](https://github.com/kalibani/Genio/blob/main/public/Screenshot-project.png)
+
+
 ## Features: 
 ### 1. Image Generation: - Users can generate unique and custom images using AI-powered algorithms. - Various styles and themes are available to choose from, offering a wide range of creative possibilities. - Images can be saved in common file formats like JPEG and PNG. 
 ### 2. Video Generation: - Users can create visually appealing videos with the help of AI algorithms. - Options to add effects, animations, and transitions to enhance visual engagement. - Videos can be exported in commonly supported formats such as MP4. 
