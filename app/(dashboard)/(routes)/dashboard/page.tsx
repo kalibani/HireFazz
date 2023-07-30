@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 
 type Props = {};
 
-const tools = [
+export const tools = [
   {
     label: "Conversation",
     icon: MessageSquare,

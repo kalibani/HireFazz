@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { VideoIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import Heading from "@/components/headings";
 import { Input } from "@/components/ui/input";
@@ -14,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { formSchema } from "./constant";
 import EmptyPage from "@/components/empty";
 import Loader from "@/components/loader";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const VideoPage = () => {
   const router = useRouter();
@@ -25,6 +28,8 @@ const VideoPage = () => {
     },
   });
 
+  const proModal = useProModal();
+
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -34,8 +39,13 @@ const VideoPage = () => {
       const response = await axios.post("/api/video", values);
       setVideo(response.data[0]);
       form.reset();
-    } catch (error) {
-      console.log("error", error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        const errorMessage = error?.response?.data || "Something went wrong.";
+        toast.error(errorMessage);
+      }
     } finally {
       router.refresh();
     }

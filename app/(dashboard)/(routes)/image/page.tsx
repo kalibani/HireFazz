@@ -6,7 +6,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download, ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import Heading from "@/components/headings";
 import { Input } from "@/components/ui/input";
@@ -22,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import { SelectTrigger } from "@/components/ui/select";
 import { Card, CardFooter } from "@/components/ui/card";
-import Image from "next/image";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const ImagePage = () => {
   const router = useRouter();
@@ -36,6 +39,8 @@ const ImagePage = () => {
     },
   });
 
+  const proModal = useProModal();
+
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -47,8 +52,13 @@ const ImagePage = () => {
       const urls = response.data.map((image: { url: string }) => image.url);
       setImages(urls);
       form.reset();
-    } catch (error) {
-      console.log("error", error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        const errorMessage = error?.response?.data || "Something went wrong.";
+        toast.error(errorMessage);
+      }
     } finally {
       router.refresh();
     }

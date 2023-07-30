@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import Heading from "@/components/headings";
 import { Input } from "@/components/ui/input";
@@ -18,6 +20,7 @@ import Loader from "@/components/loader";
 import UserAvatar from "@/components/user-avatar";
 import BotAvatar from "@/components/bot-avatar";
 import { cn } from "@/lib/utils";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const ConversationPage = () => {
   const router = useRouter();
@@ -29,10 +32,11 @@ const ConversationPage = () => {
     },
   });
 
+  const proModal = useProModal();
+
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("value", values);
     try {
       const userMessage: ChatCompletionRequestMessage = {
         role: "user",
@@ -47,8 +51,13 @@ const ConversationPage = () => {
 
       setMessages((current) => [...current, userMessage, response.data]);
       form.reset();
-    } catch (error) {
-      console.log("error", error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        const errorMessage = error?.response?.data || "Something went wrong.";
+        toast.error(errorMessage);
+      }
     } finally {
       router.refresh();
     }

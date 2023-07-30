@@ -9,6 +9,7 @@ import { Code } from "lucide-react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+import { toast } from "react-hot-toast";
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import Heading from "@/components/headings";
@@ -20,10 +21,9 @@ import Loader from "@/components/loader";
 import UserAvatar from "@/components/user-avatar";
 import BotAvatar from "@/components/bot-avatar";
 import { cn } from "@/lib/utils";
+import { useProModal } from "@/hooks/use-pro-modal";
 
-type Props = {};
-
-const CodePage = (props: Props) => {
+const CodePage = () => {
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -32,6 +32,8 @@ const CodePage = (props: Props) => {
       prompt: "",
     },
   });
+
+  const proModal = useProModal();
 
   const isLoading = form.formState.isSubmitting;
 
@@ -51,8 +53,13 @@ const CodePage = (props: Props) => {
 
       setMessages((current) => [...current, userMessage, response.data]);
       form.reset();
-    } catch (error) {
-      console.log("error", error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        const errorMessage = error?.response?.data || "Something went wrong.";
+        toast.error(errorMessage);
+      }
     } finally {
       router.refresh();
     }
