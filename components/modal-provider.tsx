@@ -16,9 +16,9 @@ const ModalProvider = (props: Props) => {
   }
 
   return (
-    <>
+    <div>
       <ProModal />
-    </>
+    </div>
   );
 };
 
