@@ -2,7 +2,7 @@
 
 import { Check, Zap } from "lucide-react";
 
-import { tools } from "@/app/(dashboard)/(routes)/dashboard/page";
+import { tools } from "@/constant";
 import { Badge } from "./ui/badge";
 import {
   Dialog,
