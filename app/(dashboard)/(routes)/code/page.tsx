@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChatCompletionRequestMessage } from "openai";
+import { OpenAI } from "openai";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,7 +25,9 @@ import { useProModal } from "@/hooks/use-pro-modal";
 
 const CodePage = () => {
   const router = useRouter();
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const [messages, setMessages] = useState<OpenAI.Chat.ChatCompletionMessage[]>(
+    []
+  );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,7 +41,7 @@ const CodePage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const userMessage: ChatCompletionRequestMessage = {
+      const userMessage: OpenAI.Chat.ChatCompletionMessage = {
         role: "user",
         content: values.prompt,
       };
@@ -50,7 +52,11 @@ const CodePage = () => {
         messages: newMessages,
       });
 
-      setMessages((current) => [...current, userMessage, response.data]);
+      setMessages((current) => [
+        ...current,
+        userMessage,
+        response.data[0].message,
+      ]);
       form.reset();
     } catch (error: any) {
       if (error?.response?.status === 403) {

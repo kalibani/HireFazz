@@ -1,16 +1,14 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
+import { OpenAI } from "openai";
 
 import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPEN_API_KEY,
 });
 
-const openai = new OpenAIApi(configuration);
-
-const instructionMessage: ChatCompletionRequestMessage = {
+const instructionMessage = {
   role: "system",
   content:
     "You are a code generator. You must answer only in markdown code snippets. Use code comments for explanations.",
@@ -26,7 +24,7 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    if (!configuration) {
+    if (!openai) {
       return new NextResponse("OpenAI APIKey not configured", { status: 500 });
     }
 
@@ -42,14 +40,14 @@ export async function POST(req: Request) {
       });
     }
 
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
+    const response = await openai.chat.completions.create({
       messages: [instructionMessage, ...messages],
+      model: "gpt-4",
     });
 
     await increaseApiLimit();
 
-    return NextResponse.json(response.data.choices[0].message);
+    return NextResponse.json(response.choices);
   } catch (error) {
     console.log("Code Error", error);
     return new NextResponse("Internal Error", { status: 500 });
