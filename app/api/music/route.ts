@@ -4,6 +4,9 @@ import Replicate from "replicate";
 
 import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
 
+export const preferredRegion = "sin1";
+export const maxDuration = 50;
+
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN || "",
 });
