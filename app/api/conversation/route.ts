@@ -4,6 +4,9 @@ import { OpenAI } from "openai";
 
 import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
 
+export const preferredRegion = "sin1";
+export const maxDuration = 50;
+
 const openai = new OpenAI({
   apiKey: process.env.OPEN_API_KEY,
 });
