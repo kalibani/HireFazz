@@ -1,15 +1,11 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import { OpenAI } from "openai";
 
 import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
+import { openai } from "@/lib/openai";
 
 export const preferredRegion = "sin1";
 export const maxDuration = 50;
-
-const openai = new OpenAI({
-  apiKey: process.env.OPEN_API_KEY,
-});
 
 const instructionMessage = {
   role: "system",

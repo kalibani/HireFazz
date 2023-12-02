@@ -12,6 +12,7 @@ import {
   Music,
   Settings,
   VideoIcon,
+  FileArchiveIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -34,6 +35,12 @@ const routes = [
     icon: MessageSquare,
     href: "/conversation",
     color: "text-violet-500",
+  },
+  {
+    label: "Summarizer",
+    icon: FileArchiveIcon,
+    href: "/summarizer",
+    color: "text-pink-300",
   },
   {
     label: "Image Generation",

@@ -1,4 +1,11 @@
-import { Code, ImageIcon, MessageSquare, Music, VideoIcon } from "lucide-react";
+import {
+  Code,
+  ImageIcon,
+  MessageSquare,
+  Music,
+  VideoIcon,
+  FileArchiveIcon,
+} from "lucide-react";
 
 export const MAX_FREE_COUNTS = 10;
 
@@ -9,6 +16,12 @@ export const tools = [
     href: "/conversation",
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
+  },
+  {
+    label: "Summarizer",
+    icon: FileArchiveIcon,
+    href: "/summarizer",
+    color: "text-pink-300",
   },
   {
     label: "Music Generation",
