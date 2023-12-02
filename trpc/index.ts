@@ -5,10 +5,7 @@ import { z } from "zod";
 
 export const appRouter = router({
   getUserFiles: privateProcedure.query(async ({ ctx }) => {
-    const { userId, user } = ctx;
-
-    console.log("--> userId", userId);
-    console.log("--> user", user);
+    const { userId } = ctx;
 
     return await prismadb.file.findMany({
       where: {

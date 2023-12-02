@@ -34,6 +34,8 @@ import { cn } from "@/lib/utils";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { trpc } from "@/app/_trpc/client";
 
+import * as formatter from "date-fns";
+
 const ConversationPage = () => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
     string | null
@@ -154,7 +156,7 @@ const ConversationPage = () => {
                     <div className="px-6 mt-4 grid grid-cols-3 place-items-center py-2 gap-6 text-xs text-zinc-500">
                       <div className="flex items-center gap-2">
                         <Plus className="h-4 w-4" />
-                        {(new Date(file.createdAt), "MMM yyyy")}
+                        {formatter.format(new Date(file.createdAt), "MMM yyyy")}
                       </div>
 
                       <div className="flex items-center gap-2">
