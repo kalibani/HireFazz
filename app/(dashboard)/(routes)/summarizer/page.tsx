@@ -136,7 +136,7 @@ const ConversationPage = () => {
                     className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
                   >
                     <Link
-                      href={`/dashboard/${file.id}`}
+                      href={`/summarizer/${file.id}`}
                       className="flex flex-col gap-2"
                     >
                       <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
@@ -179,7 +179,9 @@ const ConversationPage = () => {
                 ))}
             </ul>
           ) : isLoading ? (
-            <Skeleton height={100} className="my-2" count={3} />
+            <div className="p-8 rounded-lg w-full flex justify-center items-start bg-muted">
+              <Loader />
+            </div>
           ) : (
             <EmptyPage label="Pretty empty around here. Let's upload your first PDF." />
           )}

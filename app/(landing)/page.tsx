@@ -7,7 +7,7 @@ const LandingPage = () => {
     <div className="h-full ">
       <LandingNavbar />
       <LandingHero />
-      <LandingContent />
+      {/* <LandingContent /> */}
     </div>
   );
 };
