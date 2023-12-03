@@ -55,37 +55,6 @@ const ConversationPage = () => {
 
   // const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const userMessage: OpenAI.Chat.ChatCompletionMessage = {
-        role: "user",
-        content: values.prompt,
-      };
-
-      const newMessages = [...messages, userMessage];
-
-      const response = await axios.post("/api/conversation", {
-        messages: newMessages,
-      });
-
-      setMessages((current) => [
-        ...current,
-        userMessage,
-        response.data[0]?.message,
-      ]);
-      form.reset();
-    } catch (error: any) {
-      if (error?.response?.status === 403) {
-        proModal.onOpen();
-      } else {
-        const errorMessage = error?.response?.data || "Something went wrong.";
-        toast.error(errorMessage);
-      }
-    } finally {
-      router.refresh();
-    }
-  };
-
   const { data: files, isLoading } = trpc.getUserFiles.useQuery();
 
   const utils = trpc.useUtils();
@@ -113,10 +82,7 @@ const ConversationPage = () => {
       />
       <div className="px-4 lg:px-8">
         <div>
-          <div
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="rounded-lg w-full border p-4 px-3 md:px-4 focus-within:shadow-sm gap-2 flex h-16 items-center justify-between"
-          >
+          <div className="rounded-lg w-full border p-4 px-3 md:px-4 focus-within:shadow-sm gap-2 flex h-16 items-center justify-between">
             <h1 className="mb-3text-gray-900">Upload Your Document</h1>
             <UploadButton isSubscribed={true} />
           </div>
@@ -182,7 +148,7 @@ const ConversationPage = () => {
             </ul>
           ) : isLoading ? (
             <div className="p-8 rounded-lg w-full flex justify-center items-start bg-muted">
-              <Loader />
+              <Skeleton height={100} className="my-2" count={3} />
             </div>
           ) : (
             <EmptyPage label="Pretty empty around here. Let's upload your first PDF." />
