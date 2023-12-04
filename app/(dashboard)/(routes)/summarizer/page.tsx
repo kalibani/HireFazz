@@ -148,7 +148,7 @@ const ConversationPage = () => {
             </ul>
           ) : isLoading ? (
             <div className="p-8 rounded-lg w-full flex justify-center items-start bg-muted">
-              <Skeleton height={100} className="my-2" count={3} />
+              <Loader />
             </div>
           ) : (
             <EmptyPage label="Pretty empty around here. Let's upload your first PDF." />

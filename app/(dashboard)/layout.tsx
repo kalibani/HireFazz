@@ -3,6 +3,9 @@ import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import { getAPILimitCount } from "@/lib/api-limit";
 
+import "react-loading-skeleton/dist/skeleton.css";
+import "simplebar-react/dist/simplebar.min.css";
+
 type DashboardLayoutProps = {
   children: ReactNode;
 };
