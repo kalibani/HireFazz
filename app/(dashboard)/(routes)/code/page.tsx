@@ -42,6 +42,7 @@ const CodePage = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userMessage: OpenAI.Chat.ChatCompletionMessage = {
+        //@ts-ignore
         role: "user",
         content: values.prompt,
       };
@@ -125,11 +126,13 @@ const CodePage = () => {
                 key={index}
                 className={cn(
                   "p-8 w-full flex items-start gap-x-8 rounded-lg",
+                  //@ts-ignore
                   message?.role === "user"
                     ? "bg-white border border-black/10"
                     : "bg-muted"
                 )}
               >
+                {/* @ts-ignore */}
                 {message?.role === "user" ? <UserAvatar /> : <BotAvatar />}
                 <ReactMarkdown
                   components={{
