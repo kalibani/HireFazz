@@ -64,6 +64,8 @@ const ConversationPage = () => {
   const utils = trpc.useUtils();
 
   const { mutate: deleteFile } = trpc.deleteFile.useMutation({
+    retry: 3,
+    networkMode: "always",
     onSuccess: () => {
       utils.getUserFiles.invalidate();
     },
