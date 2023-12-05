@@ -48,6 +48,9 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
 
       return response.body;
     },
+    networkMode: "always",
+    retry: 3,
+
     onMutate: async ({ message }) => {
       backupMessage.current = message;
       setMessage("");

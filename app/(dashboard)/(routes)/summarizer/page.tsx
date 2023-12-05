@@ -55,7 +55,11 @@ const ConversationPage = () => {
 
   // const isLoading = form.formState.isSubmitting;
 
-  const { data: files, isLoading } = trpc.getUserFiles.useQuery();
+  const { data: files, isLoading } = trpc.getUserFiles
+    // @ts-ignore
+    .useQuery("_", {
+      networkMode: "always",
+    });
 
   const utils = trpc.useUtils();
 

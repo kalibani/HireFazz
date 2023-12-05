@@ -26,6 +26,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
     },
     retry: true,
     retryDelay: 500,
+    networkMode: "always",
   });
 
   const startSimulatedProgress = () => {

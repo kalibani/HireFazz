@@ -14,7 +14,7 @@ interface MessagesProps {
 const Messages = ({ fileId }: MessagesProps) => {
   const { isLoading: isAiThinking } = useContext(ChatContext);
 
-  const { data, isLoading, fetchNextPage } =
+  const { data, isInitialLoading, fetchNextPage } =
     trpc.getFileMessages.useInfiniteQuery(
       {
         fileId,
@@ -23,10 +23,9 @@ const Messages = ({ fileId }: MessagesProps) => {
       {
         getNextPageParam: (lastPage) => lastPage?.nextCursor,
         keepPreviousData: true,
+        networkMode: "always",
       }
     );
-
-  console.log("---->", data);
 
   const messages = data?.pages.flatMap((page) => page.messages);
 
@@ -85,7 +84,7 @@ const Messages = ({ fileId }: MessagesProps) => {
               />
             );
         })
-      ) : isLoading ? (
+      ) : isInitialLoading ? (
         <div className="w-full flex flex-col gap-2">
           <Skeleton className="h-16" />
           <Skeleton className="h-16" />

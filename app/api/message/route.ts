@@ -52,7 +52,6 @@ export const POST = async (req: NextRequest) => {
   });
 
   const results = await vectorStore.similaritySearch(message, 4);
-  logger.info(results);
 
   const prevMessages = await prismadb.message.findMany({
     where: {
