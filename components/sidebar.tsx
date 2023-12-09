@@ -31,16 +31,16 @@ const routes = [
     color: "text-sky-500",
   },
   {
+    label: "PDF Summarizer",
+    icon: FileArchiveIcon,
+    href: "/summarizer",
+    color: "text-pink-300",
+  },
+  {
     label: "Conversation",
     icon: MessageSquare,
     href: "/conversation",
     color: "text-violet-500",
-  },
-  {
-    label: "Summarizer",
-    icon: FileArchiveIcon,
-    href: "/summarizer",
-    color: "text-pink-300",
   },
   {
     label: "Image Generation",

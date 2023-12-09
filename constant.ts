@@ -11,17 +11,17 @@ export const MAX_FREE_COUNTS = 10;
 
 export const tools = [
   {
+    label: "PDF Summarizer",
+    icon: FileArchiveIcon,
+    href: "/summarizer",
+    color: "text-pink-300",
+  },
+  {
     label: "Conversation",
     icon: MessageSquare,
     href: "/conversation",
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
-  },
-  {
-    label: "Summarizer",
-    icon: FileArchiveIcon,
-    href: "/summarizer",
-    color: "text-pink-300",
   },
   {
     label: "Music Generation",
