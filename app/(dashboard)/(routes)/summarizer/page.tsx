@@ -2,12 +2,8 @@
 
 import { useState } from "react";
 import { OpenAI } from "openai";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   FileArchiveIcon,
-  Ghost,
   Loader2,
   MessageSquare,
   Plus,
@@ -16,27 +12,19 @@ import {
 import Skeleton from "react-loading-skeleton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { format } from "date-fns";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import Heading from "@/components/headings";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import UploadButton from "@/components/upload-button";
 
-import { formSchema } from "./constant";
 import EmptyPage from "@/components/empty";
 import Loader from "@/components/loader";
-import UserAvatar from "@/components/user-avatar";
-import BotAvatar from "@/components/bot-avatar";
-import { cn } from "@/lib/utils";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { trpc } from "@/app/_trpc/client";
 
 import * as formatter from "date-fns";
 
-const ConversationPage = () => {
+const PDFSummarizerPage = () => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
     string | null
   >(null);
@@ -44,16 +32,8 @@ const ConversationPage = () => {
   const [messages, setMessages] = useState<OpenAI.Chat.ChatCompletionMessage[]>(
     []
   );
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      prompt: "",
-    },
-  });
 
   const proModal = useProModal();
-
-  // const isLoading = form.formState.isSubmitting;
 
   const { data: files, isLoading } = trpc.getUserFiles
     // @ts-ignore
@@ -190,4 +170,4 @@ const ConversationPage = () => {
   );
 };
 
-export default ConversationPage;
+export default PDFSummarizerPage;
