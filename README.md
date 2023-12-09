@@ -1,22 +1,24 @@
-# GENIO: Image, Video, Music, and Code Generation Application 
+# GENIO: PDF Chat, Image, Video, Music, and Code Generation Application
 ## This application is built using Next.js, TypeScript, OpenAI, Langchain, Pinecone and Stripe to provide a platform for generating PDF chat, images, videos, code, and music. With a user-friendly interface and advanced algorithms, users can create content in various formats effortlessly. 
 
 ![Image1](https://github.com/kalibani/Genio/blob/main/public/Screenshot-project.png)
 
 
 ## Features: 
-### 1. Question Answering: - The application utilizes OpenAI's powerful language models to answer questions in a conversational manner.
-### 2. Image Generation: - Users can generate unique and custom images using AI-powered algorithms. - Various styles and themes are available to choose from, offering a wide range of creative possibilities. - Images can be saved in common file formats like JPEG and PNG. 
-### 3. Video Generation: - Users can create visually appealing videos with the help of AI algorithms. - Options to add effects, animations, and transitions to enhance visual engagement. - Videos can be exported in commonly supported formats such as MP4. 
-### 4. Music Generation: - Users can compose unique melodies and rhythms using AI-generated music patterns. - Different genres and moods to choose from, enabling users to create music that suits their style. - Export music compositions in widely used audio formats like MP3 and WAV.
-### 5. Code Generation: - Developers can leverage AI-generated code snippets to enhance their productivity and efficiency. - Users can specify their programming language preferences and receive optimized code samples accordingly. - Support for popular programming languages like JavaScript, Python, and Java. 
+### 1. PDF Chat: - Upload your PDF then ask everything you wanted to know about it.
+### 2. Question Answering: - The application utilizes OpenAI's powerful language models to answer questions in a conversational manner.
+### 3. Image Generation: - Users can generate unique and custom images using AI-powered algorithms. - Various styles and themes are available to choose from, offering a wide range of creative possibilities. - Images can be saved in common file formats like JPEG and PNG. 
+### 4. Video Generation: - Users can create visually appealing videos with the help of AI algorithms. - Options to add effects, animations, and transitions to enhance visual engagement. - Videos can be exported in commonly supported formats such as MP4. 
+### 5. Music Generation: - Users can compose unique melodies and rhythms using AI-generated music patterns. - Different genres and moods to choose from, enabling users to create music that suits their style. - Export music compositions in widely used audio formats like MP3 and WAV.
+### 6. Code Generation: - Developers can leverage AI-generated code snippets to enhance their productivity and efficiency. - Users can specify their programming language preferences and receive optimized code samples accordingly. - Support for popular programming languages like JavaScript, Python, and Java. 
 ## Technologies Used: 
 - **Next.js**: A JavaScript framework for building efficient and powerful web applications. 
 - **TypeScript**: A strongly typed programming language that enhances code quality and scalability. 
-- **OpenAI**: Utilizes OpenAI's models and APIs to generate images, videos, code, and music.
+- **OpenAI**: Utilizes OpenAI's models and APIs to embed and generate images, videos, code, and music.
+- **Langchain Framework**: Framework for developing applications powered by language models.
 - **Stripe**: Integrates Stripe's secure payment processing system to facilitate subscription-based access to advanced features.
-- Clerk: Clerk provides authentication and user management functionalities to ensure a secure and customized user experience. 
-- Prisma: Prisma acts as the database toolkit for connecting to and interacting with the application’s data storage.
+- **Clerk**: Clerk provides authentication and user management functionalities to ensure a secure and customized user experience. 
+- **Prisma**: Prisma acts as the database toolkit for connecting to and interacting with the application’s data storage.
 
 ## Getting Started: Follow the instructions below to run this application on your local machine: 
 1. **Prerequisites**: 
