@@ -18,8 +18,16 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
+import { trpc } from "@/app/_trpc/client";
+
 const ProModal = () => {
   const proModal = useProModal();
+
+  const { mutate: createStripeSession } = trpc.createStripeSession.useMutation({
+    onSuccess: ({ url }) => {
+      window.location.href = url ?? "/settings";
+    },
+  });
 
   return (
     <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
@@ -51,7 +59,12 @@ const ProModal = () => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="premium" size="lg" className="w-full">
+          <Button
+            variant="premium"
+            size="lg"
+            className="w-full"
+            onClick={() => createStripeSession()}
+          >
             Upgrade
             <Zap className="w-4 h-4 ml-2 fill-white" />
           </Button>
