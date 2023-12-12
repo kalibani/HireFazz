@@ -1,15 +1,17 @@
-import { ReactNode, createContext, useRef, useState } from "react";
+import { ReactNode, createContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/app/_trpc/client";
 import { MAX_FREE_COUNTS } from "@/constant";
 import { v4 as uuidv4 } from "uuid";
+import { ExtendedMessage } from "@/types/message";
 
 type StreamResponse = {
   addMessage: () => void;
   message: string;
   handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   isLoading: boolean;
+  audioUrl: string | null;
 };
 
 export const ChatContext = createContext<StreamResponse>({
@@ -17,6 +19,7 @@ export const ChatContext = createContext<StreamResponse>({
   message: "",
   handleInputChange: () => {},
   isLoading: false,
+  audioUrl: "",
 });
 
 interface Props {
@@ -26,7 +29,9 @@ interface Props {
 
 export const ChatContextProvider = ({ fileId, children }: Props) => {
   const [message, setMessage] = useState<string>("");
+  const [aiResponse, setAIResponse] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>("");
 
   const utils = trpc.useUtils();
 
@@ -155,6 +160,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
                         text: accResponse,
                       };
                     }
+                    setAIResponse(message.text);
                     return message;
                   });
                 }
@@ -188,6 +194,48 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
     },
   });
 
+  const {
+    data,
+    error,
+    mutate: streamingMp3,
+  } = useMutation({
+    mutationFn: async () => {
+      const text = aiResponse;
+      const response = await fetch("/api/tts", {
+        method: "POST",
+        body: JSON.stringify({
+          text: text,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      console.log("response", response);
+      const data = await response.arrayBuffer();
+
+      // Convert ArrayBuffer to Blob and create a URL for the audio
+      const blob = new Blob([data], { type: "audio/mpeg" });
+      const audioUrl = URL.createObjectURL(blob);
+      setAudioUrl(audioUrl);
+
+      return response.body;
+    },
+    onError: (error) => {
+      console.log("ini", error);
+    },
+  });
+
+  console.log("ada err", error);
+
+  useEffect(() => {
+    if (aiResponse) {
+      streamFile();
+    }
+  }, [aiResponse]);
+  const streamFile = () => streamingMp3();
+
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
   };
@@ -201,6 +249,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
         message,
         handleInputChange,
         isLoading,
+        audioUrl,
       }}
     >
       {children}
