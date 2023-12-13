@@ -45,34 +45,44 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
     return interval;
   };
 
+  const handleDropFiles = async (acceptedFiles: any[]) => {
+    if (acceptedFiles[0]) {
+      setIsUploading(true);
+
+      const progressInterval = startSimulatedProgress();
+
+      // handle file uploading
+      const res = await startUpload(acceptedFiles);
+
+      if (!res) {
+        return toast("Something went wrong");
+      }
+
+      const [fileResponse] = res;
+
+      const key = fileResponse?.key;
+
+      if (!key) {
+        return toast("Something went wrong");
+      }
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      startPolling({ key });
+    }
+  };
+
+  const acceptedFilesType = {
+    "application/pdf": [".pdf"],
+  };
+
   return (
     <Dropzone
+      maxFiles={1}
       multiple={false}
-      onDrop={async (acceptedFile) => {
-        setIsUploading(true);
-
-        const progressInterval = startSimulatedProgress();
-
-        // handle file uploading
-        const res = await startUpload(acceptedFile);
-
-        if (!res) {
-          return toast("Something went wrong");
-        }
-
-        const [fileResponse] = res;
-
-        const key = fileResponse?.key;
-
-        if (!key) {
-          return toast("Something went wrong");
-        }
-
-        clearInterval(progressInterval);
-        setUploadProgress(100);
-
-        startPolling({ key });
-      }}
+      onDrop={handleDropFiles}
+      accept={acceptedFilesType}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
@@ -80,10 +90,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
           className="border h-64 m-4 border-dashed border-gray-300 rounded-lg"
         >
           <div className="flex items-center justify-center h-full w-full">
-            <label
-              htmlFor="dropzone-file"
-              className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-            >
+            <div className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Cloud className="h-6 w-6 text-zinc-500 mb-2" />
                 <p className="mb-2 text-sm text-zinc-700">
@@ -130,7 +137,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
                 id="dropzone-file"
                 className="hidden"
               />
-            </label>
+            </div>
           </div>
         </div>
       )}
