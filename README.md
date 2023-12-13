@@ -1,5 +1,5 @@
 # GENIO: PDF Chat, Image, Video, Music, and Code Generation Application
-## This application is built using Next.js, TypeScript, OpenAI, Langchain, Pinecone and Stripe to provide a platform for generating PDF chat, images, videos, code, and music. With a user-friendly interface and advanced algorithms, users can create content in various formats effortlessly. 
+## This application is built using Next.js, TypeScript, OpenAI, Langchain, Pinecone to provide a platform for PDF chat, generating images, videos, code, and music. With a user-friendly interface and advanced algorithms, users can create content in various formats effortlessly. 
 
 ![Image1](https://github.com/kalibani/Genio/blob/main/public/Screenshot-project.png)
 
@@ -12,7 +12,8 @@
 ### 5. Music Generation: - Users can compose unique melodies and rhythms using AI-generated music patterns. - Different genres and moods to choose from, enabling users to create music that suits their style. - Export music compositions in widely used audio formats like MP3 and WAV.
 ### 6. Code Generation: - Developers can leverage AI-generated code snippets to enhance their productivity and efficiency. - Users can specify their programming language preferences and receive optimized code samples accordingly. - Support for popular programming languages like JavaScript, Python, and Java. 
 ## Technologies Used: 
-- **Next.js**: A JavaScript framework for building efficient and powerful web applications. 
+- **Next.js**: A JavaScript framework for building efficient and powerful web applications.
+- **Trpc**: "Typescript Remote Procedure Call". It is a way of calling functions on one computer (the server) from another computer (the client). With traditional HTTP/REST APIs, you call a URL and get a response. With RPC, you call a function and get a response.
 - **TypeScript**: A strongly typed programming language that enhances code quality and scalability. 
 - **OpenAI**: Utilizes OpenAI's models and APIs to embed and generate images, videos, code, and music.
 - **Langchain Framework**: Framework for developing applications powered by language models.
