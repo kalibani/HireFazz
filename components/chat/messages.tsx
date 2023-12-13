@@ -12,7 +12,7 @@ interface MessagesProps {
 }
 
 const Messages = ({ fileId }: MessagesProps) => {
-  const { isLoading: isAiThinking } = useContext(ChatContext);
+  const { isLoading: isAiThinking, audioUrl } = useContext(ChatContext);
 
   const { data, isInitialLoading, fetchNextPage } =
     trpc.getFileMessages.useInfiniteQuery(
@@ -73,6 +73,7 @@ const Messages = ({ fileId }: MessagesProps) => {
                 message={message}
                 isNextMessageSamePerson={isNextMessageSamePerson}
                 key={message.id}
+                audioUrl={audioUrl!}
               />
             );
           } else
@@ -81,6 +82,7 @@ const Messages = ({ fileId }: MessagesProps) => {
                 message={message}
                 isNextMessageSamePerson={isNextMessageSamePerson}
                 key={message.id}
+                audioUrl={audioUrl!}
               />
             );
         })

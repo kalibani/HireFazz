@@ -8,10 +8,11 @@ import { forwardRef } from "react";
 interface MessageProps {
   message: ExtendedMessage;
   isNextMessageSamePerson: boolean;
+  audioUrl: string;
 }
 
 const Message = forwardRef<HTMLDivElement, MessageProps>(
-  ({ message, isNextMessageSamePerson }, ref) => {
+  ({ message, isNextMessageSamePerson, audioUrl }, ref) => {
     return (
       <div
         ref={ref}
@@ -62,6 +63,12 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
               </ReactMarkdown>
             ) : (
               message.text
+            )}
+
+            {audioUrl && (
+              <audio controls>
+                <source id="audioSource" type="audio/flac" src={audioUrl!} />
+              </audio>
             )}
             {message.id !== "loading-message" ? (
               <div
