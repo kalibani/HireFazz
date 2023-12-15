@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.23.0",
+    "@cyntler/react-doc-viewer": "^1.14.1",
     "@hookform/resolvers": "^3.1.1",
     "@mantine/hooks": "^7.3.0",
     "@pinecone-database/pinecone": "^1.1.2",
@@ -50,7 +51,6 @@
     "pdf-parse": "^1.1.1",
     "postcss": "8.4.27",
     "react": "18.2.0",
-    "react-doc-viewer": "^0.1.5",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.45.2",

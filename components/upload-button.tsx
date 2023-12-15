@@ -74,7 +74,12 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   };
 
   const acceptedFilesType = {
-    // "application/pdf": [".pdf"],
+    "application/pdf": [".pdf"],
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
+      ".docx",
+    ],
+    "application/msword": [".doc"],
+    "text/csv": [".csv"],
   };
 
   return (
