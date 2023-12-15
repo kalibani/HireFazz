@@ -1,3 +1,4 @@
+"use client";
 import ChatWrapper from "@/components/chat/chat-wrapper";
 import PdfRenderer from "@/components/pdf-renderer";
 import prismadb from "@/lib/prismadb";
@@ -5,8 +6,12 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { notFound, redirect } from "next/navigation";
 import { FileArchiveIcon } from "lucide-react";
+import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 
 import Heading from "@/components/headings";
+import { trpc } from "@/app/_trpc/client";
+import toast from "react-hot-toast";
+import { extractExtension } from "@/lib/utils";
 
 interface PageProps {
   params: {
@@ -14,19 +19,30 @@ interface PageProps {
   };
 }
 
-const Page = async ({ params }: PageProps) => {
+const Page = ({ params }: PageProps) => {
   const { fileid } = params;
 
-  const { userId } = auth();
-
-  const file = await prismadb.file.findFirst({
-    where: {
-      id: fileid,
-      userId,
+  const {
+    data: file,
+    fetchStatus,
+    isLoading,
+  } = trpc.getSingleFile.useQuery(
+    {
+      fileId: fileid,
     },
-  });
+    {
+      refetchInterval: (file) =>
+        file?.uploadStatus === "SUCCESS" || file?.uploadStatus === "FAILED"
+          ? false
+          : 500,
+      networkMode: "always",
+    }
+  );
+  console.log(fetchStatus, file);
 
-  if (!file) notFound();
+  if (!file) toast("File not found");
+  const docs = [{ uri: file?.url || "" }];
+  const extension = extractExtension(file?.url || "");
 
   // const plan = await getUserSubscriptionPlan()
 
@@ -46,12 +62,30 @@ const Page = async ({ params }: PageProps) => {
           <div className="flex-1 xl:flex">
             <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">
               {/* Main area */}
-              <PdfRenderer url={file.url} />
+              {extension && extension === "pdf" ? (
+                <PdfRenderer url={file?.url || ""} />
+              ) : null}
+              {extension && extension === "docx" ? (
+                <DocViewer
+                  pluginRenderers={DocViewerRenderers}
+                  documents={docs}
+                  theme={{
+                    primary: "#5296d8",
+                    secondary: "#ffffff",
+                    tertiary: "#5296d899",
+                    text_primary: "#ffffff",
+                    text_secondary: "#5296d8",
+                    text_tertiary: "#00000099",
+                    disableThemeScrollbar: false,
+                  }}
+                  className="flex-1 w-full max-h-[60vh]"
+                />
+              ) : null}
             </div>
           </div>
 
           <div className="shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0">
-            <ChatWrapper isSubscribed={true} fileId={file.id} />
+            <ChatWrapper isSubscribed={true} fileId={file?.id || ""} />
           </div>
         </div>
       </div>

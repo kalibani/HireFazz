@@ -3,10 +3,13 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import prismadb from "@/lib/prismadb";
 
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
+import { DocxLoader } from "langchain/document_loaders/fs/docx";
+import { CSVLoader } from "langchain/document_loaders/fs/csv";
+
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { pinecone } from "@/lib/pinecone";
-import { logger } from "@/logger";
+import { extractExtension } from "@/lib/utils";
 
 const f = createUploadthing();
 
@@ -55,13 +58,22 @@ const onUploadComplete = async ({
   });
 
   try {
-    const response = await fetch(
-      `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`
-    );
-
+    const fileUrl = `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`;
+    const fileExtension = extractExtension(fileUrl);
+    const response = await fetch(fileUrl);
     const blob = await response.blob();
-
-    const loader = new PDFLoader(blob);
+    let loader;
+    switch (fileExtension) {
+      case "docx":
+        loader = new DocxLoader(blob);
+        break;
+      case "cv=sv":
+        loader = new CSVLoader(blob);
+        break;
+      default:
+        loader = new PDFLoader(blob);
+        break;
+    }
 
     const pageLevelDocs = await loader.load();
 
@@ -114,6 +126,7 @@ const onUploadComplete = async ({
       },
     });
   } catch (err) {
+    console.log("err", err);
     await prismadb.file.update({
       data: {
         uploadStatus: "FAILED",
@@ -126,7 +139,16 @@ const onUploadComplete = async ({
 };
 
 export const ourFileRouter = {
-  pdfUploader: f({ pdf: { maxFileSize: "4MB" } })
+  pdfUploader: f([
+    "image",
+    "video",
+    "audio",
+    "blob",
+    "pdf",
+    "text",
+    "application/docbook+xml",
+    "text/csv",
+  ])
     .middleware(middleware)
     .onUploadComplete(onUploadComplete),
   // proPlanUploader: f({ pdf: { maxFileSize: "16MB" } })

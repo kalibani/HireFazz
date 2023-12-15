@@ -74,7 +74,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   };
 
   const acceptedFilesType = {
-    "application/pdf": [".pdf"],
+    // "application/pdf": [".pdf"],
   };
 
   return (
