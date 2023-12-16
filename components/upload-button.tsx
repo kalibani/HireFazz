@@ -30,9 +30,18 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
         );
       }
     },
-    retry: 8,
+    onError(error, variables, context) {
+      console.log("e", error, "v", variables, "c", context);
+    },
     retryDelay: 500,
     networkMode: "always",
+    // @ts-ignore
+    retry(failureCount, error) {
+      if (failureCount > 6) {
+        console.log(error);
+        toast(` error ${error}`);
+      }
+    },
   });
 
   const startSimulatedProgress = () => {
