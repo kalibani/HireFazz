@@ -1,6 +1,6 @@
 import ChatWrapper from "@/components/chat/chat-wrapper";
 import PdfRenderer from "@/components/pdf-renderer";
-import DocRenderer from "@/components/doc-renderer";
+import FilesRenderer from "@/components/files-renderer";
 import prismadb from "@/lib/prismadb";
 // import { getUserSubscriptionPlan } from "@/lib/stripe";
 import { auth } from "@clerk/nextjs";
@@ -30,7 +30,7 @@ const Page = async ({ params }: PageProps) => {
 
   if (!file) notFound();
 
-  const extensionFile = extractExtension(file.url);
+  const fileExtension = extractExtension(file.url);
 
   // const plan = await getUserSubscriptionPlan()
 
@@ -38,22 +38,22 @@ const Page = async ({ params }: PageProps) => {
     <div>
       <Heading
         title="Document Summarizer"
-        description="Our most advanced conversation model."
+        description="Our most advanced assistant model."
         icon={FileArchiveIcon}
         iconColor="text-pink-300"
         bgColor="bg-pink-300/10"
       />
 
-      <div className="flex-1 justify-between flex flex-col h-[calc(100vh-6.5rem)]  bg-gray-200">
+      <div className="flex-1 justify-between flex flex-col h-[calc(100vh-6.5rem)] bg-gray-200">
         <div className="mx-auto w-full max-w-8xl grow lg:flex ">
           {/* Left sidebar & main wrapper */}
           <div className="flex-1 xl:flex">
             <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">
               {/* Main area */}
-              {extensionFile === "pdf" ? (
+              {fileExtension === "pdf" ? (
                 <PdfRenderer url={file.url} />
               ) : (
-                <DocRenderer url={file.url} />
+                <FilesRenderer url={file.url} fileExtension={fileExtension!} />
               )}
             </div>
           </div>

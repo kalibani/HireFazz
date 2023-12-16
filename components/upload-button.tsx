@@ -103,7 +103,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
                   and drop
                 </p>
                 <p className="text-xs text-zinc-500">
-                  PDF (up to {isSubscribed ? "16" : "4"}MB)
+                  PDF, DOCX, CSV (up to {isSubscribed ? "16" : "4"}MB)
                 </p>
               </div>
 
@@ -163,7 +163,7 @@ const UploadButton = ({ isSubscribed }: { isSubscribed: boolean }) => {
       }}
     >
       <DialogTrigger onClick={() => setIsOpen(true)} asChild>
-        <Button>Upload PDF</Button>
+        <Button>Upload Document</Button>
       </DialogTrigger>
 
       <DialogContent>

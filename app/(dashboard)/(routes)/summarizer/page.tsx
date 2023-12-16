@@ -61,7 +61,7 @@ const PDFSummarizerPage = () => {
     <div>
       <Heading
         title="Document Summarizer"
-        description="Our most advanced conversation model."
+        description="Our most advanced assistant model."
         icon={FileArchiveIcon}
         iconColor="text-pink-300"
         bgColor="bg-pink-300/10"

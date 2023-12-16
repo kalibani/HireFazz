@@ -10,6 +10,7 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { pinecone } from "@/lib/pinecone";
 import { extractExtension } from "@/lib/utils";
+import { NextResponse } from "next/server";
 
 const f = createUploadthing();
 
@@ -67,7 +68,7 @@ const onUploadComplete = async ({
       case "docx":
         loader = new DocxLoader(blob);
         break;
-      case "cv=sv":
+      case "csv":
         loader = new CSVLoader(blob);
         break;
       default:
@@ -127,14 +128,7 @@ const onUploadComplete = async ({
     });
   } catch (err) {
     console.log("err", err);
-    await prismadb.file.update({
-      data: {
-        uploadStatus: "FAILED",
-      },
-      where: {
-        id: createdFile.id,
-      },
-    });
+    throw new NextResponse("Invalid file structure", { status: 400 });
   }
 };
 

@@ -56,7 +56,7 @@
 ## Usage:
 
 - Upon launching the application, users can sign up for an account or log in if they already have one.
-- Users can upload PDF document and chat with it right away
+- Users can upload document (PDF, DOCX, CSV)and chat with it right away
 - Users can browse the different content generation options: Images, Videos, Code, and Music.
 - Select the desired option and follow the prompts to customize and generate the content.
 - Once generated, users can save or export the content in their desired file format.
