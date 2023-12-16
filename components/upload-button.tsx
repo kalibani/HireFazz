@@ -30,7 +30,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
         );
       }
     },
-    retry: 10,
+    retry: 8,
     retryDelay: 500,
     networkMode: "always",
   });
