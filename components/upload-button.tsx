@@ -22,7 +22,13 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
 
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
-      router.push(`/summarizer/${file.id}`);
+      if (file.uploadStatus !== "FAILED") {
+        router.push(`/summarizer/${file.id}`);
+      } else {
+        toast(
+          "Error while parsing document, please try with another document "
+        );
+      }
     },
     retry: true,
     retryDelay: 500,

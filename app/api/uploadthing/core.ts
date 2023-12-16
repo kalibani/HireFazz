@@ -128,6 +128,14 @@ const onUploadComplete = async ({
     });
   } catch (err) {
     console.log("err", err);
+    prismadb.file.update({
+      data: {
+        uploadStatus: "FAILED",
+      },
+      where: {
+        id: createdFile.id,
+      },
+    });
     throw new NextResponse("Invalid file structure", { status: 400 });
   }
 };
