@@ -11,7 +11,7 @@ export const MAX_FREE_COUNTS = 10;
 
 export const tools = [
   {
-    label: "Document Summarizer",
+    label: "Document Interaction",
     icon: FileArchiveIcon,
     href: "/summarizer",
     color: "text-pink-300",
