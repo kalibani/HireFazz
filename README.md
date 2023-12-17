@@ -1,4 +1,4 @@
-# GENIO: PDF Chat, Image, Video, Music, and Code Generation Application
+# SummaTalk: Chat with your document, Image, Video, Music, and Code Generation Application
 
 ## This application is built using Next.js, TypeScript, OpenAI, Langchain, Pinecone to provide a platform for PDF chat, generating images, videos, code, and music. With a user-friendly interface and advanced algorithms, users can create content in various formats effortlessly.
 
@@ -6,7 +6,7 @@
 
 ## Features:
 
-### 1. PDF Chat: - Upload your PDF then ask everything you wanted to know about it.
+### 1. Document Interaction: - Upload your document then ask everything you wanted.
 
 ### 2. Question Answering: - The application utilizes OpenAI's powerful language models to answer questions in a conversational manner.
 

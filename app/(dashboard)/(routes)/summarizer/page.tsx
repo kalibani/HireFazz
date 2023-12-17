@@ -60,8 +60,8 @@ const PDFSummarizerPage = () => {
   return (
     <div>
       <Heading
-        title="Document Summarizer"
-        description="Our most advanced assistant model."
+        title="Talk With Your Document"
+        description="Revolutionizing Document Interaction."
         icon={FileArchiveIcon}
         iconColor="text-pink-300"
         bgColor="bg-pink-300/10"
@@ -137,7 +137,7 @@ const PDFSummarizerPage = () => {
               <Loader />
             </div>
           ) : (
-            <EmptyPage label="Pretty empty around here. Let's upload your first PDF." />
+            <EmptyPage label="Pretty empty around here. Let's upload your first document." />
           )}
 
           {/* {isLoading && (

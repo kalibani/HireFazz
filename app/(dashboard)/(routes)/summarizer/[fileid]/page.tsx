@@ -37,8 +37,8 @@ const Page = async ({ params }: PageProps) => {
   return (
     <div>
       <Heading
-        title="Document Summarizer"
-        description="Our most advanced assistant model."
+        title="Talk With Your Document"
+        description="Revolutionizing Document Interaction."
         icon={FileArchiveIcon}
         iconColor="text-pink-300"
         bgColor="bg-pink-300/10"

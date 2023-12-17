@@ -5,6 +5,7 @@ import prismadb from "@/lib/prismadb";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { DocxLoader } from "langchain/document_loaders/fs/docx";
 import { CSVLoader } from "langchain/document_loaders/fs/csv";
+import { UnstructuredLoader } from "langchain/document_loaders/fs/unstructured";
 
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
@@ -62,19 +63,24 @@ const onUploadComplete = async ({
     const fileUrl = `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`;
     const fileExtension = extractExtension(fileUrl);
     const response = await fetch(fileUrl);
-    const blob = await response.blob();
-    let loader;
-    switch (fileExtension) {
-      case "docx":
-        loader = new DocxLoader(blob);
-        break;
-      case "csv":
-        loader = new CSVLoader(blob);
-        break;
-      default:
-        loader = new PDFLoader(blob);
-        break;
-    }
+    // const blob = await response.text();
+
+    // const fileText = await blob.text();
+    let loader = new UnstructuredLoader(fileUrl);
+    // switch (fileExtension) {
+    //   case "docx":
+    //     loader = new DocxLoader(blob);
+    //     break;
+    //   case "doc":
+    //     loader = new DocxLoader(blob);
+    //     break;
+    //   case "csv":
+    //     loader = new CSVLoader(blob);
+    //     break;
+    //   default:
+    //     loader = new PDFLoader(blob);
+    //     break;
+    // }
 
     const pageLevelDocs = await loader.load();
 

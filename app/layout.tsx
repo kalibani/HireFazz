@@ -9,8 +9,8 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Genio",
-  description: "Image, Video, Music and Code Generation. 100% Free",
+  title: "SummaTalk - Revolutionizing Document Interaction",
+  description: "Talk with your document effortlessly. 100% Free",
 };
 
 export default function RootLayout({
@@ -22,6 +22,14 @@ export default function RootLayout({
     <ClerkProvider>
       <Providers>
         <html lang="en">
+          <head>
+            <link rel="icon" href="/summatalk.png" type="image/png" />
+            <link
+              rel="apple-touch-icon"
+              href="/summatalk.png"
+              type="image/png"
+            />
+          </head>
           <body className={inter.className}>
             <ToasterProvider />
             <ModalProvider />
