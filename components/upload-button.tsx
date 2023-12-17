@@ -30,18 +30,19 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
         );
       }
     },
+    retry: true,
     onError(error, variables, context) {
       console.log("e", error, "v", variables, "c", context);
     },
     retryDelay: 500,
     networkMode: "always",
     // @ts-ignore
-    retry(failureCount, error) {
-      if (failureCount > 6) {
-        console.log(error);
-        toast(` error ${error}`);
-      }
-    },
+    // retry(failureCount, error) {
+    //   if (failureCount > 6) {
+    //     console.log(error);
+    //     toast(` error ${error}`);
+    //   }
+    // },
   });
 
   const startSimulatedProgress = () => {
@@ -93,14 +94,13 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
       ".docx",
     ],
-    "application/msword": [".doc"],
     "text/csv": [".csv"],
   };
 
   return (
     <Dropzone
-      maxFiles={1}
-      multiple={false}
+      maxFiles={3}
+      multiple={true}
       onDrop={handleDropFiles}
       accept={acceptedFilesType}
     >

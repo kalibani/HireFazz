@@ -63,24 +63,25 @@ const onUploadComplete = async ({
     const fileUrl = `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`;
     const fileExtension = extractExtension(fileUrl);
     const response = await fetch(fileUrl);
-    // const blob = await response.text();
+    const blob = await response.blob();
 
     // const fileText = await blob.text();
-    let loader = new UnstructuredLoader(fileUrl);
-    // switch (fileExtension) {
-    //   case "docx":
-    //     loader = new DocxLoader(blob);
-    //     break;
-    //   case "doc":
-    //     loader = new DocxLoader(blob);
-    //     break;
-    //   case "csv":
-    //     loader = new CSVLoader(blob);
-    //     break;
-    //   default:
-    //     loader = new PDFLoader(blob);
-    //     break;
-    // }
+    // let loader = new UnstructuredLoader(fileUrl);
+    let loader;
+    switch (fileExtension) {
+      case "docx":
+        loader = new DocxLoader(blob);
+        break;
+      // case "doc":
+      //   loader = new DocxLoader(blob);
+      //   break;
+      case "csv":
+        loader = new CSVLoader(blob);
+        break;
+      default:
+        loader = new PDFLoader(blob);
+        break;
+    }
 
     const pageLevelDocs = await loader.load();
 
@@ -147,16 +148,29 @@ const onUploadComplete = async ({
 };
 
 export const ourFileRouter = {
-  pdfUploader: f([
-    "image",
-    "video",
-    "audio",
-    "blob",
-    "pdf",
-    "text",
-    "application/docbook+xml",
-    "text/csv",
-  ])
+  pdfUploader: f(
+    {
+      image: { maxFileSize: "4MB" },
+      text: { maxFileSize: "4MB" },
+      video: { maxFileSize: "4MB" },
+      "application/docbook+xml": { maxFileSize: "16MB" },
+      "text/csv": { maxFileSize: "16MB" },
+      audio: { maxFileSize: "4MB" },
+      pdf: { maxFileSize: "16MB" },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        { maxFileSize: "16MB" },
+    }
+    // [
+    //   "image",
+    //   "video",
+    //   "audio",
+    //   "blob",
+    //   "pdf",
+    //   "text",
+    //   "application/docbook+xml",
+    //   "text/csv",
+    // ]
+  )
     .middleware(middleware)
     .onUploadComplete(onUploadComplete),
   // proPlanUploader: f({ pdf: { maxFileSize: "16MB" } })
