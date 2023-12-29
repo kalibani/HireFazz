@@ -165,7 +165,13 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   );
 };
 
-const UploadButton = ({ isSubscribed }: { isSubscribed: boolean }) => {
+const UploadButton = ({
+  isSubscribed,
+  buttonText,
+}: {
+  isSubscribed: boolean;
+  buttonText: string;
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
@@ -178,7 +184,7 @@ const UploadButton = ({ isSubscribed }: { isSubscribed: boolean }) => {
       }}
     >
       <DialogTrigger onClick={() => setIsOpen(true)} asChild>
-        <Button>Upload Document</Button>
+        <Button>{buttonText}</Button>
       </DialogTrigger>
 
       <DialogContent>
