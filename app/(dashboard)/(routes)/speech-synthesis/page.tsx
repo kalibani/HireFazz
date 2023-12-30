@@ -9,6 +9,7 @@ import {
   Plus,
   Trash,
   ChevronDown,
+  CheckCircle2,
 } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import Link from "next/link";
@@ -21,32 +22,26 @@ import UploadButton from "@/components/upload-button";
 import EmptyPage from "@/components/empty";
 import Loader from "@/components/loader";
 import { useProModal } from "@/hooks/use-pro-modal";
+import { useModel } from "@/hooks/use-model-modal";
+
 import { trpc } from "@/app/_trpc/client";
 
-import * as formatter from "date-fns";
-import { ComboboxDemo } from "@/components/ui/combobox";
+import { Combobox } from "@/components/ui/combobox";
+import { ComboboxSlider } from "@/components/ui/combobox-slider";
 import { Textarea } from "@/components/ui/textarea";
-import axios from "axios";
-import { NextApiResponse } from "next";
+
+import { ComboboxPopup } from "@/components/ui/combobox-popup";
+
+import { cn } from "@/lib/utils";
 
 const SpeechSynthesisPage = () => {
-  const [voices, setVoices] = useState<any>();
+  const { task, setTask } = useModel();
   const proModal = useProModal();
+  const [voiceId, setVoice] = useState("");
 
-  const getVoices = async () => {
-    try {
-      const response: any = await axios.get(
-        "https://api.elevenlabs.io/v1/voices"
-      );
-      setVoices(response?.data?.voices);
-    } catch (error) {
-      console.log("error", error);
-    }
+  const handleSetVoice = (v: string) => {
+    setVoice(v);
   };
-
-  useEffect(() => {
-    getVoices();
-  }, []);
 
   return (
     <div>
@@ -66,15 +61,21 @@ const SpeechSynthesisPage = () => {
           {/* </Form> */}
         </div>
         <div className="space-y-4 mt-4 border border-gray-200 shadow-sm rounded-lg bg-white">
-          {/* display all user files */}
           <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 pt-6 lg:pt-5 mb-5">
             <span className="block text-lg font-normal text-gray-900 mb-1 leading-none pb-1 lg:pb-0">
               <span>Task</span>
             </span>
-            <div className="mt-1 lg:col-span-5 lg:mt-0 flex gap-4 items-start">
+            <div className="mt-1 lg:col-span-5 lg:mt-0 flex items-start">
               <div>
                 <div className="space-x-3 flex">
-                  <div className="border-black ring-1 ring-black relative flex cursor-pointer rounded-lg border bg-white py-2 px-3 gap-1.5 shadow-sm focus:outline-none max-w-xs">
+                  <div
+                    className={cn(
+                      "border-gray-300 hover:border-gray-900 relative flex cursor-pointer rounded-lg border bg-white py-2 px-3 gap-1.5 shadow-sm focus:outline-none max-w-xs",
+                      task === "text" ? "border-black ring-1 ring-black" : ""
+                    )}
+                    role="presentation"
+                    onClick={() => setTask("text")}
+                  >
                     <span className="flex flex-1">
                       <span className="flex flex-col">
                         <span className="block text-sm font-medium text-gray-900">
@@ -86,8 +87,16 @@ const SpeechSynthesisPage = () => {
                         </span>
                       </span>
                     </span>
+                    {task === "text" ? <CheckCircle2 /> : null}
                   </div>
-                  <div className="border-gray-300 hover:border-gray-900 relative flex cursor-pointer rounded-lg border bg-white py-2 px-3 gap-1.5 shadow-sm focus:outline-none max-w-xs">
+                  <div
+                    className={cn(
+                      "border-gray-300 hover:border-gray-900 relative flex cursor-pointer rounded-lg border bg-white py-2 px-3 gap-1.5 shadow-sm focus:outline-none max-w-xs",
+                      task === "speech" ? "border-black ring-1 ring-black" : ""
+                    )}
+                    role="presentation"
+                    onClick={() => setTask("speech")}
+                  >
                     <span className="flex flex-1">
                       <span className="flex flex-col">
                         <span className="block text-sm font-medium text-gray-900">
@@ -99,6 +108,7 @@ const SpeechSynthesisPage = () => {
                         </span>
                       </span>
                     </span>
+                    {task === "speech" ? <CheckCircle2 /> : null}
                   </div>
                 </div>
               </div>
@@ -110,21 +120,21 @@ const SpeechSynthesisPage = () => {
               <span>Setting</span>
             </span>
             <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              <ComboboxDemo voices={voices} />
+              <Combobox voiceId={voiceId} handleSetVoice={handleSetVoice} />
             </div>
           </div>
 
           <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 mt-5 lg:mt-5">
             <div></div>
             <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              {/* <ComboboxDemo /> */}
+              <ComboboxSlider voiceId={voiceId} />
             </div>
           </div>
 
           <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 mt-5 lg:mt-5">
             <div></div>
             <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              {/* <ComboboxDemo /> */}
+              <ComboboxPopup />
             </div>
           </div>
 
@@ -135,6 +145,7 @@ const SpeechSynthesisPage = () => {
             <div className="mt-1 lg:col-span-5 lg:mt-0">
               <div className="grid w-full gap-2">
                 <Textarea
+                  className=" min-h-[150px]"
                   placeholder="Type your message here."
                   rows={15}
                   cols={40}

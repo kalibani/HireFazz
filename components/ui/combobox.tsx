@@ -1,9 +1,7 @@
 "use client";
 
-import * as React from "react";
-import { Check, ChevronDown, Play } from "lucide-react";
-
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { ChevronDown, Play, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -18,14 +16,30 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Badge } from "./badge";
+import { useQuery } from "@tanstack/react-query";
+import { getVoices } from "@/lib/axios";
 
-interface voicesType {
-  voices: string[][];
-}
+type ComboboxProps = {
+  voiceId: string;
+  handleSetVoice: (v: string) => void;
+};
 
-export function ComboboxDemo({ voices }: voicesType | any) {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+export function Combobox({ voiceId, handleSetVoice }: ComboboxProps) {
+  const [open, setOpen] = useState(false);
+
+  // Queries voices
+  const { data, isLoading } = useQuery({
+    queryKey: ["voices"],
+    queryFn: getVoices,
+  });
+  const voices = data?.data?.voices;
+  const tempVoices = data?.data?.voices;
+
+  useEffect(() => {
+    const vId = voices?.length > 0 && voices[0].voice_id;
+
+    handleSetVoice(vId);
+  }, [voices]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -36,26 +50,38 @@ export function ComboboxDemo({ voices }: voicesType | any) {
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value ? value : voices && voices[0]?.name}
-          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          {voiceId
+            ? tempVoices.find(
+                (v: any) => v.voice_id.toUpperCase() === voiceId.toUpperCase()
+              )?.name
+            : voices
+            ? voices[0]?.name
+            : isLoading
+            ? "Please waiting.."
+            : "No Data Available"}
+          {isLoading ? (
+            <Loader className="ml-2 h-4 w-4 shrink-0 opacity-50 animate-spin" />
+          ) : (
+            <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent>
-        <Command>
+        <Command className="w-[48vw]">
           <CommandInput placeholder="Search voice..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandEmpty>No voices found.</CommandEmpty>
           <CommandGroup className="w-full overflow-auto">
             {voices?.length > 0 &&
               voices.map((voice: any) => (
                 <CommandItem
                   key={voice.voice_id}
-                  value={voice.name}
+                  value={voice.voice_id}
                   onSelect={(currentValue) => {
-                    setValue(currentValue);
+                    handleSetVoice(voice.voice_id);
                     setOpen(false);
                   }}
                 >
-                  <div className="flex justify-between gap-2">
+                  <div className="flex justify-between gap-4">
                     <Play className="h-4 w-4 text-gray-600" />
                     <span>{voice.name}</span>
                     {voice?.labels.accent && (
