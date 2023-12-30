@@ -46,7 +46,7 @@ const SpeechSynthesisPage = () => {
   return (
     <div>
       <Heading
-        title="Speech Synthesis"
+        title="Speech Synthesis (Coming Soon)"
         description="Unleash the power of our cutting-edge technology to generate realistic, captivating speech in a wide range of languages."
         icon={FileArchiveIcon}
         iconColor="text-pink-300"

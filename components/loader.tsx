@@ -6,7 +6,7 @@ const Loader = () => {
       <div className="w-10 h-10 relative animate-spin">
         <Image alt="Logo" src="/genio.png" fill />
       </div>
-      <p className="text-sm text-muted-foreground">SummaTalk is thinking...</p>
+      <p className="text-sm text-muted-foreground">BerryLabs is thinking...</p>
     </div>
   );
 };
