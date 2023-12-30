@@ -80,6 +80,7 @@ const ModelModal = () => {
                         <Badge
                           className="text-xs py-1  text-[#6f7082]"
                           variant="outline"
+                          key={language.id}
                         >
                           {language.name}
                         </Badge>
