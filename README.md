@@ -1,4 +1,4 @@
-# BerryLabs: Revolutionizing document interaction, Convert text to speech online for free with AI voice generator. Create natural AI voices instantly in any language.
+# BerryLabs: Revolutionizing document interaction, Convert text to speech and clone voices instantly in any language.
 
 ![Image1](https://github.com/kalibani/Genio/blob/main/public/Screenshot-project.png)
 
