@@ -70,7 +70,7 @@ const PDFSummarizerPage = () => {
         <div>
           <div className="rounded-lg w-full border p-4 px-3 md:px-4 focus-within:shadow-sm gap-2 flex h-16 items-center justify-between">
             <h1 className="mb-3text-gray-900">Upload Your Document</h1>
-            <UploadButton isSubscribed={true} />
+            <UploadButton isSubscribed={true} buttonText="Upload document" />
           </div>
           {/* </Form> */}
         </div>

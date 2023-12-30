@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import ProModal from "./pro-modal";
+import ModelModal from "./model-modal";
 
 type Props = {};
 
@@ -18,6 +19,7 @@ const ModalProvider = (props: Props) => {
   return (
     <>
       <ProModal />
+      <ModelModal />
     </>
   );
 };

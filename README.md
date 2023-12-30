@@ -1,6 +1,4 @@
-# SummaTalk: Chat with your document, Image, Video, Music, and Code Generation Application
-
-## This application is built using Next.js, TypeScript, OpenAI, Langchain, Pinecone to provide a platform for PDF chat, generating images, videos, code, and music. With a user-friendly interface and advanced algorithms, users can create content in various formats effortlessly.
+# BerryLabs: Revolutionizing document interaction, Convert text to speech online for free with AI voice generator. Create natural AI voices instantly in any language.
 
 ![Image1](https://github.com/kalibani/Genio/blob/main/public/Screenshot-project.png)
 
@@ -8,15 +6,7 @@
 
 ### 1. Document Interaction: - Upload your document then ask everything you wanted.
 
-### 2. Question Answering: - The application utilizes OpenAI's powerful language models to answer questions in a conversational manner.
-
-### 3. Image Generation: - Users can generate unique and custom images using AI-powered algorithms. - Various styles and themes are available to choose from, offering a wide range of creative possibilities. - Images can be saved in common file formats like JPEG and PNG.
-
-### 4. Video Generation: - Users can create visually appealing videos with the help of AI algorithms. - Options to add effects, animations, and transitions to enhance visual engagement. - Videos can be exported in commonly supported formats such as MP4.
-
-### 5. Music Generation: - Users can compose unique melodies and rhythms using AI-generated music patterns. - Different genres and moods to choose from, enabling users to create music that suits their style. - Export music compositions in widely used audio formats like MP3 and WAV.
-
-### 6. Code Generation: - Developers can leverage AI-generated code snippets to enhance their productivity and efficiency. - Users can specify their programming language preferences and receive optimized code samples accordingly. - Support for popular programming languages like JavaScript, Python, and Java.
+### 2. Speech Synthesis: - Unleash the power of our cutting-edge technology to generate realistic, captivating speech in a wide range of languages.
 
 ## Technologies Used:
 

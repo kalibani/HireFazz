@@ -4,7 +4,7 @@ import { Avatar } from "./ui/avatar";
 const BotAvatar = () => {
   return (
     <Avatar className="h-8 w-8">
-      <AvatarImage className="p-1" src="/summatalk.png" />
+      <AvatarImage className="p-1" src="/BerryLabs.png" />
     </Avatar>
   );
 };

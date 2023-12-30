@@ -9,8 +9,9 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "SummaTalk - Revolutionizing Document Interaction",
-  description: "Talk with your document effortlessly. 100% Free",
+  title: "BerryLabs - Generative Voice AI & Document Interaction",
+  description:
+    "Revolutionizing document interaction, Summarize PDF, Chat With PDF. Convert text to speech online for free with AI voice generator. Create natural AI voices instantly in any language.",
 };
 
 export default function RootLayout({
@@ -23,10 +24,10 @@ export default function RootLayout({
       <Providers>
         <html lang="en">
           <head>
-            <link rel="icon" href="/summatalk.png" type="image/png" />
+            <link rel="icon" href="/BerryLabs.png" type="image/png" />
             <link
               rel="apple-touch-icon"
-              href="/summatalk.png"
+              href="/BerryLabs.png"
               type="image/png"
             />
           </head>
