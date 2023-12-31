@@ -1,6 +1,8 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useState, memo } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -24,8 +26,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useQuery } from "@tanstack/react-query";
-import { getVoiceSettings } from "@/lib/axios";
+import { getVoiceSettings, getDefaultVoiceSettings } from "@/lib/axios";
 import { useTextToSpeechStore } from "@/hooks/useTextToSpeech";
 import { useModel } from "@/hooks/use-model-modal";
 
@@ -33,7 +34,7 @@ function ComboboxSlider({
   className,
   ...props
 }: React.ComponentProps<typeof Slider>) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   // const [value, setValue] = React.useState("");
   const { voiceId } = useModel();
   const {
@@ -46,47 +47,47 @@ function ComboboxSlider({
     setStyle,
     setSpeaker_boost,
     setVoiceSettings,
-  } = useTextToSpeechStore();
+  } = useTextToSpeechStore(useShallow((state) => state));
 
   // Queries voice settings
-  // if (voiceId) {
-  const { data, isError } = useQuery({
+  const { data, isError, isLoading } = useQuery({
     queryKey: ["voice-settings", { voiceId: voiceId }],
     queryFn: () => getVoiceSettings(voiceId),
     staleTime: 1000 * 60 * 60 * 24,
     cacheTime: 1000 * 60 * 60 * 24,
   });
-  console.log("data", data);
-  // if (!isError && data?.data) {
-  //   const voiceSettings = {
-  //     stability: [data?.data.stability],
-  //     similarity_boost: [data?.data.similarity_boost],
-  //     style: [data?.data.style],
-  //     use_speaker_boost: data?.data.use_speaker_boost,
-  //   };
-  //   setVoiceSettings(voiceSettings);
-  // }
 
-  type name = "stability" | "similarity_boost" | "style" | "use_speaker_boost";
+  const queryClient = useQueryClient();
 
-  const handleStabilityChange = (name: name, v: any) => {
-    switch (name) {
-      case "similarity_boost":
-        setSimilarityBoost(v);
-        break;
-      case "stability":
-        setStability(v);
-        break;
-      case "style":
-        setStyle(v);
-        break;
-      case "use_speaker_boost":
-        setSpeaker_boost(v);
-        break;
-      default:
-        break;
+  const hanldeGetDefaultVoiceSettings = async () => {
+    const { data } = await queryClient.fetchQuery({
+      queryKey: ["default-voice-settings"],
+      queryFn: () => getDefaultVoiceSettings(),
+    });
+
+    console.log("datanya", data);
+    if (data) {
+      const voiceSettings = {
+        stability: [data?.stability * 100],
+        similarity_boost: [data?.similarity_boost * 100],
+        style: [data?.style * 100],
+        use_speaker_boost: data?.use_speaker_boost,
+      };
+      setVoiceSettings(voiceSettings);
     }
   };
+
+  useEffect(() => {
+    if (!isError && data?.data && !isLoading) {
+      const voiceSettings = {
+        stability: [data?.data.stability * 100],
+        similarity_boost: [data?.data.similarity_boost * 100],
+        style: [data?.data.style * 100],
+        use_speaker_boost: data?.data.use_speaker_boost,
+      };
+      setVoiceSettings(voiceSettings);
+    }
+  }, [data]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -115,7 +116,7 @@ function ComboboxSlider({
                   max={100}
                   step={1}
                   className={cn("w-[100%] bg-transparent", className)}
-                  onValueChange={(v) => handleStabilityChange("stability", v)}
+                  onValueChange={setStability}
                   {...props}
                 />
                 <div className="flex mt-2 justify-between">
@@ -164,9 +165,7 @@ function ComboboxSlider({
                   max={100}
                   step={1}
                   className={cn("w-[100%] bg-transparent", className)}
-                  onValueChange={(v) =>
-                    handleStabilityChange("similarity_boost", v)
-                  }
+                  onValueChange={setSimilarityBoost}
                   {...props}
                 />
                 <div className="flex mt-2 justify-between">
@@ -215,7 +214,7 @@ function ComboboxSlider({
                   step={1}
                   className={cn("w-[100%] bg-transparent", className)}
                   name="style"
-                  onValueChange={(v) => handleStabilityChange("style", v)}
+                  onValueChange={setStyle}
                   {...props}
                 />
                 <div className="flex mt-2 justify-between">
@@ -250,10 +249,9 @@ function ComboboxSlider({
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="use_speaker_boost"
+                    checked={use_speaker_boost}
                     value={use_speaker_boost}
-                    onCheckedChange={(v: boolean) =>
-                      handleStabilityChange("use_speaker_boost", v)
-                    }
+                    onCheckedChange={setSpeaker_boost}
                   />
                   <label
                     htmlFor="terms"
@@ -279,7 +277,11 @@ function ComboboxSlider({
             </CommandGroup>
             <CommandGroup>
               <CommandItem className="grid aria-selected:bg-transparent">
-                <Button variant="secondary" className="w-[30%]">
+                <Button
+                  variant="secondary"
+                  className="w-[30%]"
+                  onClick={hanldeGetDefaultVoiceSettings}
+                >
                   To Default
                 </Button>
               </CommandItem>
@@ -291,4 +293,4 @@ function ComboboxSlider({
   );
 }
 
-export default React.memo(ComboboxSlider);
+export default memo(ComboboxSlider);

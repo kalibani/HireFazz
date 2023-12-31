@@ -6,14 +6,14 @@ type voiceSettings = {
   similarity_boost: number[];
   stability: number[];
   style: number[];
-  use_speaker_boost: number | string;
+  use_speaker_boost: any;
 };
 
 type voiceSettingsActions = {
-  setSimilarityBoost: (v: voiceSettings) => void;
-  setStability: (v: voiceSettings) => void;
-  setStyle: (v: voiceSettings) => void;
-  setSpeaker_boost: (v: voiceSettings) => void;
+  setSimilarityBoost: (v: number[]) => void;
+  setStability: (v: number[]) => void;
+  setStyle: (v: number[]) => void;
+  setSpeaker_boost: (v: any) => void;
   setVoiceSettings: (v: voiceSettings) => void;
 };
 
@@ -24,22 +24,22 @@ export const useTextToSpeechStore = create<
     similarity_boost: [0],
     stability: [0],
     style: [0],
-    use_speaker_boost: 0,
-    setSimilarityBoost: ({ similarity_boost }: voiceSettings) =>
+    use_speaker_boost: false,
+    setSimilarityBoost: (v) =>
       set((state) => {
-        state.similarity_boost = similarity_boost;
+        state.similarity_boost = v;
       }),
-    setStability: ({ stability }: voiceSettings) =>
+    setStability: (v) =>
       set((state) => {
-        state.stability = stability;
+        state.stability = v;
       }),
-    setStyle: ({ style }: voiceSettings) =>
+    setStyle: (v) =>
       set((state) => {
-        state.style = style;
+        state.style = v;
       }),
-    setSpeaker_boost: ({ use_speaker_boost }: voiceSettings) =>
+    setSpeaker_boost: (v) =>
       set((state) => {
-        state.use_speaker_boost = use_speaker_boost;
+        state.use_speaker_boost = v;
       }),
     setVoiceSettings: ({
       similarity_boost,
