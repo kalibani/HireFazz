@@ -8,7 +8,7 @@ type useModelStore = {
   setModel: (model: {}) => void;
   task: string;
   setTask: (t: string) => void;
-  voice_id: string;
+  voiceId: string;
   setVoiceId: (v: string) => void;
 };
 
@@ -20,6 +20,6 @@ export const useModel = create<useModelStore>()((set) => ({
   setModel: (model) => set({ model: model }),
   task: "text",
   setTask: (t) => set({ task: t }),
-  voice_id: "",
-  setVoiceId: (v) => set({ voice_id: v }),
+  voiceId: "",
+  setVoiceId: (v) => set({ voiceId: v }),
 }));

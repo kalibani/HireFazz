@@ -49,6 +49,7 @@
     "date-fns": "^3.0.0-alpha.2",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.12",
+    "immer": "^10.0.3",
     "langchain": "^0.0.200",
     "lucide-react": "^0.263.0",
     "mammoth": "^1.6.0",

@@ -26,8 +26,8 @@ import { useModel } from "@/hooks/use-model-modal";
 
 import { trpc } from "@/app/_trpc/client";
 
-import { Combobox } from "@/components/ui/combobox";
-import { ComboboxSlider } from "@/components/ui/combobox-slider";
+import Combobox from "@/components/ui/combobox";
+import ComboboxSlider from "@/components/ui/combobox-slider";
 import { Textarea } from "@/components/ui/textarea";
 
 import { ComboboxPopup } from "@/components/ui/combobox-popup";
@@ -36,12 +36,12 @@ import { cn } from "@/lib/utils";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask } = useModel();
-  const proModal = useProModal();
-  const [voiceId, setVoice] = useState("");
+  // const proModal = useProModal();
+  // const [voiceId, setVoice] = useState("");
 
-  const handleSetVoice = (v: string) => {
-    setVoice(v);
-  };
+  // const handleSetVoice = (v: string) => {
+  //   setVoice(v);
+  // };
 
   return (
     <div>
@@ -120,14 +120,14 @@ const SpeechSynthesisPage = () => {
               <span>Setting</span>
             </span>
             <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              <Combobox voiceId={voiceId} handleSetVoice={handleSetVoice} />
+              <Combobox />
             </div>
           </div>
 
           <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 mt-5 lg:mt-5">
             <div></div>
             <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              <ComboboxSlider voiceId={voiceId} />
+              <ComboboxSlider />
             </div>
           </div>
 

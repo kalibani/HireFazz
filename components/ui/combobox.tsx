@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { ChevronDown, Play, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,27 +18,34 @@ import {
 import { Badge } from "./badge";
 import { useQuery } from "@tanstack/react-query";
 import { getVoices } from "@/lib/axios";
+import { useModel } from "@/hooks/use-model-modal";
 
-type ComboboxProps = {
-  voiceId: string;
-  handleSetVoice: (v: string) => void;
-};
+// type ComboboxProps = {
+//   voiceId: string;
+//   handleSetVoice: (v: string) => void;
+// };
 
-export function Combobox({ voiceId, handleSetVoice }: ComboboxProps) {
+function Combobox() {
+  console.log("rendered");
   const [open, setOpen] = useState(false);
+  const { voiceId, setVoiceId } = useModel();
 
   // Queries voices
   const { data, isLoading } = useQuery({
     queryKey: ["voices"],
     queryFn: getVoices,
+    staleTime: 1000 * 60 * 60 * 24,
+    cacheTime: 1000 * 60 * 60 * 24,
   });
   const voices = data?.data?.voices;
   const tempVoices = data?.data?.voices;
 
   useEffect(() => {
-    const vId = voices?.length > 0 && voices[0].voice_id;
+    if (!voiceId) {
+      const vId = voices?.length > 0 && voices[0].voice_id;
 
-    handleSetVoice(vId);
+      setVoiceId(vId);
+    }
   }, [voices]);
 
   return (
@@ -77,7 +84,7 @@ export function Combobox({ voiceId, handleSetVoice }: ComboboxProps) {
                   key={voice.voice_id}
                   value={voice.voice_id}
                   onSelect={(currentValue) => {
-                    handleSetVoice(voice.voice_id);
+                    setVoiceId(voice.voice_id);
                     setOpen(false);
                   }}
                 >
@@ -108,3 +115,5 @@ export function Combobox({ voiceId, handleSetVoice }: ComboboxProps) {
     </Popover>
   );
 }
+
+export default memo(Combobox);

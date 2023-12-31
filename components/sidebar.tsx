@@ -13,6 +13,7 @@ import {
   Settings,
   VideoIcon,
   FileArchiveIcon,
+  DollarSignIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -67,11 +68,12 @@ const routes = [
   //   href: "/code",
   //   color: "text-green-700",
   // },
-  // {
-  //   label: "Settings",
-  //   icon: Settings,
-  //   href: "/settings",
-  // },
+  {
+    label: "Manage Subscription",
+    icon: DollarSignIcon,
+    href: "/billing",
+    color: "text-emerald-500",
+  },
 ];
 
 type sidebarProps = {

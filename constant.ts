@@ -80,4 +80,17 @@ export const PLANS = [
       },
     },
   },
+  {
+    name: "Premium",
+    slug: "premium",
+    quota: 150,
+    pagesPerPdf: 25,
+    price: {
+      amount: 20,
+      priceIds: {
+        test: "price_1OLQyVC0XsP9dATYpzHIpjAe",
+        production: "",
+      },
+    },
+  },
 ];
