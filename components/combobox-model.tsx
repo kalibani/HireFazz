@@ -15,7 +15,7 @@ interface voicesType extends React.ComponentProps<typeof Slider> {
   isLoading: boolean;
 }
 
-export function ComboboxPopup({
+export function ComboboxModel({
   voices,
   isLoading,
   className,

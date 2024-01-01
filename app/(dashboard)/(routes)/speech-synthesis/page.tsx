@@ -1,47 +1,53 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { OpenAI } from "openai";
-import {
-  FileArchiveIcon,
-  Loader2,
-  MessageSquare,
-  Plus,
-  Trash,
-  ChevronDown,
-  CheckCircle2,
-} from "lucide-react";
-import Skeleton from "react-loading-skeleton";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { FileArchiveIcon, CheckCircle2 } from "lucide-react";
 import Heading from "@/components/headings";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import UploadButton from "@/components/upload-button";
 
-import EmptyPage from "@/components/empty";
-import Loader from "@/components/loader";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { useModel } from "@/hooks/use-model-modal";
+import { useTextToSpeechStore } from "@/hooks/use-text-to-speech";
+import { useShallow } from "zustand/react/shallow";
 
 import { trpc } from "@/app/_trpc/client";
 
-import Combobox from "@/components/ui/combobox";
-import ComboboxSlider from "@/components/ui/combobox-slider";
+import ComboboxSettings from "@/components/combobox-settings";
+import ComboboxSlider from "@/components/combobox-slider";
 import { Textarea } from "@/components/ui/textarea";
 
-import { ComboboxPopup } from "@/components/ui/combobox-popup";
+import { ComboboxModel } from "@/components/combobox-model";
 
 import { cn } from "@/lib/utils";
 
+import AudioPlayer from "@/components/audio-player";
+
 const SpeechSynthesisPage = () => {
   const { task, setTask } = useModel();
-  // const proModal = useProModal();
-  // const [voiceId, setVoice] = useState("");
+  const { selectedVoice, selectVoice, formattedVoices, setFormattedVoices } =
+    useTextToSpeechStore(useShallow((state) => state));
 
-  // const handleSetVoice = (v: string) => {
-  //   setVoice(v);
-  // };
+  const handlePlayVoice = (voice: any) => {
+    // update isPlaying
+    const updatedVoices = formattedVoices.map((v: any) =>
+      v.voice_id === voice.voice_id
+        ? {
+            ...v,
+            isPlaying: !voice.isPlaying,
+          }
+        : {
+            ...v,
+            isPlaying: false,
+          }
+    );
+    setFormattedVoices(updatedVoices);
+    // set voice to store
+    const updatedVoice = {
+      ...voice,
+      isPlaying: !voice.isPlaying,
+    };
+    selectVoice(updatedVoice);
+  };
 
   return (
     <div>
@@ -120,7 +126,7 @@ const SpeechSynthesisPage = () => {
               <span>Setting</span>
             </span>
             <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              <Combobox />
+              <ComboboxSettings handlePlayVoice={handlePlayVoice} />
             </div>
           </div>
 
@@ -134,7 +140,7 @@ const SpeechSynthesisPage = () => {
           <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 mt-5 lg:mt-5">
             <div></div>
             <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              <ComboboxPopup />
+              <ComboboxModel />
             </div>
           </div>
 
@@ -160,6 +166,15 @@ const SpeechSynthesisPage = () => {
           </div>
         </div>
       </div>
+      {/* audio player start */}
+      {Object.keys(selectedVoice).length > 0 ? (
+        <AudioPlayer
+          selectedVoice={selectedVoice}
+          selectVoice={selectVoice}
+          handlePlayVoice={handlePlayVoice}
+        />
+      ) : null}
+      {/* audio player end */}
     </div>
   );
 };

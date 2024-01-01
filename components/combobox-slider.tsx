@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getVoiceSettings, getDefaultVoiceSettings } from "@/lib/axios";
-import { useTextToSpeechStore } from "@/hooks/useTextToSpeech";
+import { useTextToSpeechStore } from "@/hooks/use-text-to-speech";
 import { useModel } from "@/hooks/use-model-modal";
 
 function ComboboxSlider({
