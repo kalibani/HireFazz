@@ -11,6 +11,7 @@ type audioPlayerProps = {
   handlePlayVoice: (v: any) => void;
   onExpand: (v: boolean) => void;
   stream: any;
+  selectedVoiceTemp: {};
 };
 
 const AudioPlayer = ({
@@ -19,6 +20,7 @@ const AudioPlayer = ({
   handlePlayVoice,
   onExpand,
   stream,
+  selectedVoiceTemp,
 }: audioPlayerProps) => {
   const [isPlaying, setPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -55,8 +57,14 @@ const AudioPlayer = ({
     }
   }, [selectedVoice, progress]);
 
+  useEffect(() => {
+    if (stream && Object.keys(selectedVoice).length === 0) {
+      selectVoice(selectedVoiceTemp);
+    }
+  }, [stream]);
+
   return (
-    <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 fixed bottom-0 z-10 bg-white">
+    <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 sticky bottom-0 z-10 bg-white mt-4">
       <div className="flex items-start gap-2.5">
         <div className="flex flex-col gap-1">
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -98,12 +106,12 @@ const AudioPlayer = ({
                 )}{" "}
                 / {dateFns.format(Math.round(duration) * 1000, "mm:ss")}
               </span>
-              <a href={selectedVoice.preview_url} download>
+              <a href={stream || selectedVoice.preview_url} download>
                 <span>
                   <Download color="#301a32" strokeWidth={1.75} />
                 </span>
               </a>
-              <button onClick={() => onExpand(true)}>
+              <button onClick={() => onExpand(false)}>
                 {/* <button className="p-2"> */}
                 <ChevronDown
                   className="h-6 w-6"
@@ -118,7 +126,7 @@ const AudioPlayer = ({
       </div>
 
       <ReactPlayer
-        url={selectedVoice.preview_url}
+        url={stream || selectedVoice.preview_url}
         playing={isPlaying}
         height={0}
         width={0}

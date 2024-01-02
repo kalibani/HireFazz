@@ -29,9 +29,13 @@ type ComboboxSettingsProps = {
 function ComboboxSettings({ handlePlayVoice }: ComboboxSettingsProps) {
   const [open, setOpen] = useState(false);
   const { voiceId, setVoiceId } = useModel(useShallow((state) => state));
-  const { formattedVoices, setFormattedVoices } = useTextToSpeechStore(
-    useShallow((state) => state)
-  );
+  const {
+    formattedVoices,
+    setFormattedVoices,
+    setStream,
+    selectVoice,
+    selectVoiceTemp,
+  } = useTextToSpeechStore(useShallow((state) => state));
 
   // Queries voices
   const { data, isLoading } = useQuery({
@@ -55,6 +59,7 @@ function ComboboxSettings({ handlePlayVoice }: ComboboxSettingsProps) {
     if (!voiceId) {
       const vId = voices?.length > 0 && voices[0].voice_id;
       setVoiceId(vId);
+      selectVoiceTemp(voices?.length > 0 && voices[0]);
     }
   }, [voices]);
 
@@ -103,6 +108,7 @@ function ComboboxSettings({ handlePlayVoice }: ComboboxSettingsProps) {
                   value={voice.voice_id}
                   onSelect={() => {
                     setVoiceId(voice.voice_id);
+                    selectVoice(voice);
                     setOpen(false);
                   }}
                   className=" cursor-pointer"
@@ -113,6 +119,8 @@ function ComboboxSettings({ handlePlayVoice }: ComboboxSettingsProps) {
                       type="button"
                       onClick={(e) => {
                         handlePlayVoice(voice);
+                        setVoiceId(voice.voice_id);
+                        setStream("");
                         e.stopPropagation();
                       }}
                     >

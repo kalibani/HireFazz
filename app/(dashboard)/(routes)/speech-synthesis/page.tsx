@@ -1,10 +1,15 @@
 "use client";
 
-import { FileArchiveIcon, CheckCircle2, ChevronDown } from "lucide-react";
+import {
+  FileArchiveIcon,
+  CheckCircle2,
+  ChevronDown,
+  Loader2,
+} from "lucide-react";
 import Heading from "@/components/headings";
 import { Button } from "@/components/ui/button";
 import UploadButton from "@/components/upload-button";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+// import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 
 import { useProModal } from "@/hooks/use-pro-modal";
 import { useModel } from "@/hooks/use-model-modal";
@@ -23,9 +28,8 @@ import { cn } from "@/lib/utils";
 
 import AudioPlayer from "@/components/audio-player";
 import { FormEvent, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { postTextToSpeech } from "@/lib/axios";
-import ReactPlayer from "react-player";
+import toast from "react-hot-toast";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
@@ -42,10 +46,11 @@ const SpeechSynthesisPage = () => {
     use_speaker_boost,
     stream,
     setStream,
+    selectedVoiceTemp,
   } = useTextToSpeechStore(useShallow((state) => state));
 
   const [text, setText] = useState("");
-  const [play, setPlay] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const handlePlayVoice = (voice: any) => {
     // update isPlaying
@@ -70,55 +75,52 @@ const SpeechSynthesisPage = () => {
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("voiceId", voiceId);
-    const voice_settings = {
-      similarity_boost: similarity_boost[0],
-      stability: stability[0],
-      style: style[0],
-      use_speaker_boost: use_speaker_boost,
-    };
-    console.log("setting", voice_settings);
-    console.log("model", model);
-    console.log("text", text);
+    try {
+      e.preventDefault();
+      setLoading(true);
+      console.log("voiceId", voiceId);
+      const voice_settings = {
+        similarity_boost: similarity_boost[0],
+        stability: stability[0],
+        style: style[0],
+        use_speaker_boost: use_speaker_boost,
+      };
+      console.log("setting", voice_settings);
+      console.log("model", model);
+      console.log("text", text);
 
-    const payload = {
-      // @ts-ignore
-      model_id: model?.model_id,
-      text: text,
-      // voice_settings,
-    };
+      const payload = {
+        // @ts-ignore
+        model_id: model?.model_id,
+        text: text,
+        // voice_settings,
+      };
 
-    const query = {
-      optimize_streaming_latency: 2,
-      output_format: "pcm_44100",
-    };
+      const query = {
+        optimize_streaming_latency: 2,
+        output_format: "pcm_44100",
+      };
 
-    const response = await postTextToSpeech(voiceId, query, payload);
-    // .then(res => res.blob())
-    // .then(blob => {
-    //     const url = URL.createObjectURL(blob);
-    //     new Audio(url).play();
-    // });
+      const responseType = "arraybuffer";
+      const response = await postTextToSpeech(
+        voiceId,
+        query,
+        payload,
+        responseType
+      );
 
-    const data = await Buffer.from(response.data);
-    const blob = await new Blob([data], {
-      type: "audio/mpeg",
-    });
-    const url = await URL.createObjectURL(blob);
-    console.log("-->", url);
-
-    // console.log("-->", response);
-    // const arr = Buffer.from(response.data);
-    // const blob = new Blob([arr], );
-
-    // const sream = blob.stream();
-
-    // const url = URL.createObjectURL(blob);
-    // console.log("--", url);
-
-    // @ts-ignore
-    setStream(url);
+      const data = response.data;
+      const blob = new Blob([data], {
+        type: "audio/mpeg",
+      });
+      const url = URL.createObjectURL(blob);
+      setStream(url);
+    } catch (error) {
+      console.log("e", error);
+      toast("We faced some issue");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -237,7 +239,15 @@ const SpeechSynthesisPage = () => {
                   <p className="text-sm text-muted-foreground">
                     Your message will be copied to the support team.
                   </p>
-                  <Button className="my-4">Generate</Button>
+                  <Button
+                    className="my-4 flex gap-4"
+                    disabled={!text || isLoading}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-6 h-6 text-gray-800 animate-spin" />
+                    ) : null}
+                    Generate
+                  </Button>
                 </div>
               </div>
             </div>
@@ -245,52 +255,26 @@ const SpeechSynthesisPage = () => {
         </form>
       </div>
       {/* audio player start */}
-      {!expanded && Object.keys(selectedVoice).length ? (
+      {(stream || Object.keys(selectedVoice).length) && expanded ? (
         <AudioPlayer
           selectedVoice={selectedVoice}
           selectVoice={selectVoice}
           handlePlayVoice={handlePlayVoice}
           onExpand={onExpand}
           stream={stream}
+          selectedVoiceTemp={selectedVoiceTemp}
         />
       ) : null}
 
-      {expanded ? (
+      {!expanded ? (
         <div className="fixed bottom-0 z-10 right-0 mr-3 mb-3">
           <button
-            onClick={() => onExpand(false)}
+            onClick={() => onExpand(true)}
             className="rounded-[50%] w-10 h-10 bg-black focus:outline-none flex justify-center items-center"
           >
             <ChevronDown color="white" />
           </button>
         </div>
-      ) : null}
-
-      {/* audio player end */}
-      {stream ? (
-        <>
-          <ReactPlayer
-            url={[{ src: stream, type: "audio/mpeg" }]}
-            playing={play}
-            height={150}
-            width={200}
-            config={{
-              file: {
-                forceAudio: true,
-                forceHLS: true,
-              },
-            }}
-            // ref={audioRef}
-            // onDuration={setDuration}
-            // // onEnded={() => handlePlayVoice(selectedVoice)}
-            // onProgress={(p) => {
-            //   setProgress(p);
-            //   handleAudioProgress(p);
-            // }}
-          />
-
-          <Button onClick={() => setPlay(true)}>Play</Button>
-        </>
       ) : null}
     </div>
   );

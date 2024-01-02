@@ -19,11 +19,15 @@ export const postTextToSpeech = (
     optimize_streaming_latency: number;
     output_format: string;
   },
-  payload: any
+  payload: any,
+  responseType: any
 ) =>
   axiosInterceptorsInstance.post(
-    `${elevenLabsTextToSpeech}/${voice_id}/stream?optimize_streaming_latency=${query.optimize_streaming_latency}&output_format=${query.output_format}`,
-    payload
+    `${elevenLabsTextToSpeech}/${voice_id}/stream`,
+    payload,
+    {
+      responseType: responseType,
+    }
   );
 
 // pcm_44100
