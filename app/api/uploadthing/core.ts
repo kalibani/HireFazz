@@ -159,6 +159,7 @@ export const ourFileRouter = {
       pdf: { maxFileSize: "16MB" },
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         { maxFileSize: "16MB" },
+      "audio/mpeg": { maxFileSize: "16MB" },
     }
     // [
     //   "image",

@@ -5,12 +5,15 @@ type voices = {
   isPlaying: boolean;
   formattedVoices: any[];
   selectedVoice: {};
+  expanded: boolean;
 };
 
 type voicesAction = {
   setPlaying: (t: boolean) => void;
   setFormattedVoices: (v: any[]) => void;
   selectVoice: (v: {}) => void;
+  onExpand: (v: boolean) => void;
+  setStream: (v: any) => void;
 };
 
 type voiceSettings = {
@@ -18,6 +21,7 @@ type voiceSettings = {
   stability: number[];
   style: number[];
   use_speaker_boost: any;
+  stream: any;
 };
 
 type voiceSettingsActions = {
@@ -78,6 +82,16 @@ export const useTextToSpeechStore = create<
     selectVoice: (v) =>
       set((state) => {
         state.selectedVoice = v;
+      }),
+    expanded: false,
+    onExpand: (v) =>
+      set((state) => {
+        state.expanded = v;
+      }),
+    stream: "",
+    setStream: (v) =>
+      set((state) => {
+        state.stream = v;
       }),
   }))
 );

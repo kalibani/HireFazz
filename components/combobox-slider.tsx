@@ -59,7 +59,7 @@ function ComboboxSlider({
 
   const queryClient = useQueryClient();
 
-  const hanldeGetDefaultVoiceSettings = async () => {
+  const handleGetDefaultVoiceSettings = async () => {
     const { data } = await queryClient.fetchQuery({
       queryKey: ["default-voice-settings"],
       queryFn: () => getDefaultVoiceSettings(),
@@ -280,7 +280,7 @@ function ComboboxSlider({
                 <Button
                   variant="secondary"
                   className="w-[30%]"
-                  onClick={hanldeGetDefaultVoiceSettings}
+                  onClick={handleGetDefaultVoiceSettings}
                 >
                   To Default
                 </Button>

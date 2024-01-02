@@ -1,9 +1,10 @@
 "use client";
 
-import { FileArchiveIcon, CheckCircle2 } from "lucide-react";
+import { FileArchiveIcon, CheckCircle2, ChevronDown } from "lucide-react";
 import Heading from "@/components/headings";
 import { Button } from "@/components/ui/button";
 import UploadButton from "@/components/upload-button";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 
 import { useProModal } from "@/hooks/use-pro-modal";
 import { useModel } from "@/hooks/use-model-modal";
@@ -21,11 +22,30 @@ import { ComboboxModel } from "@/components/combobox-model";
 import { cn } from "@/lib/utils";
 
 import AudioPlayer from "@/components/audio-player";
+import { FormEvent, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { postTextToSpeech } from "@/lib/axios";
+import ReactPlayer from "react-player";
 
 const SpeechSynthesisPage = () => {
-  const { task, setTask } = useModel();
-  const { selectedVoice, selectVoice, formattedVoices, setFormattedVoices } =
-    useTextToSpeechStore(useShallow((state) => state));
+  const { task, setTask, voiceId, model } = useModel();
+  const {
+    selectedVoice,
+    selectVoice,
+    formattedVoices,
+    setFormattedVoices,
+    expanded,
+    onExpand,
+    similarity_boost,
+    stability,
+    style,
+    use_speaker_boost,
+    stream,
+    setStream,
+  } = useTextToSpeechStore(useShallow((state) => state));
+
+  const [text, setText] = useState("");
+  const [play, setPlay] = useState(false);
 
   const handlePlayVoice = (voice: any) => {
     // update isPlaying
@@ -49,6 +69,58 @@ const SpeechSynthesisPage = () => {
     selectVoice(updatedVoice);
   };
 
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("voiceId", voiceId);
+    const voice_settings = {
+      similarity_boost: similarity_boost[0],
+      stability: stability[0],
+      style: style[0],
+      use_speaker_boost: use_speaker_boost,
+    };
+    console.log("setting", voice_settings);
+    console.log("model", model);
+    console.log("text", text);
+
+    const payload = {
+      // @ts-ignore
+      model_id: model?.model_id,
+      text: text,
+      // voice_settings,
+    };
+
+    const query = {
+      optimize_streaming_latency: 2,
+      output_format: "pcm_44100",
+    };
+
+    const response = await postTextToSpeech(voiceId, query, payload);
+    // .then(res => res.blob())
+    // .then(blob => {
+    //     const url = URL.createObjectURL(blob);
+    //     new Audio(url).play();
+    // });
+
+    const data = await Buffer.from(response.data);
+    const blob = await new Blob([data], {
+      type: "audio/mpeg",
+    });
+    const url = await URL.createObjectURL(blob);
+    console.log("-->", url);
+
+    // console.log("-->", response);
+    // const arr = Buffer.from(response.data);
+    // const blob = new Blob([arr], );
+
+    // const sream = blob.stream();
+
+    // const url = URL.createObjectURL(blob);
+    // console.log("--", url);
+
+    // @ts-ignore
+    setStream(url);
+  };
+
   return (
     <div>
       <Heading
@@ -64,117 +136,162 @@ const SpeechSynthesisPage = () => {
             <h1 className="mb-3text-gray-900">Your creative AI toolkit.</h1>
             <UploadButton isSubscribed={true} buttonText="Add Voice" />
           </div>
-          {/* </Form> */}
         </div>
-        <div className="space-y-4 mt-4 border border-gray-200 shadow-sm rounded-lg bg-white">
-          <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 pt-6 lg:pt-5 mb-5">
-            <span className="block text-lg font-normal text-gray-900 mb-1 leading-none pb-1 lg:pb-0">
-              <span>Task</span>
-            </span>
-            <div className="mt-1 lg:col-span-5 lg:mt-0 flex items-start">
-              <div>
-                <div className="space-x-3 flex">
-                  <div
-                    className={cn(
-                      "border-gray-300 hover:border-gray-900 relative flex cursor-pointer rounded-lg border bg-white py-2 px-3 gap-1.5 shadow-sm focus:outline-none max-w-xs",
-                      task === "text" ? "border-black ring-1 ring-black" : ""
-                    )}
-                    role="presentation"
-                    onClick={() => setTask("text")}
-                  >
-                    <span className="flex flex-1">
-                      <span className="flex flex-col">
-                        <span className="block text-sm font-medium text-gray-900">
-                          Text to speech
-                        </span>
-                        <span className="mt-1 flex items-center text-sm text-gray-500">
-                          Convert text into lifelike speech using a voice of
-                          your choice.
-                        </span>
-                      </span>
-                    </span>
-                    {task === "text" ? <CheckCircle2 /> : null}
-                  </div>
-                  <div
-                    className={cn(
-                      "border-gray-300 hover:border-gray-900 relative flex cursor-pointer rounded-lg border bg-white py-2 px-3 gap-1.5 shadow-sm focus:outline-none max-w-xs",
-                      task === "speech" ? "border-black ring-1 ring-black" : ""
-                    )}
-                    role="presentation"
-                    onClick={() => setTask("speech")}
-                  >
-                    <span className="flex flex-1">
-                      <span className="flex flex-col">
-                        <span className="block text-sm font-medium text-gray-900">
-                          Speech to speech
-                        </span>
-                        <span className="mt-1 flex items-center text-sm text-gray-500">
-                          Create speech by combining the style and content of an
-                          audio file you upload with a voice of your choice.
+        <form onSubmit={(e) => handleSubmit(e)}>
+          <div className="space-y-4 mt-4 border border-gray-200 shadow-sm rounded-lg bg-white">
+            <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 pt-6 lg:pt-5 mb-5">
+              <span className="block text-lg font-normal text-gray-900 mb-1 leading-none pb-1 lg:pb-0">
+                <span>Task</span>
+              </span>
+              <div className="mt-1 lg:col-span-5 lg:mt-0 flex items-start">
+                <div>
+                  <div className="space-x-3 flex">
+                    <div
+                      className={cn(
+                        "border-gray-300 hover:border-gray-900 relative flex cursor-pointer rounded-lg border bg-white py-2 px-3 gap-1.5 shadow-sm focus:outline-none max-w-xs",
+                        task === "text" ? "border-black ring-1 ring-black" : ""
+                      )}
+                      role="presentation"
+                      onClick={() => setTask("text")}
+                    >
+                      <span className="flex flex-1">
+                        <span className="flex flex-col">
+                          <span className="block text-sm font-medium text-gray-900">
+                            Text to speech
+                          </span>
+                          <span className="mt-1 flex items-center text-sm text-gray-500">
+                            Convert text into lifelike speech using a voice of
+                            your choice.
+                          </span>
                         </span>
                       </span>
-                    </span>
-                    {task === "speech" ? <CheckCircle2 /> : null}
+                      {task === "text" ? <CheckCircle2 /> : null}
+                    </div>
+                    <div
+                      className={cn(
+                        "border-gray-300 hover:border-gray-900 relative flex cursor-pointer rounded-lg border bg-white py-2 px-3 gap-1.5 shadow-sm focus:outline-none max-w-xs",
+                        task === "speech"
+                          ? "border-black ring-1 ring-black"
+                          : ""
+                      )}
+                      role="presentation"
+                      onClick={() => setTask("speech")}
+                    >
+                      <span className="flex flex-1">
+                        <span className="flex flex-col">
+                          <span className="block text-sm font-medium text-gray-900">
+                            Speech to speech
+                          </span>
+                          <span className="mt-1 flex items-center text-sm text-gray-500">
+                            Create speech by combining the style and content of
+                            an audio file you upload with a voice of your
+                            choice.
+                          </span>
+                        </span>
+                      </span>
+                      {task === "speech" ? <CheckCircle2 /> : null}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:border-gray-200 lg:gap-4 pt-5 lg:border-t">
-            <span className="block text-lg font-normal text-gray-900 mb-1 leading-none pb-1 lg:pb-0">
-              <span>Setting</span>
-            </span>
-            <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              <ComboboxSettings handlePlayVoice={handlePlayVoice} />
+            <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:border-gray-200 lg:gap-4 pt-5 lg:border-t">
+              <span className="block text-lg font-normal text-gray-900 mb-1 leading-none pb-1 lg:pb-0">
+                <span>Setting</span>
+              </span>
+              <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
+                <ComboboxSettings handlePlayVoice={handlePlayVoice} />
+              </div>
             </div>
-          </div>
 
-          <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 mt-5 lg:mt-5">
-            <div></div>
-            <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              <ComboboxSlider />
+            <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 mt-5 lg:mt-5">
+              <div></div>
+              <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
+                <ComboboxSlider />
+              </div>
             </div>
-          </div>
 
-          <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 mt-5 lg:mt-5">
-            <div></div>
-            <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
-              <ComboboxModel />
+            <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 mt-5 lg:mt-5">
+              <div></div>
+              <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
+                <ComboboxModel />
+              </div>
             </div>
-          </div>
 
-          <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:border-gray-200 lg:gap-4 pt-5 lg:border-t">
-            <span className="block text-lg font-normal text-gray-900 mb-1 leading-none pb-1 lg:pb-0">
-              <span>Text</span>
-            </span>
-            <div className="mt-1 lg:col-span-5 lg:mt-0">
-              <div className="grid w-full gap-2">
-                <Textarea
-                  className=" min-h-[150px]"
-                  placeholder="Type your message here."
-                  rows={15}
-                  cols={40}
-                  maxLength={2500}
-                />
-                <p className="text-sm text-muted-foreground">
-                  Your message will be copied to the support team.
-                </p>
-                <Button className="my-4">Generate</Button>
+            <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:border-gray-200 lg:gap-4 pt-5 lg:border-t">
+              <span className="block text-lg font-normal text-gray-900 mb-1 leading-none pb-1 lg:pb-0">
+                <span>Text</span>
+              </span>
+              <div className="mt-1 lg:col-span-5 lg:mt-0">
+                <div className="grid w-full gap-2">
+                  <Textarea
+                    className=" min-h-[150px]"
+                    placeholder="Type your message here."
+                    rows={15}
+                    cols={40}
+                    maxLength={2500}
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Your message will be copied to the support team.
+                  </p>
+                  <Button className="my-4">Generate</Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
       {/* audio player start */}
-      {Object.keys(selectedVoice).length > 0 ? (
+      {!expanded && Object.keys(selectedVoice).length ? (
         <AudioPlayer
           selectedVoice={selectedVoice}
           selectVoice={selectVoice}
           handlePlayVoice={handlePlayVoice}
+          onExpand={onExpand}
+          stream={stream}
         />
       ) : null}
+
+      {expanded ? (
+        <div className="fixed bottom-0 z-10 right-0 mr-3 mb-3">
+          <button
+            onClick={() => onExpand(false)}
+            className="rounded-[50%] w-10 h-10 bg-black focus:outline-none flex justify-center items-center"
+          >
+            <ChevronDown color="white" />
+          </button>
+        </div>
+      ) : null}
+
       {/* audio player end */}
+      {stream ? (
+        <>
+          <ReactPlayer
+            url={[{ src: stream, type: "audio/mpeg" }]}
+            playing={play}
+            height={150}
+            width={200}
+            config={{
+              file: {
+                forceAudio: true,
+                forceHLS: true,
+              },
+            }}
+            // ref={audioRef}
+            // onDuration={setDuration}
+            // // onEnded={() => handlePlayVoice(selectedVoice)}
+            // onProgress={(p) => {
+            //   setProgress(p);
+            //   handleAudioProgress(p);
+            // }}
+          />
+
+          <Button onClick={() => setPlay(true)}>Play</Button>
+        </>
+      ) : null}
     </div>
   );
 };
