@@ -1,6 +1,8 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useState, memo } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -24,26 +26,68 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useQuery } from "@tanstack/react-query";
-import { getVoiceSettings } from "@/lib/axios";
+import { getVoiceSettings, getDefaultVoiceSettings } from "@/lib/axios";
+import { useTextToSpeechStore } from "@/hooks/use-text-to-speech";
+import { useModel } from "@/hooks/use-model-modal";
 
-interface voicesType extends React.ComponentProps<typeof Slider> {
-  voiceId: string;
-}
-
-export function ComboboxSlider({ voiceId, className, ...props }: voicesType) {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+function ComboboxSlider({
+  className,
+  ...props
+}: React.ComponentProps<typeof Slider>) {
+  const [open, setOpen] = useState(false);
+  // const [value, setValue] = React.useState("");
+  const { voiceId } = useModel();
+  const {
+    stability,
+    similarity_boost,
+    style,
+    use_speaker_boost,
+    setSimilarityBoost,
+    setStability,
+    setStyle,
+    setSpeaker_boost,
+    setVoiceSettings,
+  } = useTextToSpeechStore(useShallow((state) => state));
 
   // Queries voice settings
-  // if (voiceId) {
-  const { data } = useQuery({
+  const { data, isError, isLoading } = useQuery({
     queryKey: ["voice-settings", { voiceId: voiceId }],
     queryFn: () => getVoiceSettings(voiceId),
+    staleTime: 1000 * 60 * 60 * 24,
+    cacheTime: 1000 * 60 * 60 * 24,
   });
-  // const settings = data?.data
-  console.log("data", data);
-  // }
+
+  const queryClient = useQueryClient();
+
+  const handleGetDefaultVoiceSettings = async () => {
+    const { data } = await queryClient.fetchQuery({
+      queryKey: ["default-voice-settings"],
+      queryFn: () => getDefaultVoiceSettings(),
+    });
+
+    console.log("datanya", data);
+    if (data) {
+      const voiceSettings = {
+        stability: [data?.stability * 100],
+        similarity_boost: [data?.similarity_boost * 100],
+        style: [data?.style * 100],
+        use_speaker_boost: data?.use_speaker_boost,
+      };
+      setVoiceSettings(voiceSettings);
+    }
+  };
+
+  useEffect(() => {
+    if (!isError && data?.data && !isLoading) {
+      const voiceSettings = {
+        stability: [data?.data.stability * 100],
+        similarity_boost: [data?.data.similarity_boost * 100],
+        style: [data?.data.style * 100],
+        use_speaker_boost: data?.data.use_speaker_boost,
+      };
+      setVoiceSettings(voiceSettings);
+    }
+  }, [data]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -68,10 +112,11 @@ export function ComboboxSlider({ voiceId, className, ...props }: voicesType) {
             <CommandGroup heading="Stability" className="w-full">
               <CommandItem className="grid aria-selected:bg-transparent">
                 <Slider
-                  defaultValue={[50]}
+                  value={stability}
                   max={100}
                   step={1}
                   className={cn("w-[100%] bg-transparent", className)}
+                  onValueChange={setStability}
                   {...props}
                 />
                 <div className="flex mt-2 justify-between">
@@ -116,10 +161,11 @@ export function ComboboxSlider({ voiceId, className, ...props }: voicesType) {
             <CommandGroup heading="Clarity + Similarity Enhancement">
               <CommandItem className="grid aria-selected:bg-transparent">
                 <Slider
-                  defaultValue={[50]}
+                  value={similarity_boost}
                   max={100}
                   step={1}
                   className={cn("w-[100%] bg-transparent", className)}
+                  onValueChange={setSimilarityBoost}
                   {...props}
                 />
                 <div className="flex mt-2 justify-between">
@@ -163,10 +209,12 @@ export function ComboboxSlider({ voiceId, className, ...props }: voicesType) {
             <CommandGroup heading="Style Exaggeration">
               <CommandItem className="grid aria-selected:bg-transparent">
                 <Slider
-                  defaultValue={[50]}
+                  value={style}
                   max={100}
                   step={1}
                   className={cn("w-[100%] bg-transparent", className)}
+                  name="style"
+                  onValueChange={setStyle}
                   {...props}
                 />
                 <div className="flex mt-2 justify-between">
@@ -199,7 +247,12 @@ export function ComboboxSlider({ voiceId, className, ...props }: voicesType) {
             <CommandGroup>
               <CommandItem className="grid aria-selected:bg-transparent">
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" />
+                  <Checkbox
+                    id="use_speaker_boost"
+                    checked={use_speaker_boost}
+                    value={use_speaker_boost}
+                    onCheckedChange={setSpeaker_boost}
+                  />
                   <label
                     htmlFor="terms"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -224,7 +277,11 @@ export function ComboboxSlider({ voiceId, className, ...props }: voicesType) {
             </CommandGroup>
             <CommandGroup>
               <CommandItem className="grid aria-selected:bg-transparent">
-                <Button variant="secondary" className="w-[30%]">
+                <Button
+                  variant="secondary"
+                  className="w-[30%]"
+                  onClick={handleGetDefaultVoiceSettings}
+                >
                   To Default
                 </Button>
               </CommandItem>
@@ -235,3 +292,5 @@ export function ComboboxSlider({ voiceId, className, ...props }: voicesType) {
     </Popover>
   );
 }
+
+export default memo(ComboboxSlider);

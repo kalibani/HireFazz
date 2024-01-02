@@ -17,7 +17,8 @@ import { getModels } from "@/lib/axios";
 import { useEffect, useState } from "react";
 
 const ModelModal = () => {
-  const { isModelModalOpen, onModelModalClose, setModel, task } = useModel();
+  const { isModelModalOpen, onModelModalClose, setModel, task, model } =
+    useModel();
   const { data, isLoading } = useQuery({
     queryKey: ["models"],
     queryFn: getModels,
@@ -38,12 +39,23 @@ const ModelModal = () => {
   useEffect(() => {
     // reset default value for speech to text
     if (task === "speech") {
-      const model = {
-        name: "Select Model",
-      };
-      setModel(model);
+      // const model = {
+      //   name: "Select Model",
+      // };
+      setModel(models[0]);
     }
   }, [task]);
+
+  useEffect(() => {
+    if (task === "text") {
+      // @ts-ignore
+      if (model && model.name !== "Select Model") {
+        setModel(model);
+      } else {
+        setModel(models && models[0]);
+      }
+    }
+  }, [models]);
 
   return (
     <Dialog open={isModelModalOpen} onOpenChange={onModelModalClose}>
