@@ -96,7 +96,7 @@ const AudioPlayer = ({
               </button>
               <Progress
                 value={audioProgress}
-                className="w-[60%]"
+                className="w-[30%] lg:w-[60%]"
                 indicatorColor="bg-gray-900"
               />
               <span className="inline-flex self-center items-center p-2 text-sm font-medium text-gray-400 dark:text-white">
