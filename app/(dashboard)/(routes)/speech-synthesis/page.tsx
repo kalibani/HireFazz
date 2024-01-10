@@ -167,7 +167,7 @@ const SpeechSynthesisPage = () => {
               </span>
               <div className="mt-1 lg:col-span-5 lg:mt-0 flex items-start">
                 <div>
-                  <div className="space-x-3 flex">
+                  <div className="space-y-3 lg:space-x-3 lg:space-y-0 flex flex-wrap lg:flex-nowrap">
                     <div
                       className={cn(
                         "border-gray-300 hover:border-gray-900 relative flex cursor-pointer rounded-lg border bg-white py-2 px-3 gap-1.5 shadow-sm focus:outline-none max-w-xs",
