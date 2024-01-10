@@ -8,9 +8,8 @@ import {
 } from "lucide-react";
 import Heading from "@/components/headings";
 import { Button } from "@/components/ui/button";
-import UploadButton from "@/components/upload-button";
+// import UploadButton from "@/components/upload-button";
 // import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-
 import { useProModal } from "@/hooks/use-pro-modal";
 import { useModel } from "@/hooks/use-model-modal";
 import { useTextToSpeechStore } from "@/hooks/use-text-to-speech";
@@ -27,9 +26,10 @@ import { ComboboxModel } from "@/components/combobox-model";
 import { cn } from "@/lib/utils";
 
 import AudioPlayer from "@/components/audio-player";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { postTextToSpeech } from "@/lib/axios";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
@@ -122,11 +122,29 @@ const SpeechSynthesisPage = () => {
       setLoading(false);
     }
   };
+  const router = useRouter();
+  const handleComingSoon = () => {
+    router.push("/coming-soon");
+  };
+
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+    if (task === "speech") {
+      timeout = setTimeout(() => {
+        handleComingSoon();
+      }, 1000);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+      setTask("text");
+    };
+  }, [task]);
 
   return (
     <div>
       <Heading
-        title="Speech Synthesis (Coming Soon)"
+        title="Speech Synthesis"
         description="Unleash the power of our cutting-edge technology to generate realistic, captivating speech in a wide range of languages."
         icon={FileArchiveIcon}
         iconColor="text-pink-300"
@@ -136,7 +154,9 @@ const SpeechSynthesisPage = () => {
         <div>
           <div className="rounded-lg w-full border p-4 px-3 md:px-4 focus-within:shadow-sm gap-2 flex h-16 items-center justify-between">
             <h1 className="mb-3text-gray-900">Your creative AI toolkit.</h1>
-            <UploadButton isSubscribed={true} buttonText="Add Voice" />
+            <Button variant="default" onClick={handleComingSoon}>
+              Add Your Voice
+            </Button>
           </div>
         </div>
         <form onSubmit={(e) => handleSubmit(e)}>
