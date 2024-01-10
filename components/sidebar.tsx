@@ -11,9 +11,12 @@ import {
   MessageSquare,
   Music,
   Settings,
+  FlaskConical,
   VideoIcon,
   FileArchiveIcon,
   DollarSignIcon,
+  SquareStack,
+  AudioLines,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -39,23 +42,23 @@ const routes = [
   },
   {
     label: "Speech Synthesis",
-    icon: MessageSquare,
+    icon: AudioLines,
     href: "/speech-synthesis",
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
   },
-  // {
-  //   label: "Image Generation",
-  //   icon: ImageIcon,
-  //   href: "/image",
-  //   color: "text-pink-700",
-  // },
-  // {
-  //   label: "Video Generation",
-  //   icon: VideoIcon,
-  //   href: "/video",
-  //   color: "text-orange-700",
-  // },
+  {
+    label: "Voice Labs",
+    icon: FlaskConical,
+    href: "/labs",
+    color: "text-pink-700",
+  },
+  {
+    label: "History",
+    icon: SquareStack,
+    href: "/history",
+    color: "text-orange-700",
+  },
   // {
   //   label: "Music Generation",
   //   icon: Music,
