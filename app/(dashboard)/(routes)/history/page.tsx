@@ -1,11 +1,26 @@
+"use client"
+
 import React from "react";
-import ComingSoon from "@/components/coming-soon";
-import { redirect } from "next/navigation";
+import { SquareStack } from "lucide-react";
 
-type Props = {};
+import Heading from "@/components/headings";
+import HistoryTable from "@/components/history-table";
 
-const HistoryPage = (props: Props) => {
-  redirect("/coming-soon");
+const HistoryPage = () => {
+  return (
+    <>
+      <Heading
+        title="History"
+        description="Full list of all your generated samples, ready for download."
+        icon={SquareStack}
+        iconColor="text-orange-700"
+        bgColor="bg-violet-500/10"
+      />
+      <div className="px-4 lg:px-8 mt-10">
+        <HistoryTable />
+      </div>
+    </>
+  );
 };
 
 export default HistoryPage;

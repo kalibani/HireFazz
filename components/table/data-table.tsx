@@ -21,9 +21,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { cn } from "@/lib/utils";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  pageIndex?: number;
+  pageSize?: number;
+  tableClassName?: string;
+  tableHeaderClassName?: string;
+  tableHeadClassName?: string;
 }
 
 export type PaginationState = {
@@ -34,6 +40,11 @@ export type PaginationState = {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  pageIndex,
+  pageSize,
+  tableClassName,
+  tableHeaderClassName,
+  tableHeadClassName,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -44,23 +55,23 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     initialState: {
       pagination: {
-        pageIndex: 1,
-        pageSize: 7,
+        pageIndex: pageIndex !== undefined ? pageIndex : 1,
+        pageSize: pageSize || 7,
       },
     },
   });
 
   return (
     <div className="w-full">
-      <Table>
-        <TableHeader className="bg-black">
+      <Table className={cn(tableClassName)}>
+        <TableHeader className={cn("bg-black", tableHeaderClassName)}>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead
                     key={header.id}
-                    className="text-white"
+                    className={cn("text-white", tableHeadClassName)}
                     style={{
                       minWidth: 110,
                     }}
