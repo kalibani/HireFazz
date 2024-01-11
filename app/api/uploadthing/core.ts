@@ -72,9 +72,6 @@ const onUploadComplete = async ({
       case "docx":
         loader = new DocxLoader(blob);
         break;
-      // case "doc":
-      //   loader = new DocxLoader(blob);
-      //   break;
       case "csv":
         loader = new CSVLoader(blob);
         break;
@@ -148,30 +145,16 @@ const onUploadComplete = async ({
 };
 
 export const ourFileRouter = {
-  pdfUploader: f(
-    {
-      image: { maxFileSize: "4MB" },
-      text: { maxFileSize: "4MB" },
-      video: { maxFileSize: "4MB" },
-      "application/docbook+xml": { maxFileSize: "16MB" },
-      "text/csv": { maxFileSize: "16MB" },
-      audio: { maxFileSize: "4MB" },
-      pdf: { maxFileSize: "16MB" },
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        { maxFileSize: "16MB" },
-      "audio/mpeg": { maxFileSize: "16MB" },
-    }
-    // [
-    //   "image",
-    //   "video",
-    //   "audio",
-    //   "blob",
-    //   "pdf",
-    //   "text",
-    //   "application/docbook+xml",
-    //   "text/csv",
-    // ]
-  )
+  pdfUploader: f({
+    image: { maxFileSize: "4MB" },
+    text: { maxFileSize: "4MB" },
+    "application/docbook+xml": { maxFileSize: "16MB" },
+    "text/csv": { maxFileSize: "16MB" },
+    pdf: { maxFileSize: "16MB" },
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+      maxFileSize: "16MB",
+    },
+  })
     .middleware(middleware)
     .onUploadComplete(onUploadComplete),
   // proPlanUploader: f({ pdf: { maxFileSize: "16MB" } })

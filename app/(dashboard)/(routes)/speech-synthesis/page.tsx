@@ -31,6 +31,8 @@ import { postTextToSpeech } from "@/lib/axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
+import axios from "axios";
+
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
   const {
@@ -74,6 +76,8 @@ const SpeechSynthesisPage = () => {
     selectVoice(updatedVoice);
   };
 
+  const createFile = trpc.createFile.useMutation();
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
@@ -110,10 +114,24 @@ const SpeechSynthesisPage = () => {
       );
 
       const data = response.data;
-      const blob = new Blob([data], {
+      const blobFile = new File([data], "your_file_name", {
         type: "audio/mpeg",
+        lastModified: Date.now(),
       });
-      const url = URL.createObjectURL(blob);
+
+      const formData = new FormData();
+      formData.append("files", blobFile);
+
+      const responseUpload = await axios.post("/api/uploadVoice", formData);
+
+      const file = {
+        key: responseUpload.data.data.key,
+        name: responseUpload.data.data.name,
+      };
+
+      await createFile.mutate(file);
+
+      const url = responseUpload.data.data.url;
       setStream(url);
     } catch (error) {
       console.log("e", error);

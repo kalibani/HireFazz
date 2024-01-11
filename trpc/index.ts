@@ -8,6 +8,31 @@ import { PLANS } from "@/constant";
 import { MAX_FREE_COUNTS } from "@/constant";
 
 export const appRouter = router({
+  createFile: privateProcedure
+    .input(
+      z.object({
+        key: z.string(),
+        name: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const createdFile = await prismadb.file.create({
+        data: {
+          key: input.key,
+          name: input.name,
+          userId: userId,
+          url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${input.key}`,
+          uploadStatus: "SUCCESS",
+        },
+      });
+
+      return { createdFile };
+    }),
+
   getUserFiles: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
 
