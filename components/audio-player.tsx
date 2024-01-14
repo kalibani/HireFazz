@@ -1,4 +1,4 @@
-import { memo, useState, useRef, useEffect } from "react";
+import { memo, useState, useRef, useEffect, useLayoutEffect } from "react";
 import ReactPlayer from "react-player";
 import * as dateFns from "date-fns";
 import { Play, Pause, Download, ChevronDown } from "lucide-react";
@@ -52,7 +52,7 @@ const AudioPlayer = ({
     }
   }, [audioProgress]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isReady) {
       setPlaying(selectedVoice.isPlaying);
     }
@@ -128,7 +128,6 @@ const AudioPlayer = ({
       </div>
 
       <ReactPlayer
-        controls
         url={stream || selectedVoice.preview_url}
         playing={isPlaying}
         height={0}
