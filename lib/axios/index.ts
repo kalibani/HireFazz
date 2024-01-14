@@ -16,10 +16,10 @@ export const getDefaultVoiceSettings = () =>
 
 export const postTextToSpeech = (
   voice_id: string,
-  query: {
-    optimize_streaming_latency: number;
-    output_format: string;
-  },
+  // query: {
+  //   optimize_streaming_latency: number;
+  //   output_format: string;
+  // },
   payload: any,
   responseType: any
 ) =>
