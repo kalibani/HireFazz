@@ -128,6 +128,7 @@ const AudioPlayer = ({
       </div>
 
       <ReactPlayer
+        controls
         url={stream || selectedVoice.preview_url}
         playing={isPlaying}
         height={0}
