@@ -1,4 +1,5 @@
 "use client";
+import { FormEvent, useEffect, useState } from "react";
 
 import {
   FileArchiveIcon,
@@ -25,7 +26,6 @@ import { ComboboxModel } from "@/components/combobox-model";
 import { cn } from "@/lib/utils";
 
 import AudioPlayer from "@/components/audio-player";
-import { FormEvent, useEffect, useState } from "react";
 import { postTextToSpeech, getGeneratedVoices } from "@/lib/axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -194,6 +194,8 @@ const SpeechSynthesisPage = () => {
     };
   }, [task]);
 
+  const characterLimit = 5000;
+
   return (
     <div>
       <Heading
@@ -305,12 +307,12 @@ const SpeechSynthesisPage = () => {
                     placeholder="Type your message here."
                     rows={15}
                     cols={40}
-                    maxLength={2500}
+                    maxLength={characterLimit}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                   />
                   <p className="text-sm text-muted-foreground">
-                    Your message will be copied to the support team.
+                    {text.length} / {characterLimit}
                   </p>
                   <Button
                     className="my-4 flex gap-4"
