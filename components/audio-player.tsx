@@ -22,6 +22,7 @@ const AudioPlayer = ({
   stream,
   selectedVoiceTemp,
 }: audioPlayerProps) => {
+  const [isReady, setReady] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState({
@@ -31,7 +32,7 @@ const AudioPlayer = ({
     loaded: 1,
   });
   const [audioProgress, setAudioProgress] = useState<number>(0);
-  const [toggle, setToggle] = useState(false);
+  // const [toggle, setToggle] = useState(false);
 
   const audioRef = useRef(null);
 
@@ -52,10 +53,10 @@ const AudioPlayer = ({
   }, [audioProgress]);
 
   useEffect(() => {
-    if (progress.loadedSeconds > 0) {
+    if (isReady) {
       setPlaying(selectedVoice.isPlaying);
     }
-  }, [selectedVoice, progress]);
+  }, [selectedVoice, isReady]);
 
   useEffect(() => {
     if (stream && Object.keys(selectedVoice).length === 0) {
@@ -72,15 +73,18 @@ const AudioPlayer = ({
               Voice Preview for {selectedVoice.category} / {selectedVoice.name}
             </span>
           </div>
+          {isReady ? (
+            <span className="relative flex h-3 w-3 -bottom-5 md:-bottom-4 -right-5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75 "></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+            </span>
+          ) : null}
           <div className="flex items-center gap-6">
             <div className="flex items-center space-x-2 rtl:space-x-reverse w-screen">
               <button
                 className="inline-flex self-center items-center p-2 text-sm font-medium text-center text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-600"
                 type="button"
-                onClick={() => {
-                  setToggle(!toggle);
-                  handlePlayVoice(selectedVoice);
-                }}
+                onClick={() => handlePlayVoice(selectedVoice)}
               >
                 {isPlaying ? (
                   <Pause
@@ -112,13 +116,11 @@ const AudioPlayer = ({
                 </span>
               </a>
               <button onClick={() => onExpand(false)}>
-                {/* <button className="p-2"> */}
                 <ChevronDown
                   className="h-6 w-6"
                   color="#301a32"
                   strokeWidth={1.75}
                 />
-                {/* </button> */}
               </button>
             </div>
           </div>
@@ -131,6 +133,7 @@ const AudioPlayer = ({
         height={0}
         width={0}
         ref={audioRef}
+        onReady={() => setReady(true)}
         onDuration={setDuration}
         // onEnded={() => handlePlayVoice(selectedVoice)}
         onProgress={(p) => {

@@ -1,4 +1,5 @@
 "use client";
+import { FormEvent, useEffect, useState } from "react";
 
 import {
   FileArchiveIcon,
@@ -8,8 +9,7 @@ import {
 } from "lucide-react";
 import Heading from "@/components/headings";
 import { Button } from "@/components/ui/button";
-// import UploadButton from "@/components/upload-button";
-// import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+
 import { useProModal } from "@/hooks/use-pro-modal";
 import { useModel } from "@/hooks/use-model-modal";
 import { useTextToSpeechStore } from "@/hooks/use-text-to-speech";
@@ -26,10 +26,11 @@ import { ComboboxModel } from "@/components/combobox-model";
 import { cn } from "@/lib/utils";
 
 import AudioPlayer from "@/components/audio-player";
-import { FormEvent, useEffect, useState } from "react";
-import { postTextToSpeech } from "@/lib/axios";
+import { postTextToSpeech, getGeneratedVoices } from "@/lib/axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
@@ -74,6 +75,58 @@ const SpeechSynthesisPage = () => {
     selectVoice(updatedVoice);
   };
 
+  const saveGeneratedVoice = trpc.saveGeneratedVoice.useMutation();
+
+  const queryClient = useQueryClient();
+  const handleSaveGeneratedVoice = async (now: any) => {
+    const params = {
+      page_size: 20,
+    };
+    try {
+      // get newly generated
+      const { data } = await queryClient.fetchQuery({
+        queryKey: ["get-generated-voices"],
+        queryFn: () => getGeneratedVoices(params),
+      });
+
+      const dateUnix = Math.round(now / 1000);
+
+      if (data.history.length > 0) {
+        const history = data.history.filter(
+          (element: any) =>
+            element.text === text &&
+            element.voice_id === voiceId &&
+            // @ts-ignore
+            element.model_id === model.model_id &&
+            element.date_unix === dateUnix
+        )[0];
+        // save newly generated to prisma
+        if (history) {
+          const payload = {
+            characterCountChangeFrom: history.character_count_change_from,
+            characterCountChangeTo: history.character_count_change_to,
+            contentType: history.content_type,
+            dateUnix: history.date_unix,
+            feedback: history.feedback,
+            historyItemId: history.history_item_id,
+            modelId: history.model_id,
+            requestId: history.request_id,
+            settings: history.settings,
+            shareLinkId: history.share_link_id,
+            state: history.state,
+            text: history.text,
+            voiceCategory: history.voice_category,
+            voiceId: history.voice_id,
+            voiceName: history.voice_name,
+          };
+          saveGeneratedVoice.mutate(payload);
+        }
+      }
+    } catch (error) {
+      console.log("err", error);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
@@ -85,26 +138,23 @@ const SpeechSynthesisPage = () => {
         style: style[0],
         use_speaker_boost: use_speaker_boost,
       };
-      console.log("setting", voice_settings);
-      console.log("model", model);
-      console.log("text", text);
 
       const payload = {
         // @ts-ignore
         model_id: model?.model_id,
         text: text,
-        // voice_settings,
       };
 
-      const query = {
-        optimize_streaming_latency: 2,
-        output_format: "pcm_44100",
-      };
+      // const query = {
+      //   optimize_streaming_latency: 2,
+      //   output_format: "pcm_44100",
+      // };
 
       const responseType = "arraybuffer";
+
       const response = await postTextToSpeech(
         voiceId,
-        query,
+        // query,
         payload,
         responseType
       );
@@ -120,8 +170,11 @@ const SpeechSynthesisPage = () => {
       toast("We faced some issue");
     } finally {
       setLoading(false);
+      const now = Date.now();
+      handleSaveGeneratedVoice(now);
     }
   };
+
   const router = useRouter();
   const handleComingSoon = () => {
     router.push("/coming-soon");
@@ -141,6 +194,8 @@ const SpeechSynthesisPage = () => {
     };
   }, [task]);
 
+  const characterLimit = 5000;
+
   return (
     <div>
       <Heading
@@ -151,14 +206,14 @@ const SpeechSynthesisPage = () => {
         bgColor="bg-pink-300/10"
       />
       <div className="px-4 lg:px-8">
-        <div>
+        {/* <div>
           <div className="rounded-lg w-full border p-4 px-3 md:px-4 focus-within:shadow-sm gap-2 flex h-16 items-center justify-between">
             <h1 className="mb-3text-gray-900">Your creative AI toolkit.</h1>
             <Button variant="default" onClick={handleComingSoon}>
               Add Your Voice
             </Button>
           </div>
-        </div>
+        </div> */}
         <form onSubmit={(e) => handleSubmit(e)}>
           <div className="space-y-4 mt-4 border border-gray-200 shadow-sm rounded-lg bg-white">
             <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 pt-6 lg:pt-5 mb-5">
@@ -252,12 +307,12 @@ const SpeechSynthesisPage = () => {
                     placeholder="Type your message here."
                     rows={15}
                     cols={40}
-                    maxLength={2500}
+                    maxLength={characterLimit}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                   />
                   <p className="text-sm text-muted-foreground">
-                    Your message will be copied to the support team.
+                    {text.length} / {characterLimit}
                   </p>
                   <Button
                     className="my-4 flex gap-4"

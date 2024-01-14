@@ -8,6 +8,62 @@ import { PLANS } from "@/constant";
 import { MAX_FREE_COUNTS } from "@/constant";
 
 export const appRouter = router({
+  saveGeneratedVoice: privateProcedure
+    .input(
+      z.object({
+        characterCountChangeFrom: z.number(),
+        characterCountChangeTo: z.number(),
+        contentType: z.string(),
+        dateUnix: z.number(),
+        feedback: z.object({}).nullish(),
+        historyItemId: z.string(),
+        modelId: z.string(),
+        requestId: z.string(),
+        settings: z.object({
+          similarity_boost: z.number(),
+          stability: z.number(),
+          style: z.number(),
+          use_speaker_boost: z.boolean(),
+        }),
+        shareLinkId: z.string().nullish(),
+        state: z.string(),
+        text: z.string(),
+        voiceCategory: z.string(),
+        voiceId: z.string(),
+        voiceName: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const generatedVoice = await prismadb.generatedVoices.create({
+        data: {
+          characterCountChangeFrom: input.characterCountChangeFrom,
+          characterCountChangeTo: input.characterCountChangeTo,
+          contentType: input.contentType,
+          dateUnix: input.dateUnix,
+          // @ts-ignore
+          feedback: input.feedback,
+          historyItemId: input.historyItemId,
+          modelId: input.modelId,
+          requestId: input.requestId,
+          settings: input.settings,
+          shareLinkId: input.shareLinkId,
+          // @ts-ignore
+          state: input.state,
+          text: input.text,
+          voiceCategory: input.voiceCategory,
+          voiceId: input.voiceId,
+          voiceName: input.voiceName,
+          userId: userId,
+        },
+      });
+
+      return { generatedVoice };
+    }),
+
   getUserFiles: privateProcedure.query(async ({ ctx }) => {
     const { userId } = ctx;
 

@@ -65,7 +65,6 @@ function ComboboxSlider({
       queryFn: () => getDefaultVoiceSettings(),
     });
 
-    console.log("datanya", data);
     if (data) {
       const voiceSettings = {
         stability: [data?.stability * 100],
