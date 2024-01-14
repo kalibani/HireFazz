@@ -74,7 +74,7 @@ const AudioPlayer = ({
             </span>
           </div>
           {isReady ? (
-            <span className="relative flex h-3 w-3 -bottom-5 md:-bottom-4 -right-5">
+            <span className="relative flex h-3 w-3 -bottom-4 md:-bottom-3.5 -right-5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75 "></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
             </span>
@@ -139,6 +139,11 @@ const AudioPlayer = ({
         onProgress={(p) => {
           setProgress(p);
           handleAudioProgress(p);
+        }}
+        config={{
+          file: {
+            forceAudio: true,
+          },
         }}
       />
     </div>
