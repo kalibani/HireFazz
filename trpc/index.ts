@@ -4,7 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { z } from "zod";
 import { absoluteUrl } from "@/lib/utils";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
-import { PLANS } from "@/constant";
+import { FILE_TYPE, PLANS } from "@/constant";
 import { MAX_FREE_COUNTS } from "@/constant";
 
 export const appRouter = router({
@@ -13,6 +13,7 @@ export const appRouter = router({
       z.object({
         key: z.string(),
         name: z.string(),
+        type: z.nativeEnum(FILE_TYPE),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -24,6 +25,8 @@ export const appRouter = router({
         data: {
           key: input.key,
           name: input.name,
+          // @ts-ignore
+          type: input.type,
           userId: userId,
           url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${input.key}`,
           uploadStatus: "SUCCESS",

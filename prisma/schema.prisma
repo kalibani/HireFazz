@@ -31,12 +31,17 @@ enum UploadStatus {
   SUCCESS
 }
 
+enum FILE_TYPE {
+  DOCUMENT
+  VOICE
+}
+
 model File {
   id   String @id @default(cuid())
   name String
 
   uploadStatus UploadStatus @default(PENDING)
-
+  type FILE_TYPE  @default(DOCUMENT)
   url      String
   key      String
   messages Message[]

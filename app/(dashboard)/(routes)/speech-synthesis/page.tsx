@@ -32,6 +32,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 import axios from "axios";
+import { FILE_TYPE } from "@/constant";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
@@ -92,6 +93,7 @@ const SpeechSynthesisPage = () => {
       console.log("setting", voice_settings);
       console.log("model", model);
       console.log("text", text);
+      console.log("selectedVoice", selectedVoice);
 
       const payload = {
         // @ts-ignore
@@ -114,7 +116,8 @@ const SpeechSynthesisPage = () => {
       );
 
       const data = response.data;
-      const blobFile = new File([data], "your_file_name", {
+      // @ts-ignore
+      const blobFile = new File([data], selectedVoice.name || "audio", {
         type: "audio/mpeg",
         lastModified: Date.now(),
       });
@@ -125,8 +128,9 @@ const SpeechSynthesisPage = () => {
       const responseUpload = await axios.post("/api/uploadVoice", formData);
 
       const file = {
-        key: responseUpload.data.data.key,
-        name: responseUpload.data.data.name,
+        key: responseUpload.data.data.key as string,
+        name: responseUpload.data.data.name as string,
+        type: FILE_TYPE.VOICE,
       };
 
       await createFile.mutate(file);
