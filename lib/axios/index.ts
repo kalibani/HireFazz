@@ -4,6 +4,7 @@ import {
   elevenLabsModels,
   elevenLabsDefaultVoiceSettings,
   elevenLabsTextToSpeech,
+  elevenLabsGeneratedVoices,
 } from "../urls";
 
 export const getVoices = () => axiosInterceptorsInstance.get(elevenLabsVoices);
@@ -30,4 +31,6 @@ export const postTextToSpeech = (
     }
   );
 
+export const getGeneratedVoices = (params?: any) =>
+  axiosInterceptorsInstance.get(elevenLabsGeneratedVoices, { params });
 // pcm_44100

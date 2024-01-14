@@ -8,8 +8,7 @@ import {
 } from "lucide-react";
 import Heading from "@/components/headings";
 import { Button } from "@/components/ui/button";
-// import UploadButton from "@/components/upload-button";
-// import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+
 import { useProModal } from "@/hooks/use-pro-modal";
 import { useModel } from "@/hooks/use-model-modal";
 import { useTextToSpeechStore } from "@/hooks/use-text-to-speech";
@@ -27,12 +26,11 @@ import { cn } from "@/lib/utils";
 
 import AudioPlayer from "@/components/audio-player";
 import { FormEvent, useEffect, useState } from "react";
-import { postTextToSpeech } from "@/lib/axios";
+import { postTextToSpeech, getGeneratedVoices } from "@/lib/axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-import axios from "axios";
-import { FILE_TYPE } from "@/constant";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
@@ -77,7 +75,57 @@ const SpeechSynthesisPage = () => {
     selectVoice(updatedVoice);
   };
 
-  const createFile = trpc.createFile.useMutation();
+  const saveGeneratedVoice = trpc.saveGeneratedVoice.useMutation();
+
+  const queryClient = useQueryClient();
+  const handleSaveGeneratedVoice = async (now: any) => {
+    const params = {
+      page_size: 20,
+    };
+    try {
+      // get newly generated
+      const { data } = await queryClient.fetchQuery({
+        queryKey: ["get-generated-voices"],
+        queryFn: () => getGeneratedVoices(params),
+      });
+
+      const dateUnix = Math.round(now / 1000);
+
+      if (data.history.length > 0) {
+        const history = data.history.filter(
+          (element: any) =>
+            element.text === text &&
+            element.voice_id === voiceId &&
+            // @ts-ignore
+            element.model_id === model.model_id &&
+            element.date_unix === dateUnix
+        )[0];
+        // save newly generated to prisma
+        if (history) {
+          const payload = {
+            characterCountChangeFrom: history.character_count_change_from,
+            characterCountChangeTo: history.character_count_change_to,
+            contentType: history.content_type,
+            dateUnix: history.date_unix,
+            feedback: history.feedback,
+            historyItemId: history.history_item_id,
+            modelId: history.model_id,
+            requestId: history.request_id,
+            settings: history.settings,
+            shareLinkId: history.share_link_id,
+            state: history.state,
+            text: history.text,
+            voiceCategory: history.voice_category,
+            voiceId: history.voice_id,
+            voiceName: history.voice_name,
+          };
+          saveGeneratedVoice.mutate(payload);
+        }
+      }
+    } catch (error) {
+      console.log("err", error);
+    }
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
@@ -90,16 +138,11 @@ const SpeechSynthesisPage = () => {
         style: style[0],
         use_speaker_boost: use_speaker_boost,
       };
-      console.log("setting", voice_settings);
-      console.log("model", model);
-      console.log("text", text);
-      console.log("selectedVoice", selectedVoice);
 
       const payload = {
         // @ts-ignore
         model_id: model?.model_id,
         text: text,
-        // voice_settings,
       };
 
       const query = {
@@ -108,6 +151,7 @@ const SpeechSynthesisPage = () => {
       };
 
       const responseType = "arraybuffer";
+
       const response = await postTextToSpeech(
         voiceId,
         query,
@@ -116,34 +160,21 @@ const SpeechSynthesisPage = () => {
       );
 
       const data = response.data;
-      // @ts-ignore
-      const blobFile = new File([data], selectedVoice.name || "audio", {
+      const blob = new Blob([data], {
         type: "audio/mpeg",
-        lastModified: Date.now(),
       });
-
-      const formData = new FormData();
-      formData.append("files", blobFile);
-
-      const responseUpload = await axios.post("/api/uploadVoice", formData);
-
-      const file = {
-        key: responseUpload.data.data.key as string,
-        name: responseUpload.data.data.name as string,
-        type: FILE_TYPE.VOICE,
-      };
-
-      await createFile.mutate(file);
-
-      const url = responseUpload.data.data.url;
+      const url = URL.createObjectURL(blob);
       setStream(url);
     } catch (error) {
       console.log("e", error);
       toast("We faced some issue");
     } finally {
       setLoading(false);
+      const now = Date.now();
+      handleSaveGeneratedVoice(now);
     }
   };
+
   const router = useRouter();
   const handleComingSoon = () => {
     router.push("/coming-soon");

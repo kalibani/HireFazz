@@ -1,9 +1,4 @@
 import {
-  Code,
-  ImageIcon,
-  MessageSquare,
-  Music,
-  VideoIcon,
   FileArchiveIcon,
   AudioLines,
   FlaskConical,
@@ -109,8 +104,3 @@ export const PLANS = [
     },
   },
 ];
-
-export enum FILE_TYPE {
-  DOCUMENT,
-  VOICE,
-}

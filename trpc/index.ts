@@ -4,16 +4,33 @@ import prismadb from "@/lib/prismadb";
 import { z } from "zod";
 import { absoluteUrl } from "@/lib/utils";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
-import { FILE_TYPE, PLANS } from "@/constant";
+import { PLANS } from "@/constant";
 import { MAX_FREE_COUNTS } from "@/constant";
 
 export const appRouter = router({
-  createFile: privateProcedure
+  saveGeneratedVoice: privateProcedure
     .input(
       z.object({
-        key: z.string(),
-        name: z.string(),
-        type: z.nativeEnum(FILE_TYPE),
+        characterCountChangeFrom: z.number(),
+        characterCountChangeTo: z.number(),
+        contentType: z.string(),
+        dateUnix: z.number(),
+        feedback: z.object({}).nullish(),
+        historyItemId: z.string(),
+        modelId: z.string(),
+        requestId: z.string(),
+        settings: z.object({
+          similarity_boost: z.number(),
+          stability: z.number(),
+          style: z.number(),
+          use_speaker_boost: z.boolean(),
+        }),
+        shareLinkId: z.string().nullish(),
+        state: z.string(),
+        text: z.string(),
+        voiceCategory: z.string(),
+        voiceId: z.string(),
+        voiceName: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -21,19 +38,30 @@ export const appRouter = router({
 
       if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const createdFile = await prismadb.file.create({
+      const generatedVoice = await prismadb.generatedVoices.create({
         data: {
-          key: input.key,
-          name: input.name,
+          characterCountChangeFrom: input.characterCountChangeFrom,
+          characterCountChangeTo: input.characterCountChangeTo,
+          contentType: input.contentType,
+          dateUnix: input.dateUnix,
           // @ts-ignore
-          type: input.type,
+          feedback: input.feedback,
+          historyItemId: input.historyItemId,
+          modelId: input.modelId,
+          requestId: input.requestId,
+          settings: input.settings,
+          shareLinkId: input.shareLinkId,
+          // @ts-ignore
+          state: input.state,
+          text: input.text,
+          voiceCategory: input.voiceCategory,
+          voiceId: input.voiceId,
+          voiceName: input.voiceName,
           userId: userId,
-          url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${input.key}`,
-          uploadStatus: "SUCCESS",
         },
       });
 
-      return { createdFile };
+      return { generatedVoice };
     }),
 
   getUserFiles: privateProcedure.query(async ({ ctx }) => {
