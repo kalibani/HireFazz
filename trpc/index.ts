@@ -240,6 +240,47 @@ export const appRouter = router({
 
     return { url: stripeSession.url };
   }),
+
+  getGeneratedVoices: privateProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100),
+        offset: z.number().min(0),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      const limit = input.limit || 0;
+      const offset = input.offset || 0;
+
+      const [count, generatedVoices] = await prismadb.$transaction([
+        prismadb.generatedVoices.count({
+          where: {
+            userId,
+          },
+        }),
+        prismadb.generatedVoices.findMany({
+          take: limit,
+          skip: offset,
+          where: {
+            userId,
+          },
+          select: {
+            id: true,
+            text: true,
+            dateUnix: true,
+            voiceName: true,
+            state: true,
+          },
+        }),
+      ]);
+
+      return {
+        generatedVoices,
+        count: count,
+      };
+    }),
 });
 // Export type router type signature,
 // NOT the router itself.

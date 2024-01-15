@@ -2,68 +2,38 @@
 
 import React, { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
+import { Play } from "lucide-react";
 
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
-
 import { DataTable } from "./table/data-table";
 
-type Props = {};
+import { trpc } from "@/app/_trpc/client";
+import { $Enums } from "@prisma/client";
 
 type Data = {
   id: string;
-  voice: string;
-  date: string;
-  state: string;
   text: string;
-  action: string;
+  dateUnix: string | number;
+  voiceName: string;
+  state: $Enums.State;
+  action?: string;
 };
 
-const DUMMY_DATA: Data[] = [
-  {
-    id: "1",
-    voice: "Charlie",
-    date: "1/1/2024",
-    state: "Success",
-    text: "Some text...",
-    action: "play",
-  },
-  {
-    id: "2",
-    voice: "Charlie",
-    date: "1/1/2024",
-    state: "Success",
-    text: "Some text...",
-    action: "play",
-  },
-  {
-    id: "3",
-    voice: "Charlie",
-    date: "1/1/2024",
-    state: "Success",
-    text: "Some text...",
-    action: "play",
-  },
-  {
-    id: "4",
-    voice: "Charlie",
-    date: "1/1/2024",
-    state: "Success",
-    text: "Some text...",
-    action: "play",
-  },
-  {
-    id: "5",
-    voice: "Charlie",
-    date: "1/1/2024",
-    state: "Success",
-    text: "Some text...",
-    action: "play",
-  },
-];
+const PAGE_LIMIT = 5;
 
-const HistoryTable = (props: Props) => {
+const HistoryTable = () => {
   const [selected, setSelected] = useState<Data[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [offset, setOffset] = useState(0);
+
+  const { data, isLoading } = trpc.getGeneratedVoices.useQuery({
+    limit: PAGE_LIMIT,
+    offset,
+  });
+
+  const generatedVoices = data?.generatedVoices || [];
+  const count = data?.count || 0;
 
   const columnHelper = createColumnHelper<Data>();
 
@@ -77,15 +47,27 @@ const HistoryTable = (props: Props) => {
           />
         ),
         header: () => (
-          <Checkbox onCheckedChange={onSelectAll} checked={isSelectedAll} />
+          <Checkbox
+            onCheckedChange={onSelectAll}
+            checked={isSelectedAll}
+            disabled={generatedVoices?.length === 0}
+          />
         ),
       }),
-      columnHelper.accessor("voice", {
+      columnHelper.accessor("voiceName", {
         cell: (info) => info.renderValue(),
         header: () => "Voice",
       }),
-      columnHelper.accessor("date", {
-        cell: (info) => <i>{info.getValue()}</i>,
+      columnHelper.accessor("dateUnix", {
+        cell: (info) => {
+          const date = new Date(Number(info.getValue()) * 1000);
+          return (
+            <i className="text-gray-500">
+              {date.getMonth()}/{date.getDate()}/{date.getFullYear()},{" "}
+              {date.getHours()}:{date.getMinutes()}
+            </i>
+          );
+        },
         header: () => "Date",
       }),
       columnHelper.accessor("state", {
@@ -97,11 +79,14 @@ const HistoryTable = (props: Props) => {
       }),
       columnHelper.accessor("action", {
         header: () => <></>,
+        cell: () => <Play className="cursor-pointer w-4 h-4 text-black" />,
       }),
     ];
-  }, [selected]);
+  }, [selected, generatedVoices]);
 
-  const isSelectedAll = selected.length === DUMMY_DATA.length;
+  const isSelectedAll = useMemo(() => {
+    return selected.length === generatedVoices?.length;
+  }, [selected, generatedVoices]);
 
   const onSelect = (data: Data) => {
     const newSelected = [...selected];
@@ -118,7 +103,17 @@ const HistoryTable = (props: Props) => {
   const onSelectAll = () => {
     if (isSelectedAll) {
       setSelected([]);
-    } else setSelected(DUMMY_DATA);
+    } else setSelected(generatedVoices || []);
+  };
+
+  const onFetchNextPage = async () => {
+    setCurrentPage((prev) => prev + 1);
+    setOffset((prev) => prev + PAGE_LIMIT);
+  };
+
+  const onFetchPreviousPage = () => {
+    setCurrentPage((prev) => prev - 1);
+    setOffset((prev) => prev - PAGE_LIMIT);
   };
 
   return (
@@ -136,13 +131,20 @@ const HistoryTable = (props: Props) => {
         </Button>
       </div>
       <DataTable
-        tableClassName="rounded-md border-r-gray-200/70 border-l-gray-200/70 border"
+        tableClassName="rounded-md border-r-gray-200/70 border-l-gray-200/70 border relative"
         tableHeaderClassName="bg-gray-300/30"
         tableHeadClassName="text-black font-bold"
         columns={columns}
-        data={DUMMY_DATA}
-        pageIndex={0}
-        pageSize={10}
+        data={generatedVoices || []}
+        pageIndex={currentPage}
+        pageSize={count}
+        onNextPage={onFetchNextPage}
+        onPreviousPage={onFetchPreviousPage}
+        disableNextPage={
+          offset + PAGE_LIMIT > count || generatedVoices?.length === 0
+        }
+        disablePreviousPage={offset === 0 || generatedVoices?.length === 0}
+        isLoading={isLoading}
       />
     </div>
   );
