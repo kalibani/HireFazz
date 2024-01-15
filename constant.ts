@@ -1,9 +1,4 @@
 import {
-  Code,
-  ImageIcon,
-  MessageSquare,
-  Music,
-  VideoIcon,
   FileArchiveIcon,
   AudioLines,
   FlaskConical,

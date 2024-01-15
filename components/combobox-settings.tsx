@@ -110,6 +110,7 @@ function ComboboxSettings({ handlePlayVoice }: ComboboxSettingsProps) {
                     setVoiceId(voice.voice_id);
                     selectVoice(voice);
                     setOpen(false);
+                    setStream("");
                   }}
                   className=" cursor-pointer"
                 >
