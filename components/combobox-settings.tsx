@@ -96,11 +96,11 @@ function ComboboxSettings({ handlePlayVoice }: ComboboxSettingsProps) {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent>
-        <Command className="w-[48vw]">
+      <PopoverContent className="popover-content-width-follow-trigger">
+        <Command>
           <CommandInput placeholder="Search voice..." />
           <CommandEmpty>No voices found.</CommandEmpty>
-          <CommandGroup className="w-full overflow-auto">
+          <CommandGroup className="w-full overflow-x-hidden overflow-y-auto">
             {formattedVoices?.length > 0 &&
               formattedVoices.map((voice: any) => (
                 <CommandItem
@@ -112,44 +112,49 @@ function ComboboxSettings({ handlePlayVoice }: ComboboxSettingsProps) {
                     setOpen(false);
                     setStream("");
                   }}
-                  className=" cursor-pointer"
+                  className="cursor-pointer"
                 >
-                  <div className="flex justify-between gap-4">
-                    <button
-                      className="inline-flex self-center items-center text-sm font-medium text-center text-gray-900  rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-                      type="button"
-                      onClick={(e) => {
-                        handlePlayVoice(voice);
-                        setVoiceId(voice.voice_id);
-                        setStream("");
-                        e.stopPropagation();
-                      }}
-                    >
-                      {voice.isPlaying ? (
-                        <Loader2 className="w-4 h-4 text-gray-800 animate-spin" />
-                      ) : (
-                        <Play
-                          className="w-4 h-4 text-gray-800"
-                          fill="text-gray-800"
-                        />
-                      )}
-                    </button>
-                    <span>{voice.name}</span>
-
-                    {Object.keys(voice?.labels).length > 0
-                      ? Object.keys(voice?.labels).map((label: any, index) => (
-                          <Badge
-                            // @ts-ignore
-                            variant={
-                              variant[index as keyof typeof variant] ||
-                              "premium"
-                            }
-                            key={index}
-                          >
-                            {voice?.labels[label]}
-                          </Badge>
-                        ))
-                      : null}
+                  <div className="flex flex-col items-start md:flex-row justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <button
+                        className="inline-flex self-center items-center text-sm font-medium text-center text-gray-900  rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+                        type="button"
+                        onClick={(e) => {
+                          handlePlayVoice(voice);
+                          setVoiceId(voice.voice_id);
+                          setStream("");
+                          e.stopPropagation();
+                        }}
+                      >
+                        {voice.isPlaying ? (
+                          <Loader2 className="w-4 h-4 text-gray-800 animate-spin" />
+                        ) : (
+                          <Play
+                            className="w-4 h-4 text-gray-800"
+                            fill="text-gray-800"
+                          />
+                        )}
+                      </button>
+                      <span>{voice.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2 md:gap-4 flex-wrap">
+                      {Object.keys(voice?.labels).length > 0
+                        ? Object.keys(voice?.labels).map(
+                            (label: any, index) => (
+                              <Badge
+                                // @ts-ignore
+                                variant={
+                                  variant[index as keyof typeof variant] ||
+                                  "premium"
+                                }
+                                key={index}
+                              >
+                                {voice?.labels[label]}
+                              </Badge>
+                            )
+                          )
+                        : null}
+                    </div>
                   </div>
                 </CommandItem>
               ))}
