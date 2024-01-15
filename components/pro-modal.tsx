@@ -37,7 +37,7 @@ const ProModal = () => {
             <div className="flex items-center gap-x-2 font-bold py-1">
               Upgrade to BerryLabs
               <Badge className=" uppercase text-sm py-1" variant="premium">
-                Pro
+                Premium
               </Badge>
             </div>
           </DialogTitle>

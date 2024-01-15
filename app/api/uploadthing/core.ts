@@ -89,7 +89,7 @@ const onUploadComplete = async ({
 
     // const isProExceeded =
     //   pagesAmt >
-    //   PLANS.find((plan) => plan.name === 'Pro')!.pagesPerPdf
+    //   PLANS.find((plan) => plan.name === 'Premium')!.pagesPerPdf
     // const isFreeExceeded =
     //   pagesAmt >
     //   PLANS.find((plan) => plan.name === 'Free')!

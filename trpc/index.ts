@@ -198,7 +198,7 @@ export const appRouter = router({
   createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
     const { userId } = ctx;
 
-    const billingUrl = absoluteUrl("/billing");
+    const billingUrl = absoluteUrl("/pricing");
 
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
@@ -229,7 +229,8 @@ export const appRouter = router({
       billing_address_collection: "auto",
       line_items: [
         {
-          price: PLANS.find((plan) => plan.name === "Pro")?.price.priceIds.test,
+          price: PLANS.find((plan) => plan.name === "Premium")?.price.priceIds
+            .test,
           quantity: 1,
         },
       ],
