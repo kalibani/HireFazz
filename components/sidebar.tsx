@@ -74,7 +74,7 @@ const routes = [
   {
     label: "Manage Subscription",
     icon: DollarSignIcon,
-    href: "/billing",
+    href: "/pricing",
     color: "text-emerald-500",
   },
 ];

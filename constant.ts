@@ -65,12 +65,12 @@ export const tools = [
 
 export const PLANS = [
   {
-    name: "Free",
-    slug: "free",
+    name: "Pay as You Go",
+    slug: "Pay as You Go",
     quota: 10,
     pagesPerPdf: 5,
     price: {
-      amount: 0,
+      amount: 9900,
       priceIds: {
         test: "",
         production: "",
@@ -78,29 +78,29 @@ export const PLANS = [
     },
   },
   {
-    name: "Pro",
-    slug: "pro",
+    name: "Premium",
+    slug: "premium",
     quota: 50,
     pagesPerPdf: 25,
     price: {
-      amount: 14,
+      amount: 499,
       priceIds: {
         test: "price_1OLQyVC0XsP9dATYpzHIpjAe",
         production: "",
       },
     },
   },
-  {
-    name: "Premium",
-    slug: "premium",
-    quota: 150,
-    pagesPerPdf: 25,
-    price: {
-      amount: 20,
-      priceIds: {
-        test: "price_1OLQyVC0XsP9dATYpzHIpjAe",
-        production: "",
-      },
-    },
-  },
+  // {
+  //   name: "Premium",
+  //   slug: "premium",
+  //   quota: 150,
+  //   pagesPerPdf: 25,
+  //   price: {
+  //     amount: 20,
+  //     priceIds: {
+  //       test: "price_1OLQyVC0XsP9dATYpzHIpjAe",
+  //       production: "",
+  //     },
+  //   },
+  // },
 ];

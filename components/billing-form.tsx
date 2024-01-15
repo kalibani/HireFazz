@@ -22,7 +22,7 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
   const { mutate: createStripeSession, isLoading } =
     trpc.createStripeSession.useMutation({
       onSuccess: ({ url }) => {
-        window.location.href = url ?? "/billing";
+        window.location.href = url ?? "/pricing";
         if (!url) {
           toast("There was a problem, Please try again in a moment...");
         }
@@ -54,7 +54,7 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
             ) : null}
             {subscriptionPlan.isSubscribed
               ? "Manage Subscription"
-              : "Upgrade to PRO"}
+              : "Upgrade to PREMIUM"}
           </Button>
 
           {subscriptionPlan.isSubscribed ? (
