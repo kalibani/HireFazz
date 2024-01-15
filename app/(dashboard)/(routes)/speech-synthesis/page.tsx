@@ -275,7 +275,7 @@ const SpeechSynthesisPage = () => {
 
             <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:border-gray-200 lg:gap-4 pt-5 lg:border-t">
               <span className="block text-lg font-normal text-gray-900 mb-1 leading-none pb-1 lg:pb-0">
-                <span>Setting</span>
+                <span>Settings</span>
               </span>
               <div className="flex mt-1 lg:col-span-5 lg:mt-0 items-start">
                 <ComboboxSettings handlePlayVoice={handlePlayVoice} />

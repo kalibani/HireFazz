@@ -105,8 +105,8 @@ function ComboboxSlider({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent>
-        <Command className="w-[48vw]">
+      <PopoverContent className="popover-content-width-follow-trigger">
+        <Command>
           <CommandList>
             <CommandGroup heading="Stability" className="w-full">
               <CommandItem className="grid aria-selected:bg-transparent">
@@ -278,7 +278,7 @@ function ComboboxSlider({
               <CommandItem className="grid aria-selected:bg-transparent">
                 <Button
                   variant="secondary"
-                  className="w-[30%]"
+                  className="w-fit md:w-[30%]"
                   onClick={handleGetDefaultVoiceSettings}
                 >
                   To Default
