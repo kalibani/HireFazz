@@ -4,6 +4,8 @@ import * as dateFns from "date-fns";
 import { Play, Pause, Download, ChevronDown } from "lucide-react";
 
 import { Progress } from "@/components/ui/progress";
+import { useProModal } from "@/hooks/use-pro-modal";
+import { MAX_FREE_COUNTS } from "@/constant";
 
 type audioPlayerProps = {
   selectedVoice: any;
@@ -64,6 +66,23 @@ const AudioPlayer = ({
     }
   }, [stream]);
 
+  const { apiLimitCount, onOpen } = useProModal();
+
+  const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
+
+  const handleDownload = (audioUrl: string | "") => {
+    if (isFreeTrialLimited && stream) {
+      onOpen();
+    } else {
+      const link = document.createElement("a");
+      link.href = audioUrl;
+      link.download = "audio.mp3";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
     <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 sticky bottom-0 z-10 bg-white mt-4">
       <div className="flex items-start gap-2.5">
@@ -110,11 +129,15 @@ const AudioPlayer = ({
                 )}{" "}
                 / {dateFns.format(Math.round(duration) * 1000, "mm:ss")}
               </span>
-              <a href={stream || selectedVoice.preview_url} download>
+              <button
+                onClick={() =>
+                  handleDownload(stream || selectedVoice.preview_url)
+                }
+              >
                 <span>
                   <Download color="#301a32" strokeWidth={1.75} />
                 </span>
-              </a>
+              </button>
               <button onClick={() => onExpand(false)}>
                 <ChevronDown
                   className="h-6 w-6"

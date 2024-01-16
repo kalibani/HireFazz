@@ -56,7 +56,7 @@ function Contact() {
         e.target.reset();
       });
   };
-  const { isSignedIn, user, isLoaded } = useUser();
+  const { isSignedIn } = useUser();
 
   return (
     <section className="py-10 sm:pt-16 md:pt-16 text-white" id="contact">

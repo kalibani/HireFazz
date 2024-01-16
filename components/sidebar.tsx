@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,6 +22,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import FreeCounter from "./free-counter";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const poppins = Montserrat({
   weight: "600",
@@ -92,6 +93,11 @@ type sidebarProps = {
 
 const Sidebar = ({ apiLimitCount = 0 }: sidebarProps) => {
   const pathname = usePathname();
+  const { setApiLimit } = useProModal();
+
+  useEffect(() => {
+    setApiLimit(apiLimitCount);
+  }, [apiLimitCount]);
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
       <div className="px-3 py-2 flex-1">

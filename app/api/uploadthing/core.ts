@@ -13,6 +13,8 @@ import { pinecone } from "@/lib/pinecone";
 import { extractExtension } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
+import { increaseApiLimit } from "@/lib/api-limit";
+
 const f = createUploadthing();
 
 // const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
@@ -22,10 +24,12 @@ const middleware = async () => {
 
   if (!userId) throw new Error("Unauthorized");
 
-  // const subscriptionPlan = await getUserSubscriptionPlan()
+  // const freeTrial = await checkApiLimit();
+
+  // if (!freeTrial) throw new Error("Free Trial has expired");
 
   return {
-    // subscriptionPlan,
+    // freeTrial: freeTrial,
     userId: userId,
   };
 };
@@ -130,6 +134,8 @@ const onUploadComplete = async ({
         id: createdFile.id,
       },
     });
+
+    await increaseApiLimit(metadata.userId);
   } catch (err) {
     console.log("err", err);
     prismadb.file.update({

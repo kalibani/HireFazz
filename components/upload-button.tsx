@@ -23,6 +23,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
       if (file.uploadStatus !== "FAILED") {
+        router.refresh();
         router.push(`/summarizer/${file.id}`);
       } else {
         toast(
@@ -79,7 +80,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
       const key = fileResponse?.key;
 
       if (!key) {
-        return toast("Something went wrong");
+        return toast("Something went wrong key");
       }
 
       clearInterval(progressInterval);

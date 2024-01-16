@@ -8,6 +8,12 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum SubscriptionType {
+  FREE
+  FLEXIBLE
+  PREMIUM
+}
+
 model userAPILimit {
   id        String   @id @default(cuid())
   userId    String   @unique
@@ -18,11 +24,15 @@ model userAPILimit {
   File    File[]
   Message Message[]
 
-  stripeCustomerId       String?           @unique @map(name: "stripe_customer_id")
-  stripeSubscriptionId   String?           @unique @map(name: "stripe_subscription_id")
-  stripePriceId          String?           @map(name: "stripe_price_id")
-  stripeCurrentPeriodEnd DateTime?         @map(name: "stripe_current_period_end")
-  GeneratedVoices        GeneratedVoices[]
+  stripeCustomerId             String?           @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId         String?           @unique @map(name: "stripe_subscription_id")
+  stripePriceId                String?           @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd       DateTime?         @map(name: "stripe_current_period_end")
+  GeneratedVoices              GeneratedVoices[]
+  subscriptionType             SubscriptionType  @default(FREE)
+  currentSubscriptionPeriodEnd DateTime?
+  Transactions                 Transactions[]
+  characterCount Int?
 }
 
 enum UploadStatus {
@@ -75,22 +85,31 @@ enum State {
 }
 
 model GeneratedVoices {
-  id                          String        @id @default(cuid())
+  id                       String        @id @default(cuid())
   characterCountChangeFrom Int
   characterCountChangeTo   Int
-  contentType                String
-  dateUnix                   Int
-  feedback                    Json?
-  historyItemId             String
-  modelId                    String
-  requestId                  String
-  settings                    Json?
-  shareLinkId               String?
-  state                       State
-  text                        String
-  voiceCategory              String
-  voiceId                    String
-  voiceName                  String
-  User                        userAPILimit? @relation(fields: [userId], references: [userId])
-  userId                      String?
+  contentType              String
+  dateUnix                 Int
+  feedback                 Json?
+  historyItemId            String
+  modelId                  String
+  requestId                String
+  settings                 Json?
+  shareLinkId              String?
+  state                    State
+  text                     String
+  voiceCategory            String
+  voiceId                  String
+  voiceName                String
+  User                     userAPILimit? @relation(fields: [userId], references: [userId])
+  userId                   String?
+  isPaid Boolean @default(false)
+}
+
+model Transactions {
+  id         String        @id @default(cuid())
+  User       userAPILimit? @relation(fields: [userId], references: [userId])
+  userId     String?
+  amountPaid Decimal
+  productName String
 }

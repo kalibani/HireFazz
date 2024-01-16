@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       return new NextResponse("Prompt is required", { status: 500 });
     }
 
-    const freeTrial = await checkApiLimit();
+    const freeTrial = await checkApiLimit(userId);
     if (!freeTrial) {
       return new NextResponse("Free Trial has expired", {
         status: 403,
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       }
     );
 
-    await increaseApiLimit();
+    await increaseApiLimit(userId);
 
     return NextResponse.json(response);
   } catch (error) {

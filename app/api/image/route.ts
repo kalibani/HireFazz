@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       return new NextResponse("Resolution is required", { status: 400 });
     }
 
-    const freeTrial = await checkApiLimit();
+    const freeTrial = await checkApiLimit(userId);
     if (!freeTrial) {
       return new NextResponse("Free Trial has expired", {
         status: 403,
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
       size: resolution,
     });
 
-    await increaseApiLimit();
+    await increaseApiLimit(userId);
 
     return NextResponse.json(response.data);
   } catch (error) {
