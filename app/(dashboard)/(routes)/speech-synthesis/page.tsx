@@ -206,14 +206,6 @@ const SpeechSynthesisPage = () => {
         bgColor="bg-pink-300/10"
       />
       <div className="px-4 lg:px-8">
-        {/* <div>
-          <div className="rounded-lg w-full border p-4 px-3 md:px-4 focus-within:shadow-sm gap-2 flex h-16 items-center justify-between">
-            <h1 className="mb-3text-gray-900">Your creative AI toolkit.</h1>
-            <Button variant="default" onClick={handleComingSoon}>
-              Add Your Voice
-            </Button>
-          </div>
-        </div> */}
         <form onSubmit={(e) => handleSubmit(e)}>
           <div className="space-y-4 mt-4 border border-gray-200 shadow-sm rounded-lg bg-white">
             <div className="px-8 lg:grid lg:grid-cols-7 lg:items-start lg:gap-4 pt-6 lg:pt-5 mb-5">

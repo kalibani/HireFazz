@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       return new NextResponse("Messages are required", { status: 400 });
     }
 
-    const freeTrial = await checkApiLimit();
+    const freeTrial = await checkApiLimit(userId);
 
     if (!freeTrial) {
       return new NextResponse("Free Trial has expired", {
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       model: "gpt-4",
     });
 
-    await increaseApiLimit();
+    await increaseApiLimit(userId);
 
     return NextResponse.json(response.choices);
   } catch (error) {

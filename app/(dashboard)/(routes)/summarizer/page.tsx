@@ -1,19 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { OpenAI } from "openai";
-import {
-  FileArchiveIcon,
-  Loader2,
-  MessageSquare,
-  Plus,
-  Trash,
-} from "lucide-react";
-import Skeleton from "react-loading-skeleton";
+import { FormEvent, useState } from "react";
+import { FileArchiveIcon, Loader2, Plus, Trash } from "lucide-react";
+import * as formatter from "date-fns";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Heading from "@/components/headings";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import UploadButton from "@/components/upload-button";
 
@@ -21,19 +12,14 @@ import EmptyPage from "@/components/empty";
 import Loader from "@/components/loader";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { trpc } from "@/app/_trpc/client";
-
-import * as formatter from "date-fns";
+import { MAX_FREE_COUNTS } from "@/constant";
 
 const PDFSummarizerPage = () => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
     string | null
   >(null);
-  const router = useRouter();
-  const [messages, setMessages] = useState<OpenAI.Chat.ChatCompletionMessage[]>(
-    []
-  );
 
-  const proModal = useProModal();
+  const { apiLimitCount, onOpen } = useProModal();
 
   const { data: files, isLoading } = trpc.getUserFiles
     // @ts-ignore
@@ -57,6 +43,8 @@ const PDFSummarizerPage = () => {
     },
   });
 
+  const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
+
   return (
     <div>
       <Heading
@@ -70,7 +58,11 @@ const PDFSummarizerPage = () => {
         <div>
           <div className="rounded-lg w-full border p-4 px-3 md:px-4 focus-within:shadow-sm gap-2 flex h-16 items-center justify-between">
             <h1 className="mb-3text-gray-900">Upload Your Document</h1>
-            <UploadButton isSubscribed={true} buttonText="Upload document" />
+            {isFreeTrialLimited ? (
+              <Button onClick={onOpen}>Upload document</Button>
+            ) : (
+              <UploadButton isSubscribed={true} buttonText="Upload document" />
+            )}
           </div>
           {/* </Form> */}
         </div>
