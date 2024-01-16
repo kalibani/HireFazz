@@ -6,9 +6,9 @@ import { v4 as uuidv4 } from "uuid";
 import Midtrans from "midtrans-client";
 
 const snap = new Midtrans.Snap({
-  isProduction: process.env.MIDTRANS_IS_PRODUCTION === "TRUE",
-  serverKey: process.env.MIDTRANS_SERVER_KEY,
-  clientKey: process.env.MIDTRANS_CLIENT_KEY,
+  isProduction: process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "TRUE",
+  serverKey: process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY,
+  clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
 });
 
 export async function POST(request: NextRequest) {

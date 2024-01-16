@@ -68,12 +68,12 @@ const AudioPlayer = ({
   }, [stream]);
 
   useEffect(() => {
-    const snapUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
-    const clientKey = process.env.MIDTRANS_CLIENT_KEY;
+    const snapUrl = process.env.NEXT_PUBLIC_MIDTRANS_URL;
+    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
 
     const script = document.createElement("script");
 
-    script.src = snapUrl;
+    script.src = snapUrl as string;
     script.setAttribute("data-client-key", clientKey as string);
     script.async = true;
 
