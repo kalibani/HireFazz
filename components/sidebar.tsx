@@ -17,6 +17,7 @@ import {
   DollarSignIcon,
   SquareStack,
   AudioLines,
+  HeartHandshake,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -76,6 +77,12 @@ const routes = [
     icon: DollarSignIcon,
     href: "/pricing",
     color: "text-emerald-500",
+  },
+  {
+    label: "Help Center",
+    icon: HeartHandshake,
+    href: "/help-center",
+    color: "text-red-500",
   },
 ];
 
