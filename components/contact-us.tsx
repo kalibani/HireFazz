@@ -3,7 +3,9 @@ import { FormEvent, useState, useEffect, useRef } from "react";
 import { Mail, MessagesSquare } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import toast, { Toaster } from "react-hot-toast";
+import { useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 function Contact() {
   const [isMobile, setIsMobile] = useState(false);
@@ -54,10 +56,17 @@ function Contact() {
         e.target.reset();
       });
   };
+  const { isSignedIn, user, isLoaded } = useUser();
+
   return (
     <section className="py-10 sm:pt-16 md:pt-16 text-white" id="contact">
       <Toaster position="top-right" reverseOrder={false} />
-      <h5 className="text-center text-4xl text-white font-extrabold mb-10">
+      <h5
+        className={cn("text-center text-4xl font-extrabold mb-10", {
+          "text-white": !isSignedIn,
+          "text-[#192339]": isSignedIn,
+        })}
+      >
         Get in Touch
       </h5>
       <div className="container w-[90%] md:w-[78%] grid grid-cols-1 md:grid-cols-[30%,50%] gap-8 md:gap-[12%] m-auto">
@@ -110,14 +119,24 @@ function Contact() {
           className="flex flex-col gap-[1.2rem]"
         >
           <input
-            className="w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] resize-none"
+            className={cn(
+              "w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none",
+              {
+                "text-[#192339]": isSignedIn,
+              }
+            )}
             type="text"
             name="name"
             placeholder="Your Name"
             required
           />
           <input
-            className="w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] resize-none"
+            className={cn(
+              "w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none",
+              {
+                "text-[#192339]": isSignedIn,
+              }
+            )}
             type="email"
             name="email"
             placeholder="Your Email"
@@ -128,7 +147,12 @@ function Contact() {
             rows={7}
             placeholder="Your Message"
             required
-            className="w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] resize-none"
+            className={cn(
+              "w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none",
+              {
+                "text-[#192339]": isSignedIn,
+              }
+            )}
           ></textarea>
           <Button type="submit">Send Message</Button>
         </form>
