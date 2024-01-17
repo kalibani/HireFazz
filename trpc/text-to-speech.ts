@@ -87,6 +87,9 @@ const TextToSpeech = {
           where: {
             userId,
           },
+          orderBy: {
+            dateUnix: "desc",
+          },
           select: {
             id: true,
             text: true,
