@@ -38,10 +38,10 @@ function Contact() {
 
     emailjs
       .sendForm(
-        process.env.EMAIL_SERVICE_ID!,
-        process.env.EMAIL_TEMPLATE_ID!,
+        process.env.NEXT_PUBLIC_EMAIL_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_ID!,
         form.current!,
-        process.env.EMAIL_PUBLIC_KEY
+        process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY
       )
       .then(
         () => {
