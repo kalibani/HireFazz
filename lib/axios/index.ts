@@ -5,6 +5,7 @@ import {
   elevenLabsDefaultVoiceSettings,
   elevenLabsTextToSpeech,
   elevenLabsGeneratedVoices,
+  elevenLabsDownloadVoices,
 } from "../urls";
 
 export const getVoices = () => axiosInterceptorsInstance.get(elevenLabsVoices);
@@ -33,4 +34,17 @@ export const postTextToSpeech = (
 
 export const getGeneratedVoices = (params?: any) =>
   axiosInterceptorsInstance.get(elevenLabsGeneratedVoices, { params });
+export const getAudioFromHistory = (historyId: string) =>
+  axiosInterceptorsInstance.get(
+    `${elevenLabsGeneratedVoices}/${historyId}/audio`,
+    {
+      responseType: "arraybuffer",
+    }
+  );
+export const downloadHistory = (history_item_ids: string[]) =>
+  axiosInterceptorsInstance.post(
+    elevenLabsDownloadVoices,
+    { history_item_ids },
+    { responseType: "blob" }
+  );
 // pcm_44100

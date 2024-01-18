@@ -4,38 +4,78 @@ import React, { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Play } from "lucide-react";
 
-import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
+import { Badge } from "./ui/badge";
 import { DataTable } from "./table/data-table";
+import { ComboboxFilterPaid, PaidStatus } from "./history/combobox-filter-paid";
 
 import { trpc } from "@/app/_trpc/client";
 import { $Enums } from "@prisma/client";
+import { ModalDownload } from "./history/modal-download";
+import { ModalDelete } from "./history/modal-delete";
+import { downloadHistory, getAudioFromHistory } from "@/lib/axios";
+import toast from "react-hot-toast";
+import { downloadBlobFile } from "@/lib/utils";
+import { useTextToSpeechStore } from "@/hooks/use-text-to-speech";
+import { useShallow } from "zustand/react/shallow";
+import AudioPlayer from "./audio-player";
 
-type Data = {
+export type GeneratedVoicesHistory = {
   id: string;
   text: string;
+  //string for table
   dateUnix: string | number;
   voiceName: string;
   state: $Enums.State;
   action?: string;
+  //string for table
+  isPaid?: string | boolean;
+  historyItemId?: string;
+};
+
+export type CurrentPlay = {
+  category: string;
+  name: string;
+};
+
+const stateColor = {
+  created: "bg-green-500",
+  deleted: "bg-red-500",
+  processing: "bg-blue-500",
 };
 
 const PAGE_LIMIT = 5;
 
 const HistoryTable = () => {
-  const [selected, setSelected] = useState<Data[]>([]);
+  const [selected, setSelected] = useState<GeneratedVoicesHistory[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [offset, setOffset] = useState(0);
+  const [paidStatus, setPaidStatus] = useState<PaidStatus>("");
+  const [currentPlay, setCurrentPlay] = useState<CurrentPlay>();
 
-  const { data, isLoading } = trpc.getGeneratedVoices.useQuery({
+  const {
+    selectedVoice,
+    selectVoice,
+    formattedVoices,
+    setFormattedVoices,
+    expanded,
+    onExpand,
+    stream,
+    setStream,
+    selectedVoiceTemp,
+  } = useTextToSpeechStore(useShallow((state) => state));
+
+  const { data, isLoading, refetch } = trpc.getGeneratedVoices.useQuery({
     limit: PAGE_LIMIT,
     offset,
+    isPaid:
+      paidStatus === "" ? undefined : paidStatus === "unpaid" ? false : true,
   });
 
   const generatedVoices = data?.generatedVoices || [];
   const count = data?.count || 0;
 
-  const columnHelper = createColumnHelper<Data>();
+  const columnHelper = createColumnHelper<GeneratedVoicesHistory>();
 
   const columns = useMemo(() => {
     return [
@@ -71,15 +111,39 @@ const HistoryTable = () => {
         header: () => "Date",
       }),
       columnHelper.accessor("state", {
-        cell: (info) => info.renderValue(),
+        cell: (info) => {
+          const value = info.renderValue() as $Enums.State;
+          return <Badge className={stateColor[value]}>{value}</Badge>;
+        },
         header: () => "State",
       }),
       columnHelper.accessor("text", {
         header: () => <span>Text</span>,
       }),
+      columnHelper.accessor("isPaid", {
+        header: () => <span>Paid</span>,
+        cell: (info) => {
+          const isPaid = info.getValue();
+          return (
+            <Badge variant={isPaid ? "premium" : "destructive"}>
+              {isPaid ? "Paid" : "Unpaid"}
+            </Badge>
+          );
+        },
+      }),
       columnHelper.accessor("action", {
         header: () => <></>,
-        cell: () => <Play className="cursor-pointer w-4 h-4 text-black" />,
+        cell: (info) => (
+          <Play
+            onClick={() =>
+              onGetVoice(
+                info.row.original.historyItemId as string,
+                info.row.original.voiceName
+              )
+            }
+            className="cursor-pointer w-4 h-4 text-black"
+          />
+        ),
       }),
     ];
   }, [selected, generatedVoices]);
@@ -88,7 +152,7 @@ const HistoryTable = () => {
     return selected.length === generatedVoices?.length;
   }, [selected, generatedVoices]);
 
-  const onSelect = (data: Data) => {
+  const onSelect = (data: GeneratedVoicesHistory) => {
     const newSelected = [...selected];
 
     const currentIndex = newSelected.findIndex((s) => s.id === data.id);
@@ -116,19 +180,95 @@ const HistoryTable = () => {
     setOffset((prev) => prev - PAGE_LIMIT);
   };
 
+  const onDelete = async () => {
+    setSelected([]);
+    await refetch();
+  };
+
+  const onDownload = async (selectedVoices: GeneratedVoicesHistory[]) => {
+    try {
+      const res = await downloadHistory(
+        selectedVoices.map((s) => s.historyItemId as string)
+      );
+      downloadBlobFile(
+        res.data,
+        `berry_labs_generated_voices${
+          selectedVoices.length === 1 ? ".mp3" : ".zip"
+        }`
+      );
+    } catch (error) {
+      toast("There was a problem, Please try again in a moment...");
+    }
+  };
+
+  const onGetVoice = async (historyId: string, voiceName: string) => {
+    try {
+      const res = await getAudioFromHistory(historyId);
+
+      const blob = new Blob([res.data], {
+        type: "audio/mpeg",
+      });
+      const url = URL.createObjectURL(blob);
+      setStream(url);
+      setCurrentPlay({
+        category: "generated history",
+        name: voiceName,
+      });
+      selectVoice({
+        name: currentPlay?.name,
+        category: currentPlay?.category,
+        isPlaying: false,
+      });
+    } catch (error) {
+      toast("There was a problem, Please try again in a moment...");
+    }
+  };
+
+  const handlePlayVoice = (voice: any) => {
+    // update isPlaying
+    const updatedVoices = formattedVoices.map((v: any) =>
+      v.voice_id === voice.voice_id
+        ? {
+            ...v,
+            isPlaying: !voice.isPlaying,
+          }
+        : {
+            ...v,
+            isPlaying: false,
+          }
+    );
+    setFormattedVoices(updatedVoices);
+    // set voice to store
+    const updatedVoice = {
+      ...voice,
+      name: currentPlay?.name,
+      category: currentPlay?.category,
+      isPlaying: !voice.isPlaying,
+    };
+    selectVoice(updatedVoice);
+  };
+
   return (
     <div className="w-full">
-      <div className="mb-4 text">
-        <Button
-          disabled={selected.length === 0}
-          className="mr-2"
-          variant="premium"
-        >
-          Download selected
-        </Button>
-        <Button disabled={selected.length === 0} variant="destructive">
-          Remove selected
-        </Button>
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <ModalDownload
+            isDisabled={selected.length === 0}
+            selectedVoices={selected}
+            onDownload={(items) => onDownload(items)}
+          />
+          <ModalDelete
+            isDisabled={selected.length === 0}
+            selectedVoices={selected}
+            onDelete={onDelete}
+          />
+        </div>
+        <div>
+          <ComboboxFilterPaid
+            paidStatus={paidStatus}
+            setPaidStatus={setPaidStatus}
+          />
+        </div>
       </div>
       <DataTable
         tableClassName="rounded-md border-r-gray-200/70 border-l-gray-200/70 border relative"
@@ -146,6 +286,17 @@ const HistoryTable = () => {
         disablePreviousPage={offset === 0 || generatedVoices?.length === 0}
         isLoading={isLoading}
       />
+      {/* audio player start */}
+      {(stream || Object.keys(selectedVoice).length) && expanded ? (
+        <AudioPlayer
+          selectedVoice={selectedVoice}
+          selectVoice={selectVoice}
+          handlePlayVoice={handlePlayVoice}
+          onExpand={onExpand}
+          stream={stream}
+          selectedVoiceTemp={selectedVoiceTemp}
+        />
+      ) : null}
     </div>
   );
 };

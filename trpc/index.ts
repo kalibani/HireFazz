@@ -4,7 +4,11 @@ import prismadb from "@/lib/prismadb";
 import { absoluteUrl } from "@/lib/utils";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
 import { PLANS } from "@/constant";
-import { getGeneratedVoices, saveGeneratedVoice } from "./text-to-speech";
+import {
+  deleteGeneratedVoices,
+  getGeneratedVoices,
+  saveGeneratedVoice,
+} from "./text-to-speech";
 import {
   deleteFile,
   getFile,
@@ -71,6 +75,7 @@ export const appRouter = router({
   // Text To Speech TRPC
   saveGeneratedVoice: saveGeneratedVoice,
   getGeneratedVoices: getGeneratedVoices,
+  deleteGeneratedVoices: deleteGeneratedVoices,
 });
 // Export type router type signature,
 // NOT the router itself.
