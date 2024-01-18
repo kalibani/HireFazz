@@ -15,3 +15,14 @@ export function extractExtension(fileUrl: string) {
   const fileExtension = fileUrl.split(".").pop();
   return fileExtension;
 }
+
+export function downloadBlobFile(file: Blob, filename: string) {
+  var a = document.createElement("a");
+  document.body.appendChild(a);
+
+  var url = window.URL.createObjectURL(file);
+  a.href = url;
+  a.download = filename;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}

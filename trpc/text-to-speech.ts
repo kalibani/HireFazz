@@ -67,6 +67,7 @@ const TextToSpeech = {
       z.object({
         limit: z.number().min(1).max(100),
         offset: z.number().min(0),
+        isPaid: z.boolean().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -74,11 +75,13 @@ const TextToSpeech = {
 
       const limit = input.limit || 0;
       const offset = input.offset || 0;
+      const isPaid = input.isPaid;
 
       const [count, generatedVoices] = await prismadb.$transaction([
         prismadb.generatedVoices.count({
           where: {
             userId,
+            isPaid,
           },
         }),
         prismadb.generatedVoices.findMany({
@@ -86,6 +89,7 @@ const TextToSpeech = {
           skip: offset,
           where: {
             userId,
+            isPaid,
           },
           orderBy: {
             dateUnix: "desc",
@@ -96,6 +100,8 @@ const TextToSpeech = {
             dateUnix: true,
             voiceName: true,
             state: true,
+            isPaid: true,
+            historyItemId: true,
           },
         }),
       ]);
@@ -105,6 +111,31 @@ const TextToSpeech = {
         count: count,
       };
     }),
+
+  // delete history
+  deleteGeneratedVoices: privateProcedure
+    .input(
+      z.object({
+        ids: z.string().array(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const generatedVoice = await prismadb.generatedVoices.deleteMany({
+        where: {
+          userId,
+          id: {
+            in: input.ids,
+          },
+        },
+      });
+
+      return { generatedVoice };
+    }),
 };
 
-export const { saveGeneratedVoice, getGeneratedVoices } = TextToSpeech;
+export const { saveGeneratedVoice, getGeneratedVoices, deleteGeneratedVoices } =
+  TextToSpeech;
