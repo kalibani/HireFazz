@@ -10,7 +10,7 @@ import {
 import { PLANS } from "@/constant";
 import { cn } from "@/lib/utils";
 
-import { ArrowRight, Check, HelpCircle, Minus } from "lucide-react";
+import { ArrowRight, Check, HelpCircle, Minus, Asterisk } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs";
 
@@ -22,15 +22,15 @@ const Page = () => {
       plan: "Pay as You Go",
       tagline: "Small or Large projects, use as you wish.",
       quota: 10,
-      quotaCharacter: "500.000",
+      quotaCharacter: "Flexible",
       features: [
         {
-          text: "5 pages per PDF",
-          footnote: "The maximum amount of pages per PDF-file.",
+          text: "5 pages per File",
+          footnote: "The maximum amount of pages per file.",
         },
         {
           text: "4MB file size limit",
-          footnote: "The maximum file size of a single PDF file.",
+          footnote: "The maximum file size of a single file.",
         },
         {
           text: "~10 hours of generated audio using text-to-speech",
@@ -39,7 +39,7 @@ const Page = () => {
           text: "Create up to 160 custom voices",
         },
         {
-          text: "Additional usage-based characters at Rp5000 per 1000 characters",
+          text: "Unlimited total characters/month",
         },
         {
           text: "Mobile-friendly interface",
@@ -59,15 +59,15 @@ const Page = () => {
       plan: "Premium",
       tagline: "For larger projects with higher needs.",
       quota: PLANS.find((p) => p.slug === "premium")!.quota,
-      quotaCharacter: "500.000",
+      quotaCharacter: "250.000",
       features: [
         {
-          text: "25 pages per PDF",
-          footnote: "The maximum amount of pages per PDF-file.",
+          text: "25 pages per File",
+          footnote: "The maximum amount of pages per file.",
         },
         {
           text: "16MB file size limit",
-          footnote: "The maximum file size of a single PDF file.",
+          footnote: "The maximum file size of a single file.",
         },
         {
           text: "~10 hours of generated audio using text-to-speech",
@@ -76,7 +76,7 @@ const Page = () => {
           text: "Create up to 160 custom voices",
         },
         {
-          text: "Additional usage-based characters at Rp5000 per 1000 characters",
+          text: "Additional usage-based characters at IDR5000 per 1000 characters",
         },
         {
           text: "Mobile-friendly interface",
@@ -130,13 +130,21 @@ const Page = () => {
                         {plan}
                       </h3>
                       <p className="text-gray-500">{tagline}</p>
+                      {plan !== "Premium" ? (
+                        <p className="float-right relative sm:right-2 md:right-32 lg:right-6 top-3">
+                          <Tooltip delayDuration={300}>
+                            <TooltipTrigger className="cursor-default ml-1.5 flex">
+                              <Asterisk className="h-4 w-4 text-zinc-500" />
+                              <Asterisk className="h-4 w-4 text-zinc-500" />
+                            </TooltipTrigger>
+                            <TooltipContent className="w-80 p-2">
+                              {"Starting from"}
+                            </TooltipContent>
+                          </Tooltip>
+                        </p>
+                      ) : null}
                       <p className="my-5 font-display text-6xl font-semibold">
-                        {plan !== "Premium" ? (
-                          <span className="text-[12px] relative -top-12">
-                            start from
-                          </span>
-                        ) : null}
-                        Rp {price}
+                        IDR {price.toLocaleString()}
                         {plan === "Premium" ? "Rb" : ""}
                       </p>
                       <p className="text-gray-500">
@@ -150,18 +158,28 @@ const Page = () => {
                     <div className="flex h-20 items-center justify-center border-b border-t border-gray-200 bg-gray-50">
                       <div className="flex items-center space-x-1">
                         <div>
-                          <p>{quota.toLocaleString()} PDFs/mo included</p>
-                          {/* <Tooltip delayDuration={300}>
-                            <TooltipTrigger className="cursor-default ml-1.5">
-                              <HelpCircle className="h-4 w-4 text-zinc-500" />
-                            </TooltipTrigger>
-                            <TooltipContent className="w-80 p-2">
-                              How many PDFs you can upload per month.
-                            </TooltipContent>
-                          </Tooltip> */}
-                          <p>
+                          <p className="flex">
+                            {quota.toLocaleString()} Files/mo included
+                            <Tooltip delayDuration={300}>
+                              <TooltipTrigger className="cursor-default ml-1.5 flex">
+                                <HelpCircle className="h-4 w-4 text-zinc-500" />
+                              </TooltipTrigger>
+                              <TooltipContent className="w-80 p-2">
+                                Document Interaction Feature Access
+                              </TooltipContent>
+                            </Tooltip>
+                          </p>
+                          <p className="flex">
                             {quotaCharacter.toLocaleString()} total
                             characters/month
+                            <Tooltip delayDuration={300}>
+                              <TooltipTrigger className="cursor-default ml-1.5 flex">
+                                <HelpCircle className="h-4 w-4 text-zinc-500" />
+                              </TooltipTrigger>
+                              <TooltipContent className="w-80 p-2">
+                                Generate Voice Feature Access
+                              </TooltipContent>
+                            </Tooltip>
                           </p>
                         </div>
                       </div>

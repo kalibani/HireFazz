@@ -8,6 +8,10 @@ import toast from "react-hot-toast";
 import { Progress } from "@/components/ui/progress";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { MAX_FREE_COUNTS } from "@/constant";
+import UseMidtrans from "@/hooks/use-midtrans";
+import { useUser } from "@/hooks/use-user";
+import { usePricing } from "@/hooks/use-pricing";
+import { downloadBlobFile } from "@/lib/utils";
 
 type audioPlayerProps = {
   selectedVoice: any;
@@ -16,6 +20,7 @@ type audioPlayerProps = {
   onExpand: (v: boolean) => void;
   stream: any;
   selectedVoiceTemp: {};
+  blob: any;
 };
 
 const AudioPlayer = ({
@@ -25,6 +30,7 @@ const AudioPlayer = ({
   onExpand,
   stream,
   selectedVoiceTemp,
+  blob,
 }: audioPlayerProps) => {
   const [isReady, setReady] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
@@ -69,69 +75,37 @@ const AudioPlayer = ({
     }
   }, [stream]);
 
-  useEffect(() => {
-    const snapUrl = process.env.NEXT_PUBLIC_MIDTRANS_URL;
-    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+  const { apiLimitCount, onOpen, setPayAsYouGoPriceVisible } = useProModal();
+  const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
+  const { subscriptionType } = useUser();
 
-    const script = document.createElement("script");
+  // const payload = {
+  //   id: selectedVoice.voice_id,
+  //   name: selectedVoice.name,
+  //   price: 1000,
+  // };
 
-    script.src = snapUrl as string;
-    script.setAttribute("data-client-key", clientKey as string);
-    script.async = true;
+  const { isLoading, success, error, isClosed } = UseMidtrans();
 
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  const handleCheckout = async (audioUrl: string | "") => {
-    const data = {
-      id: selectedVoice.voice_id,
-      name: selectedVoice.name,
-      price: 10000,
-    };
-
-    try {
-      setIsDownloading(true);
-
-      const res = await axios.post("/api/payment-gateway", data);
-      const token = res?.data?.token;
-
-      //@ts-ignore
-      snap.pay(token, {
-        onSuccess: function () {
-          //download file when payment success
-          const link = document.createElement("a");
-          link.href = stream;
-          link.download = selectedVoice?.name + ".mp3";
-          document.body.append(link);
-          link.click();
-          link.remove();
-        },
-        onPending: function () {
-          console.log("pending");
-        },
-        onError: function () {
-          console.log("error");
-        },
-        onClose: function () {
-          console.log(
-            "customer closed the popup without finishing the payment"
-          );
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      toast("There was a problem, Please try again in a moment...");
-    } finally {
-      setIsDownloading(false);
+  const handleDownload = async () => {
+    if (subscriptionType !== "PREMIUM" && isFreeTrialLimited) {
+      setPayAsYouGoPriceVisible(true);
+      onOpen();
+    } else {
+      downloadBlobFile(blob, `berrylabs-${selectedVoice.name}`);
     }
   };
+  console.log("error", error);
+  console.log("success", success);
+  console.log("isClosed", isClosed);
+  console.log("isLoading", isLoading);
 
-  const { apiLimitCount, onOpen } = useProModal();
-  const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
+  useEffect(() => {
+    if (success) {
+      downloadBlobFile(blob, `berrylabs-${selectedVoice.name}`);
+    }
+  }, [success]);
+
   return (
     <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 sticky bottom-0 z-10 bg-white mt-4">
       <div className="flex items-start gap-2.5">
@@ -178,11 +152,7 @@ const AudioPlayer = ({
                 )}{" "}
                 / {dateFns.format(Math.round(duration) * 1000, "mm:ss")}
               </span>
-              <button
-                onClick={() =>
-                  handleCheckout(stream || selectedVoice.preview_url)
-                }
-              >
+              <button onClick={() => handleDownload()}>
                 <span>
                   {isDownloading ? (
                     <Loader2 className="animate-spin" />

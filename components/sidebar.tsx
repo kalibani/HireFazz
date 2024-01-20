@@ -23,6 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 import FreeCounter from "./free-counter";
 import { useProModal } from "@/hooks/use-pro-modal";
+import { useUser } from "@/hooks/use-user";
 
 const poppins = Montserrat({
   weight: "600",
@@ -89,15 +90,22 @@ const routes = [
 
 type sidebarProps = {
   apiLimitCount: number;
+  subscriptionType: string;
 };
 
-const Sidebar = ({ apiLimitCount = 0 }: sidebarProps) => {
+const Sidebar = ({ apiLimitCount = 0, subscriptionType }: sidebarProps) => {
   const pathname = usePathname();
   const { setApiLimit } = useProModal();
+  const { setSubscriptionType } = useUser();
 
   useEffect(() => {
     setApiLimit(apiLimitCount);
   }, [apiLimitCount]);
+
+  useEffect(() => {
+    setSubscriptionType(subscriptionType);
+    console.log("-->", subscriptionType);
+  }, [subscriptionType]);
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
       <div className="px-3 py-2 flex-1">

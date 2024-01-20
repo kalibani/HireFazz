@@ -12,7 +12,8 @@ const snap = new Midtrans.Snap({
 });
 
 export async function POST(request: NextRequest) {
-  const { id, name, price } = await request.json();
+  const { id, name, price, required, start_time, interval_unit } =
+    await request.json();
 
   const params = {
     item_details: {
@@ -24,6 +25,11 @@ export async function POST(request: NextRequest) {
     transaction_details: {
       order_id: "ORDER-" + uuidv4(),
       gross_amount: price,
+    },
+    recurring: {
+      required: required,
+      start_time: start_time,
+      interval_unit: interval_unit,
     },
   };
 

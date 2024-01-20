@@ -55,7 +55,7 @@ export function ModalDownload(props: Props) {
         onClick={onDownloadTrigger}
         disabled={isDisabled}
         className="mr-2"
-        variant="premium"
+        variant="premium2"
       >
         Download selected
       </Button>

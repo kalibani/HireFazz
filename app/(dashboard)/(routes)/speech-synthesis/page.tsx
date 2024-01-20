@@ -31,6 +31,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { usePricing } from "@/hooks/use-pricing";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
@@ -48,6 +49,8 @@ const SpeechSynthesisPage = () => {
     stream,
     setStream,
     selectedVoiceTemp,
+    setBlob,
+    blob,
   } = useTextToSpeechStore(useShallow((state) => state));
 
   const [text, setText] = useState("");
@@ -127,6 +130,8 @@ const SpeechSynthesisPage = () => {
     }
   };
 
+  const { setCharacterCount } = usePricing();
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
@@ -163,8 +168,13 @@ const SpeechSynthesisPage = () => {
       const blob = new Blob([data], {
         type: "audio/mpeg",
       });
+      setBlob(blob);
       const url = URL.createObjectURL(blob);
       setStream(url);
+
+      // set character count for pricing
+      const characterCount = text.length;
+      setCharacterCount(characterCount);
     } catch (error) {
       console.log("e", error);
       toast("We faced some issue");
@@ -330,6 +340,7 @@ const SpeechSynthesisPage = () => {
           onExpand={onExpand}
           stream={stream}
           selectedVoiceTemp={selectedVoiceTemp}
+          blob={blob}
         />
       ) : null}
 

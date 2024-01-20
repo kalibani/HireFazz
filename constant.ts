@@ -70,7 +70,7 @@ export const PLANS = [
     quota: 10,
     pagesPerPdf: 5,
     price: {
-      amount: 9900,
+      amount: 19000,
       priceIds: {
         test: "",
         production: "",
@@ -80,7 +80,7 @@ export const PLANS = [
   {
     name: "Premium",
     slug: "premium",
-    quota: 50,
+    quota: 30,
     pagesPerPdf: 25,
     price: {
       amount: 499,
@@ -104,3 +104,11 @@ export const PLANS = [
   //   },
   // },
 ];
+
+export enum productName {
+  documentInteraction,
+  speechSynthesis,
+  dubbing,
+  instantVoiceCloning,
+  advanceVoiceCloning,
+}
