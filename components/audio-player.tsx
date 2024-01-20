@@ -1,7 +1,9 @@
 import { memo, useState, useRef, useEffect, useLayoutEffect } from "react";
+import axios from "axios";
 import ReactPlayer from "react-player";
 import * as dateFns from "date-fns";
-import { Play, Pause, Download, ChevronDown } from "lucide-react";
+import { Play, Pause, Download, ChevronDown, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 import { Progress } from "@/components/ui/progress";
 import { useProModal } from "@/hooks/use-pro-modal";
@@ -34,6 +36,7 @@ const AudioPlayer = ({
     loaded: 1,
   });
   const [audioProgress, setAudioProgress] = useState<number>(0);
+  const [isDownloading, setIsDownloading] = useState(false);
   // const [toggle, setToggle] = useState(false);
 
   const audioRef = useRef(null);
@@ -66,23 +69,69 @@ const AudioPlayer = ({
     }
   }, [stream]);
 
-  const { apiLimitCount, onOpen } = useProModal();
+  useEffect(() => {
+    const snapUrl = process.env.NEXT_PUBLIC_MIDTRANS_URL;
+    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
 
-  const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
+    const script = document.createElement("script");
 
-  const handleDownload = (audioUrl: string | "") => {
-    if (isFreeTrialLimited && stream) {
-      onOpen();
-    } else {
-      const link = document.createElement("a");
-      link.href = audioUrl;
-      link.download = "audio.mp3";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    script.src = snapUrl as string;
+    script.setAttribute("data-client-key", clientKey as string);
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handleCheckout = async (audioUrl: string | "") => {
+    const data = {
+      id: selectedVoice.voice_id,
+      name: selectedVoice.name,
+      price: 10000,
+    };
+
+    try {
+      setIsDownloading(true);
+
+      const res = await axios.post("/api/payment-gateway", data);
+      const token = res?.data?.token;
+
+      //@ts-ignore
+      snap.pay(token, {
+        onSuccess: function () {
+          //download file when payment success
+          const link = document.createElement("a");
+          link.href = stream;
+          link.download = selectedVoice?.name + ".mp3";
+          document.body.append(link);
+          link.click();
+          link.remove();
+        },
+        onPending: function () {
+          console.log("pending");
+        },
+        onError: function () {
+          console.log("error");
+        },
+        onClose: function () {
+          console.log(
+            "customer closed the popup without finishing the payment"
+          );
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      toast("There was a problem, Please try again in a moment...");
+    } finally {
+      setIsDownloading(false);
     }
   };
 
+  const { apiLimitCount, onOpen } = useProModal();
+  const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
   return (
     <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 sticky bottom-0 z-10 bg-white mt-4">
       <div className="flex items-start gap-2.5">
@@ -131,11 +180,15 @@ const AudioPlayer = ({
               </span>
               <button
                 onClick={() =>
-                  handleDownload(stream || selectedVoice.preview_url)
+                  handleCheckout(stream || selectedVoice.preview_url)
                 }
               >
                 <span>
-                  <Download color="#301a32" strokeWidth={1.75} />
+                  {isDownloading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <Download color="#301a32" strokeWidth={1.75} />
+                  )}
                 </span>
               </button>
               <button onClick={() => onExpand(false)}>
