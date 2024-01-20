@@ -92,7 +92,8 @@ const AudioPlayer = ({
       setPayAsYouGoPriceVisible(true);
       onOpen();
     } else {
-      downloadBlobFile(blob, `berrylabs-${selectedVoice.name}`);
+      const url = stream || selectedVoice.preview_url;
+      downloadBlobFile(url, `berrylabs-${selectedVoice.name}`);
     }
   };
   console.log("error", error);
@@ -102,7 +103,8 @@ const AudioPlayer = ({
 
   useEffect(() => {
     if (success) {
-      downloadBlobFile(blob, `berrylabs-${selectedVoice.name}`);
+      const url = stream || selectedVoice.preview_url;
+      downloadBlobFile(url, `berrylabs-${selectedVoice.name}`);
     }
   }, [success]);
 
