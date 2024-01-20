@@ -63,6 +63,7 @@ const HistoryTable = () => {
     stream,
     setStream,
     selectedVoiceTemp,
+    blob,
   } = useTextToSpeechStore(useShallow((state) => state));
 
   const { data, isLoading, refetch } = trpc.getGeneratedVoices.useQuery({
@@ -295,6 +296,7 @@ const HistoryTable = () => {
           onExpand={onExpand}
           stream={stream}
           selectedVoiceTemp={selectedVoiceTemp}
+          blob={blob}
         />
       ) : null}
     </div>
