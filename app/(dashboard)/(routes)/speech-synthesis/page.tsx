@@ -31,6 +31,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
@@ -248,8 +249,13 @@ const SpeechSynthesisPage = () => {
                     >
                       <span className="flex flex-1">
                         <span className="flex flex-col">
-                          <span className="block text-sm font-medium text-gray-900">
-                            Speech to speech
+                          <span className="flex items-center justify-between">
+                            <span className="block text-sm font-medium text-gray-900">
+                              Speech to speech
+                            </span>
+                            <Badge>
+                              Coming soon
+                            </Badge>
                           </span>
                           <span className="mt-1 flex items-center text-sm text-gray-500">
                             Create speech by combining the style and content of

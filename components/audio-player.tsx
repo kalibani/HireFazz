@@ -84,22 +84,16 @@ const AudioPlayer = ({
   };
 
   return (
-    <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 sticky bottom-0 z-10 bg-white mt-4">
-      <div className="flex items-start gap-2.5">
-        <div className="flex flex-col gap-1">
+    <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 sticky bottom-0 z-10 bg-white mt-4 w-full">
+      <div className="flex items-start gap-2.5 w-full">
+        <div className="flex flex-col gap-1 w-full">
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <span className="text-sm font-semibold text-gray-900 dark:text-white">
               Voice Preview for {selectedVoice.category} / {selectedVoice.name}
             </span>
           </div>
-          {isReady ? (
-            <span className="relative flex h-3 w-3 -bottom-4 md:-bottom-3.5 -right-5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75 "></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
-            </span>
-          ) : null}
-          <div className="flex items-center gap-6">
-            <div className="flex items-center space-x-2 rtl:space-x-reverse w-screen">
+          <div className="flex items-center gap-6 w-full">
+            <div className="flex items-center space-x-2 rtl:space-x-reverse w-full">
               <button
                 className="inline-flex self-center items-center p-2 text-sm font-medium text-center text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-600"
                 type="button"
@@ -119,7 +113,7 @@ const AudioPlayer = ({
               </button>
               <Progress
                 value={audioProgress}
-                className="w-[30%] lg:w-[60%]"
+                className="flex-1"
                 indicatorColor="bg-gray-900"
               />
               <span className="inline-flex self-center items-center p-2 text-sm font-medium text-gray-400 dark:text-white">
@@ -129,10 +123,17 @@ const AudioPlayer = ({
                 )}{" "}
                 / {dateFns.format(Math.round(duration) * 1000, "mm:ss")}
               </span>
+              {isReady ? (
+                <span className="relative flex h-3 w-3 bottom-3 -right-9">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75 "></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+                </span>
+              ) : null}
               <button
                 onClick={() =>
                   handleDownload(stream || selectedVoice.preview_url)
                 }
+                className="relative"
               >
                 <span>
                   <Download color="#301a32" strokeWidth={1.75} />

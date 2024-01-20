@@ -249,8 +249,8 @@ const HistoryTable = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="w-full flex flex-col h-screen">
+      <div className="mb-4 flex items-center justify-between px-4 lg:px-8 ">
         <div>
           <ModalDownload
             isDisabled={selected.length === 0}
@@ -270,22 +270,25 @@ const HistoryTable = () => {
           />
         </div>
       </div>
-      <DataTable
-        tableClassName="rounded-md border-r-gray-200/70 border-l-gray-200/70 border relative"
-        tableHeaderClassName="bg-gray-300/30"
-        tableHeadClassName="text-black font-bold"
-        columns={columns}
-        data={generatedVoices || []}
-        pageIndex={currentPage}
-        pageSize={count}
-        onNextPage={onFetchNextPage}
-        onPreviousPage={onFetchPreviousPage}
-        disableNextPage={
-          offset + PAGE_LIMIT > count || generatedVoices?.length === 0
-        }
-        disablePreviousPage={offset === 0 || generatedVoices?.length === 0}
-        isLoading={isLoading}
-      />
+      <div className="flex-1 px-4 lg:px-8 ">
+        <DataTable
+          tableClassName="rounded-md border-r-gray-200/70 border-l-gray-200/70 border relative"
+          tableHeaderClassName="bg-gray-300/30"
+          tableHeadClassName="text-black font-bold"
+          columns={columns}
+          data={generatedVoices || []}
+          pageIndex={currentPage}
+          pageSize={count}
+          onNextPage={onFetchNextPage}
+          onPreviousPage={onFetchPreviousPage}
+          disableNextPage={
+            offset + PAGE_LIMIT > count || generatedVoices?.length === 0
+          }
+          disablePreviousPage={offset === 0 || generatedVoices?.length === 0}
+          isLoading={isLoading}
+        />
+      </div>
+
       {/* audio player start */}
       {(stream || Object.keys(selectedVoice).length) && expanded ? (
         <AudioPlayer

@@ -14,6 +14,11 @@ export const getVoiceSettings = (voice_id: string) =>
   axiosInterceptorsInstance.get(`${elevenLabsVoices}/${voice_id}/settings`);
 export const getDefaultVoiceSettings = () =>
   axiosInterceptorsInstance.get(elevenLabsDefaultVoiceSettings);
+export const updateVoiceSettings = (payload: any, voice_id: string) =>
+  axiosInterceptorsInstance.post(
+    `${elevenLabsVoices}/${voice_id}/settings/edit`,
+    payload
+  );
 
 export const postTextToSpeech = (
   voice_id: string,
