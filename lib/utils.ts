@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { productName } from "@/constant";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -25,4 +26,18 @@ export function downloadBlobFile(file: Blob, filename: string) {
   a.download = filename;
   a.click();
   window.URL.revokeObjectURL(url);
+}
+
+export function priceSchemeHelper(
+  characterCount: number,
+  subscriptionType: string,
+  selectedProductName: productName
+) {
+  let price = 19000;
+  if (subscriptionType === "PREMIUM") return (price = 499000);
+  if (selectedProductName === productName.documentInteraction) return price;
+  if (selectedProductName === productName.speechSynthesis) {
+    if (characterCount > 2500) return price * 2;
+    return price;
+  }
 }

@@ -37,7 +37,7 @@ const FreeCounter = ({ apiLimitCount = 0 }: FreeCounterProps) => {
           </div>
           <Button
             className="w-full"
-            variant="premium"
+            variant="premium2"
             onClick={proModal.onOpen}
           >
             Upgrade
