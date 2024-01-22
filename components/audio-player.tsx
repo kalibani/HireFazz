@@ -1,11 +1,17 @@
 import { memo, useState, useRef, useEffect, useLayoutEffect } from "react";
+import axios from "axios";
 import ReactPlayer from "react-player";
 import * as dateFns from "date-fns";
-import { Play, Pause, Download, ChevronDown } from "lucide-react";
+import { Play, Pause, Download, ChevronDown, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 import { Progress } from "@/components/ui/progress";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { MAX_FREE_COUNTS } from "@/constant";
+import UseMidtrans from "@/hooks/use-midtrans";
+import { useUser } from "@/hooks/use-user";
+import { usePricing } from "@/hooks/use-pricing";
+import { downloadBlobFile } from "@/lib/utils";
 
 type audioPlayerProps = {
   selectedVoice: any;
@@ -14,6 +20,7 @@ type audioPlayerProps = {
   onExpand: (v: boolean) => void;
   stream: any;
   selectedVoiceTemp: {};
+  blob: any;
 };
 
 const AudioPlayer = ({
@@ -23,6 +30,7 @@ const AudioPlayer = ({
   onExpand,
   stream,
   selectedVoiceTemp,
+  blob,
 }: audioPlayerProps) => {
   const [isReady, setReady] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
@@ -34,6 +42,7 @@ const AudioPlayer = ({
     loaded: 1,
   });
   const [audioProgress, setAudioProgress] = useState<number>(0);
+  const [isDownloading, setIsDownloading] = useState(false);
   // const [toggle, setToggle] = useState(false);
 
   const audioRef = useRef(null);
@@ -66,22 +75,38 @@ const AudioPlayer = ({
     }
   }, [stream]);
 
-  const { apiLimitCount, onOpen } = useProModal();
-
+  const { apiLimitCount, onOpen, setPayAsYouGoPriceVisible } = useProModal();
   const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
+  const { subscriptionType } = useUser();
 
-  const handleDownload = (audioUrl: string | "") => {
-    if (isFreeTrialLimited && stream) {
+  // const payload = {
+  //   id: selectedVoice.voice_id,
+  //   name: selectedVoice.name,
+  //   price: 1000,
+  // };
+
+  const { isLoading, success, error, isClosed } = UseMidtrans();
+
+  const handleDownload = async () => {
+    if (subscriptionType !== "PREMIUM" && isFreeTrialLimited) {
+      setPayAsYouGoPriceVisible(true);
       onOpen();
     } else {
-      const link = document.createElement("a");
-      link.href = audioUrl;
-      link.download = "audio.mp3";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const url = stream || selectedVoice.preview_url;
+      downloadBlobFile(url, `berrylabs-${selectedVoice.name}`);
     }
   };
+  console.log("error", error);
+  console.log("success", success);
+  console.log("isClosed", isClosed);
+  console.log("isLoading", isLoading);
+
+  useEffect(() => {
+    if (success) {
+      const url = stream || selectedVoice.preview_url;
+      downloadBlobFile(url, `berrylabs-${selectedVoice.name}`);
+    }
+  }, [success]);
 
   return (
     <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 sticky bottom-0 z-10 bg-white mt-4 w-full">
@@ -130,13 +155,15 @@ const AudioPlayer = ({
                 </span>
               ) : null}
               <button
-                onClick={() =>
-                  handleDownload(stream || selectedVoice.preview_url)
-                }
+              onClick={() => handleDownload()}
                 className="relative"
               >
                 <span>
-                  <Download color="#301a32" strokeWidth={1.75} />
+                  {isDownloading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <Download color="#301a32" strokeWidth={1.75} />
+                  )}
                 </span>
               </button>
               <button onClick={() => onExpand(false)}>

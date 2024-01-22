@@ -63,6 +63,7 @@ const HistoryTable = () => {
     stream,
     setStream,
     selectedVoiceTemp,
+    blob,
   } = useTextToSpeechStore(useShallow((state) => state));
 
   const { data, isLoading, refetch } = trpc.getGeneratedVoices.useQuery({
@@ -190,8 +191,14 @@ const HistoryTable = () => {
       const res = await downloadHistory(
         selectedVoices.map((s) => s.historyItemId as string)
       );
+      const dataBlob = res.data;
+      const blob = new Blob([dataBlob], {
+        type: "audio/mpeg",
+      });
+      const url = URL.createObjectURL(blob);
+
       downloadBlobFile(
-        res.data,
+        url,
         `berry_labs_generated_voices${
           selectedVoices.length === 1 ? ".mp3" : ".zip"
         }`
@@ -298,6 +305,7 @@ const HistoryTable = () => {
           onExpand={onExpand}
           stream={stream}
           selectedVoiceTemp={selectedVoiceTemp}
+          blob={blob}
         />
       ) : null}
     </div>

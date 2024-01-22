@@ -2,7 +2,7 @@
 
 import { Check, Zap } from "lucide-react";
 
-import { tools } from "@/constant";
+import { productName, tools } from "@/constant";
 import { Badge } from "./ui/badge";
 import {
   Dialog,
@@ -18,20 +18,26 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
-import { trpc } from "@/app/_trpc/client";
+import { usePricing } from "@/hooks/use-pricing";
+import UseMidtrans from "@/hooks/use-midtrans";
 
 const ProModal = () => {
   const proModal = useProModal();
+  const { payAsYouGoPrice } = usePricing();
+  const { handleCheckout } = UseMidtrans();
 
-  const { mutate: createStripeSession } = trpc.createStripeSession.useMutation({
-    onSuccess: ({ url }) => {
-      window.location.href = url ?? "/settings";
-    },
-  });
+  const handleClickUpgrade = (subscriptionType: string) => {
+    const selectedProductName = productName.speechSynthesis;
+
+    handleCheckout(subscriptionType, selectedProductName);
+    setTimeout(() => {
+      proModal.onClose();
+    }, 1000);
+  };
 
   return (
     <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-lg md:min-w-max">
         <DialogHeader>
           <DialogTitle className="flex justify-center items-center flex-col gap-y-4 pb-2">
             <div className="flex items-center gap-x-2 font-bold py-1">
@@ -58,16 +64,76 @@ const ProModal = () => {
             ))}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
-          <Button
-            variant="premium"
-            size="lg"
-            className="w-full"
-            onClick={() => createStripeSession()}
+        <DialogFooter className="md:justify-between items-center">
+          <div
+            className={cn(
+              "w-full relative flex flex-col bg-slate-50 px-5 py-8 sm:rounded-2xl",
+              {
+                "md:w-fit": proModal.payAsYouGoPriceVisible,
+                "md:w-full": !proModal.payAsYouGoPriceVisible,
+              }
+            )}
           >
-            Upgrade
-            <Zap className="w-4 h-4 ml-2 fill-white" />
-          </Button>
+            <p className="flex items-center justify-center">
+              <span className="text-[2rem] leading-none text-slate-900">
+                IDR
+                <span className="font-bold"> 499Rb</span>
+              </span>
+              <span className="ml-3 text-sm">
+                <span className="font-semibold text-slate-900">
+                  One Time Payment
+                </span>
+                <br />
+                <span className="font-semibold text-slate-500">
+                  Unlimited Access
+                </span>
+              </span>
+            </p>
+            <Button
+              variant="premium2"
+              size="lg"
+              className="w-full mt-3"
+              onClick={() => handleClickUpgrade("PREMIUM")}
+            >
+              Premium
+              <Zap className="w-4 h-4 ml-2 fill-white" />
+            </Button>
+          </div>
+          {/* only show Premium Subscription when there's no download  */}
+          {proModal.payAsYouGoPriceVisible ? (
+            <>
+              <div className="font-bold">Or</div>
+              <div className="w-full md:w-fit relative flex flex-col bg-slate-50 px-5 py-8 sm:rounded-2xl">
+                <p className="flex items-center justify-center">
+                  <span className="text-[2rem] leading-none text-slate-900">
+                    IDR
+                    <span className="font-bold">
+                      {" "}
+                      {payAsYouGoPrice.toLocaleString()}
+                    </span>
+                  </span>
+                  <span className="ml-3 text-sm">
+                    <span className="font-semibold text-slate-900">
+                      Flexible Payment
+                    </span>
+                    <br />
+                    <span className="font-semibold text-slate-500">
+                      Use As You Wish
+                    </span>
+                  </span>
+                </p>
+                <Button
+                  variant="premium"
+                  size="lg"
+                  className="w-full mt-3"
+                  onClick={() => handleClickUpgrade("FLEXIBLE")}
+                >
+                  Pay as You Go
+                  <Zap className="w-4 h-4 ml-2 fill-white" />
+                </Button>
+              </div>
+            </>
+          ) : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>
