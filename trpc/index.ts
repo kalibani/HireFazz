@@ -16,6 +16,7 @@ import {
   getFileUploadStatus,
   getUserFiles,
 } from "./document-interaction";
+import { updateLimit } from "./user";
 
 export const appRouter = router({
   // Document Interaction
@@ -76,6 +77,9 @@ export const appRouter = router({
   saveGeneratedVoice: saveGeneratedVoice,
   getGeneratedVoices: getGeneratedVoices,
   deleteGeneratedVoices: deleteGeneratedVoices,
+
+  // User
+  updateLimit: updateLimit,
 });
 // Export type router type signature,
 // NOT the router itself.

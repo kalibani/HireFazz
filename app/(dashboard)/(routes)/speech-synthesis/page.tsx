@@ -187,25 +187,20 @@ const SpeechSynthesisPage = () => {
   };
 
   const router = useRouter();
-  const handleComingSoon = () => {
-    router.push("/coming-soon");
-  };
-
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-    if (task === "speech") {
-      timeout = setTimeout(() => {
-        handleComingSoon();
-      }, 1000);
-    }
-
-    return () => {
-      clearTimeout(timeout);
-      setTask("text");
-    };
-  }, [task]);
 
   const characterLimit = 5000;
+
+  const updateLimit = trpc.updateLimit.useMutation();
+
+  const handleUpdateUserLimit = async () => {
+    try {
+      await updateLimit.mutate();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      router.refresh();
+    }
+  };
 
   return (
     <div>
@@ -255,7 +250,7 @@ const SpeechSynthesisPage = () => {
                           : ""
                       )}
                       role="presentation"
-                      onClick={() => setTask("speech")}
+                      // onClick={() => setTask("speech")}
                     >
                       <span className="flex flex-1">
                         <span className="flex flex-col">
@@ -263,9 +258,7 @@ const SpeechSynthesisPage = () => {
                             <span className="block text-sm font-medium text-gray-900">
                               Speech to speech
                             </span>
-                            <Badge>
-                              Coming soon
-                            </Badge>
+                            <Badge>Coming soon</Badge>
                           </span>
                           <span className="mt-1 flex items-center text-sm text-gray-500">
                             Create speech by combining the style and content of
@@ -347,6 +340,7 @@ const SpeechSynthesisPage = () => {
           stream={stream}
           selectedVoiceTemp={selectedVoiceTemp}
           blob={blob}
+          updateUserLimit={handleUpdateUserLimit}
         />
       ) : null}
 

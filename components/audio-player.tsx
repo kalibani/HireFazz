@@ -1,16 +1,15 @@
+"use client";
+
 import { memo, useState, useRef, useEffect, useLayoutEffect } from "react";
-import axios from "axios";
 import ReactPlayer from "react-player";
 import * as dateFns from "date-fns";
 import { Play, Pause, Download, ChevronDown, Loader2 } from "lucide-react";
-import toast from "react-hot-toast";
 
 import { Progress } from "@/components/ui/progress";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { MAX_FREE_COUNTS } from "@/constant";
 import UseMidtrans from "@/hooks/use-midtrans";
 import { useUser } from "@/hooks/use-user";
-import { usePricing } from "@/hooks/use-pricing";
 import { downloadBlobFile } from "@/lib/utils";
 
 type audioPlayerProps = {
@@ -21,6 +20,7 @@ type audioPlayerProps = {
   stream: any;
   selectedVoiceTemp: {};
   blob: any;
+  updateUserLimit?: () => void;
 };
 
 const AudioPlayer = ({
@@ -31,6 +31,7 @@ const AudioPlayer = ({
   stream,
   selectedVoiceTemp,
   blob,
+  updateUserLimit,
 }: audioPlayerProps) => {
   const [isReady, setReady] = useState(false);
   const [isPlaying, setPlaying] = useState(false);
@@ -88,12 +89,18 @@ const AudioPlayer = ({
   const { isLoading, success, error, isClosed } = UseMidtrans();
 
   const handleDownload = async () => {
-    if (subscriptionType !== "PREMIUM" && isFreeTrialLimited) {
+    if (subscriptionType !== "PREMIUM" && isFreeTrialLimited && stream) {
       setPayAsYouGoPriceVisible(true);
       onOpen();
     } else {
+      setIsDownloading(true);
       const url = stream || selectedVoice.preview_url;
       downloadBlobFile(url, `berrylabs-${selectedVoice.name}`);
+      if (!isFreeTrialLimited && stream) {
+        // @ts-ignore
+        updateUserLimit();
+      }
+      setIsDownloading(false);
     }
   };
   console.log("error", error);
@@ -148,16 +155,13 @@ const AudioPlayer = ({
                 )}{" "}
                 / {dateFns.format(Math.round(duration) * 1000, "mm:ss")}
               </span>
-              {isReady ? (
+              {stream && isReady ? (
                 <span className="relative flex h-3 w-3 bottom-3 -right-9">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75 "></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
                 </span>
               ) : null}
-              <button
-              onClick={() => handleDownload()}
-                className="relative"
-              >
+              <button onClick={() => handleDownload()} className="relative">
                 <span>
                   {isDownloading ? (
                     <Loader2 className="animate-spin" />
