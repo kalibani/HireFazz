@@ -1,15 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import { priceSchemeHelper } from "@/lib/utils";
 import { usePricing } from "./use-pricing";
 import { productName } from "@/constant";
 import { useTextToSpeechStore } from "./use-text-to-speech";
-
-type PayloadProps = {
-  id: string;
-  name: string;
-  price: number;
-};
+import { useMidtransStore } from "./use-midtrans-store";
 
 export default function UseMidtrans() {
   useEffect(() => {
@@ -29,11 +24,18 @@ export default function UseMidtrans() {
     };
   }, []);
 
-  const [isLoading, setLoading] = useState(false);
-  const [success, setSuccess] = useState<any>("");
-  const [pending, setPending] = useState<any>("");
-  const [error, setError] = useState<any>("");
-  const [isClosed, setClosed] = useState<any>("");
+  const {
+    isLoading,
+    isClosed,
+    successResult,
+    pendingResult,
+    error,
+    setLoading,
+    onClosed,
+    onSuccess,
+    onPending,
+    onError,
+  } = useMidtransStore();
 
   const { characterCount, setPayAsYouGoPrice } = usePricing();
   const { selectedVoice } = useTextToSpeechStore();
@@ -71,25 +73,22 @@ export default function UseMidtrans() {
       //@ts-ignore
       snap.pay(token, {
         onSuccess: function (result: any) {
-          setSuccess(result);
-          console.log("r", result);
+          onSuccess(result);
+          //@ts-ignore
+          snap.hide();
         },
         onPending: function (result: any) {
-          setPending(result);
-          console.log("r", result);
+          onPending(result);
         },
         onError: function (result: any) {
-          setError(result);
-          console.log("r", result);
+          onError(result);
         },
-        onClose: function (result: any) {
-          setClosed(result);
-          console.log("r", result);
+        onClose: function () {
+          onClosed(true);
         },
       });
     } catch (error) {
       console.log(error);
-      setError(error);
     } finally {
       setLoading(false);
     }
@@ -97,8 +96,8 @@ export default function UseMidtrans() {
 
   return {
     handleCheckout,
-    success,
-    pending,
+    successResult,
+    pendingResult,
     error,
     isLoading,
     isClosed,

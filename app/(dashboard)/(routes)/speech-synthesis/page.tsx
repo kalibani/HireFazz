@@ -33,6 +33,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { usePricing } from "@/hooks/use-pricing";
+import { useMidtransStore } from "@/hooks/use-midtrans-store";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
@@ -53,6 +54,8 @@ const SpeechSynthesisPage = () => {
     setBlob,
     blob,
   } = useTextToSpeechStore(useShallow((state) => state));
+
+  const { onReset } = useMidtransStore();
 
   const [text, setText] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -134,6 +137,9 @@ const SpeechSynthesisPage = () => {
   const { setCharacterCount } = usePricing();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    // reset midtrans store before generate voice
+    onReset();
+
     try {
       e.preventDefault();
       setLoading(true);

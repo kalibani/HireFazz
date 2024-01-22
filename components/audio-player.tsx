@@ -80,13 +80,14 @@ const AudioPlayer = ({
   const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
   const { subscriptionType } = useUser();
 
-  // const payload = {
-  //   id: selectedVoice.voice_id,
-  //   name: selectedVoice.name,
-  //   price: 1000,
-  // };
+  const payload = {
+    id: selectedVoice.voice_id,
+    name: selectedVoice.name,
+    price: 1000,
+  };
 
-  const { isLoading, success, error, isClosed } = UseMidtrans();
+  const { isLoading, successResult, error, isClosed, pendingResult } =
+    UseMidtrans();
 
   const handleDownload = async () => {
     if (subscriptionType !== "PREMIUM" && isFreeTrialLimited && stream) {
@@ -103,17 +104,13 @@ const AudioPlayer = ({
       setIsDownloading(false);
     }
   };
-  console.log("error", error);
-  console.log("success", success);
-  console.log("isClosed", isClosed);
-  console.log("isLoading", isLoading);
 
   useEffect(() => {
-    if (success) {
+    if (Object.keys(successResult).length > 0) {
       const url = stream || selectedVoice.preview_url;
       downloadBlobFile(url, `berrylabs-${selectedVoice.name}`);
     }
-  }, [success]);
+  }, [successResult]);
 
   return (
     <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 sticky bottom-0 z-10 bg-white mt-4 w-full">
