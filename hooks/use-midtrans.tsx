@@ -1,10 +1,13 @@
 import { useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { priceSchemeHelper } from "@/lib/utils";
 import { usePricing } from "./use-pricing";
 import { productName } from "@/constant";
 import { useTextToSpeechStore } from "./use-text-to-speech";
 import { useMidtransStore } from "./use-midtrans-store";
+
+// import * as dateFns from "date-fns";
 
 export default function UseMidtrans() {
   useEffect(() => {
@@ -58,11 +61,28 @@ export default function UseMidtrans() {
       setPayAsYouGoPrice(price!);
     }
 
-    const data = {
+    let data = {
       id: voiceId,
       name: voiceName,
       price: price,
     };
+
+    if (subscriptionType === "PREMIUM") {
+      // const startTime = new Date();
+      // const nextMonth = dateFns.addMonths(startTime, 1);
+
+      // const dueDate = dateFns.format(nextMonth, "yyyy-MM-dd HH:mm:ss z");
+
+      data = {
+        ...data,
+        id: "PREMIUM" + uuidv4(),
+        name: "PREMIUM-SUBSCRIPTION",
+        // @ts-ignore
+        // required: true,
+        // start_time: dueDate,
+        // interval: "month",
+      };
+    }
 
     try {
       setLoading(true);
@@ -74,8 +94,6 @@ export default function UseMidtrans() {
       snap.pay(token, {
         onSuccess: function (result: any) {
           onSuccess(result);
-          //@ts-ignore
-          snap.hide();
         },
         onPending: function (result: any) {
           onPending(result);

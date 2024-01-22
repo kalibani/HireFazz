@@ -11,6 +11,7 @@ import { MAX_FREE_COUNTS } from "@/constant";
 import UseMidtrans from "@/hooks/use-midtrans";
 import { useUser } from "@/hooks/use-user";
 import { downloadBlobFile } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 type audioPlayerProps = {
   selectedVoice: any;
@@ -80,12 +81,6 @@ const AudioPlayer = ({
   const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
   const { subscriptionType } = useUser();
 
-  const payload = {
-    id: selectedVoice.voice_id,
-    name: selectedVoice.name,
-    price: 1000,
-  };
-
   const { isLoading, successResult, error, isClosed, pendingResult } =
     UseMidtrans();
 
@@ -106,11 +101,19 @@ const AudioPlayer = ({
   };
 
   useEffect(() => {
-    if (Object.keys(successResult).length > 0) {
-      const url = stream || selectedVoice.preview_url;
+    if (Object.keys(successResult).length > 0 && stream) {
+      const url = stream;
       downloadBlobFile(url, `berrylabs-${selectedVoice.name}`);
     }
   }, [successResult]);
+
+  useEffect(() => {
+    if (Object.keys(pendingResult).length > 0) {
+      toast.success("Pembayaran Anda Tertunda, Silakan Selesaikan Pembayaran", {
+        duration: 2000,
+      });
+    }
+  }, [pendingResult]);
 
   return (
     <div className="shadow shadow-slate-200/80 ring-1 ring-slate-900/5 py-4 px-4 sticky bottom-0 z-10 bg-white mt-4 w-full">

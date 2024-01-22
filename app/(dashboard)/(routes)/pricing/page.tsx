@@ -150,7 +150,7 @@ const Page = () => {
                       <p className="text-gray-500">
                         {" "}
                         {plan === "Premium"
-                          ? "per month"
+                          ? "Unlimited Access"
                           : "per document uploaded/voice downloaded"}
                       </p>
                     </div>
