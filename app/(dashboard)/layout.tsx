@@ -20,7 +20,7 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
       <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 bg-gray-900">
         <Sidebar apiLimitCount={count} subscriptionType={subscriptionType} />
       </div>
-      <main className="md:pl-72 overflow-hidden">
+      <main className="md:pl-72 overflow-clip">
         <Navbar />
         {children}
       </main>

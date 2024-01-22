@@ -26,7 +26,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getVoiceSettings, getDefaultVoiceSettings } from "@/lib/axios";
+import {
+  getVoiceSettings,
+  getDefaultVoiceSettings,
+  updateVoiceSettings,
+} from "@/lib/axios";
 import { useTextToSpeechStore } from "@/hooks/use-text-to-speech";
 import { useModel } from "@/hooks/use-model-modal";
 
@@ -76,6 +80,17 @@ function ComboboxSlider({
     }
   };
 
+  const handleUpdateVoiceSettings = async () => {
+    const payload = {
+      stability: stability[0] / 100,
+      similarity_boost: similarity_boost[0] / 100,
+      style: style[0] / 100,
+      use_speaker_boost,
+    };
+
+    await updateVoiceSettings(payload, voiceId);
+  };
+
   useEffect(() => {
     if (!isError && data?.data && !isLoading) {
       const voiceSettings = {
@@ -87,6 +102,14 @@ function ComboboxSlider({
       setVoiceSettings(voiceSettings);
     }
   }, [data]);
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      handleUpdateVoiceSettings();
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  }, [stability, similarity_boost, style, use_speaker_boost]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
