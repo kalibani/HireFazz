@@ -6,6 +6,8 @@ import { usePricing } from "./use-pricing";
 import { productName } from "@/constant";
 import { useTextToSpeechStore } from "./use-text-to-speech";
 import { useMidtransStore } from "./use-midtrans-store";
+import { trpc } from "@/app/_trpc/client";
+import { useRouter } from "next/navigation";
 
 // import * as dateFns from "date-fns";
 
@@ -43,6 +45,12 @@ export default function UseMidtrans() {
   const { characterCount, setPayAsYouGoPrice } = usePricing();
   const { selectedVoice } = useTextToSpeechStore();
 
+  const saveTransaction = trpc.saveTransactions.useMutation();
+
+  const updateUserSubscription = trpc.updateUserSubscription.useMutation();
+
+  const router = useRouter();
+
   const handleCheckout = async (
     subscriptionType: string,
     selectedProductName: productName
@@ -64,7 +72,7 @@ export default function UseMidtrans() {
     let data = {
       id: voiceId,
       name: voiceName,
-      price: price,
+      price: 1000,
     };
 
     if (subscriptionType === "PREMIUM") {
@@ -92,8 +100,21 @@ export default function UseMidtrans() {
 
       //@ts-ignore
       snap.pay(token, {
-        onSuccess: function (result: any) {
+        onSuccess: async function (result: any) {
           onSuccess(result);
+          // save transaction to database
+          await saveTransaction.mutate({
+            amountPaid: Number(result?.gross_amount),
+            orderId: result?.order_id,
+            productName: subscriptionType,
+          });
+
+          await updateUserSubscription.mutate({
+            characterCount: characterCount,
+            subscriptionType: subscriptionType,
+          });
+
+          router.refresh();
         },
         onPending: function (result: any) {
           onPending(result);

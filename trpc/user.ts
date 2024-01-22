@@ -12,7 +12,61 @@ const user = {
     await increaseApiLimit(userId);
   }),
 
+  saveTransactions: privateProcedure
+    .input(
+      z.object({
+        amountPaid: z.number(),
+        orderId: z.string(),
+        productName: z.string(),
+      })
+    )
+
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const transactionGenerated = await prismadb.transactions.create({
+        data: {
+          amountPaid: input.amountPaid,
+          orderId: input.orderId,
+          productName: input.productName,
+          userId: userId,
+        },
+      });
+
+      return { transactionGenerated };
+    }),
+
+  updateUserSubscription: privateProcedure
+    .input(
+      z.object({
+        characterCount: z.number(),
+        subscriptionType: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      const user = await prismadb.userAPILimit.findUnique({
+        where: {
+          userId: userId,
+        },
+      });
+
+      if (user) {
+        await prismadb.userAPILimit.update({
+          where: { userId: userId },
+          data: {
+            characterCount: user.characterCount! + input.characterCount,
+            // @ts-ignore
+            subscriptionType: input.subscriptionType,
+          },
+        });
+      }
+    }),
+
   // delete history
 };
 
-export const { updateLimit } = user;
+export const { updateLimit, saveTransactions, updateUserSubscription } = user;

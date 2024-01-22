@@ -110,6 +110,7 @@ model Transactions {
   id         String        @id @default(cuid())
   User       userAPILimit? @relation(fields: [userId], references: [userId])
   userId     String?
+  orderId String
   amountPaid Decimal
   productName String
 }

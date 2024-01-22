@@ -16,7 +16,7 @@ import {
   getFileUploadStatus,
   getUserFiles,
 } from "./document-interaction";
-import { updateLimit } from "./user";
+import { updateLimit, saveTransactions, updateUserSubscription } from "./user";
 
 export const appRouter = router({
   // Document Interaction
@@ -80,6 +80,8 @@ export const appRouter = router({
 
   // User
   updateLimit: updateLimit,
+  saveTransactions: saveTransactions,
+  updateUserSubscription: updateUserSubscription,
 });
 // Export type router type signature,
 // NOT the router itself.
