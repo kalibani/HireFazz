@@ -11,7 +11,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.23.0",
+    "@clerk/nextjs": "^4.29.3",
     "@cyntler/react-doc-viewer": "^1.14.1",
     "@emailjs/browser": "^3.12.1",
     "@hookform/resolvers": "^3.1.1",
