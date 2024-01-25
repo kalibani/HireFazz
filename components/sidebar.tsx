@@ -18,6 +18,7 @@ import {
   SquareStack,
   AudioLines,
   HeartHandshake,
+  Heart,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -138,6 +139,13 @@ const Sidebar = ({ apiLimitCount = 0, subscriptionType }: sidebarProps) => {
         </div>
       </div>
       <FreeCounter apiLimitCount={apiLimitCount} />
+      <hr className="h-px bg-white/10 border-0 " />
+      <span className="flex px-3 py-1 h-10 items-center">
+        <span className="text-zinc-400 mr-2 text-sm">
+          Powered by: IIElevenLabs
+        </span>
+        <Heart className="h-4 w-4 text-red-700" />
+      </span>
     </div>
   );
 };
