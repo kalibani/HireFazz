@@ -22,7 +22,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
 
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
-      if (file.uploadStatus !== "FAILED") {
+      if (file.uploadStatus === "SUCCESS") {
         router.refresh();
         router.push(`/summarizer/${file.id}`);
       } else {

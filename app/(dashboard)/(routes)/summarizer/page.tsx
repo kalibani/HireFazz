@@ -13,6 +13,7 @@ import Loader from "@/components/loader";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { trpc } from "@/app/_trpc/client";
 import { MAX_FREE_COUNTS } from "@/constant";
+import { useUser } from "@/hooks/use-user";
 
 const PDFSummarizerPage = () => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
@@ -20,6 +21,7 @@ const PDFSummarizerPage = () => {
   >(null);
 
   const { apiLimitCount, onOpen } = useProModal();
+  const { subscriptionType } = useUser();
 
   const { data: files, isLoading } = trpc.getUserFiles
     // @ts-ignore
@@ -58,7 +60,7 @@ const PDFSummarizerPage = () => {
         <div>
           <div className="rounded-lg w-full border p-4 px-3 md:px-4 focus-within:shadow-sm gap-2 flex h-16 items-center justify-between">
             <h1 className="mb-3text-gray-900">Upload Your Document</h1>
-            {isFreeTrialLimited ? (
+            {isFreeTrialLimited && subscriptionType !== "PREMIUM" ? (
               <Button onClick={onOpen}>Upload document</Button>
             ) : (
               <UploadButton isSubscribed={true} buttonText="Upload document" />
