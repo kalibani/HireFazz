@@ -105,7 +105,6 @@ const Sidebar = ({ apiLimitCount = 0, subscriptionType }: sidebarProps) => {
 
   useEffect(() => {
     setSubscriptionType(subscriptionType);
-    console.log("-->", subscriptionType);
   }, [subscriptionType]);
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
@@ -138,9 +137,11 @@ const Sidebar = ({ apiLimitCount = 0, subscriptionType }: sidebarProps) => {
           ))}
         </div>
       </div>
-      <FreeCounter apiLimitCount={apiLimitCount} />
+      {subscriptionType !== "PREMIUM" ? (
+        <FreeCounter apiLimitCount={apiLimitCount} />
+      ) : null}
       <hr className="h-px bg-white/10 border-0 " />
-      <span className="flex px-3 py-1 h-10 items-center">
+      <span className="flex px-3 py-1 items-center">
         <span className="text-zinc-400 mr-2 text-sm">
           Powered by: IIElevenLabs
         </span>
