@@ -81,7 +81,7 @@ export default function UseMidtrans() {
     let data = {
       id: voiceId,
       name: voiceName,
-      price: 1000,
+      price: price,
     };
 
     if (subscriptionType === "PREMIUM") {
