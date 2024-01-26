@@ -9,6 +9,7 @@ type voices = {
   expanded: boolean;
   stream: string;
   blob: any;
+  historyItemId: string;
 };
 
 type voicesAction = {
@@ -19,6 +20,7 @@ type voicesAction = {
   onExpand: (v: boolean) => void;
   setStream: (v: any) => void;
   setBlob: (v: any) => void;
+  setHistoryItemId: (v: string) => void;
 };
 
 type voiceSettings = {
@@ -106,6 +108,11 @@ export const useTextToSpeechStore = create<
     setBlob: (v) =>
       set((state) => {
         state.stream = v;
+      }),
+    historyItemId: "",
+    setHistoryItemId: (v) =>
+      set((state) => {
+        state.historyItemId = v;
       }),
   }))
 );

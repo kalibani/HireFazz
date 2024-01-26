@@ -48,6 +48,7 @@ const TextToSpeech = {
           requestId: input.requestId,
           settings: input.settings,
           shareLinkId: input.shareLinkId,
+          isPaid: false,
           // @ts-ignore
           state: input.state,
           text: input.text,
@@ -135,7 +136,71 @@ const TextToSpeech = {
 
       return { generatedVoice };
     }),
+
+  updateGeneratedVoiceStatus: privateProcedure
+    .input(
+      z.object({
+        isPaid: z.boolean(),
+        historyItemId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      if (!input.historyItemId) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const generatedVoice = await prismadb.generatedVoices.findFirst({
+        where: {
+          historyItemId: input.historyItemId,
+        },
+      });
+
+      if (generatedVoice) {
+        const updatedVoice = await prismadb.generatedVoices.update({
+          where: { historyItemId: input.historyItemId },
+          data: {
+            isPaid: input.isPaid,
+          },
+        });
+        return { updatedVoice };
+      } else {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+    }),
+
+  getGeneratedVoice: privateProcedure
+    .input(
+      z.object({
+        historyItemId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      if (!input.historyItemId) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const generatedVoice = await prismadb.generatedVoices.findFirst({
+        where: {
+          historyItemId: input.historyItemId,
+        },
+      });
+
+      if (generatedVoice) {
+        return { generatedVoice };
+      } else {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+    }),
 };
 
-export const { saveGeneratedVoice, getGeneratedVoices, deleteGeneratedVoices } =
-  TextToSpeech;
+export const {
+  saveGeneratedVoice,
+  getGeneratedVoices,
+  deleteGeneratedVoices,
+  updateGeneratedVoiceStatus,
+  getGeneratedVoice,
+} = TextToSpeech;

@@ -7,7 +7,6 @@ import { productName } from "@/constant";
 import { useTextToSpeechStore } from "./use-text-to-speech";
 import { useMidtransStore } from "./use-midtrans-store";
 import { trpc } from "@/app/_trpc/client";
-import { useRouter } from "next/navigation";
 
 // import * as dateFns from "date-fns";
 
@@ -43,13 +42,23 @@ export default function UseMidtrans() {
   } = useMidtransStore();
 
   const { characterCount, setPayAsYouGoPrice } = usePricing();
-  const { selectedVoice } = useTextToSpeechStore();
+  const { selectedVoice, historyItemId } = useTextToSpeechStore();
 
-  const saveTransaction = trpc.saveTransactions.useMutation();
+  const saveTransaction = trpc.saveTransactions.useMutation({
+    retry: 3,
+    networkMode: "always",
+  });
 
-  const updateUserSubscription = trpc.updateUserSubscription.useMutation();
+  const updateUserSubscription = trpc.updateUserSubscription.useMutation({
+    retry: 3,
+    networkMode: "always",
+  });
 
-  const router = useRouter();
+  const updateGeneratedVoiceStatus =
+    trpc.updateGeneratedVoiceStatus.useMutation({
+      retry: 3,
+      networkMode: "always",
+    });
 
   const handleCheckout = async (
     subscriptionType: string,
@@ -72,7 +81,7 @@ export default function UseMidtrans() {
     let data = {
       id: voiceId,
       name: voiceName,
-      price: price,
+      price: 1000,
     };
 
     if (subscriptionType === "PREMIUM") {
@@ -102,6 +111,8 @@ export default function UseMidtrans() {
       snap.pay(token, {
         onSuccess: async function (result: any) {
           onSuccess(result);
+
+          // await Promise.all([
           // save transaction to database
           await saveTransaction.mutate({
             amountPaid: Number(result?.gross_amount),
@@ -109,12 +120,18 @@ export default function UseMidtrans() {
             productName: subscriptionType,
           });
 
+          // update user subscription type
           await updateUserSubscription.mutate({
             characterCount: characterCount,
             subscriptionType: subscriptionType,
           });
 
-          router.refresh();
+          // update user generated voice status
+          await updateGeneratedVoiceStatus.mutate({
+            historyItemId: historyItemId,
+            isPaid: true,
+          });
+          // ]);
         },
         onPending: function (result: any) {
           onPending(result);

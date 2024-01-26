@@ -20,7 +20,6 @@ type audioPlayerProps = {
   onExpand: (v: boolean) => void;
   stream: any;
   selectedVoiceTemp: {};
-  blob: any;
   updateUserLimit?: () => void;
 };
 
@@ -31,7 +30,6 @@ const AudioPlayer = ({
   onExpand,
   stream,
   selectedVoiceTemp,
-  blob,
   updateUserLimit,
 }: audioPlayerProps) => {
   const [isReady, setReady] = useState(false);

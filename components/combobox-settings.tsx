@@ -105,7 +105,7 @@ function ComboboxSettings({ handlePlayVoice }: ComboboxSettingsProps) {
               formattedVoices.map((voice: any) => (
                 <CommandItem
                   key={voice.voice_id}
-                  value={voice.voice_id}
+                  value={voice.name}
                   onSelect={() => {
                     setVoiceId(voice.voice_id);
                     selectVoice(voice);

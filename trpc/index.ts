@@ -8,6 +8,8 @@ import {
   deleteGeneratedVoices,
   getGeneratedVoices,
   saveGeneratedVoice,
+  updateGeneratedVoiceStatus,
+  getGeneratedVoice,
 } from "./text-to-speech";
 import {
   deleteFile,
@@ -82,6 +84,8 @@ export const appRouter = router({
   updateLimit: updateLimit,
   saveTransactions: saveTransactions,
   updateUserSubscription: updateUserSubscription,
+  updateGeneratedVoiceStatus: updateGeneratedVoiceStatus,
+  getGeneratedVoice: getGeneratedVoice,
 });
 // Export type router type signature,
 // NOT the router itself.

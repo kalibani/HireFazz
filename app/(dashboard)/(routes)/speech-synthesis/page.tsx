@@ -10,7 +10,6 @@ import {
 import Heading from "@/components/headings";
 import { Button } from "@/components/ui/button";
 
-import { useProModal } from "@/hooks/use-pro-modal";
 import { useModel } from "@/hooks/use-model-modal";
 import { useTextToSpeechStore } from "@/hooks/use-text-to-speech";
 import { useShallow } from "zustand/react/shallow";
@@ -34,6 +33,7 @@ import { Badge } from "@/components/ui/badge";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePricing } from "@/hooks/use-pricing";
 import { useMidtransStore } from "@/hooks/use-midtrans-store";
+import axios from "axios";
 
 const SpeechSynthesisPage = () => {
   const { task, setTask, voiceId, model } = useModel();
@@ -44,16 +44,26 @@ const SpeechSynthesisPage = () => {
     setFormattedVoices,
     expanded,
     onExpand,
-    similarity_boost,
-    stability,
-    style,
-    use_speaker_boost,
     stream,
     setStream,
     selectedVoiceTemp,
-    setBlob,
-    blob,
+    setHistoryItemId,
+    historyItemId,
   } = useTextToSpeechStore(useShallow((state) => state));
+
+  // const getGeneratedVoice =
+  //   trpc.getGeneratedVoice.useQuery();
+
+  // const handleUpdate = async () => {
+  //   const resp = await getGeneratedVoice.mutate({
+  //     historyItemId: historyItemId,
+  //     isPaid: true,
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   handleUpdate();
+  // }, [historyItemId]);
 
   const { onReset } = useMidtransStore();
 
@@ -126,6 +136,10 @@ const SpeechSynthesisPage = () => {
             voiceId: history.voice_id,
             voiceName: history.voice_name,
           };
+          setHistoryItemId(history.history_item_id);
+
+          // set to local storage
+          // localStorage.setItem("historyItemId", history.history_item_id);
           saveGeneratedVoice.mutate(payload);
         }
       }
@@ -143,13 +157,6 @@ const SpeechSynthesisPage = () => {
     try {
       e.preventDefault();
       setLoading(true);
-      console.log("voiceId", voiceId);
-      const voice_settings = {
-        similarity_boost: similarity_boost[0],
-        stability: stability[0],
-        style: style[0],
-        use_speaker_boost: use_speaker_boost,
-      };
 
       const payload = {
         // @ts-ignore
@@ -175,7 +182,6 @@ const SpeechSynthesisPage = () => {
       const blob = new Blob([data], {
         type: "audio/mpeg",
       });
-      setBlob(blob);
       const url = URL.createObjectURL(blob);
       setStream(url);
 
@@ -192,21 +198,37 @@ const SpeechSynthesisPage = () => {
     }
   };
 
-  const router = useRouter();
-
   const characterLimit = 5000;
 
-  const updateLimit = trpc.updateLimit.useMutation();
-
+  const router = useRouter();
   const handleUpdateUserLimit = async () => {
     try {
-      await updateLimit.mutate();
+      await axios.post("/api/update-user-limit");
     } catch (error) {
       console.log(error);
     } finally {
       router.refresh();
     }
   };
+
+  // TEMPORARY COMMENTED
+
+  // const utils = trpc.useUtils();
+
+  // const handleGetGeneratedVoice = async (historyItemIdSaved: string) => {
+  //   const response = await utils.getGeneratedVoice.fetch({
+  //     historyItemId: historyItemIdSaved,
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   const historyItemIdSaved =
+  //     historyItemId || localStorage.getItem("historyItemId");
+
+  //   if (historyItemIdSaved) {
+  //     handleGetGeneratedVoice(historyItemIdSaved);
+  //   }
+  // }, []);
 
   return (
     <div>
@@ -345,7 +367,6 @@ const SpeechSynthesisPage = () => {
           onExpand={onExpand}
           stream={stream}
           selectedVoiceTemp={selectedVoiceTemp}
-          blob={blob}
           updateUserLimit={handleUpdateUserLimit}
         />
       ) : null}
