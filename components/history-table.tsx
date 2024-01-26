@@ -305,7 +305,6 @@ const HistoryTable = () => {
           onExpand={onExpand}
           stream={stream}
           selectedVoiceTemp={selectedVoiceTemp}
-          blob={blob}
         />
       ) : null}
     </div>
