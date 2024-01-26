@@ -41,6 +41,7 @@ function ComboboxSlider({
   const [open, setOpen] = useState(false);
   // const [value, setValue] = React.useState("");
   const { voiceId } = useModel();
+
   const {
     stability,
     similarity_boost,
@@ -54,14 +55,32 @@ function ComboboxSlider({
   } = useTextToSpeechStore(useShallow((state) => state));
 
   // Queries voice settings
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["voice-settings", { voiceId: voiceId }],
-    queryFn: () => getVoiceSettings(voiceId),
-    staleTime: 1000 * 60 * 60 * 24,
-    cacheTime: 1000 * 60 * 60 * 24,
-  });
+  // const { data, isError, isLoading } = useQuery({
+  //   queryKey: ["voice-settings", { voiceId: voiceId }],
+  //   queryFn: () => getVoiceSettings(voiceId),
+  //   staleTime: 1000 * 60 * 60 * 24,
+  //   cacheTime: 1000 * 60 * 60 * 24,
+  // });
 
   const queryClient = useQueryClient();
+
+  const handleGetVoiceSettings = async (voiceId: string) => {
+    const { data } = await queryClient.fetchQuery({
+      queryKey: ["voice-settings", { voiceId: voiceId }],
+      queryFn: () => getVoiceSettings(voiceId),
+    });
+
+    if (data) {
+      const voiceSettings = {
+        stability: [data?.stability * 100],
+        similarity_boost: [data?.similarity_boost * 100],
+        style: [data?.style * 100],
+        use_speaker_boost: data?.use_speaker_boost,
+      };
+
+      setVoiceSettings(voiceSettings);
+    }
+  };
 
   const handleGetDefaultVoiceSettings = async () => {
     const { data } = await queryClient.fetchQuery({
@@ -76,40 +95,33 @@ function ComboboxSlider({
         style: [data?.style * 100],
         use_speaker_boost: data?.use_speaker_boost,
       };
+
       setVoiceSettings(voiceSettings);
     }
   };
 
-  const handleUpdateVoiceSettings = async () => {
-    const payload = {
+  const handleUpdateVoiceSettings = async (settings: any, value: any) => {
+    const voiceSettings = {
       stability: stability[0] / 100,
       similarity_boost: similarity_boost[0] / 100,
       style: style[0] / 100,
-      use_speaker_boost,
+      use_speaker_boost: use_speaker_boost,
+    };
+
+    const payload = {
+      ...voiceSettings,
+      [settings]: Array.isArray(value) ? value[0] / 100 : value,
     };
 
     await updateVoiceSettings(payload, voiceId);
+    await handleGetVoiceSettings(voiceId);
   };
 
   useEffect(() => {
-    if (!isError && data?.data && !isLoading) {
-      const voiceSettings = {
-        stability: [data?.data.stability * 100],
-        similarity_boost: [data?.data.similarity_boost * 100],
-        style: [data?.data.style * 100],
-        use_speaker_boost: data?.data.use_speaker_boost,
-      };
-      setVoiceSettings(voiceSettings);
+    if (voiceId) {
+      handleGetVoiceSettings(voiceId);
     }
-  }, [data]);
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      handleUpdateVoiceSettings();
-    }, 1000);
-
-    return () => clearTimeout(delay);
-  }, [stability, similarity_boost, style, use_speaker_boost]);
+  }, [voiceId]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -138,7 +150,9 @@ function ComboboxSlider({
                   max={100}
                   step={1}
                   className={cn("w-[100%] bg-transparent", className)}
-                  onValueChange={setStability}
+                  onValueChange={(value) =>
+                    handleUpdateVoiceSettings("stability", value)
+                  }
                   {...props}
                 />
                 <div className="flex mt-2 justify-between">
@@ -187,7 +201,9 @@ function ComboboxSlider({
                   max={100}
                   step={1}
                   className={cn("w-[100%] bg-transparent", className)}
-                  onValueChange={setSimilarityBoost}
+                  onValueChange={(value) =>
+                    handleUpdateVoiceSettings("similarity_boost", value)
+                  }
                   {...props}
                 />
                 <div className="flex mt-2 justify-between">
@@ -236,7 +252,9 @@ function ComboboxSlider({
                   step={1}
                   className={cn("w-[100%] bg-transparent", className)}
                   name="style"
-                  onValueChange={setStyle}
+                  onValueChange={(value) =>
+                    handleUpdateVoiceSettings("style", value)
+                  }
                   {...props}
                 />
                 <div className="flex mt-2 justify-between">
@@ -273,7 +291,10 @@ function ComboboxSlider({
                     id="use_speaker_boost"
                     checked={use_speaker_boost}
                     value={use_speaker_boost}
-                    onCheckedChange={setSpeaker_boost}
+                    // onCheckedChange={setSpeaker_boost}
+                    onCheckedChange={(value) =>
+                      handleUpdateVoiceSettings("use_speaker_boost", value)
+                    }
                   />
                   <label
                     htmlFor="terms"
