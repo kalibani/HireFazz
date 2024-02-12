@@ -10,6 +10,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { logger } from "@/logger";
 
+export const preferredRegion = "sin1";
+export const maxDuration = 50;
+
 export const POST = async (req: NextRequest) => {
   // endpoint for asking a question to a pdf file
 
