@@ -1,20 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import {
+  JSXElementConstructor,
+  PromiseLikeOfReactNode,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useState,
+} from "react";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { toast } from "react-hot-toast";
 
 import Dropzone from "react-dropzone";
-import { Cloud, File, Loader2 } from "lucide-react";
+import { Cloud, File, Loader2, AlertCircle, ChevronDown } from "lucide-react";
 import { Progress } from "./ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import { useUploadThing } from "@/lib/upload-thing";
 import { trpc } from "@/app/_trpc/client";
-import { useRouter } from "next/navigation";
 
-const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
-  const router = useRouter();
+import { useAnalyzer } from "@/hooks/use-analyzer";
 
+const UploadDropzone = ({
+  isSubscribed,
+  setIsOpen,
+  isDisabled,
+  refetch,
+}: {
+  isSubscribed: boolean;
+  isDisabled: boolean;
+  setIsOpen: (v: boolean) => void;
+  refetch: () => void;
+}) => {
+  const [files, setFiles] = useState<any>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
@@ -23,12 +55,8 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
       if (file.uploadStatus === "SUCCESS") {
-        router.refresh();
-        router.push(`/summarizer/${file.id}`);
-      } else {
-        toast(
-          "Error while parsing document, please try with another document "
-        );
+        refetch();
+        // setIsOpen(false);
       }
     },
     retry: true,
@@ -37,13 +65,6 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
     },
     retryDelay: 500,
     networkMode: "always",
-    // @ts-ignore
-    // retry(failureCount, error) {
-    //   if (failureCount > 6) {
-    //     console.log(error);
-    //     toast(` error ${error}`);
-    //   }
-    // },
   });
 
   const startSimulatedProgress = () => {
@@ -64,29 +85,53 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
 
   const handleDropFiles = async (acceptedFiles: any[]) => {
     if (acceptedFiles[0]) {
+      // console.log("formatted", acceptedFiles);
+      // const formattedFiles = acceptedFiles.map((v: any) => ({
+      //   ...v,
+      //   isUploading: false,
+      // }));
+      // console.log("formatted", formattedFiles);
+      // setFiles(formattedFiles);
+
+      acceptedFiles
+        .reduce((acc, file) => {
+          return acc.then(async () => {
+            return await startUpload(file);
+          });
+        }, Promise.resolve())
+        .then((res) => {
+          const [fileResponse] = res;
+
+          const key = fileResponse?.key;
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
+
+      console.log("-->", acceptedFiles);
       setIsUploading(true);
 
       const progressInterval = startSimulatedProgress();
 
       // handle file uploading
-      const res = await startUpload(acceptedFiles);
+      // const res = await startUpload(acceptedFiles);
 
-      if (!res) {
-        return toast("Something went wrong");
-      }
+      // if (!res) {
+      //   return toast("Something went wrong");
+      // }
 
-      const [fileResponse] = res;
+      // const [fileResponse] = res;
 
-      const key = fileResponse?.key;
+      // const key = fileResponse?.key;
 
-      if (!key) {
-        return toast("Something went wrong key");
-      }
+      // if (!key) {
+      //   return toast("Something went wrong key");
+      // }
 
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      startPolling({ key });
+      // startPolling({ key });
     }
   };
 
@@ -100,7 +145,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
 
   return (
     <Dropzone
-      maxFiles={3}
+      maxFiles={10}
       multiple={true}
       onDrop={handleDropFiles}
       accept={acceptedFilesType}
@@ -108,10 +153,10 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
           {...getRootProps()}
-          className="border h-64 m-4 border-dashed border-gray-300 rounded-lg"
+          className="border min-h-64 m-4 border-dashed border-gray-300 rounded-lg overflow-auto"
         >
           <div className="flex items-center justify-center h-full w-full">
-            <div className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+            <div className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 py-2">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Cloud className="h-6 w-6 text-zinc-500 mb-2" />
                 <p className="mb-2 text-sm text-zinc-700">
@@ -119,22 +164,56 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
                   and drop
                 </p>
                 <p className="text-xs text-zinc-500">
-                  PDF, DOCX, CSV (up to {isSubscribed ? "16" : "4"}MB)
+                  PDF, DOCX (up to {isSubscribed ? "16" : "4"}MB)
                 </p>
               </div>
 
-              {acceptedFiles && acceptedFiles[0] ? (
-                <div className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200">
-                  <div className="px-3 py-2 h-full grid place-items-center">
-                    <File className="h-4 w-4 text-blue-500" />
-                  </div>
-                  <div className="px-3 py-2 h-full text-sm truncate">
-                    {acceptedFiles[0].name}
-                  </div>
-                </div>
-              ) : null}
+              {acceptedFiles && files[0]
+                ? files.map(
+                    (file: {
+                      name:
+                        | string
+                        | number
+                        | boolean
+                        | ReactElement<any, string | JSXElementConstructor<any>>
+                        | Iterable<ReactNode>
+                        | ReactPortal
+                        | PromiseLikeOfReactNode
+                        | null
+                        | undefined;
+                    }) => (
+                      <>
+                        <div className="w-[300px] bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200 mb-1">
+                          <div className="px-3 py-2 h-full grid place-items-center">
+                            <File className="h-4 w-4 text-blue-500" />
+                          </div>
+                          <div className="px-3 py-2 h-full text-sm truncate">
+                            {file.name}
+                            {isUploading ? (
+                              <div className="w-full my-2 max-w-xs mx-auto">
+                                <Progress
+                                  indicatorColor={
+                                    uploadProgress === 100 ? "bg-green-500" : ""
+                                  }
+                                  value={uploadProgress}
+                                  className="h-1 w-full bg-zinc-200"
+                                />
+                                {/* {uploadProgress === 100 ? (
+                            <div className="flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2">
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                              Redirecting...
+                            </div>
+                          ) : null} */}
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                      </>
+                    )
+                  )
+                : null}
 
-              {isUploading ? (
+              {/* {isUploading ? (
                 <div className="w-full mt-4 max-w-xs mx-auto">
                   <Progress
                     indicatorColor={
@@ -150,13 +229,14 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
                     </div>
                   ) : null}
                 </div>
-              ) : null}
+              ) : null} */}
 
               <input
                 {...getInputProps()}
                 type="file"
                 id="dropzone-file"
                 className="hidden"
+                disabled={isDisabled}
               />
             </div>
           </div>
@@ -169,11 +249,15 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
 const UploadButton = ({
   isSubscribed,
   buttonText,
+  refetch,
 }: {
   isSubscribed: boolean;
   buttonText: string;
+  refetch: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { requirements, setRequirements, percentage, setPercentage } =
+    useAnalyzer();
 
   return (
     <Dialog
@@ -188,8 +272,75 @@ const UploadButton = ({
         <Button>{buttonText}</Button>
       </DialogTrigger>
 
-      <DialogContent>
-        <UploadDropzone isSubscribed={isSubscribed} />
+      <DialogContent className=" min-w-fit lg:min-w-[724px] max-h-screen overflow-auto">
+        <div>
+          <div className="px-4">
+            <label>
+              Input your requirements here{" "}
+              <span className="text-red-400">*</span>
+            </label>
+            <Textarea
+              className="min-h-[150px] mt-2"
+              placeholder="Type your requirements here."
+              rows={15}
+              cols={40}
+              maxLength={10000}
+              value={requirements}
+              onChange={(e) => setRequirements(e.target.value)}
+            />
+          </div>
+          <div className="px-4 mt-4 flex justify-between items-center">
+            <TooltipProvider>
+              <label className="mr-2">
+                Set Percentage
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger className="cursor-default ml-1.5">
+                    <AlertCircle className="h-4 w-4 text-zinc-500" />
+                  </TooltipTrigger>
+                  <TooltipContent className="w-80 p-2">
+                    How many percentage you wanted to match.
+                  </TooltipContent>
+                </Tooltip>
+              </label>
+            </TooltipProvider>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  className="gap-1.5 w-[250px] hover:bg-transparent"
+                  aria-label="zoom"
+                  variant="outline"
+                >
+                  {percentage}%
+                  <ChevronDown className="h-3 w-3 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[250px]">
+                <DropdownMenuItem onSelect={() => setPercentage(20)}>
+                  20%
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setPercentage(40)}>
+                  40%
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setPercentage(60)}>
+                  60%
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setPercentage(80)}>
+                  80%
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setPercentage(100)}>
+                  100%
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <UploadDropzone
+            isSubscribed={isSubscribed}
+            setIsOpen={setIsOpen}
+            // @ts-ignore
+            isDisabled={!requirements}
+            refetch={refetch}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

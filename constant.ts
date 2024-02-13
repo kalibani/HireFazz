@@ -3,16 +3,23 @@ import {
   AudioLines,
   FlaskConical,
   SquareStack,
+  FileText,
 } from "lucide-react";
 
 export const MAX_FREE_COUNTS = 5;
 
 export const tools = [
+  // {
+  //   label: "Document Interaction",
+  //   icon: FileArchiveIcon,
+  //   href: "/summarizer",
+  //   color: "text-pink-300",
+  // },
   {
-    label: "Document Interaction",
-    icon: FileArchiveIcon,
-    href: "/summarizer",
-    color: "text-pink-300",
+    label: "CV Analyzer",
+    icon: FileText,
+    href: "/cv-analyzer",
+    color: "text-blue-500",
   },
   {
     label: "Speech Synthesis",
@@ -112,3 +119,25 @@ export enum productName {
   instantVoiceCloning,
   advanceVoiceCloning,
 }
+
+export const cVAnalyzerPrompt = `
+Below is what we are looking for:
+
+You have 5+ years of experience building React-based web applications at scale
+You have significant experience with relevant web technologies (React, Javascript, Typescript, CSS)
+You have a deep understanding of modern web architecture and server-side rendering You have built and maintained complex, highly interactive frontend UI
+You have excellent frontend debugging skills, and a deep understanding of how to build and optimize for performance
+You have strong communication skills and the ability to work well cross-functionally
+You have strong product and design sensibilities and enjoy perfecting the details that matter most to users Bonus: You have direct experience with a customer facing Next.js applications
+
+Instructions:
+You have to calculate how much is the percentage of this cv match with our requirements. The answer must be on a json format, for example: 
+{
+  documentsOwner: 'full name of the owner',
+  matchPercentage: '70%',
+  reason: 'reason of the match percentage' 
+}
+Please note that you don’t need to explain every point at the beginning, just answer with the json!
+`;
+
+export const matchLimit = 50;

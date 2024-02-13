@@ -50,6 +50,7 @@ model File {
   url          String
   key          String
   messages     Message[]
+  reportOfAnalysis  Json?
 
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
