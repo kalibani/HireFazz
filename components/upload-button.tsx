@@ -51,7 +51,7 @@ const UploadDropzone = ({
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
   const { startUpload } = useUploadThing("pdfUploader");
-
+  // @ts-ignore
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
       if (file.uploadStatus === "SUCCESS") {
@@ -83,35 +83,53 @@ const UploadDropzone = ({
     return interval;
   };
 
+  const handleUpload = async (file: File[]) => {
+    // handle file uploading
+    // @ts-ignore
+    const res = await startUpload([file]);
+
+    if (!res) {
+      return toast("Something went wrong");
+    }
+
+    const [fileResponse] = res;
+
+    const key = fileResponse?.key;
+
+    if (!key) {
+      return toast("Something went wrong on file key");
+    }
+
+    startPolling({ key });
+  };
+
   const handleDropFiles = async (acceptedFiles: any[]) => {
     if (acceptedFiles[0]) {
-      // console.log("formatted", acceptedFiles);
-      // const formattedFiles = acceptedFiles.map((v: any) => ({
-      //   ...v,
-      //   isUploading: false,
-      // }));
-      // console.log("formatted", formattedFiles);
-      // setFiles(formattedFiles);
+      const progressInterval = startSimulatedProgress();
 
       acceptedFiles
         .reduce((acc, file) => {
-          return acc.then(async () => {
-            return await startUpload(file);
+          setIsUploading(true);
+          return acc.then(() => {
+            return handleUpload(file);
           });
         }, Promise.resolve())
-        .then((res) => {
-          const [fileResponse] = res;
-
-          const key = fileResponse?.key;
+        .then((res: any) => {
+          // console.log("res", res);
         })
         .catch((err: any) => {
           console.log(err);
+        })
+        .finally(() => {
+          clearInterval(progressInterval);
+          setUploadProgress(100);
+          setIsOpen(false);
         });
 
-      console.log("-->", acceptedFiles);
-      setIsUploading(true);
+      // console.log("-->", acceptedFiles);
+      // setIsUploading(true);
 
-      const progressInterval = startSimulatedProgress();
+      // const progressInterval = startSimulatedProgress();
 
       // handle file uploading
       // const res = await startUpload(acceptedFiles);
@@ -128,8 +146,8 @@ const UploadDropzone = ({
       //   return toast("Something went wrong key");
       // }
 
-      clearInterval(progressInterval);
-      setUploadProgress(100);
+      // clearInterval(progressInterval);
+      // setUploadProgress(100);
 
       // startPolling({ key });
     }
@@ -140,12 +158,12 @@ const UploadDropzone = ({
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
       ".docx",
     ],
-    "text/csv": [".csv"],
+    // "text/csv": [".csv"],
   };
 
   return (
     <Dropzone
-      maxFiles={10}
+      maxFiles={20}
       multiple={true}
       onDrop={handleDropFiles}
       accept={acceptedFilesType}
@@ -153,7 +171,7 @@ const UploadDropzone = ({
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
           {...getRootProps()}
-          className="border min-h-64 m-4 border-dashed border-gray-300 rounded-lg overflow-auto"
+          className="border min-h-64 max-h-[400px] m-4 border-dashed border-gray-300 rounded-lg overflow-auto"
         >
           <div className="flex items-center justify-center h-full w-full">
             <div className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 py-2">
@@ -168,8 +186,8 @@ const UploadDropzone = ({
                 </p>
               </div>
 
-              {acceptedFiles && files[0]
-                ? files.map(
+              {acceptedFiles && acceptedFiles[0]
+                ? acceptedFiles.map(
                     (file: {
                       name:
                         | string
@@ -188,7 +206,9 @@ const UploadDropzone = ({
                             <File className="h-4 w-4 text-blue-500" />
                           </div>
                           <div className="px-3 py-2 h-full text-sm truncate">
-                            {file.name}
+                            {/* @ts-ignore */}
+                            {file.path}
+                            {/* @ts-ignore */}
                             {isUploading ? (
                               <div className="w-full my-2 max-w-xs mx-auto">
                                 <Progress
@@ -205,7 +225,14 @@ const UploadDropzone = ({
                             </div>
                           ) : null} */}
                               </div>
-                            ) : null}
+                            ) : (
+                              <div className="w-full my-2 max-w-xs mx-auto">
+                                <Progress
+                                  value={0}
+                                  className="h-1 w-full bg-zinc-200"
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
                       </>
@@ -280,7 +307,7 @@ const UploadButton = ({
               <span className="text-red-400">*</span>
             </label>
             <Textarea
-              className="min-h-[150px] mt-2"
+              className="min-h-[150px] max-h-[400px] overflow-auto mt-2"
               placeholder="Type your requirements here."
               rows={15}
               cols={40}

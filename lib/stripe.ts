@@ -26,7 +26,7 @@ export async function getUserSubscriptionPlan() {
     },
   });
 
-  console.log("--", dbUser);
+  // console.log("--", dbUser);
 
   if (!dbUser) {
     return {

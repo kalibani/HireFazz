@@ -32,14 +32,14 @@ const CVAnalyzerPage = () => {
 
   const { apiLimitCount, onOpen } = useProModal();
   const { subscriptionType } = useUser();
-
+  // @ts-ignore
   const { data: files, isLoading } = trpc.getUserFiles
     // @ts-ignore
     .useQuery("_", {
       networkMode: "always",
     });
 
-  console.log("files", files);
+  // console.log("files", files);
 
   const utils = trpc.useUtils();
 
@@ -68,15 +68,24 @@ const CVAnalyzerPage = () => {
     ${requirements}
     
     Instructions:
-    You have to calculate how much is the percentage of this cv match with our requirements. The answer must be on a json format, for example: 
+    You have to calculate how much is the percentage of this cv match with our requirements. The calculation must be count all the aspects provided on the document, including but are not limited to: experience, educational background, skills, total years of experience, salary expectation, country of origin, residential place, age, etc.
+    The answer must be on a json format, for example: 
     {
       documentOwner: 'full name of the owner',
       requirements: ${requirements},
       percentage: ${percentage},
       matchPercentage: '70',
-      reason: 'reason of the match percentage' 
+      reason: 'reason of the match percentage',
     }
-    Please note that you don’t need to explain every point at the beginning, just answer with the json!
+    description:
+    documentOwner = name of the document owner
+    requirements =  requirements provided by the user. Do not change this part!
+    percentage: percentage provided by the user. Do not change this part!
+    matchPercentage: 'result of the matched percentage i.e 70',
+    reason: 'reason of the match percentage',
+
+    IF the requirements is not clearly defined, matchPercentage should be '0'.
+    The answer must be in the same language as the language used in the requirements.
     `;
 
     try {
@@ -85,7 +94,7 @@ const CVAnalyzerPage = () => {
         fileId: fileId,
       });
       const dataFormatted = JSON.parse(response.data.message.content);
-      console.log("formatted", dataFormatted);
+
       utils.getUserFiles.invalidate();
     } catch (error: any) {
       console.log("error", error);
@@ -114,7 +123,7 @@ const CVAnalyzerPage = () => {
     userPercentage: string,
     matchPercentage: string
   ) => {
-    return Number(matchPercentage) > Number(userPercentage);
+    return Number(matchPercentage) >= Number(userPercentage);
   };
 
   const characterLimit = 5000;
@@ -160,8 +169,8 @@ const CVAnalyzerPage = () => {
                       key={file.id}
                       className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
                     >
-                      <Link
-                        href={`/summarizer/${file.id}`}
+                      <div
+                        // href={`/summarizer/${file.id}`}
                         className="flex flex-col gap-2"
                       >
                         <div className="p-4 flex w-full items-center justify-between space-x-6">
@@ -174,7 +183,7 @@ const CVAnalyzerPage = () => {
                             </div>
                           </div>
                         </div>
-                      </Link>
+                      </div>
                       <div>
                         <div className="px-4 flex justify-between py-2 gap-6 text-sm">
                           <div className="flex items-center gap-2">
@@ -234,7 +243,7 @@ const CVAnalyzerPage = () => {
                             </p>
                           }
                         </div>
-                        <Button
+                        {/* <Button
                           onClick={() => deleteFile({ id: file.id })}
                           size="sm"
                           className="float-right"
@@ -245,7 +254,7 @@ const CVAnalyzerPage = () => {
                           ) : (
                             <Trash className="h-4 w-4" />
                           )}
-                        </Button>
+                        </Button> */}
                       </div>
                     </li>
                   ))}

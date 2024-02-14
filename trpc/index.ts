@@ -17,6 +17,7 @@ import {
   getFileMessages,
   getFileUploadStatus,
   getUserFiles,
+  getFileById,
 } from "./document-interaction";
 import { updateLimit, saveTransactions, updateUserSubscription } from "./user";
 
@@ -27,6 +28,7 @@ export const appRouter = router({
   getFileMessages: getFileMessages,
   getFileUploadStatus: getFileUploadStatus,
   deleteFile: deleteFile,
+  getFileById: getFileById,
 
   createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
     const { userId } = ctx;

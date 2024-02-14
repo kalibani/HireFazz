@@ -30,7 +30,7 @@ const PDFSummarizerPage = () => {
       networkMode: "always",
     });
 
-  console.log("files", files);
+  // console.log("files", files);
 
   const utils = trpc.useUtils();
 
@@ -51,14 +51,14 @@ const PDFSummarizerPage = () => {
   const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
 
   const handleClick = async () => {
-    console.log("clicked");
+    // console.log("clicked");
     try {
       const response = await axios.post("/api/load-multiples", {
         files: files,
         namespace: "multiple-cv",
       });
 
-      console.log("---", response);
+      // console.log("---", response);
     } catch (error: any) {
       console.log(error);
     }
@@ -73,7 +73,7 @@ const PDFSummarizerPage = () => {
         namespace: "multiple-cv",
       });
 
-      console.log("---", response);
+      // console.log("---", response);
     } catch (error: any) {
       console.log("error", error);
     }
