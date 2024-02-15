@@ -92,8 +92,8 @@ const UploadDropzone = ({
 
   const handleUpload = async (file: File[], idx: number) => {
     // handle file uploading
-    // @ts-ignore
     const progressInterval = startSimulatedProgress(idx);
+    // @ts-ignore
     const res = await startUpload([file]);
     if (!res) {
       return toast("Something went wrong");
