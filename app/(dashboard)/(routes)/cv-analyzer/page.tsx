@@ -63,35 +63,17 @@ const CVAnalyzerPage = () => {
 
   const analyzeCV = async (fileId: string) => {
     const messages = `
-    Below is what we are looking for:
+    Below is the requirements or qualifications or job descriptions that we are looking for:
 
     ${requirements}
-    
-    Instructions:
-    You have to calculate how much is the percentage of this cv match with our requirements. The calculation must be count all the aspects provided on the document, including but are not limited to: experience, educational background, skills, total years of experience, salary expectation, country of origin, residential place, age, etc.
-    The answer must be on a json format, for example: 
-    {
-      documentOwner: 'full name of the owner',
-      requirements: ${requirements},
-      percentage: ${percentage},
-      matchPercentage: '70',
-      reason: 'reason of the match percentage',
-    }
-    description:
-    documentOwner = name of the document owner
-    requirements =  requirements provided by the user. Do not change this part!
-    percentage: percentage provided by the user. Do not change this part!
-    matchPercentage: 'result of the matched percentage i.e 70',
-    reason: 'reason of the match percentage',
-
-    IF the requirements is not clearly defined, matchPercentage should be '0'.
-    The answer must be in the same language as the language used in the requirements.
     `;
 
     try {
       const response = await axios.post("/api/cv-analyzer", {
         message: messages,
         fileId: fileId,
+        requirements: requirements,
+        percentage: percentage,
       });
       const dataFormatted = JSON.parse(response.data.message.content);
 
