@@ -5,7 +5,7 @@ import prismadb from "@/lib/prismadb";
 // import { getUserSubscriptionPlan } from "@/lib/stripe";
 import { auth } from "@clerk/nextjs";
 import { notFound, redirect } from "next/navigation";
-import { FileArchiveIcon } from "lucide-react";
+import { FileText } from "lucide-react";
 
 import Heading from "@/components/headings";
 import { extractExtension } from "@/lib/utils";
@@ -37,11 +37,11 @@ const Page = async ({ params }: PageProps) => {
   return (
     <div>
       <Heading
-        title="Talk With Your Document"
-        description="Revolutionizing Document Interaction."
-        icon={FileArchiveIcon}
-        iconColor="text-pink-300"
-        bgColor="bg-pink-300/10"
+        title="Analyze Your CV"
+        description="Revolutionizing CV Analysis."
+        icon={FileText}
+        iconColor="text-blue-300"
+        bgColor="bg-blue-300/10"
       />
 
       <div className="flex-1 justify-between flex flex-col h-[calc(100vh-6.5rem)] bg-gray-200">
@@ -58,9 +58,9 @@ const Page = async ({ params }: PageProps) => {
             </div>
           </div>
 
-          <div className="shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0">
+          {/* <div className="shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0">
             <ChatWrapper isSubscribed={true} fileId={file.id} />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

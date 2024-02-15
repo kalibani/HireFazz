@@ -116,8 +116,8 @@ const CVAnalyzerPage = () => {
         title="Analyze Your CV"
         description="Revolutionizing CV Analysis."
         icon={FileArchiveIcon}
-        iconColor="text-pink-300"
-        bgColor="bg-pink-300/10"
+        iconColor="text-blue-300"
+        bgColor="bg-blue-300/10"
       />
       <div className="p-4 lg:p-8">
         <div>
@@ -151,8 +151,8 @@ const CVAnalyzerPage = () => {
                       key={file.id}
                       className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
                     >
-                      <div
-                        // href={`/summarizer/${file.id}`}
+                      <Link
+                        href={`/cv-analyzer/${file.id}`}
                         className="flex flex-col gap-2"
                       >
                         <div className="p-4 flex w-full items-center justify-between space-x-6">
@@ -165,7 +165,7 @@ const CVAnalyzerPage = () => {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                       <div>
                         <div className="px-4 flex justify-between py-2 gap-6 text-sm">
                           <div className="flex items-center gap-2">
