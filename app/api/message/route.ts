@@ -10,6 +10,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { logger } from "@/logger";
 
+export const preferredRegion = "sin1";
+export const maxDuration = 50;
+
 export const POST = async (req: NextRequest) => {
   // endpoint for asking a question to a pdf file
 
@@ -44,7 +47,9 @@ export const POST = async (req: NextRequest) => {
     openAIApiKey: process.env.OPEN_API_KEY,
   });
 
-  const pineconeIndex = pinecone.Index("genio");
+  const index = process.env.NEXT_PUBLIC_PINECONE_INDEX;
+
+  const pineconeIndex = pinecone.Index(index!);
 
   const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
     pineconeIndex,

@@ -115,7 +115,9 @@ const onUploadComplete = async ({
 
     // vectorize and index entire document
 
-    const pineconeIndex = pinecone.Index("genio");
+    const index = process.env.NEXT_PUBLIC_PINECONE_INDEX;
+
+    const pineconeIndex = pinecone.Index(index!);
 
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPEN_API_KEY,

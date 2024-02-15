@@ -102,6 +102,24 @@ const DocumentInteraction = {
       return file;
     }),
 
+  // get file
+  getFileById: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      const file = await prismadb.file.findFirst({
+        where: {
+          id: input.id,
+          userId,
+        },
+      });
+
+      if (!file) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return file;
+    }),
+
   // delete file
   deleteFile: privateProcedure
     .input(z.object({ id: z.string() }))
@@ -133,4 +151,5 @@ export const {
   getFileUploadStatus,
   deleteFile,
   getUserFiles,
+  getFileById,
 } = DocumentInteraction;

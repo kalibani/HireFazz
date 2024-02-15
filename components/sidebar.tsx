@@ -19,6 +19,7 @@ import {
   AudioLines,
   HeartHandshake,
   Heart,
+  FileText,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -38,11 +39,17 @@ const routes = [
     href: "/dashboard",
     color: "text-sky-500",
   },
+  // {
+  //   label: "Document Interaction",
+  //   icon: FileArchiveIcon,
+  //   href: "/summarizer",
+  //   color: "text-pink-300",
+  // },
   {
-    label: "Document Interaction",
-    icon: FileArchiveIcon,
-    href: "/summarizer",
-    color: "text-pink-300",
+    label: "CV Analyzer",
+    icon: FileText,
+    href: "/cv-analyzer",
+    color: "text-blue-500",
   },
   {
     label: "Speech Synthesis",
