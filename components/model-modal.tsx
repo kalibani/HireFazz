@@ -79,24 +79,26 @@ const ModelModal = () => {
                     {model.name}
                   </h1>
                   <p className="max-w-md">{model.description}</p>
-                  <div className="flex items-center gap-x-2 font-bold py-1 text-gray-600">
+                  <div className="flex items-center py-1 font-bold text-gray-600 gap-x-2">
                     Tasks:
                     <Badge className="text-xs py-1 bg-[#DBEAFE] hover:bg-[#DBEAFE] text-[#6f7082]">
                       {task === "text" ? "Text to Speech" : "Speech to Speech"}
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-x-2 font-bold py-1 text-gray-600 max-w-md overflow-auto flex-wrap gap-y-2">
+                  <div className="flex flex-wrap items-center max-w-md py-1 overflow-auto font-bold text-gray-600 gap-x-2 gap-y-2">
                     Languages:
                     {model.languages?.length > 0 &&
-                      model.languages.map((language: { id: ""; name: "" }) => (
-                        <Badge
-                          className="text-xs py-1  text-[#6f7082]"
-                          variant="outline"
-                          key={language.id}
-                        >
-                          {language.name}
-                        </Badge>
-                      ))}
+                      model.languages.map(
+                        (language: { id: ""; name: "" }, idx: number) => (
+                          <Badge
+                            className="text-xs py-1  text-[#6f7082]"
+                            variant="outline"
+                            key={`${language.id}-${idx}`}
+                          >
+                            {language.name}
+                          </Badge>
+                        )
+                      )}
                   </div>
                 </div>
               </Card>

@@ -6,6 +6,7 @@ import {
   ReactElement,
   ReactNode,
   ReactPortal,
+  useMemo,
   useState,
 } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
@@ -46,10 +47,12 @@ const UploadDropzone = ({
   setIsOpen: (v: boolean) => void;
   refetch: () => void;
 }) => {
-  const [files, setFiles] = useState<any>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
-
+  const [uploadProgressArr, setUploadProgressArr] = useState<number[]>([]);
+  const orderUploading = useMemo(() => {
+    const ongoing = uploadProgressArr.filter((el) => el > 0);
+    return ongoing.length;
+  }, [uploadProgressArr]);
   const { startUpload } = useUploadThing("pdfUploader");
   // @ts-ignore
   const { mutate: startPolling } = trpc.getFile.useMutation({
@@ -67,27 +70,31 @@ const UploadDropzone = ({
     networkMode: "always",
   });
 
-  const startSimulatedProgress = () => {
-    setUploadProgress(0);
-
+  const startSimulatedProgress = (idx: number) => {
     const interval = setInterval(() => {
-      setUploadProgress((prevProgress) => {
+      setUploadProgressArr((prevProgressArr) => {
+        const prevProgress = prevProgressArr[idx];
         if (prevProgress >= 95) {
           clearInterval(interval);
-          return prevProgress;
+          return prevProgressArr;
         }
-        return prevProgress + 5;
+        const updated = [...prevProgressArr].map((el, i) => {
+          if (i < idx) return 100;
+          if (i === idx) return el + 5;
+          return 0;
+        });
+        return updated;
       });
     }, 500);
 
     return interval;
   };
 
-  const handleUpload = async (file: File[]) => {
+  const handleUpload = async (file: File[], idx: number) => {
     // handle file uploading
     // @ts-ignore
+    const progressInterval = startSimulatedProgress(idx);
     const res = await startUpload([file]);
-
     if (!res) {
       return toast("Something went wrong");
     }
@@ -99,19 +106,19 @@ const UploadDropzone = ({
     if (!key) {
       return toast("Something went wrong on file key");
     }
-
+    clearInterval(progressInterval);
     startPolling({ key });
   };
 
   const handleDropFiles = async (acceptedFiles: any[]) => {
     if (acceptedFiles[0]) {
-      const progressInterval = startSimulatedProgress();
-
+      const arr = acceptedFiles.map(() => 0);
+      setUploadProgressArr(arr);
       acceptedFiles
-        .reduce((acc, file) => {
+        .reduce((acc, file, idx) => {
           setIsUploading(true);
           return acc.then(() => {
-            return handleUpload(file);
+            return handleUpload(file, idx);
           });
         }, Promise.resolve())
         .then((res: any) => {
@@ -121,8 +128,6 @@ const UploadDropzone = ({
           console.log(err);
         })
         .finally(() => {
-          clearInterval(progressInterval);
-          setUploadProgress(100);
           setIsOpen(false);
         });
 
@@ -167,16 +172,23 @@ const UploadDropzone = ({
       multiple={true}
       onDrop={handleDropFiles}
       accept={acceptedFilesType}
+      disabled={isUploading}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
           {...getRootProps()}
-          className="border min-h-64 max-h-[400px] m-4 border-dashed border-gray-300 rounded-lg overflow-auto"
+          className="border min-h-64 max-h-[400px] m-4 border-dashed border-gray-300 rounded-lg overflow-auto relative"
         >
-          <div className="flex items-center justify-center h-full w-full">
-            <div className="flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 py-2">
+          {isUploading && (
+            <div className="absolute right-0 flex px-4 py-2 bg-white rounded-lg">
+              <span className="mr-2 text-gray-500">{`uploading ${orderUploading}/${uploadProgressArr.length}`}</span>
+              <Loader2 className="text-blue-500 animate-spin" />
+            </div>
+          )}
+          <div className="flex items-center justify-center w-full h-full">
+            <div className="flex flex-col items-center justify-center w-full h-full py-2 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Cloud className="h-6 w-6 text-zinc-500 mb-2" />
+                <Cloud className="w-6 h-6 mb-2 text-zinc-500" />
                 <p className="mb-2 text-sm text-zinc-700">
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
@@ -188,70 +200,79 @@ const UploadDropzone = ({
 
               {acceptedFiles && acceptedFiles[0]
                 ? acceptedFiles.map(
-                    (file: {
-                      name:
-                        | string
-                        | number
-                        | boolean
-                        | ReactElement<any, string | JSXElementConstructor<any>>
-                        | Iterable<ReactNode>
-                        | ReactPortal
-                        | PromiseLikeOfReactNode
-                        | null
-                        | undefined;
-                    }) => (
-                      <>
-                        <div className="w-[300px] bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200 mb-1">
-                          <div className="px-3 py-2 h-full grid place-items-center">
-                            <File className="h-4 w-4 text-blue-500" />
-                          </div>
-                          <div className="px-3 py-2 h-full text-sm truncate">
-                            {/* @ts-ignore */}
-                            {file.path}
-                            {/* @ts-ignore */}
-                            {isUploading ? (
-                              <div className="w-full my-2 max-w-xs mx-auto">
-                                <Progress
-                                  indicatorColor={
-                                    uploadProgress === 100 ? "bg-green-500" : ""
-                                  }
-                                  value={uploadProgress}
-                                  className="h-1 w-full bg-zinc-200"
-                                />
-                                {/* {uploadProgress === 100 ? (
-                            <div className="flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2">
-                              <Loader2 className="h-3 w-3 animate-spin" />
+                    (
+                      file: {
+                        name:
+                          | string
+                          | number
+                          | boolean
+                          | ReactElement<
+                              any,
+                              string | JSXElementConstructor<any>
+                            >
+                          | Iterable<ReactNode>
+                          | ReactPortal
+                          | PromiseLikeOfReactNode
+                          | null
+                          | undefined;
+                      },
+                      indx: number
+                    ) => (
+                      <div
+                        key={indx}
+                        className="w-[300px] bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200 mb-1"
+                      >
+                        <div className="grid h-full px-3 py-2 place-items-center">
+                          <File className="w-4 h-4 text-blue-500" />
+                        </div>
+                        <div className="h-full px-3 py-2 text-sm truncate">
+                          {/* @ts-ignore */}
+                          {file.path}
+                          {/* @ts-ignore */}
+                          {isUploading ? (
+                            <div className="w-full max-w-xs mx-auto my-2">
+                              <Progress
+                                indicatorColor={
+                                  uploadProgressArr[indx] === 100
+                                    ? "bg-green-500"
+                                    : ""
+                                }
+                                value={uploadProgressArr[indx]}
+                                className="w-full h-1 bg-zinc-200"
+                              />
+                              {/* {uploadProgress === 100 ? (
+                            <div className="flex items-center justify-center gap-1 pt-2 text-sm text-center text-zinc-700">
+                              <Loader2 className="w-3 h-3 animate-spin" />
                               Redirecting...
                             </div>
                           ) : null} */}
-                              </div>
-                            ) : (
-                              <div className="w-full my-2 max-w-xs mx-auto">
-                                <Progress
-                                  value={0}
-                                  className="h-1 w-full bg-zinc-200"
-                                />
-                              </div>
-                            )}
-                          </div>
+                            </div>
+                          ) : (
+                            <div className="w-full max-w-xs mx-auto my-2">
+                              <Progress
+                                value={0}
+                                className="w-full h-1 bg-zinc-200"
+                              />
+                            </div>
+                          )}
                         </div>
-                      </>
+                      </div>
                     )
                   )
                 : null}
 
               {/* {isUploading ? (
-                <div className="w-full mt-4 max-w-xs mx-auto">
+                <div className="w-full max-w-xs mx-auto mt-4">
                   <Progress
                     indicatorColor={
                       uploadProgress === 100 ? "bg-green-500" : ""
                     }
                     value={uploadProgress}
-                    className="h-1 w-full bg-zinc-200"
+                    className="w-full h-1 bg-zinc-200"
                   />
                   {uploadProgress === 100 ? (
-                    <div className="flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2">
-                      <Loader2 className="h-3 w-3 animate-spin" />
+                    <div className="flex items-center justify-center gap-1 pt-2 text-sm text-center text-zinc-700">
+                      <Loader2 className="w-3 h-3 animate-spin" />
                       Redirecting...
                     </div>
                   ) : null}
@@ -316,15 +337,15 @@ const UploadButton = ({
               onChange={(e) => setRequirements(e.target.value)}
             />
           </div>
-          <div className="px-4 mt-4 flex justify-between items-center">
+          <div className="flex items-center justify-between px-4 mt-4">
             <TooltipProvider>
               <label className="mr-2">
                 Set Percentage
                 <Tooltip delayDuration={300}>
                   <TooltipTrigger className="cursor-default ml-1.5">
-                    <AlertCircle className="h-4 w-4 text-zinc-500" />
+                    <AlertCircle className="w-4 h-4 text-zinc-500" />
                   </TooltipTrigger>
-                  <TooltipContent className="w-80 p-2">
+                  <TooltipContent className="p-2 w-80">
                     How many percentage you wanted to match.
                   </TooltipContent>
                 </Tooltip>
@@ -338,7 +359,7 @@ const UploadButton = ({
                   variant="outline"
                 >
                   {percentage}%
-                  <ChevronDown className="h-3 w-3 opacity-50" />
+                  <ChevronDown className="w-3 h-3 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-[250px]">
