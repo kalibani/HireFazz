@@ -91,7 +91,6 @@ const UploadDropzone = ({
   };
 
   const handleUpload = async (file: File[], idx: number) => {
-    // handle file uploading
     const progressInterval = startSimulatedProgress(idx);
     // @ts-ignore
     const res = await startUpload([file]);
