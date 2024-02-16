@@ -1,14 +1,14 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FileArchiveIcon,
   MoreHorizontal,
   Plus,
-  Trash,
   Check,
   X,
   Loader2,
+  GripVertical,
 } from "lucide-react";
 import * as formatter from "date-fns";
 import Link from "next/link";
@@ -24,14 +24,24 @@ import { trpc } from "@/app/_trpc/client";
 import { MAX_FREE_COUNTS } from "@/constant";
 import { useUser } from "@/hooks/use-user";
 import { useAnalyzer } from "@/hooks/use-analyzer";
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ReanalyzeModal } from "@/components/reanalyze-modal";
+interface AnalyzeCV {
+  id: string;
+  requirement?: string;
+  percentage?: number;
+}
 const CVAnalyzerPage = () => {
-  const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
-    string | null
-  >(null);
-
   const { apiLimitCount, onOpen } = useProModal();
   const { subscriptionType } = useUser();
+  const [deletingIds, setDeletingIds] = useState<string[]>([]);
+  const [selectedFile, setSelectedFile] = useState("");
+  const [reanalyzeIds, setReanalyzeIds] = useState<string[]>([]);
   // @ts-ignore
   const { data: files, isLoading } = trpc.getUserFiles
     // @ts-ignore
@@ -50,10 +60,10 @@ const CVAnalyzerPage = () => {
       utils.getUserFiles.invalidate();
     },
     onMutate({ id }) {
-      setCurrentlyDeletingFile(id);
+      setDeletingIds([...deletingIds, id]);
     },
-    onSettled() {
-      setCurrentlyDeletingFile(null);
+    onSettled(data) {
+      setDeletingIds(deletingIds.filter((el) => el !== data?.id));
     },
   });
 
@@ -61,19 +71,25 @@ const CVAnalyzerPage = () => {
 
   const { requirements, percentage } = useAnalyzer();
 
-  const analyzeCV = async (fileId: string) => {
+  const analyzeCV = async ({
+    id,
+    requirement,
+    percentage: percentageProp,
+  }: AnalyzeCV) => {
+    const safeRequirement = requirement || requirements;
+    const safePercentage = percentageProp || percentage;
     const messages = `
     Below is the requirements or qualifications or job descriptions that we are looking for:
 
-    ${requirements}
+    ${safeRequirement}
     `;
 
     try {
       const response = await axios.post("/api/cv-analyzer", {
         message: messages,
-        fileId: fileId,
-        requirements: requirements,
-        percentage: percentage,
+        fileId: id,
+        requirements: safeRequirement,
+        percentage: safePercentage,
       });
       const dataFormatted = JSON.parse(response.data.message.content);
 
@@ -91,7 +107,7 @@ const CVAnalyzerPage = () => {
             if (item.reportOfAnalysis) {
               return;
             }
-            return analyzeCV(item.id);
+            return analyzeCV({ id: item.id });
           });
         }, Promise.resolve())
         .then((res) => {})
@@ -109,7 +125,20 @@ const CVAnalyzerPage = () => {
   };
 
   const characterLimit = 5000;
-
+  const handleDelete = async (id: string) => {
+    deleteFile({ id });
+  };
+  const handleReanalyze = async (requirement: string, percentage: number) => {
+    const fileId = selectedFile;
+    setSelectedFile("");
+    try {
+      setReanalyzeIds([...reanalyzeIds, fileId]);
+      await analyzeCV({ id: fileId, requirement, percentage });
+    } catch (error) {
+    } finally {
+      setReanalyzeIds(reanalyzeIds.filter((id) => id !== fileId));
+    }
+  };
   return (
     <div>
       <Heading
@@ -121,7 +150,7 @@ const CVAnalyzerPage = () => {
       />
       <div className="p-4 lg:p-8">
         <div>
-          <div className="rounded-lg w-full border p-4 px-3 md:px-4 focus-within:shadow-sm gap-2 flex h-16 items-center justify-between">
+          <div className="flex items-center justify-between w-full h-16 gap-2 p-4 px-3 border rounded-lg md:px-4 focus-within:shadow-sm">
             <h1 className="mb-3text-gray-900">Start Analyzing</h1>
             {isFreeTrialLimited && subscriptionType !== "PREMIUM" ? (
               <Button onClick={onOpen}>Upload CV</Button>
@@ -135,11 +164,11 @@ const CVAnalyzerPage = () => {
           </div>
           {/* </Form> */}
         </div>
-        <div className="space-y-4 mt-4">
+        <div className="mt-4 space-y-4">
           {/* display all user files */}
           {files && files?.length !== 0 ? (
             <>
-              <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
+              <ul className="grid grid-cols-1 gap-6 mt-8 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
                 {files
                   .sort(
                     (a, b) =>
@@ -149,25 +178,63 @@ const CVAnalyzerPage = () => {
                   .map((file) => (
                     <li
                       key={file.id}
-                      className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
+                      className="col-span-1 transition bg-white divide-y divide-gray-200 rounded-lg shadow hover:shadow-lg"
                     >
-                      <Link
-                        href={`/cv-analyzer/${file.id}`}
-                        className="flex flex-col gap-2"
-                      >
-                        <div className="p-4 flex w-full items-center justify-between space-x-6">
-                          <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
-                          <div className="flex-1 truncate">
-                            <div className="flex items-center space-x-3">
-                              <h3 className="truncate text-lg font-medium text-zinc-900">
-                                {file.name}
-                              </h3>
+                      <div className="flex items-center">
+                        <Link
+                          href={`/cv-analyzer/${file.id}`}
+                          className="flex flex-col flex-1 gap-2"
+                        >
+                          <div className="flex items-center justify-between w-full p-4 space-x-6">
+                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
+                            <div className="flex-1 truncate">
+                              <div className="flex items-center space-x-3">
+                                <h3 className="text-lg font-medium truncate text-zinc-900">
+                                  {file.name}
+                                </h3>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Link>
+                        </Link>
+                        {deletingIds.includes(file.id) ? (
+                          <Loader2 className="mr-4 text-blue-500 animate-spin" />
+                        ) : (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                className="mr-4"
+                                size="icon"
+                              >
+                                <GripVertical />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-[100px]">
+                              <DropdownMenuItem>
+                                <Button
+                                  className="w-full "
+                                  size="sm"
+                                  onClick={() => setSelectedFile(file.id)}
+                                >
+                                  Reanalyze
+                                </Button>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Button
+                                  className="w-full text-red-500 border-red-500 hover:text-red-500"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDelete(file.id)}
+                                >
+                                  Delete
+                                </Button>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
+                      </div>
                       <div>
-                        <div className="px-4 flex justify-between py-2 gap-6 text-sm">
+                        <div className="flex justify-between gap-6 px-4 py-2 text-sm">
                           <div className="flex items-center gap-2">
                             {
                               <>
@@ -181,7 +248,7 @@ const CVAnalyzerPage = () => {
                                   </>
                                 ) : (
                                   <>
-                                    <Plus className="h-4 w-4" />
+                                    <Plus className="w-4 h-4" />
                                     <span>
                                       {formatter.format(
                                         new Date(file.createdAt),
@@ -194,13 +261,14 @@ const CVAnalyzerPage = () => {
                             }
                           </div>
 
-                          {!file.reportOfAnalysis ? (
-                            <div className="flex p-2 text-zinc-900 text-sm">
+                          {!file.reportOfAnalysis ||
+                          reanalyzeIds.includes(file.id) ? (
+                            <div className="flex p-2 text-sm text-zinc-900">
                               Analyzing
                               <MoreHorizontal className="ml-1 mt-0.5 h-4 w-4 shrink-0 opacity-50 animate-ping text-zinc-900" />
                             </div>
                           ) : (
-                            <div className="flex gap-1 text-sm text-zinc-900 justify-center items-center h-10">
+                            <div className="flex items-center justify-center h-10 gap-1 text-sm text-zinc-900">
                               {/* @ts-ignore */}
                               {file.reportOfAnalysis?.matchPercentage}%
                               <p>Match</p>
@@ -210,20 +278,20 @@ const CVAnalyzerPage = () => {
                                 // @ts-ignore
                                 file.reportOfAnalysis?.matchPercentage
                               ) ? (
-                                <Check className=" h-5 w-5 text-green-500" />
+                                <Check className="w-5 h-5 text-green-500 " />
                               ) : (
-                                <X className=" h-5 w-5 text-red-500" />
+                                <X className="w-5 h-5 text-red-500 " />
                               )}
                             </div>
                           )}
                         </div>
                         <div className="px-4 pb-4">
-                          {
+                          {!reanalyzeIds.includes(file.id) && (
                             <p className="text-xs text-zinc-500">
                               {/* @ts-ignore */}
                               {file.reportOfAnalysis?.reason}
                             </p>
-                          }
+                          )}
                         </div>
                         {/* <Button
                           onClick={() => deleteFile({ id: file.id })}
@@ -232,9 +300,9 @@ const CVAnalyzerPage = () => {
                           variant="destructive"
                         >
                           {currentlyDeletingFile === file.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <Loader2 className="w-4 h-4 animate-spin" />
                           ) : (
-                            <Trash className="h-4 w-4" />
+                            <Trash className="w-4 h-4" />
                           )}
                         </Button> */}
                       </div>
@@ -245,7 +313,7 @@ const CVAnalyzerPage = () => {
               {/* <Button onClick={handleClick}>Click</Button> */}
             </>
           ) : isLoading ? (
-            <div className="p-8 rounded-lg w-full flex justify-center items-start bg-muted">
+            <div className="flex items-start justify-center w-full p-8 rounded-lg bg-muted">
               <LoaderGeneral />
             </div>
           ) : (
@@ -253,6 +321,11 @@ const CVAnalyzerPage = () => {
           )}
         </div>
       </div>
+      <ReanalyzeModal
+        open={!!selectedFile}
+        onOpenChange={() => setSelectedFile("")}
+        onSubmit={handleReanalyze}
+      />
     </div>
   );
 };
