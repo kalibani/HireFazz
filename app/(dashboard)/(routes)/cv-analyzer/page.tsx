@@ -189,7 +189,7 @@ const CVAnalyzerPage = () => {
                             <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
                             <div className="flex-1 truncate">
                               <div className="flex items-center space-x-3">
-                                <p className="text-ellipsis overflow-hidden text-lg font-medium text-zinc-900">
+                                <p className="truncate text-lg font-medium text-zinc-900">
                                   {file.name}
                                 </p>
                               </div>
