@@ -1,6 +1,7 @@
 import { privateProcedure } from "./trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { pinecone } from "@/lib/pinecone";
 import prismadb from "@/lib/prismadb";
 import { MAX_FREE_COUNTS } from "@/constant";
 
@@ -140,7 +141,10 @@ const DocumentInteraction = {
           id: input.id,
         },
       });
+      const index = process.env.NEXT_PUBLIC_PINECONE_INDEX;
 
+      const pineconeIndex = pinecone.Index(index!);
+      await pineconeIndex.namespace(input.id).deleteAll();
       return file;
     }),
 };
