@@ -8,7 +8,7 @@ import {
   Check,
   X,
   Loader2,
-  GripVertical,
+  MoreVertical,
 } from "lucide-react";
 import * as formatter from "date-fns";
 import Link from "next/link";
@@ -185,13 +185,13 @@ const CVAnalyzerPage = () => {
                           href={`/cv-analyzer/${file.id}`}
                           className="flex flex-col flex-1 gap-2"
                         >
-                          <div className="flex items-center justify-between w-full p-4 space-x-6">
+                          <div className="flex items-center justify-between max-w-[300px] p-4 space-x-6">
                             <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
                             <div className="flex-1 truncate">
                               <div className="flex items-center space-x-3">
-                                <h3 className="text-lg font-medium truncate text-zinc-900">
+                                <p className="text-ellipsis overflow-hidden text-lg font-medium text-zinc-900">
                                   {file.name}
-                                </h3>
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -206,7 +206,7 @@ const CVAnalyzerPage = () => {
                                 className="mr-4"
                                 size="icon"
                               >
-                                <GripVertical />
+                                <MoreVertical />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-[100px]">
@@ -250,6 +250,7 @@ const CVAnalyzerPage = () => {
                                   <>
                                     <Plus className="w-4 h-4" />
                                     <span>
+                                      {/* @ts-ignore */}
                                       {formatter.format(
                                         new Date(file.createdAt),
                                         "MMM yyyy"
