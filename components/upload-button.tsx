@@ -167,7 +167,7 @@ const UploadDropzone = ({
 
   return (
     <Dropzone
-      maxFiles={20}
+      maxFiles={50}
       multiple={true}
       onDrop={handleDropFiles}
       accept={acceptedFilesType}
