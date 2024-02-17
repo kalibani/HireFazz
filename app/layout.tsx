@@ -9,9 +9,9 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BerryLabs - Generative Voice AI & Document Interaction",
+  title: "BerryLabs - Document Analyzer & Generative Voice AI",
   description:
-    "Revolutionizing document interaction, Summarize PDF, Chat With PDF. Convert text to speech online for free with AI voice generator. Create natural AI voices instantly in any language.",
+    "Revolutionizing CV Analyzer, get the match CV percentage within seconds. Convert text to speech online for free with AI voice generator. Create natural AI voices instantly in any language.",
 };
 
 export default function RootLayout({
@@ -24,6 +24,10 @@ export default function RootLayout({
       <Providers>
         <html lang="en">
           <head>
+            <meta
+              name="keywords"
+              content="SaaS Website for Automatic CV Analysis with AI, AI-Powered CV Analyzer for SaaS Platforms, Automated Resume Parsing Tool with AI Integration, AI-Based CV Evaluation Software for SaaS Websites, SaaS Solution for AI-Driven CV Analysis, AI-Powered Resume Scanner for SaaS Applications"
+            />
             <link rel="icon" href="/BerryLabs.png" type="image/png" />
             <link
               rel="apple-touch-icon"

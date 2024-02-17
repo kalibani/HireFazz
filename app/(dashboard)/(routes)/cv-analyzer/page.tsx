@@ -40,7 +40,7 @@ const CVAnalyzerPage = () => {
   const { apiLimitCount, onOpen } = useProModal();
   const { subscriptionType } = useUser();
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
-  const [selectedFile, setSelectedFile] = useState("");
+  const [selectedFile, setSelectedFile] = useState({});
   const [reanalyzeIds, setReanalyzeIds] = useState<string[]>([]);
   // @ts-ignore
   const { data: files, isLoading } = trpc.getUserFiles
@@ -129,8 +129,9 @@ const CVAnalyzerPage = () => {
     deleteFile({ id });
   };
   const handleReanalyze = async (requirement: string, percentage: number) => {
-    const fileId = selectedFile;
-    setSelectedFile("");
+    // @ts-ignore
+    const fileId = selectedFile.id;
+    setSelectedFile({});
     try {
       setReanalyzeIds([...reanalyzeIds, fileId]);
       await analyzeCV({ id: fileId, requirement, percentage });
@@ -214,7 +215,7 @@ const CVAnalyzerPage = () => {
                                 <Button
                                   className="w-full "
                                   size="sm"
-                                  onClick={() => setSelectedFile(file.id)}
+                                  onClick={() => setSelectedFile(file)}
                                 >
                                   Reanalyze
                                 </Button>
@@ -323,8 +324,11 @@ const CVAnalyzerPage = () => {
         </div>
       </div>
       <ReanalyzeModal
-        open={!!selectedFile}
-        onOpenChange={() => setSelectedFile("")}
+        // @ts-ignore
+        open={!!selectedFile?.id}
+        // @ts-ignore
+        selectedFile={selectedFile}
+        onOpenChange={() => setSelectedFile({})}
         onSubmit={handleReanalyze}
       />
     </div>

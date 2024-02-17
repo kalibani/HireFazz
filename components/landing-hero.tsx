@@ -17,12 +17,11 @@ export const LandingHero = () => {
           <TypewriterComponent
             options={{
               strings: [
+                "Automatic CV Scanner",
+                "AI Based CV Analyzer",
                 "Generative Voice AI.",
-                "Voice Cloning.",
                 "Text to Speech.",
                 "Speech to Speech.",
-                "Summarize Document.",
-                "Chat With Your Document.",
               ],
               autoStart: true,
               loop: true,
@@ -36,7 +35,7 @@ export const LandingHero = () => {
       <div>
         <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
           <Button
-            variant="premium"
+            variant="premium2"
             className="md:text-lg p-4 md:p-6 rounded-full font-semibold"
           >
             Start Generating For Free
