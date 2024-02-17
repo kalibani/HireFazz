@@ -19,17 +19,18 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 import { usePricing } from "@/hooks/use-pricing";
+
 import UseMidtrans from "@/hooks/use-midtrans";
+import { useUser } from "@/hooks/use-user";
 
 const ProModal = () => {
   const proModal = useProModal();
-  const { payAsYouGoPrice } = usePricing();
+  const { payAsYouGoPrice, price } = usePricing();
+  const { subscriptionType } = useUser();
   const { handleCheckout } = UseMidtrans();
 
-  const handleClickUpgrade = (subscriptionType: string) => {
-    const selectedProductName = productName.speechSynthesis;
-
-    handleCheckout(subscriptionType, selectedProductName);
+  const handleClickUpgrade = () => {
+    handleCheckout();
     setTimeout(() => {
       proModal.onClose();
     }, 1000);
@@ -43,7 +44,7 @@ const ProModal = () => {
             <div className="flex items-center gap-x-2 font-bold py-1">
               Upgrade to BerryLabs
               <Badge className=" uppercase text-sm py-1" variant="premium">
-                Premium
+                {subscriptionType}
               </Badge>
             </div>
           </DialogTitle>
@@ -76,8 +77,8 @@ const ProModal = () => {
           >
             <p className="flex items-center justify-center">
               <span className="text-[2rem] leading-none text-slate-900">
-                IDR
-                <span className="font-bold"> 499Rb</span>
+                IDR{" "}
+                <span className="font-bold ml-1">{price.toLocaleString()}</span>
               </span>
               <span className="ml-3 text-sm">
                 <span className="font-semibold text-slate-900">
@@ -93,9 +94,9 @@ const ProModal = () => {
               variant="premium2"
               size="lg"
               className="w-full mt-3"
-              onClick={() => handleClickUpgrade("PREMIUM")}
+              onClick={handleClickUpgrade}
             >
-              Premium
+              {subscriptionType}
               <Zap className="w-4 h-4 ml-2 fill-white" />
             </Button>
           </div>
@@ -126,7 +127,7 @@ const ProModal = () => {
                   variant="premium"
                   size="lg"
                   className="w-full mt-3"
-                  onClick={() => handleClickUpgrade("FLEXIBLE")}
+                  onClick={handleClickUpgrade}
                 >
                   Pay as You Go
                   <Zap className="w-4 h-4 ml-2 fill-white" />

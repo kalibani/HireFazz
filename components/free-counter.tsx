@@ -6,14 +6,19 @@ import { MAX_FREE_COUNTS } from "@/constant";
 import { Progress } from "./ui/progress";
 import { Button } from "./ui/button";
 import { Zap } from "lucide-react";
-import { useProModal } from "@/hooks/use-pro-modal";
+
+import { useRouter } from "next/navigation";
 
 type FreeCounterProps = {
   apiLimitCount: number;
+  subscriptionType: string;
 };
 
-const FreeCounter = ({ apiLimitCount = 0 }: FreeCounterProps) => {
-  const proModal = useProModal();
+const FreeCounter = ({
+  subscriptionType,
+  apiLimitCount = 0,
+}: FreeCounterProps) => {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -35,14 +40,16 @@ const FreeCounter = ({ apiLimitCount = 0 }: FreeCounterProps) => {
               value={(apiLimitCount / MAX_FREE_COUNTS) * 100}
             />
           </div>
-          <Button
-            className="w-full"
-            variant="premium2"
-            onClick={proModal.onOpen}
-          >
-            Upgrade
-            <Zap className="w-4 h-4 ml-2 fill-white" />
-          </Button>
+          {subscriptionType !== "PREMIUM" ? (
+            <Button
+              className="w-full"
+              variant="premium2"
+              onClick={() => router.push("/pricing")}
+            >
+              Upgrade
+              <Zap className="w-4 h-4 ml-2 fill-white" />
+            </Button>
+          ) : null}
         </CardContent>
       </Card>
     </div>

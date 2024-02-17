@@ -198,7 +198,7 @@ const SpeechSynthesisPage = () => {
     }
   };
 
-  const characterLimit = 5000;
+  const characterLimit = 1000;
 
   const router = useRouter();
   const handleUpdateUserLimit = async () => {

@@ -21,7 +21,7 @@ import EmptyPage from "@/components/empty";
 import LoaderGeneral from "@/components/loader";
 import { useProModal } from "@/hooks/use-pro-modal";
 import { trpc } from "@/app/_trpc/client";
-import { MAX_FREE_COUNTS } from "@/constant";
+import { MAX_FREE_COUNTS, subscriptionTypes } from "@/constant";
 import { useUser } from "@/hooks/use-user";
 import { useAnalyzer } from "@/hooks/use-analyzer";
 import {
@@ -31,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ReanalyzeModal } from "@/components/reanalyze-modal";
+
 interface AnalyzeCV {
   id: string;
   requirement?: string;
@@ -124,7 +125,6 @@ const CVAnalyzerPage = () => {
     return Number(matchPercentage) >= Number(userPercentage);
   };
 
-  const characterLimit = 5000;
   const handleDelete = async (id: string) => {
     deleteFile({ id });
   };
@@ -153,7 +153,8 @@ const CVAnalyzerPage = () => {
         <div>
           <div className="flex items-center justify-between w-full h-16 gap-2 p-4 px-3 border rounded-lg md:px-4 focus-within:shadow-sm">
             <h1 className="mb-3text-gray-900">Start Analyzing</h1>
-            {isFreeTrialLimited && subscriptionType !== "PREMIUM" ? (
+            {isFreeTrialLimited &&
+            !subscriptionTypes.includes(subscriptionType) ? (
               <Button onClick={onOpen}>Upload CV</Button>
             ) : (
               <UploadButton

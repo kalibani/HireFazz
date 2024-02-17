@@ -11,6 +11,8 @@ datasource db {
 enum SubscriptionType {
   FREE
   FLEXIBLE
+  BASIC
+  PRO
   PREMIUM
 }
 

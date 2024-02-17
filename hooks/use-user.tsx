@@ -9,7 +9,7 @@ type useUserStore = {
 
 export const useUser = create<useUserStore>()((set) => ({
   user: {},
-  subscriptionType: "FREE",
+  subscriptionType: "Basic",
   setUser: (user: any) => set({ user: user }),
   setSubscriptionType: (v: string) => set({ subscriptionType: v }),
 }));
