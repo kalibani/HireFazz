@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
-import { MAX_FREE_COUNTS } from "@/constant";
+// import { MAX_FREE_COUNTS } from "@/constant";
 import { Progress } from "./ui/progress";
 import { Button } from "./ui/button";
 import { Zap } from "lucide-react";
@@ -12,11 +12,13 @@ import { useRouter } from "next/navigation";
 type FreeCounterProps = {
   apiLimitCount: number;
   subscriptionType: string;
+  maxFreeCount?: number;
 };
 
 const FreeCounter = ({
   subscriptionType,
   apiLimitCount = 0,
+  maxFreeCount,
 }: FreeCounterProps) => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -33,11 +35,11 @@ const FreeCounter = ({
         <CardContent className="py-6">
           <div className="text-center text-sm text-white mb-4 space-y-2">
             <p>
-              {apiLimitCount} / {MAX_FREE_COUNTS} Free Generations
+              {apiLimitCount} / {maxFreeCount} Free Generations
             </p>
             <Progress
               className="h-3"
-              value={(apiLimitCount / MAX_FREE_COUNTS) * 100}
+              value={(apiLimitCount / maxFreeCount!) * 100}
             />
           </div>
           {subscriptionType !== "PREMIUM" ? (

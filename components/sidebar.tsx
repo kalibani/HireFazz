@@ -26,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import FreeCounter from "./free-counter";
 import { useProModal } from "@/hooks/use-pro-modal";
+import { useUser } from "@/hooks/use-user";
 
 const poppins = Montserrat({
   weight: "600",
@@ -107,15 +108,25 @@ const routes = [
 type sidebarProps = {
   apiLimitCount: number;
   subscriptionType: string;
+  maxFreeCount?: number;
 };
 
-const Sidebar = ({ apiLimitCount = 0, subscriptionType }: sidebarProps) => {
+const Sidebar = ({
+  apiLimitCount = 0,
+  subscriptionType,
+  maxFreeCount,
+}: sidebarProps) => {
   const pathname = usePathname();
   const { setApiLimit } = useProModal();
+  const { setMaxFreeCount } = useUser();
 
   useEffect(() => {
     setApiLimit(apiLimitCount);
   }, [apiLimitCount]);
+
+  useEffect(() => {
+    setMaxFreeCount(maxFreeCount!);
+  }, [maxFreeCount]);
 
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
@@ -151,6 +162,7 @@ const Sidebar = ({ apiLimitCount = 0, subscriptionType }: sidebarProps) => {
       <FreeCounter
         apiLimitCount={apiLimitCount}
         subscriptionType={subscriptionType}
+        maxFreeCount={maxFreeCount}
       />
       {/* <hr className="h-px bg-white/10 border-0 " />
       <span className="flex px-3 py-1 items-center">

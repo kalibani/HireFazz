@@ -39,7 +39,7 @@ interface AnalyzeCV {
 }
 const CVAnalyzerPage = () => {
   const { apiLimitCount, onOpen } = useProModal();
-  const { subscriptionType } = useUser();
+  const { subscriptionType, maxFreeCount } = useUser();
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState({});
   const [reanalyzeIds, setReanalyzeIds] = useState<string[]>([]);
@@ -68,7 +68,7 @@ const CVAnalyzerPage = () => {
     },
   });
 
-  const isFreeTrialLimited = apiLimitCount === MAX_FREE_COUNTS;
+  const isFreeTrialLimited = apiLimitCount === maxFreeCount;
 
   const { requirements, percentage } = useAnalyzer();
 
