@@ -2,18 +2,25 @@
 
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
-import { MAX_FREE_COUNTS } from "@/constant";
+// import { MAX_FREE_COUNTS } from "@/constant";
 import { Progress } from "./ui/progress";
 import { Button } from "./ui/button";
 import { Zap } from "lucide-react";
-import { useProModal } from "@/hooks/use-pro-modal";
+
+import { useRouter } from "next/navigation";
 
 type FreeCounterProps = {
   apiLimitCount: number;
+  subscriptionType: string;
+  maxFreeCount?: number;
 };
 
-const FreeCounter = ({ apiLimitCount = 0 }: FreeCounterProps) => {
-  const proModal = useProModal();
+const FreeCounter = ({
+  subscriptionType,
+  apiLimitCount = 0,
+  maxFreeCount,
+}: FreeCounterProps) => {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -28,21 +35,23 @@ const FreeCounter = ({ apiLimitCount = 0 }: FreeCounterProps) => {
         <CardContent className="py-6">
           <div className="text-center text-sm text-white mb-4 space-y-2">
             <p>
-              {apiLimitCount} / {MAX_FREE_COUNTS} Free Generations
+              {apiLimitCount} / {maxFreeCount} Free Generations
             </p>
             <Progress
               className="h-3"
-              value={(apiLimitCount / MAX_FREE_COUNTS) * 100}
+              value={(apiLimitCount / maxFreeCount!) * 100}
             />
           </div>
-          <Button
-            className="w-full"
-            variant="premium2"
-            onClick={proModal.onOpen}
-          >
-            Upgrade
-            <Zap className="w-4 h-4 ml-2 fill-white" />
-          </Button>
+          {subscriptionType !== "PREMIUM" ? (
+            <Button
+              className="w-full"
+              variant="premium2"
+              onClick={() => router.push("/pricing")}
+            >
+              Upgrade
+              <Zap className="w-4 h-4 ml-2 fill-white" />
+            </Button>
+          ) : null}
         </CardContent>
       </Card>
     </div>

@@ -11,7 +11,7 @@ const HistoryPage = () => {
     <>
       <Heading
         title="History"
-        description="Full list of all your generated samples, ready for download."
+        description="Full list of all your generated text to speech, ready for download."
         icon={SquareStack}
         iconColor="text-orange-700"
         bgColor="bg-violet-500/10"
@@ -23,3 +23,13 @@ const HistoryPage = () => {
 };
 
 export default HistoryPage;
+
+// import { redirect } from "next/navigation";
+
+// type Props = {};
+
+// const HistoryPage = (props: Props) => {
+//   redirect("/coming-soon");
+// };
+
+// export default HistoryPage;
