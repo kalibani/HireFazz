@@ -11,9 +11,10 @@ import { useUser } from "@/hooks/use-user";
 interface Ibutton {
   plan?: string;
   price?: number;
+  quota?: number;
 }
 
-const UpgradeButton = ({ plan, price }: Ibutton) => {
+const UpgradeButton = ({ plan, price, quota }: Ibutton) => {
   // const { mutate: createStripeSession } = trpc.createStripeSession.useMutation({
   //   onSuccess: ({ url }) => {
   //     window.location.href = url ?? "/pricing";
@@ -22,11 +23,13 @@ const UpgradeButton = ({ plan, price }: Ibutton) => {
 
   const { onOpen } = useProModal();
   const { setPrice } = usePricing();
-  const { setSubscriptionType } = useUser();
+  const { setPlan, setQuota, setQuotaLimited } = useUser();
 
   const handleUpgrade = () => {
     setPrice(price!);
-    setSubscriptionType(plan!);
+    setPlan(plan!);
+    setQuota(quota!);
+    setQuotaLimited(false);
     onOpen();
   };
 

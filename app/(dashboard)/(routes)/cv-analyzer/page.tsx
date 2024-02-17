@@ -31,6 +31,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ReanalyzeModal } from "@/components/reanalyze-modal";
+import { usePricing } from "@/hooks/use-pricing";
+import { pricing } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface AnalyzeCV {
   id: string;
@@ -39,7 +42,8 @@ interface AnalyzeCV {
 }
 const CVAnalyzerPage = () => {
   const { apiLimitCount, onOpen } = useProModal();
-  const { subscriptionType, maxFreeCount } = useUser();
+  const { subscriptionType, maxFreeCount, setPlan, setQuota, setQuotaLimited } =
+    useUser();
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState({});
   const [reanalyzeIds, setReanalyzeIds] = useState<string[]>([]);
@@ -68,6 +72,8 @@ const CVAnalyzerPage = () => {
     },
   });
 
+  const isQuotaLimited =
+    subscriptionType !== "FREE" && apiLimitCount === maxFreeCount;
   const isFreeTrialLimited = apiLimitCount === maxFreeCount;
 
   const { requirements, percentage } = useAnalyzer();
@@ -140,6 +146,23 @@ const CVAnalyzerPage = () => {
       setReanalyzeIds(reanalyzeIds.filter((id) => id !== fileId));
     }
   };
+
+  const { setPrice } = usePricing();
+
+  const handleUpgrade = () => {
+    const subsType = subscriptionType.toUpperCase();
+    // @ts-ignore
+    const price = pricing[subsType];
+    setPrice(price);
+    setPlan(subscriptionType);
+    setQuota(maxFreeCount);
+    onOpen();
+  };
+
+  useEffect(() => {
+    setQuotaLimited(isQuotaLimited);
+  }, [isQuotaLimited]);
+
   return (
     <div>
       <Heading
@@ -153,9 +176,8 @@ const CVAnalyzerPage = () => {
         <div>
           <div className="flex items-center justify-between w-full h-16 gap-2 p-4 px-3 border rounded-lg md:px-4 focus-within:shadow-sm">
             <h1 className="mb-3text-gray-900">Start Analyzing</h1>
-            {isFreeTrialLimited &&
-            !subscriptionTypes.includes(subscriptionType) ? (
-              <Button onClick={onOpen}>Upload CV</Button>
+            {isQuotaLimited || isFreeTrialLimited ? (
+              <Button onClick={handleUpgrade}>Upload CV</Button>
             ) : (
               <UploadButton
                 isSubscribed={true}

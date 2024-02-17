@@ -118,7 +118,7 @@ const Sidebar = ({
 }: sidebarProps) => {
   const pathname = usePathname();
   const { setApiLimit } = useProModal();
-  const { setMaxFreeCount } = useUser();
+  const { setMaxFreeCount, setSubscriptionType } = useUser();
 
   useEffect(() => {
     setApiLimit(apiLimitCount);
@@ -126,6 +126,10 @@ const Sidebar = ({
 
   useEffect(() => {
     setMaxFreeCount(maxFreeCount!);
+  }, [maxFreeCount]);
+
+  useEffect(() => {
+    setSubscriptionType(subscriptionType!);
   }, [maxFreeCount]);
 
   return (

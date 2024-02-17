@@ -5,7 +5,7 @@ type usePricingStore = {
   setPayAsYouGoPrice: (v: number) => void;
   price: number;
   setPrice: (v: number) => void;
-  characterCount: number;
+  characterCount: number | null;
   setCharacterCount: (v: number) => void;
 };
 
@@ -14,6 +14,6 @@ export const usePricing = create<usePricingStore>()((set) => ({
   setPayAsYouGoPrice: (v: number) => set({ payAsYouGoPrice: v }),
   price: 249000,
   setPrice: (v: number) => set({ price: v }),
-  characterCount: 0,
+  characterCount: null,
   setCharacterCount: (v: number) => set({ characterCount: v }),
 }));

@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
 import { Check, Zap } from "lucide-react";
-
 import { productName, tools } from "@/constant";
 import { Badge } from "./ui/badge";
 import {
@@ -22,12 +22,16 @@ import { usePricing } from "@/hooks/use-pricing";
 
 import UseMidtrans from "@/hooks/use-midtrans";
 import { useUser } from "@/hooks/use-user";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const ProModal = () => {
   const proModal = useProModal();
-  const { payAsYouGoPrice, price } = usePricing();
-  const { subscriptionType } = useUser();
-  const { handleCheckout } = UseMidtrans();
+  const { payAsYouGoPrice, price, characterCount } = usePricing();
+  const { plan, quota, isQuotaLimited } = useUser();
+  const { handleCheckout, successResult } = UseMidtrans();
+  const router = useRouter();
 
   const handleClickUpgrade = () => {
     handleCheckout();
@@ -36,16 +40,43 @@ const ProModal = () => {
     }, 1000);
   };
 
+  const handleUpdateSubscription = async () => {
+    try {
+      const response = await axios.post("/api/update-user-subscription", {
+        characterCount: characterCount,
+        maxFreeCount: quota,
+        subscriptionType: plan?.toUpperCase(),
+      });
+
+      if (response) {
+        toast.success(`Successfully Upgrade to ${plan} Plan`, {
+          duration: 5000,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      router.refresh();
+    }
+  };
+
+  useEffect(() => {
+    if (Object.keys(successResult).length > 0) {
+      handleUpdateSubscription();
+    }
+  }, [successResult]);
+
   return (
     <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
       <DialogContent className="sm:max-w-lg md:min-w-max">
         <DialogHeader>
           <DialogTitle className="flex justify-center items-center flex-col gap-y-4 pb-2">
             <div className="flex items-center gap-x-2 font-bold py-1">
-              Upgrade to BerryLabs
+              {isQuotaLimited ? "Re-subscribe to" : "Upgrade to BerryLabs"}
               <Badge className=" uppercase text-sm py-1" variant="premium">
-                {subscriptionType}
+                {plan}
               </Badge>
+              Plan
             </div>
           </DialogTitle>
           <DialogDescription className=" text-center pt-2 space-y-2 text-zinc-900 font-medium">
@@ -96,7 +127,7 @@ const ProModal = () => {
               className="w-full mt-3"
               onClick={handleClickUpgrade}
             >
-              {subscriptionType}
+              {plan}
               <Zap className="w-4 h-4 ml-2 fill-white" />
             </Button>
           </div>

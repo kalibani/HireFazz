@@ -35,6 +35,9 @@ import { useUploadThing } from "@/lib/upload-thing";
 import { trpc } from "@/app/_trpc/client";
 
 import { useAnalyzer } from "@/hooks/use-analyzer";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/use-user";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const UploadDropzone = ({
   isSubscribed,
@@ -54,19 +57,22 @@ const UploadDropzone = ({
     return ongoing.length;
   }, [uploadProgressArr]);
   const { startUpload } = useUploadThing("pdfUploader");
+  const router = useRouter();
+  const { apiLimitCount } = useProModal();
+  const { maxFreeCount } = useUser();
   // @ts-ignore
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
       if (file.uploadStatus === "SUCCESS") {
         refetch();
-        // setIsOpen(false);
+        router.refresh();
       }
     },
     retry: true,
     onError(error, variables, context) {
       console.log("e", error, "v", variables, "c", context);
     },
-    retryDelay: 500,
+    retryDelay: 200,
     networkMode: "always",
   });
 
@@ -85,7 +91,7 @@ const UploadDropzone = ({
         });
         return updated;
       });
-    }, 500);
+    }, 200);
 
     return interval;
   };
@@ -95,7 +101,7 @@ const UploadDropzone = ({
     // @ts-ignore
     const res = await startUpload([file]);
     if (!res) {
-      return toast("Something went wrong");
+      return toast.error("Something went wrong");
     }
 
     const [fileResponse] = res;
@@ -103,7 +109,7 @@ const UploadDropzone = ({
     const key = fileResponse?.key;
 
     if (!key) {
-      return toast("Something went wrong on file key");
+      return toast.error("Something went wrong on file key");
     }
     clearInterval(progressInterval);
     startPolling({ key });
@@ -111,6 +117,15 @@ const UploadDropzone = ({
 
   const handleDropFiles = async (acceptedFiles: any[]) => {
     if (acceptedFiles[0]) {
+      if (acceptedFiles.length > maxFreeCount - apiLimitCount) {
+        toast.error(
+          "Your files is more than remaining quota, please reduce some",
+          {
+            duration: 5000,
+          }
+        );
+        return;
+      }
       const arr = acceptedFiles.map(() => 0);
       setUploadProgressArr(arr);
       acceptedFiles
@@ -129,31 +144,6 @@ const UploadDropzone = ({
         .finally(() => {
           setIsOpen(false);
         });
-
-      // console.log("-->", acceptedFiles);
-      // setIsUploading(true);
-
-      // const progressInterval = startSimulatedProgress();
-
-      // handle file uploading
-      // const res = await startUpload(acceptedFiles);
-
-      // if (!res) {
-      //   return toast("Something went wrong");
-      // }
-
-      // const [fileResponse] = res;
-
-      // const key = fileResponse?.key;
-
-      // if (!key) {
-      //   return toast("Something went wrong key");
-      // }
-
-      // clearInterval(progressInterval);
-      // setUploadProgress(100);
-
-      // startPolling({ key });
     }
   };
 

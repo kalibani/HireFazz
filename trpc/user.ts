@@ -41,7 +41,8 @@ const user = {
   updateUserSubscription: privateProcedure
     .input(
       z.object({
-        characterCount: z.number(),
+        characterCount: z.number().nullish(),
+        maxFreeCount: z.number().nullish(),
         subscriptionType: z.string(),
       })
     )
@@ -55,14 +56,17 @@ const user = {
       });
 
       if (user) {
-        await prismadb.userAPILimit.update({
+        const response = await prismadb.userAPILimit.update({
           where: { userId: userId },
           data: {
-            characterCount: user.characterCount! + input.characterCount,
+            characterCount: user.characterCount! + input.characterCount!,
+            maxFreeCount: input.maxFreeCount,
+            count: 0,
             // @ts-ignore
             subscriptionType: input.subscriptionType,
           },
         });
+        return response.subscriptionType;
       }
     }),
 

@@ -7,15 +7,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PLANS } from "@/constant";
+// import { PLANS, subscriptionTypes } from "@/constant";
 import { cn } from "@/lib/utils";
 
 import { ArrowRight, Check, HelpCircle, Minus, Asterisk } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs";
+import { getUser } from "@/lib/api-limit";
 
-const Page = () => {
+const Page = async () => {
   const { userId } = auth();
+  const { subscriptionType, maxFreeCount, count } = await getUser(userId!);
 
   const pricingItems = [
     {
@@ -247,7 +249,8 @@ const Page = () => {
                   </ul>
                   <div className="border-t border-gray-200" />
                   <div className="p-5">
-                    {plan === "Free" ? (
+                    {subscriptionType?.toLowerCase() === plan.toLowerCase() &&
+                    maxFreeCount! > count ? (
                       <Link
                         href={userId ? "/dashboard" : "/sign-in"}
                         className={buttonVariants({
@@ -259,7 +262,7 @@ const Page = () => {
                         <ArrowRight className="h-5 w-5 ml-1.5" />
                       </Link>
                     ) : userId ? (
-                      <UpgradeButton plan={plan} price={price} />
+                      <UpgradeButton plan={plan} price={price} quota={quota} />
                     ) : (
                       <Link
                         href="/sign-in"

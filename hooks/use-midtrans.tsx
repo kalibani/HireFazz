@@ -6,7 +6,6 @@ import { usePricing } from "./use-pricing";
 // import { productName } from "@/constant";
 // import { useTextToSpeechStore } from "./use-text-to-speech";
 import { useMidtransStore } from "./use-midtrans-store";
-import { trpc } from "@/app/_trpc/client";
 import { useUser } from "./use-user";
 
 // import * as dateFns from "date-fns";
@@ -44,23 +43,6 @@ export default function UseMidtrans() {
 
   const { characterCount, price } = usePricing();
   const { subscriptionType } = useUser();
-  // const { selectedVoice, historyItemId } = useTextToSpeechStore();
-
-  // const saveTransaction = trpc.saveTransactions.useMutation({
-  //   retry: 3,
-  //   networkMode: "always",
-  // });
-
-  const updateUserSubscription = trpc.updateUserSubscription.useMutation({
-    retry: 3,
-    networkMode: "always",
-  });
-
-  // const updateGeneratedVoiceStatus =
-  //   trpc.updateGeneratedVoiceStatus.useMutation({
-  //     retry: 3,
-  //     networkMode: "always",
-  //   });
 
   const handleCheckout = async () => {
     // @ts-ignore
@@ -72,10 +54,6 @@ export default function UseMidtrans() {
     //   subscriptionType,
     //   selectedProductName
     // );
-
-    // if (subscriptionType === "FLEXIBLE") {
-    //   setPayAsYouGoPrice(price!);
-    // }
 
     const data = {
       id: subscriptionType + uuidv4(),
@@ -110,27 +88,6 @@ export default function UseMidtrans() {
       snap.pay(token, {
         onSuccess: async function (result: any) {
           onSuccess(result);
-
-          // await Promise.all([
-          // save transaction to database
-          // await saveTransaction.mutate({
-          //   amountPaid: Number(result?.gross_amount),
-          //   orderId: result?.order_id,
-          //   productName: subscriptionType,
-          // });
-
-          // update user subscription type
-          await updateUserSubscription.mutate({
-            characterCount: characterCount,
-            subscriptionType: subscriptionType,
-          });
-
-          // update user generated voice status
-          // await updateGeneratedVoiceStatus.mutate({
-          //   historyItemId: historyItemId,
-          //   isPaid: true,
-          // });
-          // ]);
         },
         onPending: function (result: any) {
           onPending(result);
