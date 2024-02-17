@@ -22,22 +22,26 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { fileTypes } from "@/types/types";
 interface IReanalyzeModal {
   open: boolean;
   onOpenChange: () => void;
   onSubmit: (requirements: string, percentage: number) => void;
+  selectedFile: fileTypes;
 }
 
 export const ReanalyzeModal = ({
   open,
   onOpenChange,
   onSubmit,
+  selectedFile,
 }: IReanalyzeModal) => {
   const [requirements, setRequirements] = useState("");
   const [percentage, setPercentage] = useState(60);
   useEffect(() => {
     if (open) {
-      setRequirements("");
+      // @ts-ignore
+      setRequirements(selectedFile?.reportOfAnalysis?.requirements || "");
       setPercentage(60);
     }
   }, [open]);

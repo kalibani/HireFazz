@@ -4,3 +4,22 @@ export enum fileExtension {
   "docx",
   "doc",
 }
+
+export enum UploadStatus {
+  PENDING,
+  PROCESSING,
+  FAILED,
+  SUCCESS,
+}
+
+export type fileTypes = {
+  id: string;
+  name: string;
+  uploadStatus: UploadStatus;
+  url: string;
+  key: string;
+  reportOfAnalysis?: JSON | null;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string | null;
+};
