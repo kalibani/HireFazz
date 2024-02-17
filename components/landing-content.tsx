@@ -6,27 +6,27 @@ const testimonials = [
   {
     name: "Bima",
     avatar: "B",
-    title: "Content Creator",
-    description: "Easy to use, the best price on the class!",
+    title: "HR Specialist",
+    description: "Scan hundreds of CVs within minutes, absolutely game changer",
   },
   {
     name: "Rachel",
     avatar: "R",
     title: "Youtuber",
-    description: "I use this voice generator for my daily content!",
+    description: "I use the voice generator feature for my daily content!",
   },
   {
-    name: "Mark",
+    name: "Muhammad",
     avatar: "M",
-    title: "Social Media Specialist",
-    description: "This app has changed my life, we can use our own voice!",
+    title: "HRD",
+    description:
+      "This app has changed my life, say goodbye to the tiring repetitive jobs!",
   },
   {
-    name: "David",
-    avatar: "D",
-    title: "Students",
-    description:
-      "The best in class, pay as you need is the best subscription method!",
+    name: "Indra",
+    avatar: "I",
+    title: "HRD",
+    description: "Easy to use, super helpful CV scanner",
   },
 ];
 
