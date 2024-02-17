@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 
 type Props = {};
 
-const LabsPage = (props: Props) => {
+const BankStatementPage = (props: Props) => {
   redirect("/coming-soon");
 };
 
-export default LabsPage;
+export default BankStatementPage;

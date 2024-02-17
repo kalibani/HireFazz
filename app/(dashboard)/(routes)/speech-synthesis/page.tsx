@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 
 import {
   FileArchiveIcon,
@@ -198,7 +198,7 @@ const SpeechSynthesisPage = () => {
     }
   };
 
-  const characterLimit = 5000;
+  const characterLimit = 1000;
 
   const router = useRouter();
   const handleUpdateUserLimit = async () => {

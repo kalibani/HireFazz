@@ -13,12 +13,16 @@ type DashboardLayoutProps = {
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
   const { userId } = auth();
-  const { count, subscriptionType } = await getUser(userId!);
+  const { count, subscriptionType, maxFreeCount } = await getUser(userId!);
 
   return (
     <div className="h-full relative">
       <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 bg-gray-900">
-        <Sidebar apiLimitCount={count} subscriptionType={subscriptionType} />
+        <Sidebar
+          apiLimitCount={count}
+          subscriptionType={subscriptionType}
+          maxFreeCount={maxFreeCount!}
+        />
       </div>
       <main className="md:pl-72 overflow-clip">
         <Navbar />

@@ -1,6 +1,6 @@
 import prismadb from "./prismadb";
 
-import { MAX_FREE_COUNTS } from "@/constant";
+// import { MAX_FREE_COUNTS } from "@/constant";
 
 export const increaseApiLimit = async (userId: string) => {
   if (!userId) {
@@ -13,7 +13,7 @@ export const increaseApiLimit = async (userId: string) => {
     },
   });
 
-  if (userApiLimit && userApiLimit.count < MAX_FREE_COUNTS) {
+  if (userApiLimit && userApiLimit.count < userApiLimit.maxFreeCount!) {
     await prismadb.userAPILimit.update({
       where: { userId: userId },
       data: { count: userApiLimit.count + 1 },
@@ -38,7 +38,7 @@ export const checkApiLimit = async (userId: string) => {
     },
   });
 
-  if (!userApiLimit || userApiLimit.count < MAX_FREE_COUNTS) {
+  if (!userApiLimit || userApiLimit.count < userApiLimit.maxFreeCount!) {
     return true;
   } else {
     return false;
@@ -57,6 +57,7 @@ export const getUser = async (userId: string) => {
       count: 0,
       characterCount: 0,
       subscriptionType: "FREE",
+      maxFreeCount: 25,
     };
   }
 
@@ -65,5 +66,6 @@ export const getUser = async (userId: string) => {
     characterCount: user.characterCount,
     subscriptionType: user.subscriptionType,
     currentSubscriptionPeriodEnd: user.currentSubscriptionPeriodEnd,
+    maxFreeCount: user.maxFreeCount,
   };
 };

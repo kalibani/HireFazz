@@ -20,6 +20,7 @@ import {
   HeartHandshake,
   Heart,
   FileText,
+  Banknote,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -50,6 +51,7 @@ const routes = [
     icon: FileText,
     href: "/cv-analyzer",
     color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
   },
   {
     label: "Speech Synthesis",
@@ -59,11 +61,18 @@ const routes = [
     bgColor: "bg-violet-500/10",
   },
   {
-    label: "Voice Labs",
-    icon: FlaskConical,
-    href: "/labs",
-    color: "text-pink-700",
+    label: "Bank Statement Analyzer",
+    icon: Banknote,
+    href: "/bank-statement-analyzer",
+    color: "text-pink-500",
+    bgColor: "bg-pink-500/10",
   },
+  // {
+  //   label: "Voice Labs",
+  //   icon: FlaskConical,
+  //   href: "/labs",
+  //   color: "text-pink-700",
+  // },
   {
     label: "History",
     icon: SquareStack,
@@ -99,20 +108,30 @@ const routes = [
 type sidebarProps = {
   apiLimitCount: number;
   subscriptionType: string;
+  maxFreeCount?: number;
 };
 
-const Sidebar = ({ apiLimitCount = 0, subscriptionType }: sidebarProps) => {
+const Sidebar = ({
+  apiLimitCount = 0,
+  subscriptionType,
+  maxFreeCount,
+}: sidebarProps) => {
   const pathname = usePathname();
   const { setApiLimit } = useProModal();
-  const { setSubscriptionType } = useUser();
+  const { setMaxFreeCount, setSubscriptionType } = useUser();
 
   useEffect(() => {
     setApiLimit(apiLimitCount);
   }, [apiLimitCount]);
 
   useEffect(() => {
-    setSubscriptionType(subscriptionType);
-  }, [subscriptionType]);
+    setMaxFreeCount(maxFreeCount!);
+  }, [maxFreeCount]);
+
+  useEffect(() => {
+    setSubscriptionType(subscriptionType!);
+  }, [maxFreeCount]);
+
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
       <div className="px-3 py-2 flex-1">
@@ -144,16 +163,18 @@ const Sidebar = ({ apiLimitCount = 0, subscriptionType }: sidebarProps) => {
           ))}
         </div>
       </div>
-      {subscriptionType !== "PREMIUM" ? (
-        <FreeCounter apiLimitCount={apiLimitCount} />
-      ) : null}
-      <hr className="h-px bg-white/10 border-0 " />
+      <FreeCounter
+        apiLimitCount={apiLimitCount}
+        subscriptionType={subscriptionType}
+        maxFreeCount={maxFreeCount}
+      />
+      {/* <hr className="h-px bg-white/10 border-0 " />
       <span className="flex px-3 py-1 items-center">
         <span className="text-zinc-400 mr-2 text-sm">
           Powered by: IIElevenLabs
         </span>
         <Heart className="h-4 w-4 text-red-700" />
-      </span>
+      </span> */}
     </div>
   );
 };

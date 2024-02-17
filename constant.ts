@@ -4,9 +4,10 @@ import {
   FlaskConical,
   SquareStack,
   FileText,
+  Banknote,
 } from "lucide-react";
 
-export const MAX_FREE_COUNTS = 25;
+export const MAX_FREE_COUNTS = 19;
 
 export const tools = [
   // {
@@ -20,6 +21,7 @@ export const tools = [
     icon: FileText,
     href: "/cv-analyzer",
     color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
   },
   {
     label: "Speech Synthesis",
@@ -29,16 +31,24 @@ export const tools = [
     bgColor: "bg-violet-500/10",
   },
   {
-    label: "Voice Labs",
-    icon: FlaskConical,
-    href: "/labs",
-    color: "text-pink-700",
+    label: "Bank Statement Analyzer",
+    icon: Banknote,
+    href: "/bank-statement-analyzer",
+    color: "text-pink-500",
+    bgColor: "bg-pink-500/10",
   },
+  // {
+  //   label: "Voice Labs",
+  //   icon: FlaskConical,
+  //   href: "/labs",
+  //   color: "text-pink-700",
+  // },
   {
     label: "History",
     icon: SquareStack,
     href: "/history",
     color: "text-orange-700",
+    bgColor: "bg-orange-500/10",
   },
   // {
   //   label: "Music Generation",
@@ -72,12 +82,12 @@ export const tools = [
 
 export const PLANS = [
   {
-    name: "Pay as You Go",
-    slug: "Pay as You Go",
-    quota: 10,
+    name: "Basic",
+    slug: "basic",
+    quota: 100,
     pagesPerPdf: 5,
     price: {
-      amount: 19000,
+      amount: 249,
       priceIds: {
         test: "",
         production: "",
@@ -85,10 +95,10 @@ export const PLANS = [
     },
   },
   {
-    name: "Premium",
-    slug: "premium",
-    quota: 30,
-    pagesPerPdf: 25,
+    name: "Pro",
+    slug: "pro",
+    quota: 200,
+    pagesPerPdf: 10,
     price: {
       amount: 499,
       priceIds: {
@@ -97,19 +107,19 @@ export const PLANS = [
       },
     },
   },
-  // {
-  //   name: "Premium",
-  //   slug: "premium",
-  //   quota: 150,
-  //   pagesPerPdf: 25,
-  //   price: {
-  //     amount: 20,
-  //     priceIds: {
-  //       test: "price_1OLQyVC0XsP9dATYpzHIpjAe",
-  //       production: "",
-  //     },
-  //   },
-  // },
+  {
+    name: "Premium",
+    slug: "premium",
+    quota: 500,
+    pagesPerPdf: 25,
+    price: {
+      amount: 999,
+      priceIds: {
+        test: "price_1OLQyVC0XsP9dATYpzHIpjAe",
+        production: "",
+      },
+    },
+  },
 ];
 
 export enum productName {
@@ -141,3 +151,4 @@ Please note that you don’t need to explain every point at the beginning, just 
 `;
 
 export const matchLimit = 50;
+export const subscriptionTypes = ["BASIC", "PRO", "PREMIUM"];

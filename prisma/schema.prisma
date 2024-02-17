@@ -11,6 +11,8 @@ datasource db {
 enum SubscriptionType {
   FREE
   FLEXIBLE
+  BASIC
+  PRO
   PREMIUM
 }
 
@@ -33,6 +35,7 @@ model userAPILimit {
   currentSubscriptionPeriodEnd DateTime?
   Transactions                 Transactions[]
   characterCount Int?
+  maxFreeCount Int? @default(25)
 }
 
 enum UploadStatus {

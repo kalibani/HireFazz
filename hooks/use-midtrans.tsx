@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import { priceSchemeHelper } from "@/lib/utils";
+// import { priceSchemeHelper } from "@/lib/utils";
 import { usePricing } from "./use-pricing";
-import { productName } from "@/constant";
-import { useTextToSpeechStore } from "./use-text-to-speech";
+// import { productName } from "@/constant";
+// import { useTextToSpeechStore } from "./use-text-to-speech";
 import { useMidtransStore } from "./use-midtrans-store";
-import { trpc } from "@/app/_trpc/client";
+import { useUser } from "./use-user";
 
 // import * as dateFns from "date-fns";
 
@@ -41,65 +41,42 @@ export default function UseMidtrans() {
     onError,
   } = useMidtransStore();
 
-  const { characterCount, setPayAsYouGoPrice } = usePricing();
-  const { selectedVoice, historyItemId } = useTextToSpeechStore();
+  const { characterCount, price } = usePricing();
+  const { subscriptionType } = useUser();
 
-  const saveTransaction = trpc.saveTransactions.useMutation({
-    retry: 3,
-    networkMode: "always",
-  });
-
-  const updateUserSubscription = trpc.updateUserSubscription.useMutation({
-    retry: 3,
-    networkMode: "always",
-  });
-
-  const updateGeneratedVoiceStatus =
-    trpc.updateGeneratedVoiceStatus.useMutation({
-      retry: 3,
-      networkMode: "always",
-    });
-
-  const handleCheckout = async (
-    subscriptionType: string,
-    selectedProductName: productName
-  ) => {
+  const handleCheckout = async () => {
     // @ts-ignore
-    const voiceId = selectedVoice.voice_id;
+    // const voiceId = selectedVoice.voice_id;
     // @ts-ignore
-    const voiceName = selectedVoice.name;
-    const price = priceSchemeHelper(
-      characterCount,
-      subscriptionType,
-      selectedProductName
-    );
+    // const voiceName = selectedVoice.name;
+    // const price = priceSchemeHelper(
+    //   characterCount,
+    //   subscriptionType,
+    //   selectedProductName
+    // );
 
-    if (subscriptionType === "FLEXIBLE") {
-      setPayAsYouGoPrice(price!);
-    }
-
-    let data = {
-      id: voiceId,
-      name: voiceName,
+    const data = {
+      id: subscriptionType + uuidv4(),
+      name: `${subscriptionType}-SUBSCRIPTION`,
       price: price,
     };
 
-    if (subscriptionType === "PREMIUM") {
-      // const startTime = new Date();
-      // const nextMonth = dateFns.addMonths(startTime, 1);
+    // if (subscriptionType === "PREMIUM") {
+    // const startTime = new Date();
+    // const nextMonth = dateFns.addMonths(startTime, 1);
 
-      // const dueDate = dateFns.format(nextMonth, "yyyy-MM-dd HH:mm:ss z");
+    // const dueDate = dateFns.format(nextMonth, "yyyy-MM-dd HH:mm:ss z");
 
-      data = {
-        ...data,
-        id: "PREMIUM" + uuidv4(),
-        name: "PREMIUM-SUBSCRIPTION",
-        // @ts-ignore
-        // required: true,
-        // start_time: dueDate,
-        // interval: "month",
-      };
-    }
+    // data = {
+    //   ...data,
+    //   id: subscriptionType + uuidv4(),
+    //   name: `${subscriptionType}-SUBSCRIPTION`,
+    // @ts-ignore
+    // required: true,
+    // start_time: dueDate,
+    // interval: "month",
+    // };
+    // }
 
     try {
       setLoading(true);
@@ -111,27 +88,6 @@ export default function UseMidtrans() {
       snap.pay(token, {
         onSuccess: async function (result: any) {
           onSuccess(result);
-
-          // await Promise.all([
-          // save transaction to database
-          await saveTransaction.mutate({
-            amountPaid: Number(result?.gross_amount),
-            orderId: result?.order_id,
-            productName: subscriptionType,
-          });
-
-          // update user subscription type
-          await updateUserSubscription.mutate({
-            characterCount: characterCount,
-            subscriptionType: subscriptionType,
-          });
-
-          // update user generated voice status
-          await updateGeneratedVoiceStatus.mutate({
-            historyItemId: historyItemId,
-            isPaid: true,
-          });
-          // ]);
         },
         onPending: function (result: any) {
           onPending(result);

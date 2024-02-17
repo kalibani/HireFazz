@@ -39,3 +39,10 @@ export function priceSchemeHelper(
     return price;
   }
 }
+
+export const pricing = {
+  FREE: 249000, // default price
+  BASIC: 249000,
+  PRO: 499000,
+  PREMIUM: 999000,
+};

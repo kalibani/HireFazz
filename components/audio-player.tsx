@@ -83,19 +83,19 @@ const AudioPlayer = ({
     UseMidtrans();
 
   const handleDownload = async () => {
-    if (subscriptionType !== "PREMIUM" && isFreeTrialLimited && stream) {
-      setPayAsYouGoPriceVisible(true);
-      onOpen();
-    } else {
-      setIsDownloading(true);
-      const url = stream || selectedVoice.preview_url;
-      downloadBlobFile(url, `berrylabs-${selectedVoice.name}`);
-      if (!isFreeTrialLimited && stream) {
-        // @ts-ignore
-        updateUserLimit();
-      }
-      setIsDownloading(false);
+    // if (subscriptionType !== "PREMIUM" && isFreeTrialLimited && stream) {
+    //   setPayAsYouGoPriceVisible(true);
+    //   onOpen();
+    // } else {
+    setIsDownloading(true);
+    const url = stream || selectedVoice.preview_url;
+    downloadBlobFile(url, `berrylabs-${selectedVoice.name}`);
+    if (!isFreeTrialLimited && stream) {
+      // @ts-ignore
+      // updateUserLimit();
     }
+    setIsDownloading(false);
+    // }
   };
 
   useEffect(() => {
@@ -147,11 +147,13 @@ const AudioPlayer = ({
                 indicatorColor="bg-gray-900"
               />
               <span className="inline-flex self-center items-center p-2 text-sm font-medium text-gray-400 dark:text-white">
+                {/* @ts-ignore */}
                 {dateFns.format(
                   Math.round(progress.playedSeconds) * 1000,
                   "mm:ss"
                 )}{" "}
-                / {dateFns.format(Math.round(duration) * 1000, "mm:ss")}
+                {/* @ts-ignore */}/{" "}
+                {dateFns.format(Math.round(duration) * 1000, "mm:ss")}
               </span>
               {stream && isReady ? (
                 <span className="relative flex h-3 w-3 bottom-3 -right-9">
