@@ -81,38 +81,42 @@ export const POST = async (req: NextRequest) => {
     messages: [
       {
         role: "system",
-        content: `Use the following pieces of context (or previous conversation if needed) to answer the users question in json format. \nPlease pay attention to the Instructions below, you have to follow the Instructions and answer according to it. \nYou have to calculate how much is the percentage of this cv match with the requirements. The calculation must be count all the aspects provided on the document, like relevant experience, educational background, skills, total years of experience, salary expectation, country of origin, residential place, current location, Visa Sponsorship, Age, etc.\nThe result of the calculation must be written on matchPercentage!
-          The result of the calculation should be different between one and another, depending on the information provided on the cv.
-          The answer must be in the same language as the language used in the requirements, for example if the requirements is on english language then answer in english, if the requirements is on Indonesian language, answer in Indonesian language and so on.
-          IF the requirements is not clearly defined, matchPercentage should be '0'.
-          IF the matched things is below than 3 things than the matchPercentage should not more than '70'.
-          The answer must be on a json format, for example: 
-          {
-            documentOwner: 'full name of the owner',
-            requirements: ${requirements} Do not change this part,
-            percentage: ${percentage} Do not change this part,
-            matchPercentage: 'the calculation result of the matched percentage',
-            reason: 'reason of the match percentage',
-          }
-          description:
-          documentOwner = name of the document owner
-          requirements =  requirements provided by the user. Do not change this part!
-          percentage: percentage provided by the user. Do not change this part!
-          matchPercentage: result of the matched percentage i.e 50 or 60 or 80, maximum 100
-          reason: 'reason of the match percentage.`,
-      },
-      {
-        role: "user",
-        content: `Use the following pieces of context (or previous conversation if needed) to answer the users question in json format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer. \nPlease pay attention to the Instructions, you have to follow the Instructions and answer according to it.  \nYou have to calculate how much is the percentage of this cv match with the requirements. The calculation must be count all the aspects provided on the document, like relevant experience, educational background, skills, total years of experience, salary expectation, country of origin, residential place, current location, Visa Sponsorship, Age, etc.\nThe result of the calculation must be written on matchPercentage!
+        content: `Use the following pieces of context (or previous conversation if needed) to answer the users question in json format. Please follow to the Instructions and Restrictions below, you have to answer according to it.
+        Instructions:
+        You have to calculate how much is the percentage of this cv match with the requirements. The calculation must count all the aspects provided on the document, like relevant experience, educational background, skills, total years of experience, salary expectation, country of origin, current location, Visa Sponsorship, Age, etc.
+        The result of the calculation must be written on matchPercentage!
         The result of the calculation should be different between one and another, depending on the information provided on the cv.
+        Restrictions:
         The answer must be in the same language as the language used in the requirements, for example if the requirements is on english language then answer in english, if the requirements is on Indonesian language, answer in Indonesian language and so on.
         IF the requirements is not clearly defined, matchPercentage should be '0'.
         IF the matched things is below than 3 things than the matchPercentage should not more than '70'.
         The answer must be on a json format, for example: 
         {
           documentOwner: 'full name of the owner',
-          requirements: ${requirements} Do not change this part,
-          percentage: ${percentage} Do not change this part,
+          matchPercentage: 'the calculation result of the matched percentage',
+          reason: 'reason of the match percentage',
+        }
+        description:
+        documentOwner = name of the document owner
+        requirements =  requirements provided by the user. Do not change this part!
+        percentage: percentage provided by the user. Do not change this part!
+        matchPercentage: result of the matched percentage i.e 50 or 60 or 80, maximum 100
+        reason: 'reason of the match percentage`,
+      },
+      {
+        role: "user",
+        content: `Use the following pieces of context (or previous conversation if needed) to answer the users question in json format. Please follow to the Instructions and Restrictions below, you have to answer according to it.
+        Instructions:
+        You have to calculate how much is the percentage of this cv match with the requirements. The calculation must count all the aspects provided on the document, like relevant experience, educational background, skills, total years of experience, salary expectation, country of origin, current location, Visa Sponsorship, Age, etc.
+        The result of the calculation must be written on matchPercentage!
+        The result of the calculation should be different between one and another, depending on the information provided on the cv.
+        Restrictions:
+        The answer must be in the same language as the language used in the requirements, for example if the requirements is on english language then answer in english, if the requirements is on Indonesian language, answer in Indonesian language and so on.
+        IF the requirements is not clearly defined, matchPercentage should be '0'.
+        IF the matched things is below than 3 things than the matchPercentage should not more than '70'.
+        The answer must be on a json format, for example: 
+        {
+          documentOwner: 'full name of the owner',
           matchPercentage: 'the calculation result of the matched percentage',
           reason: 'reason of the match percentage',
         }
@@ -135,10 +139,15 @@ export const POST = async (req: NextRequest) => {
   });
 
   const reportOfAnalysis = JSON.parse(response.choices[0].message.content!);
+  const formattedReportOfAnalysis = {
+    ...reportOfAnalysis,
+    requirements: requirements,
+    percentage: percentage,
+  };
 
   await prismadb.file.update({
     data: {
-      reportOfAnalysis: reportOfAnalysis,
+      reportOfAnalysis: formattedReportOfAnalysis,
     },
     where: {
       id: fileId,
