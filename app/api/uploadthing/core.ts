@@ -45,26 +45,16 @@ const onUploadComplete = async ({
     url: string;
   };
 }) => {
-  const isFileExist = await prismadb.file.findFirst({
-    where: {
-      key: file.key,
-    },
-  });
+  // const isFileExist = await prismadb.file.findFirst({
+  //   where: {
+  //     key: file.key,
+  //   },
+  // });
 
-  if (isFileExist) return;
-
-  const createdFile = await prismadb.file.create({
-    data: {
-      key: file.key,
-      name: file.name,
-      userId: metadata.userId,
-      url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`,
-      uploadStatus: "PROCESSING",
-    },
-  });
+  // if (isFileExist) return;
 
   try {
-    const fileUrl = `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`;
+    const fileUrl = `https://uploadthing-prod-icn1.s3.ap-northeast-2.amazonaws.com/${file.key}`;
     const fileExtension = extractExtension(fileUrl);
     const response = await fetch(fileUrl);
     const blob = await response.blob();
@@ -123,31 +113,25 @@ const onUploadComplete = async ({
       openAIApiKey: process.env.OPEN_API_KEY,
     });
 
+    const createdFile = await prismadb.file.create({
+      data: {
+        key: file.key,
+        name: file.name,
+        userId: metadata.userId,
+        url: `https://uploadthing-prod-icn1.s3.ap-northeast-2.amazonaws.com/${file.key}`,
+        uploadStatus: "SUCCESS",
+      },
+    });
+
     await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
       pineconeIndex,
       namespace: createdFile.id,
     });
 
-    await prismadb.file.update({
-      data: {
-        uploadStatus: "SUCCESS",
-      },
-      where: {
-        id: createdFile.id,
-      },
-    });
-
     await increaseApiLimit(metadata.userId);
   } catch (err) {
     console.log("err", err);
-    prismadb.file.update({
-      data: {
-        uploadStatus: "FAILED",
-      },
-      where: {
-        id: createdFile.id,
-      },
-    });
+
     throw new NextResponse("Invalid file structure", { status: 400 });
   }
 };
@@ -173,7 +157,7 @@ export const ourFileRouter = {
   //         key: file.key,
   //         name: file.name,
   //         userId: metadata.userId,
-  //         url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`,
+  //         url: `https://uploadthing-prod-icn1.s3.ap-northeast-2.amazonaws.com/${file.key}`,
   //         uploadStatus: "PROCESSING",
   //       },
   //     });
