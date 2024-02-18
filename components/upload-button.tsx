@@ -185,6 +185,9 @@ const UploadDropzone = ({
                 <p className="text-xs text-zinc-500">
                   PDF, DOCX (up to {isSubscribed ? "16" : "4"}MB)
                 </p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Maximum 50 files per upload
+                </p>
               </div>
 
               {acceptedFiles && acceptedFiles[0]
