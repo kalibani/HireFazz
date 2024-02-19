@@ -36,6 +36,7 @@ import { pricing } from "@/lib/utils";
 const limit = 10;
 interface AnalyzeCV {
   id: string;
+  jobTitle?: string;
   requirement?: string;
   percentage?: number;
 }
@@ -62,6 +63,7 @@ const CVAnalyzerPage = () => {
     );
   const filesMemo = useMemo(() => {
     if (filesInfinite?.pages) {
+      // @ts-ignore
       return filesInfinite?.pages.reduce((acc, el) => {
         return [...acc, ...el.items];
       }, []);
@@ -89,23 +91,26 @@ const CVAnalyzerPage = () => {
     subscriptionType !== "FREE" && apiLimitCount === maxFreeCount;
   const isFreeTrialLimited = apiLimitCount === maxFreeCount;
 
-  const { requirements, percentage } = useAnalyzer();
+  const { jobTitle, requirements, percentage } = useAnalyzer();
 
   const analyzeCV = async ({
     id,
+    jobTitle: jobTitleProp,
     requirement,
     percentage: percentageProp,
   }: AnalyzeCV) => {
     const safeRequirement = requirement || requirements;
     const safePercentage = percentageProp || percentage;
+    const safeJobTitle = jobTitleProp || jobTitle;
     const messages = `
     Below is the requirements or qualifications or job descriptions that we are looking for:
-
+    Job Title: ${safeJobTitle} 
     ${safeRequirement}
     `;
 
     try {
       await axios.post("/api/cv-analyzer", {
+        jobTitle: safeJobTitle,
         message: messages,
         fileId: id,
         requirements: safeRequirement,
@@ -118,8 +123,10 @@ const CVAnalyzerPage = () => {
   };
 
   useEffect(() => {
+    // @ts-ignore
     if (filesMemo?.length) {
       filesMemo
+        // @ts-ignore
         .reduce((acc, item) => {
           return acc.then(() => {
             if (item.reportOfAnalysis) {
@@ -128,6 +135,7 @@ const CVAnalyzerPage = () => {
             return analyzeCV({ id: item.id });
           });
         }, Promise.resolve())
+        // @ts-ignore
         .then((res) => {})
         .catch((err: any) => {
           console.log(err);
@@ -145,13 +153,17 @@ const CVAnalyzerPage = () => {
   const handleDelete = async (id: string) => {
     deleteFile({ id });
   };
-  const handleReanalyze = async (requirement: string, percentage: number) => {
+  const handleReanalyze = async (
+    jobTitle: string,
+    requirement: string,
+    percentage: number
+  ) => {
     // @ts-ignore
     const fileId = selectedFile.id;
     setSelectedFile({});
     try {
       setReanalyzeIds([...reanalyzeIds, fileId]);
-      await analyzeCV({ id: fileId, requirement, percentage });
+      await analyzeCV({ id: fileId, jobTitle, requirement, percentage });
     } catch (error) {
     } finally {
       setReanalyzeIds(reanalyzeIds.filter((id) => id !== fileId));
@@ -201,9 +213,11 @@ const CVAnalyzerPage = () => {
         </div>
         <div className="mt-4 space-y-4">
           {/* display all user files */}
+          {/* @ts-ignore */}
           {filesMemo && filesMemo?.length !== 0 ? (
             <>
               <ul className="grid grid-cols-1 gap-6 mt-8 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
+                {/* @ts-ignore */}
                 {filesMemo.map((file) => (
                   <li
                     key={file.id}
@@ -211,7 +225,7 @@ const CVAnalyzerPage = () => {
                   >
                     <div className="flex items-center">
                       <Link
-                        href={`/cv-analyzer/${file.id}`}
+                        href={`/cv-scanner/${file.id}`}
                         className="flex flex-col flex-1 gap-2"
                       >
                         <div className="flex items-center justify-between max-w-[300px] p-4 space-x-6">
@@ -263,7 +277,7 @@ const CVAnalyzerPage = () => {
                       )}
                     </div>
                     <div>
-                      <div className="flex justify-between gap-6 px-4 py-2 text-sm">
+                      <div className="flex justify-between gap-6 px-4 pt-2 text-base text-zinc-900">
                         <div className="flex items-center gap-2">
                           {
                             <>
@@ -293,20 +307,22 @@ const CVAnalyzerPage = () => {
 
                         {!file.reportOfAnalysis ||
                         reanalyzeIds.includes(file.id) ? (
-                          <div className="flex p-2 text-sm text-zinc-900">
+                          <div className="flex p-2 text-base text-zinc-900 items-center">
                             Analyzing
-                            <MoreHorizontal className="ml-1 mt-0.5 h-4 w-4 shrink-0 opacity-50 animate-ping text-zinc-900" />
+                            <MoreHorizontal className="ml-1 h-4 w-4 shrink-0 opacity-50 animate-ping text-zinc-900" />
                           </div>
                         ) : (
-                          <div className="flex items-center justify-center h-10 gap-1 text-sm text-zinc-900">
+                          <div className="flex items-center justify-center h-10 gap-1 text-base text-zinc-900">
                             {/* @ts-ignore */}
-                            {file.reportOfAnalysis?.matchPercentage}%
-                            <p>Match</p>
+                            {file.reportOfAnalysis?.matchPercentage ??
+                              file.reportOfAnalysis?.matchedPercentage}
+                            %<p>Match</p>
                             {isMoreThanMatchLimit(
                               // @ts-ignore
                               file.reportOfAnalysis?.percentage,
                               // @ts-ignore
-                              file.reportOfAnalysis?.matchPercentage
+                              file.reportOfAnalysis?.matchPercentage ??
+                                file.reportOfAnalysis?.matchedPercentage
                             ) ? (
                               <Check className="w-5 h-5 text-green-500 " />
                             ) : (
@@ -314,6 +330,9 @@ const CVAnalyzerPage = () => {
                             )}
                           </div>
                         )}
+                      </div>
+                      <div className="px-4 pb-1 text-zinc-900 text-sm">
+                        {file.reportOfAnalysis?.jobTitle}
                       </div>
                       <div className="px-4 pb-4">
                         {!reanalyzeIds.includes(file.id) && (
@@ -347,6 +366,7 @@ const CVAnalyzerPage = () => {
               </Button>
             </div>
           )}
+          {/* @ts-ignore */}
           {isLoading && !!filesMemo.length && (
             <div className="flex justify-center mt-4">
               <Loader2 className="mr-4 text-blue-500 animate-spin" />

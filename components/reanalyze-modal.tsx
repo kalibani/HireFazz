@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
+import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import {
@@ -26,7 +27,11 @@ import { fileTypes } from "@/types/types";
 interface IReanalyzeModal {
   open: boolean;
   onOpenChange: () => void;
-  onSubmit: (requirements: string, percentage: number) => void;
+  onSubmit: (
+    jobTitle: string,
+    requirements: string,
+    percentage: number
+  ) => void;
   selectedFile: fileTypes;
 }
 
@@ -36,10 +41,13 @@ export const ReanalyzeModal = ({
   onSubmit,
   selectedFile,
 }: IReanalyzeModal) => {
+  const [jobTitle, setJobTitle] = useState("");
   const [requirements, setRequirements] = useState("");
   const [percentage, setPercentage] = useState(60);
   useEffect(() => {
     if (open) {
+      // @ts-ignore
+      setJobTitle(selectedFile?.reportOfAnalysis?.jobTitle || "");
       // @ts-ignore
       setRequirements(selectedFile?.reportOfAnalysis?.requirements || "");
       setPercentage(60);
@@ -51,7 +59,20 @@ export const ReanalyzeModal = ({
         <DialogHeader>
           <DialogTitle className="flex flex-col pb-2 gap-y-4">
             <div className="flex items-center py-1 font-bold gap-x-2">
-              Input your requirements
+              Update Job Title <span className="text-red-400">*</span>
+            </div>
+          </DialogTitle>
+          <Input
+            type="text"
+            name="jobTitle"
+            className="mt-1"
+            placeholder="Job Title"
+            value={jobTitle}
+            onChange={(e) => setJobTitle(e.target.value)}
+          />
+          <DialogTitle className="flex flex-col pb-2 gap-y-4">
+            <div className="flex items-center py-1 font-bold gap-x-2">
+              Update Requirements <span className="text-red-400">*</span>
             </div>
           </DialogTitle>
           <Textarea
@@ -108,8 +129,9 @@ export const ReanalyzeModal = ({
             </DropdownMenu>
           </div>
           <Button
-            onClick={() => onSubmit(requirements, percentage)}
+            onClick={() => onSubmit(jobTitle, requirements, percentage)}
             className="w-full mt-4"
+            disabled={!requirements || !jobTitle}
           >
             Submit
           </Button>

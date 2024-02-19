@@ -15,6 +15,7 @@ import { toast } from "react-hot-toast";
 
 import Dropzone from "react-dropzone";
 import { Cloud, File, Loader2, AlertCircle, ChevronDown } from "lucide-react";
+import { Input } from "./ui/input";
 import { Progress } from "./ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -38,6 +39,7 @@ import { useAnalyzer } from "@/hooks/use-analyzer";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/use-user";
 import { useProModal } from "@/hooks/use-pro-modal";
+import { cn } from "@/lib/utils";
 
 const UploadDropzone = ({
   isSubscribed,
@@ -175,7 +177,12 @@ const UploadDropzone = ({
             </div>
           )}
           <div className="flex items-center justify-center w-full h-full">
-            <div className="flex flex-col items-center justify-center w-full h-full py-2 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+            <div
+              className={cn(
+                "flex flex-col items-center justify-center w-full h-full py-2 rounded-lg bg-gray-50 hover:bg-gray-100",
+                isDisabled ? "cursor-not-allowed" : "cursor-pointer"
+              )}
+            >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Cloud className="w-6 h-6 mb-2 text-zinc-500" />
                 <p className="mb-2 text-sm text-zinc-700">
@@ -296,8 +303,14 @@ const UploadButton = ({
   refetch: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { requirements, setRequirements, percentage, setPercentage } =
-    useAnalyzer();
+  const {
+    jobTitle,
+    setJobTitle,
+    requirements,
+    setRequirements,
+    percentage,
+    setPercentage,
+  } = useAnalyzer();
 
   return (
     <Dialog
@@ -314,8 +327,21 @@ const UploadButton = ({
 
       <DialogContent className=" min-w-fit lg:min-w-[724px] max-h-screen overflow-auto">
         <div>
+          <div className="px-4 mb-1">
+            <label className="text-lg font-semibold">
+              Input Job Title <span className="text-red-400">*</span>
+            </label>
+            <Input
+              type="text"
+              name="jobTitle"
+              className="mt-1"
+              placeholder="Job Title"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+            />
+          </div>
           <div className="px-4">
-            <label>
+            <label className="text-lg font-semibold">
               Input your requirements here{" "}
               <span className="text-red-400">*</span>
             </label>
@@ -331,7 +357,7 @@ const UploadButton = ({
           </div>
           <div className="flex items-center justify-between px-4 mt-4">
             <TooltipProvider>
-              <label className="mr-2">
+              <label className="mr-2 text-lg font-semibold">
                 Set Percentage
                 <Tooltip delayDuration={300}>
                   <TooltipTrigger className="cursor-default ml-1.5">
@@ -377,7 +403,7 @@ const UploadButton = ({
             isSubscribed={isSubscribed}
             setIsOpen={setIsOpen}
             // @ts-ignore
-            isDisabled={!requirements}
+            isDisabled={!requirements || !jobTitle}
             refetch={refetch}
           />
         </div>
