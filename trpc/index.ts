@@ -18,6 +18,7 @@ import {
   getFileUploadStatus,
   getUserFiles,
   getFileById,
+  infiniteFiles,
 } from "./document-interaction";
 import { updateLimit, saveTransactions, updateUserSubscription } from "./user";
 
@@ -29,7 +30,7 @@ export const appRouter = router({
   getFileUploadStatus: getFileUploadStatus,
   deleteFile: deleteFile,
   getFileById: getFileById,
-
+  infiniteFiles: infiniteFiles,
   createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
     const { userId } = ctx;
 
