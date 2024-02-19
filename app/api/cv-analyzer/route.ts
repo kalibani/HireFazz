@@ -97,8 +97,6 @@ export const POST = async (req: NextRequest) => {
           reason: 'reason of the match percentage'}
         description:
         documentOwner = name of the document owner
-        requirements =  requirements provided by the user. Do not change this part!
-        percentage: percentage provided by the user. Do not change this part!
         matchPercentage: result of the matched percentage i.e 50 or 60 or 80, maximum 100
         reason: 'reason of the match percentage, should not more than 100 words'`,
       },
@@ -119,8 +117,6 @@ export const POST = async (req: NextRequest) => {
           reason: 'reason of the match percentage'}
         description:
         documentOwner = name of the document owner
-        requirements =  requirements provided by the user. Do not change this part!
-        percentage: percentage provided by the user. Do not change this part!
         matchPercentage: result of the matched percentage i.e 50 or 60 or 80, maximum 100
         reason: 'reason of the match percentage, should not more than 100 words'
         

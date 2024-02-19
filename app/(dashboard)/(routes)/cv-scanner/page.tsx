@@ -166,8 +166,8 @@ const CVAnalyzerPage = () => {
   return (
     <div>
       <Heading
-        title="Analyze Your CV"
-        description="Revolutionizing CV Analysis."
+        title="CV Scanner"
+        description="Scan Hundreds of CVs in Minutes"
         icon={FileArchiveIcon}
         iconColor="text-blue-300"
         bgColor="bg-blue-300/10"
@@ -206,7 +206,7 @@ const CVAnalyzerPage = () => {
                     >
                       <div className="flex items-center">
                         <Link
-                          href={`/cv-analyzer/${file.id}`}
+                          href={`/cv-scanner/${file.id}`}
                           className="flex flex-col flex-1 gap-2"
                         >
                           <div className="flex items-center justify-between max-w-[300px] p-4 space-x-6">
