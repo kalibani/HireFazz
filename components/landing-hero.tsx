@@ -31,7 +31,7 @@ export const LandingHero = () => {
         </div>
       </div>
       <div className="text-sm md:text-xl font-light text-white">
-        Work Smarter With The Smartest AI Assistant
+        Empower Your Workflow with AI Precision
       </div>
       <div>
         <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>

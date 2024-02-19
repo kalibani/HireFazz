@@ -9,9 +9,9 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BerryLabs - Document Analyzer & Generative Voice AI",
+  title: "BerryLabs - AI-Powered Solutions, Human-Centered Results",
   description:
-    "Revolutionizing CV Analyzer, get the match CV percentage within seconds. Convert text to speech online for free with AI voice generator. Create natural AI voices instantly in any language.",
+    "BerryLabs harnesses the power of artificial intelligence to revolutionize your document handling processes. Our platform offers a suite of tools designed to automate and optimize your repetitive tasks, from scanning CVs and analyzing bank statements to reviewing contracts and ensuring regulatory compliance. Transform your business operations with BerryLabs and make data-driven decisions faster and more accurately.",
 };
 
 export default function RootLayout({
@@ -26,7 +26,15 @@ export default function RootLayout({
           <head>
             <meta
               name="keywords"
-              content="SaaS Website for Automatic CV Analysis with AI, AI-Powered CV Analyzer for SaaS Platforms, Automated Resume Parsing Tool with AI Integration, AI-Based CV Evaluation Software for SaaS Websites, SaaS Solution for AI-Driven CV Analysis, AI-Powered Resume Scanner for SaaS Applications"
+              content="AI-powered CV scanner,
+              Automated bank statement analysis,
+              AI contract review tool,
+              Compliance and regulatory AI software,
+              Invoice processing automation,
+              Financial document analysis AI,
+              AI for HR and finance,
+              Automated document scanning,
+              Regulatory compliance automation."
             />
             <link rel="icon" href="/BerryLabs.png" type="image/png" />
             <link

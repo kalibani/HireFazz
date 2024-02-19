@@ -147,6 +147,37 @@ const DocumentInteraction = {
       await pineconeIndex.namespace(input.id).deleteAll();
       return file;
     }),
+  infiniteFiles: privateProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const { userId } = ctx;
+      const limit = input.limit ?? 5;
+      const { cursor } = input;
+      const items = await prismadb.file.findMany({
+        take: limit + 1, // get an extra item at the end which we'll use as next cursor
+        where: {
+          userId,
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem!.id;
+      }
+      return {
+        items,
+        nextCursor,
+      };
+    }),
 };
 
 export const {
@@ -156,4 +187,5 @@ export const {
   deleteFile,
   getUserFiles,
   getFileById,
+  infiniteFiles,
 } = DocumentInteraction;
