@@ -11,6 +11,7 @@ import { OpenAIStream, StreamingTextResponse } from "ai";
 
 export const preferredRegion = "sin1";
 export const maxDuration = 50;
+// export const runtime = "edge";
 
 export const POST = async (req: NextRequest) => {
   // endpoint for get the result of cv analyzer
@@ -89,19 +90,15 @@ export const POST = async (req: NextRequest) => {
         Restrictions:
         The answer must be in the same language as the language used in the requirements, for example if the requirements is on english language then answer in english, if the requirements is on Indonesian language, answer in Indonesian language and so on.
         IF the requirements is not clearly defined, matchPercentage should be '0'.
-        IF the matched things is below than 3 things than the matchPercentage should not more than '70'.
+        IF the matched things is below than 3 things than the matchPercentage should not more than '60'.
         The answer must be on a json format, for example: 
-        {
-          documentOwner: 'full name of the owner',
+        {documentOwner: 'full name of the owner',
           matchPercentage: 'the calculation result of the matched percentage',
-          reason: 'reason of the match percentage',
-        }
+          reason: 'reason of the match percentage'}
         description:
         documentOwner = name of the document owner
-        requirements =  requirements provided by the user. Do not change this part!
-        percentage: percentage provided by the user. Do not change this part!
         matchPercentage: result of the matched percentage i.e 50 or 60 or 80, maximum 100
-        reason: 'reason of the match percentage`,
+        reason: 'reason of the match percentage, should not more than 100 words'`,
       },
       {
         role: "user",
@@ -113,19 +110,15 @@ export const POST = async (req: NextRequest) => {
         Restrictions:
         The answer must be in the same language as the language used in the requirements, for example if the requirements is on english language then answer in english, if the requirements is on Indonesian language, answer in Indonesian language and so on.
         IF the requirements is not clearly defined, matchPercentage should be '0'.
-        IF the matched things is below than 3 things than the matchPercentage should not more than '70'.
+        IF the matched things is below than 3 things than the matchPercentage should not more than '60'.
         The answer must be on a json format, for example: 
-        {
-          documentOwner: 'full name of the owner',
+        {documentOwner: 'full name of the owner',
           matchPercentage: 'the calculation result of the matched percentage',
-          reason: 'reason of the match percentage',
-        }
+          reason: 'reason of the match percentage'}
         description:
         documentOwner = name of the document owner
-        requirements =  requirements provided by the user. Do not change this part!
-        percentage: percentage provided by the user. Do not change this part!
         matchPercentage: result of the matched percentage i.e 50 or 60 or 80, maximum 100
-        reason: 'reason of the match percentage
+        reason: 'reason of the match percentage, should not more than 100 words'
         
   \n----------------\n
   

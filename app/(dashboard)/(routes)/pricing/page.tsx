@@ -35,13 +35,13 @@ const Page = async () => {
           text: "4MB file size limit",
           footnote: "The maximum file size of a single file.",
         },
-        {
-          text: "5K characters/month",
-          footnote: "The maximum amount of characters for text to speech.",
-        },
-        {
-          text: "Generate compelling speech in 29 languages",
-        },
+        // {
+        //   text: "5K characters/month",
+        //   footnote: "The maximum amount of characters for text to speech.",
+        // },
+        // {
+        //   text: "Generate compelling speech in 29 languages",
+        // },
         {
           text: "High-quality responses",
 
@@ -71,13 +71,13 @@ const Page = async () => {
           text: "4MB file size limit",
           footnote: "The maximum file size of a single file.",
         },
-        {
-          text: "10K characters/month",
-          footnote: "The maximum amount of characters for text to speech.",
-        },
-        {
-          text: "Generate compelling speech in 29 languages",
-        },
+        // {
+        //   text: "10K characters/month",
+        //   footnote: "The maximum amount of characters for text to speech.",
+        // },
+        // {
+        //   text: "Generate compelling speech in 29 languages",
+        // },
         {
           text: "High-quality responses",
 
@@ -107,13 +107,13 @@ const Page = async () => {
           text: "16MB file size limit",
           footnote: "The maximum file size of a single file.",
         },
-        {
-          text: "20K characters/month",
-          footnote: "The maximum amount of characters for text to speech.",
-        },
-        {
-          text: "Generate compelling speech in 29 languages",
-        },
+        // {
+        //   text: "20K characters/month",
+        //   footnote: "The maximum amount of characters for text to speech.",
+        // },
+        // {
+        //   text: "Generate compelling speech in 29 languages",
+        // },
         {
           text: "High-quality responses",
         },
