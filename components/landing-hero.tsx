@@ -18,10 +18,11 @@ export const LandingHero = () => {
             options={{
               strings: [
                 "Automatic CV Scanner",
-                "AI Based CV Analyzer",
-                "Generative Voice AI.",
-                "Text to Speech.",
-                "Speech to Speech.",
+                "Bank Statement Analyzer",
+                "Invoice Reviewer",
+                "Loan Application Processor",
+                "Regulatory Auditor",
+                "Contract Checker",
               ],
               autoStart: true,
               loop: true,
@@ -30,7 +31,7 @@ export const LandingHero = () => {
         </div>
       </div>
       <div className="text-sm md:text-xl font-light text-white">
-        Create content using AI 10x faster.
+        Work Smarter With The Smartest AI Assistant
       </div>
       <div>
         <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
@@ -42,8 +43,8 @@ export const LandingHero = () => {
           </Button>
         </Link>
       </div>
-      <div className="text-white text-xs md:text-sm font-normal">
-        No credit card required.
+      <div className="text-white text-base md:text-base font-normal">
+        Avoid a Tiring Repetitive Job
       </div>
     </div>
   );

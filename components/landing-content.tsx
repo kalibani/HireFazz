@@ -6,14 +6,14 @@ const testimonials = [
   {
     name: "Bima",
     avatar: "B",
-    title: "HR Specialist",
+    title: "Talent Acquisition",
     description: "Scan hundreds of CVs within minutes, absolutely game changer",
   },
   {
     name: "Rachel",
     avatar: "R",
-    title: "Youtuber",
-    description: "I use the voice generator feature for my daily content!",
+    title: "HeadHunter",
+    description: "This AI Assistant is Saving My Time So Much",
   },
   {
     name: "Muhammad",
