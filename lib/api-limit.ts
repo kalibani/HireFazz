@@ -58,6 +58,7 @@ export const getUser = async (userId: string) => {
       characterCount: 0,
       subscriptionType: "FREE",
       maxFreeCount: 25,
+      isUserAgreedTermsOfService: false,
     };
   }
 
@@ -67,5 +68,6 @@ export const getUser = async (userId: string) => {
     subscriptionType: user.subscriptionType,
     currentSubscriptionPeriodEnd: user.currentSubscriptionPeriodEnd,
     maxFreeCount: user.maxFreeCount,
+    isUserAgreedTermsOfService: user.isUserAgreedTermsOfService,
   };
 };

@@ -36,6 +36,7 @@ model userAPILimit {
   Transactions                 Transactions[]
   characterCount Int?
   maxFreeCount Int? @default(25)
+  isUserAgreedTermsOfService Boolean @default(false)
 }
 
 enum UploadStatus {

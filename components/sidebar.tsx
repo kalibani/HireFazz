@@ -110,17 +110,20 @@ const routes = [
 type sidebarProps = {
   apiLimitCount: number;
   subscriptionType: string;
-  maxFreeCount?: number;
+  maxFreeCount: number | null;
+  isUserAgreedTermsOfService: boolean;
 };
 
 const Sidebar = ({
   apiLimitCount = 0,
   subscriptionType,
   maxFreeCount,
+  isUserAgreedTermsOfService,
 }: sidebarProps) => {
   const pathname = usePathname();
   const { setApiLimit } = useProModal();
-  const { setMaxFreeCount, setSubscriptionType } = useUser();
+  const { setMaxFreeCount, setSubscriptionType, setAgreedTermsOfService } =
+    useUser();
 
   useEffect(() => {
     setApiLimit(apiLimitCount);
@@ -133,6 +136,10 @@ const Sidebar = ({
   useEffect(() => {
     setSubscriptionType(subscriptionType!);
   }, [maxFreeCount]);
+
+  useEffect(() => {
+    setAgreedTermsOfService(isUserAgreedTermsOfService);
+  }, [isUserAgreedTermsOfService]);
 
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">

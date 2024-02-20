@@ -13,6 +13,8 @@ type useUserStore = {
   setMaxFreeCount: (v: number) => void;
   setUser: (user: any) => void;
   setSubscriptionType: (v: string) => void;
+  isUserAgreedTermsOfService: boolean;
+  setAgreedTermsOfService: (v: boolean) => void;
 };
 
 export const useUser = create<useUserStore>()((set) => ({
@@ -28,4 +30,7 @@ export const useUser = create<useUserStore>()((set) => ({
   setQuotaLimited: (v: boolean) => set({ isQuotaLimited: v }),
   plan: "BASIC",
   setPlan: (v: string) => set({ plan: v }),
+  isUserAgreedTermsOfService: false,
+  setAgreedTermsOfService: (v: boolean) =>
+    set({ isUserAgreedTermsOfService: v }),
 }));

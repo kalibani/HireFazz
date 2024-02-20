@@ -5,12 +5,15 @@ import MobileSidebar from "./mobile-sidebar";
 
 const Navbar = async () => {
   const { userId } = auth();
-  const { count, subscriptionType } = await getUser(userId!);
+  const { count, subscriptionType, isUserAgreedTermsOfService, maxFreeCount } =
+    await getUser(userId!);
   return (
     <div className=" flex items-center p-4">
       <MobileSidebar
         apiLimitCount={count}
         subscriptionType={subscriptionType}
+        isUserAgreedTermsOfService={isUserAgreedTermsOfService}
+        maxFreeCount={maxFreeCount}
       />
       <div className="flex w-full justify-end">
         <UserButton afterSignOutUrl="/" />
