@@ -10,7 +10,12 @@ export async function POST(req: Request) {
   try {
     const { userId } = auth();
     const body = await req.json();
-    const { characterCount, subscriptionType, maxFreeCount } = body;
+    const {
+      characterCount,
+      subscriptionType,
+      maxFreeCount,
+      isUserAgreedTermsOfService,
+    } = body;
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -29,8 +34,8 @@ export async function POST(req: Request) {
           characterCount: user.characterCount! + characterCount!,
           maxFreeCount: maxFreeCount,
           count: 0,
-          // @ts-ignore
           subscriptionType: subscriptionType,
+          isUserAgreedTermsOfService: isUserAgreedTermsOfService,
         },
       });
     }
