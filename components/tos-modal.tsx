@@ -15,6 +15,7 @@ import { Button } from "./ui/button";
 import { useUser } from "@/hooks/use-user";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 const ToSModal = () => {
   const { isUserAgreedTermsOfService } = useUser();
@@ -35,7 +36,7 @@ const ToSModal = () => {
 
   const { isSignedIn } = useSignIn();
 
-  const isOpen = false;
+  const isOpen = isSignedIn && !isUserAgreedTermsOfService;
 
   return (
     <Dialog open={isOpen}>
@@ -63,7 +64,10 @@ const ToSModal = () => {
             onClick={handleClickToS}
             disabled={isLoading}
           >
-            I accept
+            <span>I accept</span>
+            {isLoading ? (
+              <Loader2 className="ml-1 w-4 h-4 text-gray-800 animate-spin" />
+            ) : null}
           </Button>
         </DialogFooter>
       </DialogContent>
