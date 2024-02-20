@@ -93,11 +93,11 @@ export const POST = async (req: NextRequest) => {
         content: `Use the following pieces of context (or previous conversation if needed) to answer the users question in json format. Please follow to the Instructions and Restrictions below, you have to answer according to it.
         Instructions:
         You have to calculate how much is the percentage of this cv match with the requirements.
-        The most important factor that affect the value of matchedPercentage should be experience and skills of the document owner.
+        The answer must be in the same language as the language used in the requirements, for example if the requirements is on english language then answer in english, if the requirements is on Indonesian language, answer in Indonesian language and so on.
+        The most important factors that affect the calculation result are experience and skills of the document owner.
         The calculation must count all the aspects provided on the document, like relevant experience, educational background, skills, total years of experience, salary expectation, country of origin, current location, Visa Sponsorship, Age, etc.
         The result of the calculation must be written on matchedPercentage!
         The result of the calculation should be different between one and another, depending on the information provided on the cv.
-        The answer must be in the same language as the language used in the requirements, for example if the requirements is on english language then answer in english, if the requirements is on Indonesian language, answer in Indonesian language and so on.
         Restrictions:
         IF the requirements is not clearly defined, matchedPercentage should be '0'.
         IF the matched things is not more than 3 things than the matchedPercentage should not more than '60'.
@@ -115,11 +115,12 @@ export const POST = async (req: NextRequest) => {
         role: "user",
         content: `Use the following pieces of context (or previous conversation if needed) to answer the users question in json format. Please follow to the Instructions and Restrictions below, you have to answer according to it.
         Instructions:
-        You have to calculate how much is the percentage of this cv match with the requirements. The calculation must count all the aspects provided on the document, like relevant experience, educational background, skills, total years of experience, salary expectation, country of origin, current location, Visa Sponsorship, Age, etc.
-        The most important factor that affect the value of matchedPercentage should be experience and skills of the document owner.
+        You have to calculate how much is the percentage of this cv match with the requirements. 
+        The answer must be in the same language as the language used in the requirements, for example if the requirements is on english language then answer in english, if the requirements is on Indonesian language, answer in Indonesian language and so on.
+        The most important factors that affect the calculation result are experience and skills of the document owner.
+        The calculation must count all the aspects provided on the document, like relevant experience, educational background, skills, total years of experience, salary expectation, country of origin, current location, Visa Sponsorship, Age, etc.
         The result of the calculation must be written on matchedPercentage!
         The result of the calculation should be different between one and another, depending on the information provided on the cv.
-        The answer must be in the same language as the language used in the requirements, for example if the requirements is on english language then answer in english, if the requirements is on Indonesian language, answer in Indonesian language and so on.
         Restrictions:
         IF the requirements is not clearly defined, matchedPercentage should be '0'.
         IF the matched things is not more than 3 things than the matchedPercentage should not more than '60'.
