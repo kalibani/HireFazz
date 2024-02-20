@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 type FreeCounterProps = {
   apiLimitCount: number;
   subscriptionType: string;
-  maxFreeCount?: number;
+  maxFreeCount: number | null;
 };
 
 const FreeCounter = ({

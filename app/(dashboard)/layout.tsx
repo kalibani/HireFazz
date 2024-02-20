@@ -13,7 +13,8 @@ type DashboardLayoutProps = {
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
   const { userId } = auth();
-  const { count, subscriptionType, maxFreeCount } = await getUser(userId!);
+  const { count, subscriptionType, maxFreeCount, isUserAgreedTermsOfService } =
+    await getUser(userId!);
 
   return (
     <div className="h-full relative">
@@ -22,6 +23,7 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
           apiLimitCount={count}
           subscriptionType={subscriptionType}
           maxFreeCount={maxFreeCount!}
+          isUserAgreedTermsOfService={isUserAgreedTermsOfService}
         />
       </div>
       <main className="md:pl-72 overflow-clip">
