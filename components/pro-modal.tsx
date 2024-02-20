@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Check, Zap } from "lucide-react";
-import { productName, tools } from "@/constant";
+import { tools } from "@/constant";
 import { Badge } from "./ui/badge";
 import {
   Dialog,
@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { useProModal } from "@/hooks/use-pro-modal";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -29,7 +30,13 @@ import toast from "react-hot-toast";
 const ProModal = () => {
   const proModal = useProModal();
   const { payAsYouGoPrice, price, characterCount } = usePricing();
-  const { plan, quota, isQuotaLimited, maxFreeCount } = useUser();
+  const {
+    plan,
+    quota,
+    isQuotaLimited,
+    maxFreeCount,
+    isUserAgreedTermsOfService,
+  } = useUser();
   const { handleCheckout, successResult } = UseMidtrans();
   const router = useRouter();
 
@@ -47,6 +54,7 @@ const ProModal = () => {
         characterCount: characterCount,
         maxFreeCount: quota + remainingQuota,
         subscriptionType: plan?.toUpperCase(),
+        isUserAgreedTermsOfService: isChecked,
       });
 
       if (response) {
@@ -66,6 +74,12 @@ const ProModal = () => {
       handleUpdateSubscription();
     }
   }, [successResult]);
+
+  const [isChecked, setChecked] = useState(false);
+
+  useEffect(() => {
+    setChecked(isUserAgreedTermsOfService);
+  }, [isUserAgreedTermsOfService]);
 
   return (
     <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
@@ -107,7 +121,7 @@ const ProModal = () => {
               }
             )}
           >
-            <p className="flex items-center justify-center">
+            <p className="flex items-center justify-center relative -top-2">
               <span className="text-[2rem] leading-none text-slate-900">
                 IDR{" "}
                 <span className="font-bold ml-1">{price.toLocaleString()}</span>
@@ -122,11 +136,35 @@ const ProModal = () => {
                 </span>
               </span>
             </p>
+            {!isUserAgreedTermsOfService ? (
+              <div className="flex items-center space-x-2 mt-2">
+                <Checkbox
+                  id="terms"
+                  checked={isChecked}
+                  onCheckedChange={() => setChecked(!isChecked)}
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                >
+                  By Clicking This You Agree with Our{" "}
+                  <a
+                    className="text-blue-400 underline"
+                    href="https://drive.google.com/file/d/1u-DULua9EUEYjhK15JV6lrnKEDrLRuqZ/view?usp=sharing"
+                    target="_blank"
+                  >
+                    Terms of Service
+                  </a>
+                </label>
+              </div>
+            ) : null}
+
             <Button
               variant="premium2"
               size="lg"
               className="w-full mt-3"
               onClick={handleClickUpgrade}
+              disabled={!isChecked}
             >
               {plan}
               <Zap className="w-4 h-4 ml-2 fill-white" />
