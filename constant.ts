@@ -155,7 +155,7 @@ Instructions:
 You have to calculate how much is the percentage of this cv match with our requirements. The answer must be on a json format, for example: 
 {
   documentsOwner: 'full name of the owner',
-  matchPercentage: '70%',
+  matchedPercentage: '70%',
   reason: 'reason of the match percentage' 
 }
 Please note that you don’t need to explain every point at the beginning, just answer with the json!
