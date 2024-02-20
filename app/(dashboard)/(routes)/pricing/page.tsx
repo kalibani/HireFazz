@@ -28,6 +28,12 @@ const Page = async () => {
       quotaCharacter: "125.000",
       features: [
         {
+          text: "25 Free Generations",
+        },
+        {
+          text: "Up to 25 Files per Upload",
+        },
+        {
           text: "5 pages per File",
           footnote: "The maximum amount of pages per file.",
         },
@@ -35,15 +41,8 @@ const Page = async () => {
           text: "4MB file size limit",
           footnote: "The maximum file size of a single file.",
         },
-        // {
-        //   text: "5K characters/month",
-        //   footnote: "The maximum amount of characters for text to speech.",
-        // },
-        // {
-        //   text: "Generate compelling speech in 29 languages",
-        // },
         {
-          text: "High-quality responses",
+          text: "High-accuracy responses",
 
           negative: false,
         },
@@ -64,6 +63,12 @@ const Page = async () => {
       quotaCharacter: "125.000",
       features: [
         {
+          text: "25 Free Generations",
+        },
+        {
+          text: "Up to 50 Files per Upload",
+        },
+        {
           text: "10 pages per File",
           footnote: "The maximum amount of pages per file.",
         },
@@ -71,15 +76,8 @@ const Page = async () => {
           text: "4MB file size limit",
           footnote: "The maximum file size of a single file.",
         },
-        // {
-        //   text: "10K characters/month",
-        //   footnote: "The maximum amount of characters for text to speech.",
-        // },
-        // {
-        //   text: "Generate compelling speech in 29 languages",
-        // },
         {
-          text: "High-quality responses",
+          text: "High-accuracy responses",
 
           negative: false,
         },
@@ -100,6 +98,12 @@ const Page = async () => {
       quotaCharacter: "250.000",
       features: [
         {
+          text: "25 Free Generations",
+        },
+        {
+          text: "Up to 100 Files per Upload",
+        },
+        {
           text: "15 pages per File",
           footnote: "The maximum amount of pages per file.",
         },
@@ -107,15 +111,8 @@ const Page = async () => {
           text: "16MB file size limit",
           footnote: "The maximum file size of a single file.",
         },
-        // {
-        //   text: "20K characters/month",
-        //   footnote: "The maximum amount of characters for text to speech.",
-        // },
-        // {
-        //   text: "Generate compelling speech in 29 languages",
-        // },
         {
-          text: "High-quality responses",
+          text: "High-accuracy responses",
         },
         {
           text: "Mobile-friendly interface",
@@ -207,7 +204,7 @@ const Page = async () => {
                     </div>
                   </div>
 
-                  <ul className="my-10 space-y-5 px-8">
+                  <ul className="my-10 space-y-5 px-6">
                     {features.map(({ text, footnote, negative }, index) => (
                       <li key={index} className="flex space-x-5">
                         <div className="flex-shrink-0">
