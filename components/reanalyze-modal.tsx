@@ -47,12 +47,13 @@ export const ReanalyzeModal = ({
   useEffect(() => {
     if (open) {
       // @ts-ignore
-      setJobTitle(selectedFile?.reportOfAnalysis?.jobTitle || "");
+      setJobTitle(selectedFile?.reportOfAnalysis?.jobTitle);
       // @ts-ignore
-      setRequirements(selectedFile?.reportOfAnalysis?.requirements || "");
+      setRequirements(selectedFile?.reportOfAnalysis?.requirements);
       setPercentage(60);
     }
   }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>

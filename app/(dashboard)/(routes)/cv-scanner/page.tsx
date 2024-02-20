@@ -102,11 +102,8 @@ const CVAnalyzerPage = () => {
     const safeRequirement = requirement || requirements;
     const safePercentage = percentageProp || percentage;
     const safeJobTitle = jobTitleProp || jobTitle;
-    const messages = `
-    Below is the requirements or qualifications or job descriptions that we are looking for:
-    Job Title: ${safeJobTitle} 
-    ${safeRequirement}
-    `;
+    const messages = `Job Title: ${safeJobTitle} 
+    Requirements: ${safeRequirement}`;
 
     try {
       await axios.post("/api/cv-analyzer", {
@@ -118,7 +115,7 @@ const CVAnalyzerPage = () => {
       });
       utils.infiniteFiles.refetch();
     } catch (error: any) {
-      console.log("error", error);
+      console.log("error", error.response);
     }
   };
 
@@ -153,6 +150,7 @@ const CVAnalyzerPage = () => {
   const handleDelete = async (id: string) => {
     deleteFile({ id });
   };
+
   const handleReanalyze = async (
     jobTitle: string,
     requirement: string,
