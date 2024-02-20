@@ -10,6 +10,7 @@ import {
 } from "./ui/dialog";
 
 import { useState } from "react";
+import { useUser as useSignIn } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import { useUser } from "@/hooks/use-user";
 import axios from "axios";
@@ -32,8 +33,12 @@ const ToSModal = () => {
     setLoading(false);
   };
 
+  const { isSignedIn } = useSignIn();
+
+  const isOpen = isSignedIn && !isUserAgreedTermsOfService;
+
   return (
-    <Dialog open={!isUserAgreedTermsOfService}>
+    <Dialog open={isOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex  flex-col gap-y-4 pb-2">
