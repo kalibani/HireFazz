@@ -35,7 +35,7 @@ const ToSModal = () => {
 
   const { isSignedIn } = useSignIn();
 
-  const isOpen = isSignedIn && !isUserAgreedTermsOfService;
+  const isOpen = false;
 
   return (
     <Dialog open={isOpen}>
