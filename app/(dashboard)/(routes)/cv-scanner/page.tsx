@@ -203,7 +203,6 @@ const CVAnalyzerPage = () => {
               <Button onClick={handleUpgrade}>Upload CV</Button>
             ) : (
               <UploadButton
-                isSubscribed={true}
                 buttonText="Upload CV"
                 refetch={() => utils.infiniteFiles.refetch()}
               />

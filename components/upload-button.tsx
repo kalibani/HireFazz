@@ -42,14 +42,14 @@ import { useProModal } from "@/hooks/use-pro-modal";
 import { cn } from "@/lib/utils";
 
 const UploadDropzone = ({
-  isSubscribed,
   setIsOpen,
+  onUpload,
   isDisabled,
   refetch,
 }: {
-  isSubscribed: boolean;
   isDisabled: boolean;
   setIsOpen: (v: boolean) => void;
+  onUpload: (v: boolean) => void;
   refetch: () => void;
 }) => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -61,7 +61,7 @@ const UploadDropzone = ({
   const { startUpload } = useUploadThing("pdfUploader");
   const router = useRouter();
   const { apiLimitCount } = useProModal();
-  const { maxFreeCount } = useUser();
+  const { maxFreeCount, subscriptionType } = useUser();
   // @ts-ignore
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
@@ -133,6 +133,7 @@ const UploadDropzone = ({
       acceptedFiles
         .reduce((acc, file, idx) => {
           setIsUploading(true);
+          onUpload(true);
           return acc.then(() => {
             return handleUpload(file, idx);
           });
@@ -144,6 +145,7 @@ const UploadDropzone = ({
           console.log(err);
         })
         .finally(() => {
+          onUpload(false);
           setIsOpen(false);
         });
     }
@@ -157,9 +159,12 @@ const UploadDropzone = ({
     // "text/csv": [".csv"],
   };
 
+  const maxFiles = subscriptionType === "PREMIUM" ? 100 : 50;
+  const maxFileSize = subscriptionType === "PREMIUM" ? 16 : 4;
+
   return (
     <Dropzone
-      maxFiles={50}
+      maxFiles={maxFiles}
       multiple={true}
       onDrop={handleDropFiles}
       accept={acceptedFilesType}
@@ -190,10 +195,10 @@ const UploadDropzone = ({
                   and drop
                 </p>
                 <p className="text-xs text-zinc-500">
-                  PDF, DOCX (up to {isSubscribed ? "16" : "4"}MB)
+                  PDF, DOCX (up to {maxFileSize} MB)
                 </p>
                 <p className="text-xs text-zinc-500 mt-1">
-                  Maximum 50 files per upload
+                  Maximum {maxFiles} files per upload
                 </p>
               </div>
 
@@ -294,15 +299,14 @@ const UploadDropzone = ({
 };
 
 const UploadButton = ({
-  isSubscribed,
   buttonText,
   refetch,
 }: {
-  isSubscribed: boolean;
   buttonText: string;
   refetch: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [upload, onUpload] = useState<boolean>(false);
   const {
     jobTitle,
     setJobTitle,
@@ -317,7 +321,9 @@ const UploadButton = ({
       open={isOpen}
       onOpenChange={(v) => {
         if (!v) {
-          setIsOpen(v);
+          if (!upload) {
+            setIsOpen(v);
+          }
         }
       }}
     >
@@ -325,7 +331,10 @@ const UploadButton = ({
         <Button>{buttonText}</Button>
       </DialogTrigger>
 
-      <DialogContent className=" min-w-fit lg:min-w-[724px] max-h-screen overflow-auto">
+      <DialogContent
+        className=" min-w-fit lg:min-w-[724px] max-h-screen overflow-auto"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <div>
           <div className="px-4 mb-1">
             <label className="text-lg font-semibold">
@@ -400,8 +409,8 @@ const UploadButton = ({
             </DropdownMenu>
           </div>
           <UploadDropzone
-            isSubscribed={isSubscribed}
             setIsOpen={setIsOpen}
+            onUpload={onUpload}
             // @ts-ignore
             isDisabled={!requirements || !jobTitle}
             refetch={refetch}

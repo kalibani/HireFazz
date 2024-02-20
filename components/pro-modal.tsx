@@ -29,7 +29,7 @@ import toast from "react-hot-toast";
 const ProModal = () => {
   const proModal = useProModal();
   const { payAsYouGoPrice, price, characterCount } = usePricing();
-  const { plan, quota, isQuotaLimited } = useUser();
+  const { plan, quota, isQuotaLimited, maxFreeCount } = useUser();
   const { handleCheckout, successResult } = UseMidtrans();
   const router = useRouter();
 
@@ -42,9 +42,10 @@ const ProModal = () => {
 
   const handleUpdateSubscription = async () => {
     try {
+      const remainingQuota = maxFreeCount - proModal.apiLimitCount;
       const response = await axios.post("/api/update-user-subscription", {
         characterCount: characterCount,
-        maxFreeCount: quota,
+        maxFreeCount: quota + remainingQuota,
         subscriptionType: plan?.toUpperCase(),
       });
 
