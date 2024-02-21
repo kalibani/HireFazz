@@ -8,6 +8,7 @@ import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { NextRequest, NextResponse } from "next/server";
 
 import { OpenAIStream, StreamingTextResponse } from "ai";
+import { checkValidJSON } from "@/lib/utils";
 
 export const preferredRegion = "sin1";
 export const maxDuration = 50;
@@ -65,6 +66,7 @@ export const POST = async (req: NextRequest) => {
     const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
       pineconeIndex,
       namespace: fileId,
+      textKey: "text",
     });
 
     const results = await vectorStore.similaritySearch(requirements, 4);
@@ -88,6 +90,7 @@ export const POST = async (req: NextRequest) => {
       model: "gpt-4",
       temperature: 0,
       // stream: true,
+
       messages: [
         {
           role: "system",
@@ -104,9 +107,9 @@ export const POST = async (req: NextRequest) => {
         IF the matched things is not more than 3 things than the matchedPercentage should not more than 60.
         The reason should not more than 100 words.
         The answer must be on a json format, for example: 
-        {documentOwner: 'full name of the owner',
-          matchedPercentage: 'the calculation result of the matched percentage',
-          reason: 'reason of the match percentage'}
+        {"documentOwner": "full name of the owner",
+          "matchedPercentage": "the calculation result of the matched percentage",
+          "reason": "reason of the match percentage"}
         description:
         documentOwner = name of the document owner, if the name is more than 2 words and more than 20 characters then print only two words plus the first character of the third words, however if the name is more than 2 words but not more than 20 characters then print all the words. for example if the name Muhammad Rizal Herdiyana then print Muhammad Rizal H because the name is more than 2 words and more than 20 characters.
         matchedPercentage: result of the matched percentage in example 10, 20, 25, 30, 35, 45, 50 or 60 or 80, or 90 maximum 100
@@ -127,9 +130,9 @@ export const POST = async (req: NextRequest) => {
         IF the matched things is not more than 3 things than the matchedPercentage should not more than 60.
         The reason should not more than 100 words.
         The answer must be on a json format, for example: 
-        {documentOwner: 'full name of the owner',
-          matchedPercentage: 'the calculation result of the matched percentage',
-          reason: 'reason of the match percentage'}
+        {"documentOwner": "full name of the owner",
+          "matchedPercentage": "the calculation result of the matched percentage",
+          "reason": "reason of the match percentage"}
         description:
         documentOwner = name of the document owner, if the name is more than 2 words and more than 20 characters then print only two words plus the first character of the third words, however if the name is more than 2 words but not more than 20 characters then print all the words. for example if the name Muhammad Rizal Herdiyana then print Muhammad Rizal H because the name is more than 2 words and more than 20 characters.
         matchedPercentage: result of the matched percentage in example 10, 20, 25, 30, 35, 45, 50 or 60 or 80, or 90 maximum 100
@@ -146,22 +149,34 @@ export const POST = async (req: NextRequest) => {
       ],
     });
 
-    const reportOfAnalysis = JSON.parse(response.choices[0].message.content!);
-    const formattedReportOfAnalysis = {
-      ...reportOfAnalysis,
-      jobTitle: jobTitle,
-      requirements: requirements,
-      percentage: percentage,
-    };
+    console.log("response", response);
 
-    await prismadb.file.update({
-      data: {
-        reportOfAnalysis: formattedReportOfAnalysis,
-      },
-      where: {
-        id: fileId,
-      },
-    });
+    console.log("res", response.choices[0].message.content);
+
+    const isValidJSON = checkValidJSON(response.choices[0].message.content!);
+    if (isValidJSON) {
+      const reportOfAnalysis = JSON.parse(response.choices[0].message.content!);
+      const formattedReportOfAnalysis = {
+        ...reportOfAnalysis,
+        jobTitle: jobTitle,
+        requirements: requirements,
+        percentage: percentage,
+      };
+
+      await prismadb.file.update({
+        data: {
+          reportOfAnalysis: formattedReportOfAnalysis,
+        },
+        where: {
+          id: fileId,
+        },
+      });
+    } else {
+      return new NextResponse("Failed parsing JSON ", {
+        status: 400,
+        statusText: "JSONIsNotValid",
+      });
+    }
 
     // const stream = OpenAIStream(response, {
     //   async onCompletion(completion) {
@@ -179,8 +194,7 @@ export const POST = async (req: NextRequest) => {
     // return new StreamingTextResponse(stream);
     return NextResponse.json(response.choices[0]);
   } catch (error) {
-    // @ts-ignore
-    console.log("--", error?.response);
-    return NextResponse.json({ error });
+    console.log("error api", error);
+    return NextResponse.json("Internal Server Error", { status: 500 });
   }
 };

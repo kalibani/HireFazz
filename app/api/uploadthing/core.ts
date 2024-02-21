@@ -12,6 +12,7 @@ import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { pinecone } from "@/lib/pinecone";
 import { extractExtension } from "@/lib/utils";
 import { NextResponse } from "next/server";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
 import { increaseApiLimit } from "@/lib/api-limit";
 
@@ -76,7 +77,14 @@ const onUploadComplete = async ({
 
     const pageLevelDocs = await loader.load();
 
-    const pagesAmt = pageLevelDocs.length;
+    const textSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000,
+      chunkOverlap: 200,
+    });
+
+    const docs = await textSplitter.splitDocuments(pageLevelDocs);
+
+    // const pagesAmt = pageLevelDocs.length;
 
     // const { subscriptionPlan } = metadata
     // const { isSubscribed } = subscriptionPlan
@@ -123,9 +131,10 @@ const onUploadComplete = async ({
       },
     });
 
-    await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+    await PineconeStore.fromDocuments(docs, embeddings, {
       pineconeIndex,
       namespace: createdFile.id,
+      textKey: "text",
     });
 
     await increaseApiLimit(metadata.userId);
