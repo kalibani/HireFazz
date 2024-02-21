@@ -12,6 +12,7 @@ import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { pinecone } from "@/lib/pinecone";
 import { extractExtension } from "@/lib/utils";
 import { NextResponse } from "next/server";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
 import { increaseApiLimit } from "@/lib/api-limit";
 
@@ -76,7 +77,14 @@ const onUploadComplete = async ({
 
     const pageLevelDocs = await loader.load();
 
-    const pagesAmt = pageLevelDocs.length;
+    const textSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000,
+      chunkOverlap: 200,
+    });
+
+    const docs = await textSplitter.splitDocuments(pageLevelDocs);
+
+    // const pagesAmt = pageLevelDocs.length;
 
     // const { subscriptionPlan } = metadata
     // const { isSubscribed } = subscriptionPlan
@@ -105,30 +113,42 @@ const onUploadComplete = async ({
 
     // vectorize and index entire document
 
-    const index = process.env.NEXT_PUBLIC_PINECONE_INDEX;
+    if (docs.length > 0) {
+      const index = process.env.NEXT_PUBLIC_PINECONE_INDEX;
 
-    const pineconeIndex = pinecone.Index(index!);
+      const pineconeIndex = pinecone.Index(index!);
 
-    const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPEN_API_KEY,
-    });
+      const embeddings = new OpenAIEmbeddings({
+        openAIApiKey: process.env.OPEN_API_KEY,
+      });
 
-    const createdFile = await prismadb.file.create({
-      data: {
-        key: file.key,
-        name: file.name,
-        userId: metadata.userId,
-        url: `https://uploadthing-prod-icn1.s3.ap-northeast-2.amazonaws.com/${file.key}`,
-        uploadStatus: "SUCCESS",
-      },
-    });
+      const createdFile = await prismadb.file.create({
+        data: {
+          key: file.key,
+          name: file.name,
+          userId: metadata.userId,
+          url: `https://uploadthing-prod-icn1.s3.ap-northeast-2.amazonaws.com/${file.key}`,
+          uploadStatus: "SUCCESS",
+        },
+      });
 
-    await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
-      pineconeIndex,
-      namespace: createdFile.id,
-    });
+      await PineconeStore.fromDocuments(docs, embeddings, {
+        pineconeIndex,
+        namespace: createdFile.id,
+      });
 
-    await increaseApiLimit(metadata.userId);
+      await increaseApiLimit(metadata.userId);
+    } else {
+      await prismadb.file.create({
+        data: {
+          key: file.key,
+          name: file.name,
+          userId: metadata.userId,
+          url: `https://uploadthing-prod-icn1.s3.ap-northeast-2.amazonaws.com/${file.key}`,
+          uploadStatus: "FAILED",
+        },
+      });
+    }
   } catch (err) {
     console.log("err", err);
 
@@ -149,19 +169,6 @@ export const ourFileRouter = {
   })
     .middleware(middleware)
     .onUploadComplete(onUploadComplete),
-  // proPlanUploader: f({ pdf: { maxFileSize: "16MB" } })
-  //   .middleware(middleware)
-  //   .onUploadComplete(async ({ metadata, file }) => {
-  //     const createdFile = await prismadb.file.create({
-  //       data: {
-  //         key: file.key,
-  //         name: file.name,
-  //         userId: metadata.userId,
-  //         url: `https://uploadthing-prod-icn1.s3.ap-northeast-2.amazonaws.com/${file.key}`,
-  //         uploadStatus: "PROCESSING",
-  //       },
-  //     });
-  //   }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

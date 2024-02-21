@@ -9,6 +9,7 @@ import {
   X,
   Loader2,
   MoreVertical,
+  AlertCircle,
 } from "lucide-react";
 import * as formatter from "date-fns";
 import Link from "next/link";
@@ -29,9 +30,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import { ReanalyzeModal } from "@/components/reanalyze-modal";
 import { usePricing } from "@/hooks/use-pricing";
 import { pricing } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 const limit = 10;
 interface AnalyzeCV {
@@ -102,16 +112,10 @@ const CVAnalyzerPage = () => {
     const safeRequirement = requirement || requirements;
     const safePercentage = percentageProp || percentage;
     const safeJobTitle = jobTitleProp || jobTitle;
-    const messages = `
-    Below is the requirements or qualifications or job descriptions that we are looking for:
-    Job Title: ${safeJobTitle} 
-    ${safeRequirement}
-    `;
 
     try {
       await axios.post("/api/cv-analyzer", {
         jobTitle: safeJobTitle,
-        message: messages,
         fileId: id,
         requirements: safeRequirement,
         percentage: safePercentage,
@@ -281,11 +285,12 @@ const CVAnalyzerPage = () => {
                           {
                             <>
                               {/* @ts-ignore */}
-                              {file.reportOfAnalysis?.documentOwner ? (
+                              {file.reportOfAnalysis ? (
                                 <>
-                                  <p className="w-full">
+                                  <p className="w-48 truncate">
                                     {/* @ts-ignore */}
-                                    {file.reportOfAnalysis?.documentOwner}
+                                    {file.reportOfAnalysis?.documentOwner ||
+                                      file?.name}
                                   </p>
                                 </>
                               ) : (
@@ -304,30 +309,51 @@ const CVAnalyzerPage = () => {
                           }
                         </div>
 
-                        {!file.reportOfAnalysis ||
+                        {(jobTitle && !file.reportOfAnalysis) ||
                         reanalyzeIds.includes(file.id) ? (
                           <div className="flex p-2 text-base text-zinc-900 items-center">
                             Analyzing
                             <MoreHorizontal className="ml-1 h-4 w-4 shrink-0 opacity-50 animate-ping text-zinc-900" />
                           </div>
                         ) : (
-                          <div className="flex items-center justify-center h-10 gap-1 text-base text-zinc-900">
-                            {/* @ts-ignore */}
-                            {file.reportOfAnalysis?.matchPercentage ??
-                              file.reportOfAnalysis?.matchedPercentage}
-                            %<p>Match</p>
-                            {isMoreThanMatchLimit(
-                              // @ts-ignore
-                              file.reportOfAnalysis?.percentage,
-                              // @ts-ignore
-                              file.reportOfAnalysis?.matchPercentage ??
-                                file.reportOfAnalysis?.matchedPercentage
-                            ) ? (
-                              <Check className="w-5 h-5 text-green-500 " />
+                          <>
+                            {file.reportOfAnalysis?.matchPercentage ||
+                            file.reportOfAnalysis?.matchedPercentage ? (
+                              <div className="flex items-center justify-center h-10 gap-1 text-base text-zinc-900">
+                                {/* @ts-ignore */}
+                                {file.reportOfAnalysis?.matchPercentage ??
+                                  file.reportOfAnalysis?.matchedPercentage}
+                                %<p>Match</p>
+                                {isMoreThanMatchLimit(
+                                  // @ts-ignore
+                                  file.reportOfAnalysis?.percentage,
+                                  // @ts-ignore
+                                  file.reportOfAnalysis?.matchPercentage ??
+                                    file.reportOfAnalysis?.matchedPercentage
+                                ) ? (
+                                  <Check className="w-5 h-5 text-green-500 " />
+                                ) : (
+                                  <X className="w-5 h-5 text-red-500 " />
+                                )}
+                              </div>
                             ) : (
-                              <X className="w-5 h-5 text-red-500 " />
+                              <TooltipProvider>
+                                <label className="mr-2 text-lg font-semibold">
+                                  Please Reanalyze
+                                  <Tooltip delayDuration={300}>
+                                    <TooltipTrigger className="cursor-default ml-1.5">
+                                      <AlertCircle className="w-4 h-4 text-zinc-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="p-2 w-80">
+                                      Process stopped because you refresh the
+                                      page, please reanalyze and do not refresh
+                                      the page
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </label>
+                              </TooltipProvider>
                             )}
-                          </div>
+                          </>
                         )}
                       </div>
                       <div className="px-4 pb-1 text-zinc-900 text-sm">

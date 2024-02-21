@@ -46,3 +46,12 @@ export const pricing = {
   PRO: 499000,
   PREMIUM: 999000,
 };
+
+export const checkValidJSON = (str: string) => {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
