@@ -147,6 +147,7 @@ const UploadDropzone = ({
         .finally(() => {
           onUpload(false);
           setIsOpen(false);
+          setIsUploading(false);
         });
     }
   };
@@ -188,18 +189,38 @@ const UploadDropzone = ({
                 isDisabled ? "cursor-not-allowed" : "cursor-pointer"
               )}
             >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Cloud className="w-6 h-6 mb-2 text-zinc-500" />
-                <p className="mb-2 text-sm text-zinc-700">
-                  <span className="font-semibold">Click to upload</span> or drag
-                  and drop
-                </p>
-                <p className="text-xs text-zinc-500">
-                  PDF, DOCX (up to {maxFileSize} MB)
-                </p>
-                <p className="text-xs text-zinc-500 mt-1">
-                  Maximum {maxFiles} files per upload
-                </p>
+              <div
+                className={cn(
+                  "flex flex-col items-center justify-center pt-5 pb-6",
+                  isUploading ? "mt-[18px]" : ""
+                )}
+              >
+                {!isUploading ? (
+                  <>
+                    <Cloud className="w-6 h-6 mb-2 text-zinc-500" />
+                    <p className="mb-2 text-sm text-zinc-700">
+                      <span className="font-semibold">Click to upload</span> or
+                      drag and drop
+                    </p>
+                    <p className="text-xs text-zinc-500">
+                      PDF, DOCX (up to {maxFileSize} MB)
+                    </p>
+                    <p className="text-xs text-zinc-500 mt-1">
+                      Maximum {maxFiles} files per upload
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mb-2 text-sm text-zinc-700">
+                      <span className="font-semibold">
+                        Please wait until the process is done.
+                      </span>
+                    </p>
+                    <p className="font-semibold text-sm text-zinc-700">
+                      Do not refresh the page!
+                    </p>
+                  </>
+                )}
               </div>
 
               {acceptedFiles && acceptedFiles[0]
@@ -244,12 +265,6 @@ const UploadDropzone = ({
                                 value={uploadProgressArr[indx]}
                                 className="w-full h-1 bg-zinc-200"
                               />
-                              {/* {uploadProgress === 100 ? (
-                            <div className="flex items-center justify-center gap-1 pt-2 text-sm text-center text-zinc-700">
-                              <Loader2 className="w-3 h-3 animate-spin" />
-                              Redirecting...
-                            </div>
-                          ) : null} */}
                             </div>
                           ) : (
                             <div className="w-full max-w-xs mx-auto my-2">
@@ -264,24 +279,6 @@ const UploadDropzone = ({
                     )
                   )
                 : null}
-
-              {/* {isUploading ? (
-                <div className="w-full max-w-xs mx-auto mt-4">
-                  <Progress
-                    indicatorColor={
-                      uploadProgress === 100 ? "bg-green-500" : ""
-                    }
-                    value={uploadProgress}
-                    className="w-full h-1 bg-zinc-200"
-                  />
-                  {uploadProgress === 100 ? (
-                    <div className="flex items-center justify-center gap-1 pt-2 text-sm text-center text-zinc-700">
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                      Redirecting...
-                    </div>
-                  ) : null}
-                </div>
-              ) : null} */}
 
               <input
                 {...getInputProps()}
