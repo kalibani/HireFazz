@@ -102,16 +102,10 @@ const CVAnalyzerPage = () => {
     const safeRequirement = requirement || requirements;
     const safePercentage = percentageProp || percentage;
     const safeJobTitle = jobTitleProp || jobTitle;
-    const messages = `
-    Below is the requirements or qualifications or job descriptions that we are looking for:
-    Job Title: ${safeJobTitle} 
-    ${safeRequirement}
-    `;
 
     try {
       await axios.post("/api/cv-analyzer", {
         jobTitle: safeJobTitle,
-        message: messages,
         fileId: id,
         requirements: safeRequirement,
         percentage: safePercentage,
