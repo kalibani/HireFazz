@@ -14,7 +14,7 @@ import { Button } from "./ui/button";
 import { toast } from "react-hot-toast";
 
 import Dropzone from "react-dropzone";
-import { Cloud, File, Loader2, AlertCircle, ChevronDown } from "lucide-react";
+import { Cloud, File, Loader2, HelpCircle, ChevronDown } from "lucide-react";
 import { Input } from "./ui/input";
 import { Progress } from "./ui/progress";
 import { Textarea } from "@/components/ui/textarea";
@@ -347,10 +347,40 @@ const UploadButton = ({
             />
           </div>
           <div className="px-4">
-            <label className="text-lg font-semibold">
-              Input your requirements here{" "}
-              <span className="text-red-400">*</span>
-            </label>
+            <TooltipProvider>
+              <label className="text-lg font-semibold">
+                Input your requirements here{" "}
+                <span className="text-red-400">*</span>
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger className="cursor-default ml-1.5">
+                    <HelpCircle className="w-4 h-4 text-zinc-500" />
+                  </TooltipTrigger>
+                  <TooltipContent className="p-2 w-80 ">
+                    <span className="text-xs">
+                      Set your job requirements here, example:
+                    </span>
+                    <ul className="text-xs ">
+                      <li>
+                        1. Bachelor Degree from all major (Marketing major is a
+                        plus)
+                      </li>
+                      <li>2. Get used to work based on target and incentive</li>
+                      <li>3. Min. 1 year experience in a similar position</li>
+                      <li>4. Proficient in Microsoft Office and Excel</li>
+                      <li>5. Have a good communication skill</li>
+                      <li>6. Have a good analytics skill</li>
+                      <li>7. Willing to be placed in any city</li>
+                    </ul>
+
+                    <span className="mt-1 text-xs">
+                      Tips: You can add a strict instructions to get a better
+                      accuracy, i.e: If the requirement no 3 is not fulfilled
+                      then the percentage should not more than 30%.
+                    </span>
+                  </TooltipContent>
+                </Tooltip>
+              </label>
+            </TooltipProvider>
             <Textarea
               className="min-h-[150px] max-h-[400px] overflow-auto mt-2"
               placeholder="Type your requirements here."
@@ -367,7 +397,7 @@ const UploadButton = ({
                 Set Percentage
                 <Tooltip delayDuration={300}>
                   <TooltipTrigger className="cursor-default ml-1.5">
-                    <AlertCircle className="w-4 h-4 text-zinc-500" />
+                    <HelpCircle className="w-4 h-4 text-zinc-500" />
                   </TooltipTrigger>
                   <TooltipContent className="p-2 w-80">
                     How many percentage you wanted to match.
