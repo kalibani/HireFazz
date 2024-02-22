@@ -149,9 +149,9 @@ const CVAnalyzerPage = () => {
 
   const isMoreThanMatchLimit = (
     userPercentage: string,
-    matchPercentage: string
+    matchedPercentage: string
   ) => {
-    return Number(matchPercentage) >= Number(userPercentage);
+    return Number(matchedPercentage) >= Number(userPercentage);
   };
 
   const handleDelete = async (id: string) => {
@@ -214,162 +214,174 @@ const CVAnalyzerPage = () => {
           </div>
           {/* </Form> */}
         </div>
-        <div className="mt-4 space-y-4">
-          {/* display all user files */}
+        {/* @ts-ignore */}
+        {filesMemo && filesMemo?.length > 0 ? (
+          <div className="flex justify-end mt-4 mb-2 mr-1 gap-1">
+            Automatically Sorted by <b>Highest Matched</b>
+          </div>
+        ) : null}
+        <div className="">
           {/* @ts-ignore */}
           {filesMemo && filesMemo?.length !== 0 ? (
             <>
-              <ul className="grid grid-cols-1 gap-6 mt-8 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
+              <ul className="grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
                 {/* @ts-ignore */}
-                {filesMemo.map((file) => (
-                  <li
-                    key={file.id}
-                    className="col-span-1 transition bg-white divide-y divide-gray-200 rounded-lg shadow hover:shadow-lg"
-                  >
-                    <div className="flex items-center">
-                      <Link
-                        href={`/cv-scanner/${file.id}`}
-                        className="flex flex-col flex-1 gap-2"
-                      >
-                        <div className="flex items-center justify-between max-w-[300px] p-4 space-x-6">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
-                          <div className="flex-1 truncate">
-                            <div className="flex items-center space-x-3">
-                              <p className="text-lg font-medium truncate text-zinc-900">
-                                {file.name}
-                              </p>
+                {filesMemo
+                  // @ts-ignore
+                  .sort(
+                    (
+                      a: { reportOfAnalysis: { matchedPercentage: any } },
+                      b: { reportOfAnalysis: { matchedPercentage: any } }
+                    ) =>
+                      Number(b.reportOfAnalysis?.matchedPercentage) -
+                      Number(a.reportOfAnalysis?.matchedPercentage)
+                  )
+                  .map((file: any) => (
+                    <li
+                      key={file.id}
+                      className="col-span-1 transition bg-white divide-y divide-gray-200 rounded-lg shadow hover:shadow-lg"
+                    >
+                      <div className="flex items-center">
+                        <Link
+                          href={`/cv-scanner/${file.id}`}
+                          className="flex flex-col flex-1 gap-2"
+                        >
+                          <div className="flex items-center justify-between max-w-[300px] p-4 space-x-6">
+                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
+                            <div className="flex-1 truncate">
+                              <div className="flex items-center space-x-3">
+                                <p className="text-lg font-medium truncate text-zinc-900">
+                                  {file.name}
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Link>
-                      {deletingIds.includes(file.id) ? (
-                        <Loader2 className="mr-4 text-blue-500 animate-spin" />
-                      ) : (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className="mr-4"
-                              size="icon"
-                            >
-                              <MoreVertical />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="w-[100px]">
-                            <DropdownMenuItem>
+                        </Link>
+                        {deletingIds.includes(file.id) ? (
+                          <Loader2 className="mr-4 text-blue-500 animate-spin" />
+                        ) : (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
                               <Button
-                                className="w-full "
-                                size="sm"
-                                onClick={() => setSelectedFile(file)}
+                                variant="ghost"
+                                className="mr-4"
+                                size="icon"
                               >
-                                Reanalyze
+                                <MoreVertical />
                               </Button>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Button
-                                className="w-full text-red-500 border-red-500 hover:text-red-500"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDelete(file.id)}
-                              >
-                                Delete
-                              </Button>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
-                    </div>
-                    <div>
-                      <div className="flex justify-between gap-6 px-4 pt-2 text-base text-zinc-900">
-                        <div className="flex items-center gap-2">
-                          {
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-[100px]">
+                              <DropdownMenuItem>
+                                <Button
+                                  className="w-full "
+                                  size="sm"
+                                  onClick={() => setSelectedFile(file)}
+                                >
+                                  Reanalyze
+                                </Button>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Button
+                                  className="w-full text-red-500 border-red-500 hover:text-red-500"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDelete(file.id)}
+                                >
+                                  Delete
+                                </Button>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex justify-between gap-6 px-4 pt-2 text-base text-zinc-900">
+                          <div className="flex items-center gap-2">
+                            {
+                              <>
+                                {/* @ts-ignore */}
+                                {file.reportOfAnalysis ? (
+                                  <>
+                                    <p className="w-48 truncate">
+                                      {/* @ts-ignore */}
+                                      {file.reportOfAnalysis?.documentOwner ||
+                                        file?.name}
+                                    </p>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Plus className="w-4 h-4" />
+                                    <span>
+                                      {/* @ts-ignore */}
+                                      {formatter.format(
+                                        new Date(file.createdAt),
+                                        "MMM yyyy"
+                                      )}
+                                    </span>
+                                  </>
+                                )}
+                              </>
+                            }
+                          </div>
+
+                          {(jobTitle && !file.reportOfAnalysis) ||
+                          reanalyzeIds.includes(file.id) ? (
+                            <div className="flex p-2 text-base text-zinc-900 items-center">
+                              Analyzing
+                              <MoreHorizontal className="ml-1 h-4 w-4 shrink-0 opacity-50 animate-ping text-zinc-900" />
+                            </div>
+                          ) : (
                             <>
-                              {/* @ts-ignore */}
-                              {file.reportOfAnalysis ? (
-                                <>
-                                  <p className="w-48 truncate">
-                                    {/* @ts-ignore */}
-                                    {file.reportOfAnalysis?.documentOwner ||
-                                      file?.name}
-                                  </p>
-                                </>
+                              {file.reportOfAnalysis?.matchedPercentage ? (
+                                <div className="flex items-center justify-center h-10 gap-1 text-base text-zinc-900">
+                                  {/* @ts-ignore */}
+                                  {file.reportOfAnalysis?.matchedPercentage}%
+                                  <p>Match</p>
+                                  {isMoreThanMatchLimit(
+                                    // @ts-ignore
+                                    file.reportOfAnalysis?.percentage,
+                                    // @ts-ignore
+                                    file.reportOfAnalysis?.matchedPercentage
+                                  ) ? (
+                                    <Check className="w-5 h-5 text-green-500 " />
+                                  ) : (
+                                    <X className="w-5 h-5 text-red-500 " />
+                                  )}
+                                </div>
                               ) : (
-                                <>
-                                  <Plus className="w-4 h-4" />
-                                  <span>
-                                    {/* @ts-ignore */}
-                                    {formatter.format(
-                                      new Date(file.createdAt),
-                                      "MMM yyyy"
-                                    )}
-                                  </span>
-                                </>
+                                <TooltipProvider>
+                                  <label className="mr-2 text-lg font-semibold">
+                                    Please Reanalyze
+                                    <Tooltip delayDuration={300}>
+                                      <TooltipTrigger className="cursor-default ml-1.5">
+                                        <AlertCircle className="w-4 h-4 text-zinc-500" />
+                                      </TooltipTrigger>
+                                      <TooltipContent className="p-2 w-80">
+                                        Process stopped because you refresh the
+                                        page, please reanalyze and do not
+                                        refresh the page
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </label>
+                                </TooltipProvider>
                               )}
                             </>
-                          }
+                          )}
                         </div>
-
-                        {(jobTitle && !file.reportOfAnalysis) ||
-                        reanalyzeIds.includes(file.id) ? (
-                          <div className="flex p-2 text-base text-zinc-900 items-center">
-                            Analyzing
-                            <MoreHorizontal className="ml-1 h-4 w-4 shrink-0 opacity-50 animate-ping text-zinc-900" />
-                          </div>
-                        ) : (
-                          <>
-                            {file.reportOfAnalysis?.matchPercentage ||
-                            file.reportOfAnalysis?.matchedPercentage ? (
-                              <div className="flex items-center justify-center h-10 gap-1 text-base text-zinc-900">
-                                {/* @ts-ignore */}
-                                {file.reportOfAnalysis?.matchPercentage ??
-                                  file.reportOfAnalysis?.matchedPercentage}
-                                %<p>Match</p>
-                                {isMoreThanMatchLimit(
-                                  // @ts-ignore
-                                  file.reportOfAnalysis?.percentage,
-                                  // @ts-ignore
-                                  file.reportOfAnalysis?.matchPercentage ??
-                                    file.reportOfAnalysis?.matchedPercentage
-                                ) ? (
-                                  <Check className="w-5 h-5 text-green-500 " />
-                                ) : (
-                                  <X className="w-5 h-5 text-red-500 " />
-                                )}
-                              </div>
-                            ) : (
-                              <TooltipProvider>
-                                <label className="mr-2 text-lg font-semibold">
-                                  Please Reanalyze
-                                  <Tooltip delayDuration={300}>
-                                    <TooltipTrigger className="cursor-default ml-1.5">
-                                      <AlertCircle className="w-4 h-4 text-zinc-500" />
-                                    </TooltipTrigger>
-                                    <TooltipContent className="p-2 w-80">
-                                      Process stopped because you refresh the
-                                      page, please reanalyze and do not refresh
-                                      the page
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </label>
-                              </TooltipProvider>
-                            )}
-                          </>
-                        )}
+                        <div className="px-4 pb-1 text-zinc-900 text-sm">
+                          {file.reportOfAnalysis?.jobTitle}
+                        </div>
+                        <div className="px-4 pb-4">
+                          {!reanalyzeIds.includes(file.id) && (
+                            <p className="text-xs text-zinc-500">
+                              {/* @ts-ignore */}
+                              {file.reportOfAnalysis?.reason}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <div className="px-4 pb-1 text-zinc-900 text-sm">
-                        {file.reportOfAnalysis?.jobTitle}
-                      </div>
-                      <div className="px-4 pb-4">
-                        {!reanalyzeIds.includes(file.id) && (
-                          <p className="text-xs text-zinc-500">
-                            {/* @ts-ignore */}
-                            {file.reportOfAnalysis?.reason}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  ))}
               </ul>
             </>
           ) : isLoading ? (
