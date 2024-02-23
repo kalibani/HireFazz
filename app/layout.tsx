@@ -5,28 +5,30 @@ import { ClerkProvider } from "@clerk/nextjs";
 import ModalProvider from "@/components/modal-provider";
 import { ToasterProvider } from "@/components/toasterProvider";
 import Providers from "@/components/Providers";
+import useTranslation from "next-translate/useTranslation";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BerryLabs - AI-Powered Solutions, Human-Centered Results",
-  description:
-    "BerryLabs harnesses the power of artificial intelligence to revolutionize your document handling processes. Our platform offers a suite of tools designed to automate and optimize your repetitive tasks, from scanning CVs and analyzing bank statements to reviewing contracts and ensuring regulatory compliance. Transform your business operations with BerryLabs and make data-driven decisions faster and more accurately.",
+	title: "BerryLabs - AI-Powered Solutions, Human-Centered Results",
+	description:
+		"BerryLabs harnesses the power of artificial intelligence to revolutionize your document handling processes. Our platform offers a suite of tools designed to automate and optimize your repetitive tasks, from scanning CVs and analyzing bank statements to reviewing contracts and ensuring regulatory compliance. Transform your business operations with BerryLabs and make data-driven decisions faster and more accurately.",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <ClerkProvider>
-      <Providers>
-        <html lang="en">
-          <head>
-            <meta
-              name="keywords"
-              content="AI-powered CV scanner,
+	const { lang } = useTranslation();
+	return (
+		<ClerkProvider>
+			<Providers>
+				<html lang={lang}>
+					<head>
+						<meta
+							name="keywords"
+							content="AI-powered CV scanner,
               Automated bank statement analysis,
               AI contract review tool,
               Compliance and regulatory AI software,
@@ -35,21 +37,21 @@ export default function RootLayout({
               AI for HR and finance,
               Automated document scanning,
               Regulatory compliance automation."
-            />
-            <link rel="icon" href="/BerryLabs.png" type="image/png" />
-            <link
-              rel="apple-touch-icon"
-              href="/BerryLabs.png"
-              type="image/png"
-            />
-          </head>
-          <body className={inter.className}>
-            <ToasterProvider />
-            <ModalProvider />
-            {children}
-          </body>
-        </html>
-      </Providers>
-    </ClerkProvider>
-  );
+						/>
+						<link rel="icon" href="/BerryLabs.png" type="image/png" />
+						<link
+							rel="apple-touch-icon"
+							href="/BerryLabs.png"
+							type="image/png"
+						/>
+					</head>
+					<body className={inter.className}>
+						<ToasterProvider />
+						<ModalProvider />
+						{children}
+					</body>
+				</html>
+			</Providers>
+		</ClerkProvider>
+	);
 }
