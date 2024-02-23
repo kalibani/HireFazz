@@ -1,39 +1,39 @@
 {
-	"btn-start": "Mulai Sekarang",
-	"hero-title": "Teknologi AI Terdepan",
-	"running-text": {
-		"1": "Analisis Laporan Bank",
-		"2": "Analisa Tagihan",
-		"3": "Prosesor Aplikasi Peminjaman",
-		"4": "Verifikasi Perjanjian"
-	},
-	"tag-line": {
-		"1": "Tingkatkan Produktivitas Anda dengan Presisi AI",
-		"2": "Singkirkan Pekerjaan yang Membosankan"
-	},
-	"cta": "Coba Sekarang Gratis",
-	"testimoni": {
-		"title": "Cerita Sukses",
-		"content": {
-			"1": {
-				"description": "Analisis Ratusan CV dalam Sekejap, Luar Biasa!"
-			},
-			"2": {
-				"description": "AI ini Menyelamatkan Waktu Saya Begitu Banyak"
-			},
-			"3": {
-				"description": "Aplikasi ini telah mengubah hidup saya, selamat tinggal pekerjaan yang membosankan dan monoton!"
-			},
-			"4": {
-				"description": "Analisa CV yang Super Berguna dan Mudah Digunakan"
-			}
-		}
-	},
-	"contact": {
-		"title": "Hubungi Kami",
-		"name": "Nama Kamu",
-		"email": "Email Kamu",
-		"message": "Ketik Pesan Kamu",
-		"btn-send": "Kirim Pesan"
-	}
+  "btn-start": "Mulai Sekarang",
+  "hero-title": "Teknologi AI Terdepan",
+  "running-text": {
+    "1": "Analisis Laporan Bank",
+    "2": "Analisa Tagihan",
+    "3": "Prosesor Aplikasi Peminjaman",
+    "4": "Verifikasi Perjanjian"
+  },
+  "tag-line": {
+    "1": "Tingkatkan Produktivitas Anda dengan Presisi AI",
+    "2": "Singkirkan Pekerjaan yang Membosankan"
+  },
+  "cta": "Coba Sekarang Gratis",
+  "testimoni": {
+    "title": "Cerita Sukses",
+    "content": {
+      "1": {
+        "description": "Analisis Ratusan CV dalam Sekejap, Luar Biasa!"
+      },
+      "2": {
+        "description": "AI ini Menyelamatkan Waktu Saya Begitu Banyak"
+      },
+      "3": {
+        "description": "Aplikasi ini telah mengubah hidup saya, selamat tinggal pekerjaan yang membosankan dan monoton!"
+      },
+      "4": {
+        "description": "Analisa CV yang Super Berguna dan Mudah Digunakan"
+      }
+    }
+  },
+  "contact": {
+    "title": "Hubungi Kami",
+    "name": "Nama Kamu",
+    "email": "Email Kamu",
+    "message": "Ketik Pesan Kamu",
+    "btn-send": "Kirim Pesan"
+  }
 }

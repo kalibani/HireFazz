@@ -1,77 +1,78 @@
-"use client";
+'use client';
 
-import { getUserSubscriptionPlan } from "@/lib/stripe";
-import { trpc } from "@/app/_trpc/client";
+import { getUserSubscriptionPlan } from '@/lib/stripe';
+import { trpc } from '@/app/_trpc/client';
 import {
-	Card,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
-import { Loader2 } from "lucide-react";
-import * as dateFns from "date-fns";
-import toast from "react-hot-toast";
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from './ui/card';
+import { Button } from './ui/button';
+import { Loader2 } from 'lucide-react';
+import * as dateFns from 'date-fns';
+import toast from 'react-hot-toast';
 
 interface BillingFormProps {
-	subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
+  subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
 }
 
 const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
-	const { mutate: createStripeSession, isLoading } =
-		trpc.createStripeSession.useMutation({
-			onSuccess: ({ url }) => {
-				window.location.href = url ?? "/pricing";
-				if (!url) {
-					toast("There was a problem, Please try again in a moment...");
-				}
-			},
-			networkMode: "always",
-		});
+  const { mutate: createStripeSession, isLoading } =
+    trpc.createStripeSession.useMutation({
+      onSuccess: ({ url }) => {
+        window.location.href = url ?? '/pricing';
+        if (!url) {
+          toast('There was a problem, Please try again in a moment...');
+        }
+      },
+      networkMode: 'always',
+    });
 
-	return (
-		<form
-			className="mt-12"
-			onSubmit={(e) => {
-				e.preventDefault();
-				createStripeSession();
-			}}>
-			<Card>
-				<CardHeader>
-					<CardTitle>Subscription Plan</CardTitle>
-					<CardDescription>
-						You are currently on the <strong>{subscriptionPlan.name}</strong>{" "}
-						plan.
-					</CardDescription>
-				</CardHeader>
+  return (
+    <form
+      className="mt-12"
+      onSubmit={(e) => {
+        e.preventDefault();
+        createStripeSession();
+      }}
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle>Subscription Plan</CardTitle>
+          <CardDescription>
+            You are currently on the <strong>{subscriptionPlan.name}</strong>{' '}
+            plan.
+          </CardDescription>
+        </CardHeader>
 
-				<CardFooter className="flex flex-col items-start space-y-2 md:flex-row md:justify-between md:space-x-0">
-					<Button type="submit">
-						{isLoading ? (
-							<Loader2 className="mr-4 h-4 w-4 animate-spin" />
-						) : null}
-						{subscriptionPlan.isSubscribed
-							? "Manage Subscription"
-							: "Upgrade to PREMIUM"}
-					</Button>
+        <CardFooter className="flex flex-col items-start space-y-2 md:flex-row md:justify-between md:space-x-0">
+          <Button type="submit">
+            {isLoading ? (
+              <Loader2 className="mr-4 h-4 w-4 animate-spin" />
+            ) : null}
+            {subscriptionPlan.isSubscribed
+              ? 'Manage Subscription'
+              : 'Upgrade to PREMIUM'}
+          </Button>
 
-					{subscriptionPlan.isSubscribed ? (
-						<p className="rounded-full text-xs font-medium">
-							{subscriptionPlan.isCanceled
-								? "Your plan will be canceled on "
-								: "Your plan renews on"}
-							{dateFns.format(
-								subscriptionPlan.stripeCurrentPeriodEnd!,
-								"dd.MM.yyyy"
-							)}
-							.
-						</p>
-					) : null}
-				</CardFooter>
-			</Card>
-		</form>
-	);
+          {subscriptionPlan.isSubscribed ? (
+            <p className="rounded-full text-xs font-medium">
+              {subscriptionPlan.isCanceled
+                ? 'Your plan will be canceled on '
+                : 'Your plan renews on'}
+              {dateFns.format(
+                subscriptionPlan.stripeCurrentPeriodEnd!,
+                'dd.MM.yyyy'
+              )}
+              .
+            </p>
+          ) : null}
+        </CardFooter>
+      </Card>
+    </form>
+  );
 };
 
 export default BillingForm;
