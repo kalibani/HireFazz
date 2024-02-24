@@ -3,10 +3,12 @@
     "btn-start": "Mulai Sekarang",
     "hero-title": "Teknologi AI Terdepan",
     "running-text": {
-      "1": "Analisis Laporan Bank",
-      "2": "Analisa Tagihan",
-      "3": "Prosesor Aplikasi Peminjaman",
-      "4": "Verifikasi Perjanjian"
+      "1": "Pendeteksi CV Otomatis",
+      "2": "Analisis Laporan Bank",
+      "3": "Analisa Tagihan",
+      "4": "Prosesor Aplikasi Peminjaman",
+      "5": "Verifikasi Perjanjian",
+      "6": "Pemeriksa Regulasi"
     },
     "tag-line": {
       "1": "Tingkatkan Produktivitas Anda dengan Presisi AI",

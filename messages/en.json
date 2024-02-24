@@ -3,10 +3,12 @@
     "btn-start": "Get Started",
     "hero-title": "The Best AI Tool for",
     "running-text": {
-      "1": "Bank Statement Analyzer",
-      "2": "Invoice Reviewer",
-      "3": "Loan Application Processor",
-      "4": "Contract Checker"
+      "1": "Automatic CV Scanner",
+      "2": "Bank Statement Analyzer",
+      "3": "Invoice Reviewer",
+      "4": "Loan Application Processor",
+      "5": "Contract Checker",
+      "6": "Regulatory Auditor"
     },
     "tag-line": {
       "1": "Empower Your Workflow with AI Precision",
@@ -37,5 +39,19 @@
       "message": "Your Message",
       "btn-send": "Send Message"
     }
+  },
+  "landing-hero": {
+    "title": "The Best AI Tool for",
+    "running-text": {
+      "1": "Bank Statement Analyzer",
+      "2": "Invoice Reviewer",
+      "3": "Loan Application Processor",
+      "4": "Contract Checker"
+    },
+    "tag-line": {
+      "1": "Empower Your Workflow with AI Precision",
+      "2": "Avoid a Tiring Repetitive Job"
+    },
+    "cta": "Start Generating For Free"
   }
 }

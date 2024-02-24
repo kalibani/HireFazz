@@ -1,14 +1,16 @@
-import React from "react";
+import React from 'react';
+import pick from 'lodash/pick';
 
-import ContactUs from "@/components/contact-us";
-import Heading from "@/components/headings";
-import { HeartHandshake } from "lucide-react";
+import ContactUs from '@/components/contact-us';
+import Heading from '@/components/headings';
+import { HeartHandshake } from 'lucide-react';
+import { NextIntlClientProvider, useMessages } from 'next-intl';
 
-type Props = {};
+const Page = () => {
+  const messages = useMessages();
 
-const page = (props: Props) => {
   return (
-    <>
+    <NextIntlClientProvider messages={pick(messages, 'landing')}>
       <Heading
         title="Help Center"
         description="Tell us what you need by sending email or whatsapp :)"
@@ -17,8 +19,8 @@ const page = (props: Props) => {
         bgColor="bg-red-500/10"
       />
       <ContactUs />
-    </>
+    </NextIntlClientProvider>
   );
 };
 
-export default page;
+export default Page;

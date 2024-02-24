@@ -1,33 +1,35 @@
-"use client";
-import { FormEvent, useState, useEffect, useRef } from "react";
-import { Mail, MessagesSquare } from "lucide-react";
-import emailjs from "@emailjs/browser";
-import toast, { Toaster } from "react-hot-toast";
-import { useUser } from "@clerk/nextjs";
-import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
+'use client';
+import { FormEvent, useState, useEffect, useRef } from 'react';
+import { Mail, MessagesSquare } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+import toast, { Toaster } from 'react-hot-toast';
+import { useUser } from '@clerk/nextjs';
+import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 function Contact() {
+  const t = useTranslations('landing');
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const isMobile = window.innerWidth <= 640;
     setIsMobile(isMobile);
   }, []);
   const form = useRef();
-  const submitNotification = (error = "", toastHandler = toast) => {
+  const submitNotification = (error = '', toastHandler = toast) => {
     if (error) {
       toastHandler.error(`Failed to sent message: ${error}`, {
         style: {
-          background: "#eb4034",
-          color: "#fff",
+          background: '#eb4034',
+          color: '#fff',
           maxWidth: 500,
         },
       });
     } else {
       toastHandler.success(`Successfully sent message`, {
         style: {
-          background: "#04111d",
-          color: "#fff",
+          background: '#04111d',
+          color: '#fff',
         },
       });
     }
@@ -62,12 +64,12 @@ function Contact() {
     <section className="py-10 sm:pt-16 md:pt-16 text-white" id="contact">
       <Toaster position="top-right" reverseOrder={false} />
       <h5
-        className={cn("text-center text-4xl font-extrabold mb-10", {
-          "text-white": !isSignedIn,
-          "text-[#192339]": isSignedIn,
+        className={cn('text-center text-4xl font-extrabold mb-10', {
+          'text-white': !isSignedIn,
+          'text-[#192339]': isSignedIn,
         })}
       >
-        Get in Touch
+        {t('contact.title')}
       </h5>
       <div className="container w-[90%] md:w-[78%] grid grid-cols-1 md:grid-cols-[30%,50%] gap-8 md:gap-[12%] m-auto">
         <div className="flex flex-col gap-[1.2rem]">
@@ -80,7 +82,7 @@ function Contact() {
               target="_blank"
               className="text-[#4db5ff] transition delay-150 duration-300 ease-in-out hover:text-white mt-3 inline-block text-xs"
             >
-              Send a Message
+              {t('contact.btn-send')}
             </a>
           </article>
           {/* <article className="bg-[#192339] p-[1.2rem] rounded-[1.2rem] text-center border-[1px] border-solid border-transparent transition delay-150 duration-300 ease-in-out hover:border-[#4db5ff66]">
@@ -102,13 +104,13 @@ function Contact() {
             <a
               href={
                 isMobile
-                  ? "https://api.whatsapp.com/send?phone=+6282126753060"
-                  : "https://web.whatsapp.com/send?phone=+6282126753060"
+                  ? 'https://api.whatsapp.com/send?phone=+6282126753060'
+                  : 'https://web.whatsapp.com/send?phone=+6282126753060'
               }
               target="_blank"
               className="text-[#4db5ff] transition delay-150 duration-300 ease-in-out hover:text-white mt-3 inline-block text-xs"
             >
-              Send a Message
+              {t('contact.btn-send')}
             </a>
           </article>
         </div>
@@ -120,41 +122,41 @@ function Contact() {
         >
           <input
             className={cn(
-              "w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none",
+              'w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none',
               {
-                "text-[#192339]": isSignedIn,
+                'text-[#192339]': isSignedIn,
               }
             )}
             type="text"
             name="name"
-            placeholder="Your Name"
+            placeholder={t('contact.name')}
             required
           />
           <input
             className={cn(
-              "w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none",
+              'w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none',
               {
-                "text-[#192339]": isSignedIn,
+                'text-[#192339]': isSignedIn,
               }
             )}
             type="email"
             name="email"
-            placeholder="Your Email"
+            placeholder={t('contact.email')}
             required
           />
           <textarea
             name="message"
             rows={7}
-            placeholder="Your Message"
+            placeholder={t('contact.message')}
             required
             className={cn(
-              "w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none",
+              'w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none',
               {
-                "text-[#192339]": isSignedIn,
+                'text-[#192339]': isSignedIn,
               }
             )}
           ></textarea>
-          <Button type="submit">Send Message</Button>
+          <Button type="submit">{t('contact.btn-send')}</Button>
         </form>
       </div>
     </section>
