@@ -43,7 +43,8 @@ import { usePricing } from "@/hooks/use-pricing";
 import { pricing } from "@/lib/utils";
 import toast from "react-hot-toast";
 
-const limit = 10;
+// temporary set to 100 for testing purpose
+const limit = 100;
 interface AnalyzeCV {
   id: string;
   jobTitle?: string;
