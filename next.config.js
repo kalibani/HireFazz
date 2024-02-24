@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextTranslate = require('next-translate-plugin');
-const nextConfig = nextTranslate({
-  // experimental: { appDir: true },
+const nextConfig = {
   images: {
     domains: [
       'googleusercontent.com',
@@ -14,6 +12,6 @@ const nextConfig = nextTranslate({
     config.resolve.alias.encoding = false;
     return config;
   },
-});
+};
 
 module.exports = nextConfig;

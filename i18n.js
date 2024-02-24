@@ -4,6 +4,7 @@ const i18n = {
   pages: {
     '*': ['common'],
     '/(landing)': ['landing'],
+    '/(auth)/(routes)': ['auth'],
   },
 };
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import useTranslation from 'next-translate/useTranslation';
+import t from '@/locales/en/landing.json';
 
 const testimonials = [
   {
@@ -32,14 +32,13 @@ const testimonials = [
 ];
 
 export const LandingContent = () => {
-  const { t } = useTranslation('landing');
   return (
     <div className="px-10 pb-20">
       <h2 className="text-center text-4xl text-white font-extrabold mb-10">
-        {t('testimoni.title')}
+        {t.testimoni.title}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {testimonials.map((item, index) => (
+        {testimonials.map((item) => (
           <Card
             key={item.description}
             className="bg-[#192339] border-none text-white"
@@ -52,7 +51,7 @@ export const LandingContent = () => {
                 </div>
               </CardTitle>
               <CardContent className="pt-4 px-0">
-                {t(`testimoni.content.${index + 1}.description`)}
+                {item.description}
               </CardContent>
             </CardHeader>
           </Card>

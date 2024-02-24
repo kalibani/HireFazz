@@ -22,7 +22,6 @@ import { cn } from '@/lib/utils';
 import FreeCounter from './free-counter';
 import { useProModal } from '@/hooks/use-pro-modal';
 import { useUser } from '@/hooks/use-user';
-import useTranslation from 'next-translate/useTranslation';
 
 const poppins = Montserrat({
   weight: '600',
@@ -121,7 +120,6 @@ const Sidebar = ({
   maxFreeCount,
   isUserAgreedTermsOfService,
 }: sidebarProps) => {
-  const { lang } = useTranslation();
   const pathname = usePathname();
   const { setApiLimit } = useProModal();
   const { setMaxFreeCount, setSubscriptionType, setAgreedTermsOfService } =
@@ -146,13 +144,9 @@ const Sidebar = ({
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
       <div className="px-3 py-2 flex-1">
-        <Link
-          href={`/dashboard?lang=${lang}`}
-          as={`/${lang}/dashboard`}
-          className="flex items-center pl-3 mb-14"
-        >
+        <Link href={`/dashboard`} className="flex items-center pl-3 mb-14">
           <div className="relative h-12 w-16 mr-4">
-            <Image fill alt="Logo" src="/BerryLabs.png" />
+            <Image fill alt="Logo" src="/BerryLabs.png" sizes="100%" />
           </div>
           <h1 className={cn('text-2xl font-bold', poppins.className)}>
             BerryLabs

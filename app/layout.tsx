@@ -5,7 +5,6 @@ import { ClerkProvider } from '@clerk/nextjs';
 import ModalProvider from '@/components/modal-provider';
 import { ToasterProvider } from '@/components/toasterProvider';
 import Providers from '@/components/Providers';
-import useTranslation from 'next-translate/useTranslation';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,23 +19,22 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { lang } = useTranslation();
   return (
     <ClerkProvider>
       <Providers>
-        <html lang={lang}>
+        <html lang="en">
           <head>
             <meta
               name="keywords"
               content="AI-powered CV scanner,
-              Automated bank statement analysis,
-              AI contract review tool,
-              Compliance and regulatory AI software,
-              Invoice processing automation,
-              Financial document analysis AI,
-              AI for HR and finance,
-              Automated document scanning,
-              Regulatory compliance automation."
+                Automated bank statement analysis,
+                AI contract review tool,
+                Compliance and regulatory AI software,
+                Invoice processing automation,
+                Financial document analysis AI,
+                AI for HR and finance,
+                Automated document scanning,
+                Regulatory compliance automation."
             />
             <link rel="icon" href="/BerryLabs.png" type="image/png" />
             <link

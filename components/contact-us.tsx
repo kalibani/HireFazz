@@ -6,10 +6,9 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useUser } from '@clerk/nextjs';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
-import useTranslation from 'next-translate/useTranslation';
+import t from '@/locales/en/landing.json';
 
 function Contact() {
-  const { t } = useTranslation('landing');
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const isMobile = window.innerWidth <= 640;
@@ -69,7 +68,7 @@ function Contact() {
           'text-[#192339]': isSignedIn,
         })}
       >
-        {t('contact.title')}
+        {t.contact.title}
       </h5>
       <div className="container w-[90%] md:w-[78%] grid grid-cols-1 md:grid-cols-[30%,50%] gap-8 md:gap-[12%] m-auto">
         <div className="flex flex-col gap-[1.2rem]">
@@ -82,7 +81,7 @@ function Contact() {
               target="_blank"
               className="text-[#4db5ff] transition delay-150 duration-300 ease-in-out hover:text-white mt-3 inline-block text-xs"
             >
-              {t('contact.btn-send')}
+              {t.contact['btn-send']}
             </a>
           </article>
           {/* <article className="bg-[#192339] p-[1.2rem] rounded-[1.2rem] text-center border-[1px] border-solid border-transparent transition delay-150 duration-300 ease-in-out hover:border-[#4db5ff66]">
@@ -110,7 +109,7 @@ function Contact() {
               target="_blank"
               className="text-[#4db5ff] transition delay-150 duration-300 ease-in-out hover:text-white mt-3 inline-block text-xs"
             >
-              {t('contact.btn-send')}
+              {t.contact['btn-send']}
             </a>
           </article>
         </div>
@@ -129,7 +128,7 @@ function Contact() {
             )}
             type="text"
             name="name"
-            placeholder={t('contact.name')}
+            placeholder={t.contact.name}
             required
           />
           <input
@@ -141,13 +140,13 @@ function Contact() {
             )}
             type="email"
             name="email"
-            placeholder={t('contact.email')}
+            placeholder={t.contact.email}
             required
           />
           <textarea
             name="message"
             rows={7}
-            placeholder={t('contact.message')}
+            placeholder={t.contact.message}
             required
             className={cn(
               'w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none',
@@ -156,7 +155,7 @@ function Contact() {
               }
             )}
           ></textarea>
-          <Button type="submit">{t('contact.btn-send')}</Button>
+          <Button type="submit">{t.contact['btn-send']}</Button>
         </form>
       </div>
     </section>
