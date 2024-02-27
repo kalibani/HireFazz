@@ -176,14 +176,14 @@ const UploadDropzone = ({
           {...getRootProps()}
           className="border min-h-64 max-h-[400px] m-4 border-dashed border-gray-300 rounded-lg overflow-auto relative"
         >
-          {/* {isUploading && ( */}
-          <div className="sticky">
-            <div className="absolute right-0 flex px-4 py-2 bg-white rounded-lg">
-              <span className="mr-2 text-gray-500">{`uploading ${orderUploading}/${uploadProgressArr.length}`}</span>
-              <Loader2 className="text-blue-500 animate-spin" />
+          {isUploading && (
+            <div className="sticky">
+              <div className="absolute right-0 flex px-4 py-2 bg-white rounded-lg">
+                <span className="mr-2 text-gray-500">{`uploading ${orderUploading}/${uploadProgressArr.length}`}</span>
+                <Loader2 className="text-blue-500 animate-spin" />
+              </div>
             </div>
-          </div>
-          {/* )} */}
+          )}
           <div className="flex items-center justify-center w-full h-full">
             <div
               className={cn(
