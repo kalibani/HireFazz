@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 import {
   FileArchiveIcon,
   MoreHorizontal,
@@ -10,38 +10,38 @@ import {
   Loader2,
   MoreVertical,
   AlertCircle,
-} from "lucide-react";
-import * as formatter from "date-fns";
-import Link from "next/link";
-import Heading from "@/components/headings";
-import axios from "axios";
-import { Button } from "@/components/ui/button";
-import UploadButton from "@/components/upload-button";
+} from 'lucide-react';
+import * as formatter from 'date-fns';
+import Link from 'next/link';
+import Heading from '@/components/headings';
+import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import UploadButton from '@/components/upload-button';
 
-import EmptyPage from "@/components/empty";
-import LoaderGeneral from "@/components/loader";
-import { useProModal } from "@/hooks/use-pro-modal";
-import { trpc } from "@/app/_trpc/client";
-import { useUser } from "@/hooks/use-user";
-import { useAnalyzer } from "@/hooks/use-analyzer";
+import EmptyPage from '@/components/empty';
+import LoaderGeneral from '@/components/loader';
+import { useProModal } from '@/hooks/use-pro-modal';
+import { trpc } from '@/src/app/[locale]/_trpc/client';
+import { useUser } from '@/hooks/use-user';
+import { useAnalyzer } from '@/hooks/use-analyzer';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 
-import { ReanalyzeModal } from "@/components/reanalyze-modal";
-import { usePricing } from "@/hooks/use-pricing";
-import { pricing } from "@/lib/utils";
-import toast from "react-hot-toast";
+import { ReanalyzeModal } from '@/components/reanalyze-modal';
+import { usePricing } from '@/hooks/use-pricing';
+import { pricing } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
 const limit = 10;
 interface AnalyzeCV {
@@ -67,7 +67,7 @@ const CVAnalyzerPage = () => {
     .useInfiniteQuery(
       { limit },
       {
-        networkMode: "always",
+        networkMode: 'always',
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       }
     );
@@ -85,7 +85,7 @@ const CVAnalyzerPage = () => {
 
   const { mutate: deleteFile } = trpc.deleteFile.useMutation({
     retry: 3,
-    networkMode: "always",
+    networkMode: 'always',
     onSuccess: () => {
       utils.infiniteFiles.refetch();
     },
@@ -98,7 +98,7 @@ const CVAnalyzerPage = () => {
   });
 
   const isQuotaLimited =
-    subscriptionType !== "FREE" && apiLimitCount === maxFreeCount;
+    subscriptionType !== 'FREE' && apiLimitCount === maxFreeCount;
   const isFreeTrialLimited = apiLimitCount === maxFreeCount;
 
   const { jobTitle, requirements, percentage } = useAnalyzer();
@@ -114,7 +114,7 @@ const CVAnalyzerPage = () => {
     const safeJobTitle = jobTitleProp || jobTitle;
 
     try {
-      await axios.post("/api/cv-analyzer", {
+      await axios.post('/api/cv-analyzer', {
         jobTitle: safeJobTitle,
         fileId: id,
         requirements: safeRequirement,
@@ -122,7 +122,7 @@ const CVAnalyzerPage = () => {
       });
       utils.infiniteFiles.refetch();
     } catch (error: any) {
-      console.log("error", error);
+      console.log('error', error);
     }
   };
 
@@ -315,7 +315,7 @@ const CVAnalyzerPage = () => {
                                       {/* @ts-ignore */}
                                       {formatter.format(
                                         new Date(file.createdAt),
-                                        "MMM yyyy"
+                                        'MMM yyyy'
                                       )}
                                     </span>
                                   </>
@@ -385,7 +385,7 @@ const CVAnalyzerPage = () => {
               </ul>
             </>
           ) : isLoading ? (
-            <div className="flex items-start justify-center w-full p-8 rounded-lg bg-muted">
+            <div className="flex items-start mt-8 justify-center w-full p-8 rounded-lg bg-muted">
               <LoaderGeneral />
             </div>
           ) : (
