@@ -1,7 +1,8 @@
-import { UserButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs";
-import { getUser } from "@/lib/api-limit";
-import MobileSidebar from "./mobile-sidebar";
+import { UserButton } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs';
+import { getUser } from '@/lib/api-limit';
+import MobileSidebar from './mobile-sidebar';
+import SelectLanguage from './select-languange';
 
 const Navbar = async () => {
   const { userId } = auth();
@@ -17,6 +18,7 @@ const Navbar = async () => {
       />
       <div className="flex w-full justify-end">
         <UserButton afterSignOutUrl="/" />
+        <SelectLanguage />
       </div>
     </div>
   );

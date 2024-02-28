@@ -28,7 +28,6 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
       </div>
       <main className="md:pl-72 overflow-clip">
         <Navbar />
-
         {children}
       </main>
     </div>
