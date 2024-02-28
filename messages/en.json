@@ -52,6 +52,12 @@
       "History": "History",
       "Manage Subscription": "Manage Subscription",
       "Help Center": "Help Center"
+    },
+    "page": {
+      "dashboard": {
+        "title": "Explore the power of AI",
+        "tag-line": "Work Smarter with the Smartest AI Assistant"
+      }
     }
   }
 }

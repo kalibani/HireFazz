@@ -52,6 +52,12 @@
       "History": "Riwayat",
       "Manage Subscription": "Kelola Langganan",
       "Help Center": "Pusat Bantuan"
+    },
+    "page": {
+      "dashboard": {
+        "title": "Jelajahi Kehebatan AI",
+        "tag-line": "Bekerja Lebih Cerdas dengan Asisten AI"
+      }
     }
   }
 }
