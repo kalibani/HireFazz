@@ -57,6 +57,13 @@
       "dashboard": {
         "title": "Jelajahi Kehebatan AI",
         "tag-line": "Bekerja Lebih Cerdas dengan Asisten AI"
+      },
+      "cv-scan": {
+        "title": "Analisa CV",
+        "description": "Analisa Ratusan CV dalam Hitungan Menit",
+        "placeholder": "Mulai Menganalisis",
+        "button": "Unggah CV",
+        "empty-page": "Ayo unggah dokumen pertama Anda."
       }
     }
   }

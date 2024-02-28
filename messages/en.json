@@ -57,6 +57,13 @@
       "dashboard": {
         "title": "Explore the power of AI",
         "tag-line": "Work Smarter with the Smartest AI Assistant"
+      },
+      "cv-scan": {
+        "title": "CV Scanner",
+        "description": "Scan Hundreds of CVs in Minutes",
+        "placeholder": "Start Analyzing",
+        "button": "Upload CV",
+        "empty-page": "Pretty empty around here. Let's upload your first document."
       }
     }
   }
