@@ -32,7 +32,7 @@ export const LandingNavbar = () => {
             {t('btn-start')}
           </Button>
         </Link>
-        <SelectLanguage lang="en" />
+        <SelectLanguage />
       </div>
     </nav>
   );

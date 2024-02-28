@@ -39,5 +39,19 @@
       "message": "Ketik Pesan Kamu",
       "btn-send": "Kirim Pesan"
     }
+  },
+  "dashboard": {
+    "menu": {
+      "Dashboard": "Dashboard",
+      "CV Scanner": "Analisa CV",
+      "Bank Statement Analyzer": "Analisis Rekening Bank",
+      "Invoice Reviewer": "Pemeriksa Tagihan",
+      "Loan Application Processor": "Proses Aplikasi Pinjaman",
+      "Regulatory Auditor": "Pemeriksa Regulasi",
+      "Contract Checker": "Pemeriksa Kontrak",
+      "History": "Riwayat",
+      "Manage Subscription": "Kelola Langganan",
+      "Help Center": "Pusat Bantuan"
+    }
   }
 }

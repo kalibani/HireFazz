@@ -9,10 +9,10 @@ import {
 } from '@/components/ui/select';
 import { usePathname } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import { removeLanguagePrefix } from '@/lib/utils';
+import { cn, removeLanguagePrefix } from '@/lib/utils';
 import { useRouter } from '@/src/navigation-intl';
 
-const SelectLanguage = () => {
+const SelectLanguage = ({ className }: { className?: string }) => {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -25,7 +25,12 @@ const SelectLanguage = () => {
       defaultValue={locale}
       onValueChange={(val) => handlerChangeSelect(val)}
     >
-      <SelectTrigger className="w-fit text-primary-foreground focus:ring-0 focus:ring-ring focus:ring-offset-0 border-0">
+      <SelectTrigger
+        className={cn(
+          'w-fit text-primary-foreground focus:ring-0 focus:ring-ring focus:ring-offset-0 border-0',
+          className
+        )}
+      >
         <SelectValue placeholder="EN" className="text-primary-foreground" />
       </SelectTrigger>
       <SelectContent className="w-fit min-w-fit">

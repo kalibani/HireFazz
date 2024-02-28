@@ -18,7 +18,7 @@ const Navbar = async () => {
       />
       <div className="flex w-full justify-end">
         <UserButton afterSignOutUrl="/" />
-        <SelectLanguage />
+        <SelectLanguage className="text-slate-900" />
       </div>
     </div>
   );

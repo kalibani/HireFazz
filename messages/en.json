@@ -41,6 +41,17 @@
     }
   },
   "dashboard": {
-    "menu": {}
+    "menu": {
+      "Dashboard": "Dashboard",
+      "CV Scanner": "CV Scanner",
+      "Bank Statement Analyzer": "Bank Statement Analyzer",
+      "Invoice Reviewer": "Invoice Reviewer",
+      "Loan Application Processor": "Loan Application Processor",
+      "Regulatory Auditor": "Regulatory Auditor",
+      "Contract Checker": "Contract Checker",
+      "History": "History",
+      "Manage Subscription": "Manage Subscription",
+      "Help Center": "Help Center"
+    }
   }
 }
