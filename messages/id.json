@@ -1,0 +1,119 @@
+{
+  "landing": {
+    "btn-start": "Mulai Sekarang",
+    "hero-title": "Teknologi AI Terdepan",
+    "running-text": {
+      "1": "Pendeteksi CV Otomatis",
+      "2": "Analisis Laporan Bank",
+      "3": "Analisa Tagihan",
+      "4": "Prosesor Aplikasi Peminjaman",
+      "5": "Verifikasi Perjanjian",
+      "6": "Pemeriksa Regulasi"
+    },
+    "tag-line": {
+      "1": "Tingkatkan Produktivitas Anda dengan Presisi AI",
+      "2": "Singkirkan Pekerjaan yang Membosankan"
+    },
+    "cta": "Coba Sekarang Gratis",
+    "testimoni": {
+      "title": "Cerita Sukses",
+      "content": {
+        "1": {
+          "description": "Analisis Ratusan CV dalam Sekejap, Luar Biasa!"
+        },
+        "2": {
+          "description": "AI ini Menyelamatkan Waktu Saya Begitu Banyak"
+        },
+        "3": {
+          "description": "Aplikasi ini telah mengubah hidup saya, selamat tinggal pekerjaan yang membosankan dan monoton!"
+        },
+        "4": {
+          "description": "Analisa CV yang Super Berguna dan Mudah Digunakan"
+        }
+      }
+    },
+    "contact": {
+      "title": "Hubungi Kami",
+      "name": "Nama Kamu",
+      "email": "Email Kamu",
+      "message": "Ketik Pesan Kamu",
+      "btn-send": "Kirim Pesan"
+    }
+  },
+  "dashboard": {
+    "menu": {
+      "Dashboard": "Dashboard",
+      "CV Scanner": "Analisa CV",
+      "Bank Statement Analyzer": "Analisis Rekening Bank",
+      "Invoice Reviewer": "Pemeriksa Tagihan",
+      "Loan Application Processor": "Proses Aplikasi Pinjaman",
+      "Regulatory Auditor": "Pemeriksa Regulasi",
+      "Contract Checker": "Pemeriksa Kontrak",
+      "History": "Riwayat",
+      "Manage Subscription": "Kelola Langganan",
+      "Help Center": "Pusat Bantuan"
+    },
+    "page": {
+      "dashboard": {
+        "title": "Jelajahi Kehebatan AI",
+        "tag-line": "Bekerja Lebih Cerdas dengan Asisten AI"
+      },
+      "cv-scan": {
+        "title": "Analisa CV",
+        "description": "Analisa Ratusan CV dalam Hitungan Menit",
+        "placeholder": "Mulai Menganalisis",
+        "button": {
+          "upload-cv": "Unggah CV",
+          "submit": "Kirim",
+          "reanalyze": "Analisa lagi",
+          "delete": "Hapus",
+          "load-more": "Lainnya"
+        },
+        "empty-page": "Ayo unggah dokumen pertama Anda.",
+        "matched": "Otomatis Diurutkan berdasarkan <b>Pencocokan Tertinggi</b>",
+        "modal": {
+          "input-job": {
+            "1": "Masukkan Judul Pekerjaan",
+            "2": "Judul Pekerjaan"
+          },
+          "input-req": {
+            "1": "Masukkan persyaratan Anda di sini",
+            "2": "Ketik persyaratan Anda di sini.",
+            "3": "Atur Persentase"
+          },
+          "tooltip": {
+            "title": "Atur persyaratan pekerjaan Anda di sini, contoh:",
+            "content-1": {
+              "1": "1. Gelar Sarjana dari semua jurusan (Jurusan Pemasaran menjadi nilai tambah)",
+              "2": "2. Terbiasa bekerja berdasarkan target dan insentif",
+              "3": "3. Pengalaman min. 1 tahun di posisi serupa",
+              "4": "4. Mahir dalam Microsoft Office dan Excel",
+              "5": "5. Memiliki keterampilan komunikasi yang baik",
+              "6": "6. Memiliki keterampilan analisis yang baik",
+              "7": "7. Bersedia ditempatkan di mana saja"
+            },
+            "content-2": "Berapa persentase yang ingin Anda sesuaikan.",
+            "tips": "Tips: Anda dapat menambahkan instruksi yang ketat untuk mendapatkan akurasi yang lebih baik, yaitu: Jika persyaratan nomor 3 tidak terpenuhi, maka persentasenya tidak boleh lebih dari 30%."
+          },
+          "dropzone": {
+            "title": "<span>Klik untuk mengunggah</span> atau seret dan lepaskan",
+            "file": "PDF, DOCX (hingga {maxFileSize} MB)",
+            "max-upload": "Maksimum {maxFiles} file per unggah",
+            "warning": {
+              "1": "Harap tunggu hingga proses selesai.",
+              "2": "Jangan refresh halaman!"
+            }
+          },
+          "update": {
+            "title": "Perbarui Judul Pekerjaan",
+            "require": "Perbarui Persyaratan",
+            "placeholder": {
+              "1": "Judul Pekerjaan",
+              "2": "Ketik persyaratan Anda di sini."
+            }
+          }
+        }
+      }
+    }
+  }
+}

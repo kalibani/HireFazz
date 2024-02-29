@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   JSXElementConstructor,
@@ -8,38 +8,40 @@ import {
   ReactPortal,
   useMemo,
   useState,
-} from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import { Button } from "./ui/button";
-import { toast } from "react-hot-toast";
+  useTransition,
+} from 'react';
+import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
+import { Button } from './ui/button';
+import { toast } from 'react-hot-toast';
 
-import Dropzone from "react-dropzone";
-import { Cloud, File, Loader2, HelpCircle, ChevronDown } from "lucide-react";
-import { Input } from "./ui/input";
-import { Progress } from "./ui/progress";
-import { Textarea } from "@/components/ui/textarea";
+import { Cloud, File, Loader2, HelpCircle, ChevronDown } from 'lucide-react';
+import { Input } from './ui/input';
+import { Progress } from './ui/progress';
+import { Textarea } from '@/components/ui/textarea';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from './ui/dropdown-menu';
 
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 
-import { useUploadThing } from "@/lib/upload-thing";
-import { trpc } from "@/app/_trpc/client";
+import { useUploadThing } from '@/lib/upload-thing';
+import { trpc } from '@/src/app/[locale]/_trpc/client';
 
-import { useAnalyzer } from "@/hooks/use-analyzer";
-import { useRouter } from "next/navigation";
-import { useUser } from "@/hooks/use-user";
-import { useProModal } from "@/hooks/use-pro-modal";
-import { cn } from "@/lib/utils";
+import { useAnalyzer } from '@/hooks/use-analyzer';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/hooks/use-user';
+import { useProModal } from '@/hooks/use-pro-modal';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import Dropzone from 'react-dropzone';
 
 const UploadDropzone = ({
   setIsOpen,
@@ -52,30 +54,31 @@ const UploadDropzone = ({
   onUpload: (v: boolean) => void;
   refetch: () => void;
 }) => {
+  const t = useTranslations('dashboard');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgressArr, setUploadProgressArr] = useState<number[]>([]);
   const orderUploading = useMemo(() => {
     const ongoing = uploadProgressArr.filter((el) => el > 0);
     return ongoing.length;
   }, [uploadProgressArr]);
-  const { startUpload } = useUploadThing("pdfUploader");
+  const { startUpload } = useUploadThing('pdfUploader');
   const router = useRouter();
   const { apiLimitCount } = useProModal();
   const { maxFreeCount, subscriptionType } = useUser();
   // @ts-ignore
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
-      if (file.uploadStatus === "SUCCESS") {
+      if (file.uploadStatus === 'SUCCESS') {
         refetch();
         router.refresh();
       }
     },
     retry: true,
     onError(error, variables, context) {
-      console.log("e", error, "v", variables, "c", context);
+      console.log('e', error, 'v', variables, 'c', context);
     },
     retryDelay: 200,
-    networkMode: "always",
+    networkMode: 'always',
   });
 
   const startSimulatedProgress = (idx: number) => {
@@ -103,15 +106,12 @@ const UploadDropzone = ({
     // @ts-ignore
     const res = await startUpload([file]);
     if (!res) {
-      return toast.error("Something went wrong");
+      return toast.error('Something went wrong');
     }
-
     const [fileResponse] = res;
-
     const key = fileResponse?.key;
-
     if (!key) {
-      return toast.error("Something went wrong on file key");
+      return toast.error('Something went wrong on file key');
     }
     clearInterval(progressInterval);
     startPolling({ key });
@@ -121,7 +121,7 @@ const UploadDropzone = ({
     if (acceptedFiles[0]) {
       if (acceptedFiles.length > maxFreeCount - apiLimitCount) {
         toast.error(
-          "Your files is more than remaining quota, please reduce some",
+          'Your files is more than remaining quota, please reduce some',
           {
             duration: 5000,
           }
@@ -153,15 +153,15 @@ const UploadDropzone = ({
   };
 
   const acceptedFilesType = {
-    "application/pdf": [".pdf"],
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
-      ".docx",
+    'application/pdf': ['.pdf'],
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [
+      '.docx',
     ],
     // "text/csv": [".csv"],
   };
 
-  const maxFiles = subscriptionType === "PREMIUM" ? 100 : 50;
-  const maxFileSize = subscriptionType === "PREMIUM" ? 16 : 4;
+  const maxFiles = subscriptionType === 'PREMIUM' ? 100 : 50;
+  const maxFileSize = subscriptionType === 'PREMIUM' ? 16 : 4;
 
   return (
     <Dropzone
@@ -169,7 +169,7 @@ const UploadDropzone = ({
       multiple={true}
       onDrop={handleDropFiles}
       accept={acceptedFilesType}
-      disabled={isUploading}
+      disabled={isDisabled || isUploading}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
@@ -177,47 +177,59 @@ const UploadDropzone = ({
           className="border min-h-64 max-h-[400px] m-4 border-dashed border-gray-300 rounded-lg overflow-auto relative"
         >
           {isUploading && (
-            <div className="absolute right-0 flex px-4 py-2 bg-white rounded-lg">
-              <span className="mr-2 text-gray-500">{`uploading ${orderUploading}/${uploadProgressArr.length}`}</span>
-              <Loader2 className="text-blue-500 animate-spin" />
+            <div className="sticky top-0">
+              <div className="absolute right-0 flex px-4 py-2 bg-white rounded-lg">
+                <span className="mr-2 text-gray-500">{`uploading ${orderUploading}/${uploadProgressArr.length}`}</span>
+                <Loader2 className="text-blue-500 animate-spin" />
+              </div>
             </div>
           )}
+
           <div className="flex items-center justify-center w-full h-full">
             <div
               className={cn(
-                "flex flex-col items-center justify-center w-full h-full py-2 rounded-lg bg-gray-50 hover:bg-gray-100",
-                isDisabled ? "cursor-not-allowed" : "cursor-pointer"
+                'flex flex-col items-center justify-center w-full h-full py-2 rounded-lg bg-gray-50 hover:bg-gray-100',
+                isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
               )}
             >
               <div
                 className={cn(
-                  "flex flex-col items-center justify-center pt-5 pb-6",
-                  isUploading ? "mt-[18px]" : ""
+                  'flex flex-col items-center justify-center pt-5 pb-6',
+                  isUploading ? 'mt-[18px]' : ''
                 )}
               >
                 {!isUploading ? (
                   <>
                     <Cloud className="w-6 h-6 mb-2 text-zinc-500" />
                     <p className="mb-2 text-sm text-zinc-700">
-                      <span className="font-semibold">Click to upload</span> or
-                      drag and drop
+                      {t.rich('page.cv-scan.modal.dropzone.title', {
+                        span: (chunks) => (
+                          <span className="font-semibold">{chunks}</span>
+                        ),
+                      })}
                     </p>
                     <p className="text-xs text-zinc-500">
-                      PDF, DOCX (up to {maxFileSize} MB)
+                      {/* PDF, DOCX (up to {maxFileSize} MB)
+                       */}
+                      {t('page.cv-scan.modal.dropzone.file', {
+                        maxFileSize: maxFileSize,
+                      })}
                     </p>
                     <p className="text-xs text-zinc-500 mt-1">
-                      Maximum {maxFiles} files per upload
+                      {t('page.cv-scan.modal.dropzone.max-upload', {
+                        maxFiles: maxFiles,
+                      })}
                     </p>
                   </>
                 ) : (
                   <>
                     <p className="mb-2 text-sm text-zinc-700">
                       <span className="font-semibold">
-                        Please wait until the process is done.
+                        {t('page.cv-scan.modal.dropzone.warning.1')}
                       </span>
                     </p>
                     <p className="font-semibold text-sm text-zinc-700">
-                      Do not refresh the page!
+                      {t('page.cv-scan.modal.dropzone.warning.2')}
                     </p>
                   </>
                 )}
@@ -259,8 +271,8 @@ const UploadDropzone = ({
                               <Progress
                                 indicatorColor={
                                   uploadProgressArr[indx] === 100
-                                    ? "bg-green-500"
-                                    : ""
+                                    ? 'bg-green-500'
+                                    : ''
                                 }
                                 value={uploadProgressArr[indx]}
                                 className="w-full h-1 bg-zinc-200"
@@ -302,6 +314,7 @@ const UploadButton = ({
   buttonText: string;
   refetch: () => void;
 }) => {
+  const t = useTranslations('dashboard');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [upload, onUpload] = useState<boolean>(false);
   const {
@@ -312,7 +325,6 @@ const UploadButton = ({
     percentage,
     setPercentage,
   } = useAnalyzer();
-
   return (
     <Dialog
       open={isOpen}
@@ -329,19 +341,20 @@ const UploadButton = ({
       </DialogTrigger>
 
       <DialogContent
-        className=" min-w-fit lg:min-w-[724px] max-h-screen overflow-auto"
+        className=" min-w-fit lg:min-w-[724px] max-h-screen"
         onInteractOutside={(e) => e.preventDefault()}
       >
         <div>
           <div className="px-4 mb-1">
             <label className="text-lg font-semibold">
-              Input Job Title <span className="text-red-400">*</span>
+              {t('page.cv-scan.modal.input-job.1')}
+              <span className="text-red-400">*</span>
             </label>
             <Input
               type="text"
               name="jobTitle"
               className="mt-1"
-              placeholder="Job Title"
+              placeholder={t('page.cv-scan.modal.input-job.2')}
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
             />
@@ -349,33 +362,32 @@ const UploadButton = ({
           <div className="px-4">
             <TooltipProvider>
               <label className="text-lg font-semibold">
-                Input your requirements here{" "}
+                {t('page.cv-scan.modal.input-req.1')}{' '}
                 <span className="text-red-400">*</span>
-                <Tooltip delayDuration={300}>
+                <Tooltip delayDuration={200}>
                   <TooltipTrigger className="cursor-default ml-1.5">
                     <HelpCircle className="w-4 h-4 text-zinc-500" />
                   </TooltipTrigger>
-                  <TooltipContent className="p-2 w-80 ">
+                  <TooltipContent
+                    className="p-2 w-80"
+                    alignOffset={10}
+                    sticky="always"
+                  >
                     <span className="text-xs">
-                      Set your job requirements here, example:
+                      {t('page.cv-scan.modal.tooltip.title')}
                     </span>
                     <ul className="text-xs ">
-                      <li>
-                        1. Bachelor Degree from all major (Marketing major is a
-                        plus)
-                      </li>
-                      <li>2. Get used to work based on target and incentive</li>
-                      <li>3. Min. 1 year experience in a similar position</li>
-                      <li>4. Proficient in Microsoft Office and Excel</li>
-                      <li>5. Have a good communication skill</li>
-                      <li>6. Have a good analytics skill</li>
-                      <li>7. Willing to be placed in any city</li>
+                      {Array.from({ length: 7 }, (_, index) => (
+                        <li key={index}>
+                          {t(
+                            `page.cv-scan.modal.tooltip.content-1.${index + 1}`
+                          )}
+                        </li>
+                      ))}
                     </ul>
 
                     <span className="mt-1 text-xs">
-                      Tips: You can add a strict instructions to get a better
-                      accuracy, i.e: If the requirement no 3 is not fulfilled
-                      then the percentage should not more than 30%.
+                      {t('page.cv-scan.modal.tooltip.tips')}
                     </span>
                   </TooltipContent>
                 </Tooltip>
@@ -383,7 +395,7 @@ const UploadButton = ({
             </TooltipProvider>
             <Textarea
               className="min-h-[150px] max-h-[400px] overflow-auto mt-2"
-              placeholder="Type your requirements here."
+              placeholder={t('page.cv-scan.modal.input-req.2')}
               rows={15}
               cols={40}
               maxLength={10000}
@@ -394,13 +406,14 @@ const UploadButton = ({
           <div className="flex items-center justify-between px-4 mt-4">
             <TooltipProvider>
               <label className="mr-2 text-lg font-semibold">
-                Set Percentage
+                {t('page.cv-scan.modal.input-req.3')}
+
                 <Tooltip delayDuration={300}>
                   <TooltipTrigger className="cursor-default ml-1.5">
                     <HelpCircle className="w-4 h-4 text-zinc-500" />
                   </TooltipTrigger>
                   <TooltipContent className="p-2 w-80">
-                    How many percentage you wanted to match.
+                    {t('page.cv-scan.modal.tooltip.content-2')}
                   </TooltipContent>
                 </Tooltip>
               </label>

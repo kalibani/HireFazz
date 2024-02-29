@@ -1,29 +1,30 @@
-"use client";
-import { useEffect, useState } from "react";
+'use client';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
+} from './ui/dialog';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Button } from './ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { AlertCircle, ChevronDown } from "lucide-react";
+} from './ui/dropdown-menu';
+import { AlertCircle, ChevronDown } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./ui/tooltip";
-import { fileTypes } from "@/types/types";
+} from './ui/tooltip';
+import { fileTypes } from '@/types/types';
+import { useTranslations } from 'next-intl';
 interface IReanalyzeModal {
   open: boolean;
   onOpenChange: () => void;
@@ -41,15 +42,16 @@ export const ReanalyzeModal = ({
   onSubmit,
   selectedFile,
 }: IReanalyzeModal) => {
-  const [jobTitle, setJobTitle] = useState("");
-  const [requirements, setRequirements] = useState("");
+  const t = useTranslations('dashboard');
+  const [jobTitle, setJobTitle] = useState('');
+  const [requirements, setRequirements] = useState('');
   const [percentage, setPercentage] = useState(60);
   useEffect(() => {
     if (open) {
       // @ts-ignore
-      setJobTitle(selectedFile?.reportOfAnalysis?.jobTitle || "");
+      setJobTitle(selectedFile?.reportOfAnalysis?.jobTitle || '');
       // @ts-ignore
-      setRequirements(selectedFile?.reportOfAnalysis?.requirements || "");
+      setRequirements(selectedFile?.reportOfAnalysis?.requirements || '');
       setPercentage(60);
     }
   }, [open]);
@@ -59,20 +61,22 @@ export const ReanalyzeModal = ({
         <DialogHeader>
           <DialogTitle className="flex flex-col pb-2 gap-y-4">
             <div className="flex items-center py-1 font-bold gap-x-2">
-              Update Job Title <span className="text-red-400">*</span>
+              {t('page.cv-scan.modal.update.title')}
+              <span className="text-red-400">*</span>
             </div>
           </DialogTitle>
           <Input
             type="text"
             name="jobTitle"
             className="mt-1"
-            placeholder="Job Title"
+            placeholder={t('page.cv-scan.modal.update.placeholder.1')}
             value={jobTitle}
             onChange={(e) => setJobTitle(e.target.value)}
           />
           <DialogTitle className="flex flex-col pb-2 gap-y-4">
             <div className="flex items-center py-1 font-bold gap-x-2">
-              Update Requirements <span className="text-red-400">*</span>
+              {t('page.cv-scan.modal.update.require')}{' '}
+              <span className="text-red-400">*</span>
             </div>
           </DialogTitle>
           <Textarea
@@ -87,13 +91,13 @@ export const ReanalyzeModal = ({
           <div className="flex justify-between mt-[20px]">
             <TooltipProvider>
               <label className="mr-2">
-                Set Percentage
+                {t('page.cv-scan.modal.input-req.3')}
                 <Tooltip delayDuration={300}>
                   <TooltipTrigger className="cursor-default ml-1.5">
                     <AlertCircle className="w-4 h-4 mt-2 text-zinc-500" />
                   </TooltipTrigger>
                   <TooltipContent className="p-2 w-80">
-                    How many percentage you wanted to match.
+                    {t('page.cv-scan.modal.tooltip.content-2')}
                   </TooltipContent>
                 </Tooltip>
               </label>
@@ -133,7 +137,7 @@ export const ReanalyzeModal = ({
             className="w-full mt-4"
             disabled={!requirements || !jobTitle}
           >
-            Submit
+            {t('page.cv-scan.button.submit')}
           </Button>
         </DialogHeader>
       </DialogContent>
