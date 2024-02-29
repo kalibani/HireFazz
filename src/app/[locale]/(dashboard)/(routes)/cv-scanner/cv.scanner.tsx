@@ -233,7 +233,7 @@ const CvScanner = () => {
           {/* @ts-ignore */}
           {filesMemo && filesMemo?.length !== 0 ? (
             <>
-              <ul className="grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
+              <ul className="grid grid-cols-1 gap-6 divide-y divide-zinc-200  xl:grid-cols-3 md:grid-cols-2">
                 {/* @ts-ignore */}
                 {filesMemo
                   // @ts-ignore
@@ -250,20 +250,16 @@ const CvScanner = () => {
                       key={file.id}
                       className="col-span-1 transition bg-white divide-y divide-gray-200 rounded-lg shadow hover:shadow-lg"
                     >
-                      <div className="flex items-center">
+                      <div className="flex items-center justify-between">
                         <Link
                           href={`/cv-scanner/${file.id}`}
                           className="flex flex-col flex-1 gap-2"
                         >
-                          <div className="flex items-center justify-between max-w-[300px] p-4 space-x-6">
+                          <div className="flex items-center justify-between max-w-[300px] p-4 space-x-2">
                             <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
-                            <div className="flex-1 truncate">
-                              <div className="flex items-center space-x-3">
-                                <p className="text-lg font-medium truncate text-zinc-900">
-                                  {file.name}
-                                </p>
-                              </div>
-                            </div>
+                            <p className="text-lg font-medium line-clamp-1 text-zinc-900">
+                              {file.name}
+                            </p>
                           </div>
                         </Link>
                         {deletingIds.includes(file.id) ? (
@@ -304,14 +300,14 @@ const CvScanner = () => {
                         )}
                       </div>
                       <div>
-                        <div className="flex justify-between gap-6 px-4 pt-2 text-base text-zinc-900">
+                        <div className="flex lg:justify-between lg:flex-row flex-col-reverse px-4 pt-2 text-base text-zinc-900">
                           <div className="flex items-center gap-2">
                             {
                               <>
                                 {/* @ts-ignore */}
                                 {file.reportOfAnalysis ? (
                                   <>
-                                    <p className="w-48 truncate">
+                                    <p className="w-48 line-clamp-1">
                                       {/* @ts-ignore */}
                                       {file.reportOfAnalysis?.documentOwner ||
                                         file?.name}
@@ -342,7 +338,7 @@ const CvScanner = () => {
                           ) : (
                             <>
                               {file.reportOfAnalysis?.matchedPercentage ? (
-                                <div className="flex items-center justify-center h-10 gap-1 text-base text-zinc-900">
+                                <div className="flex lg:items-center lg:justify-center h-10 gap-1 text-base text-zinc-900">
                                   {/* @ts-ignore */}
                                   {file.reportOfAnalysis?.matchedPercentage}%
                                   <p>Match</p>
