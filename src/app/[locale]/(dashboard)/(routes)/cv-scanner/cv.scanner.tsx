@@ -130,8 +130,7 @@ const CvScanner = () => {
       });
       utils.infiniteFiles.refetch();
     } catch (error: any) {
-      toast.error(error.message);
-      console.log(error.message);
+      toast.error(error.response.data);
     }
   };
 
@@ -357,15 +356,18 @@ const CvScanner = () => {
                               ) : (
                                 <TooltipProvider>
                                   <label className="mr-2 text-lg font-semibold">
-                                    Please Reanalyze
-                                    <Tooltip delayDuration={300}>
+                                    {t('page.cv-scan.button.reanalyze')}
+                                    <Tooltip delayDuration={200}>
                                       <TooltipTrigger className="cursor-default ml-1.5">
                                         <AlertCircle className="w-4 h-4 text-zinc-500" />
                                       </TooltipTrigger>
-                                      <TooltipContent className="p-2 w-80">
-                                        Process stopped because you refresh the
-                                        page, please reanalyze and do not
-                                        refresh the page
+                                      <TooltipContent
+                                        className="p-2 w-80"
+                                        align="end"
+                                      >
+                                        {t(
+                                          'page.cv-scan.modal.tooltip.content-3'
+                                        )}
                                       </TooltipContent>
                                     </Tooltip>
                                   </label>
