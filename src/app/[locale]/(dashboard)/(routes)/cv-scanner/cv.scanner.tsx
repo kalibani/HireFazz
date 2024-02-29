@@ -132,7 +132,6 @@ const CvScanner = () => {
       toast.error(error.response.data);
     }
   };
-
   useEffect(() => {
     // @ts-ignore
     if (filesMemo?.length) {
