@@ -7,22 +7,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useLocale } from 'next-intl';
+import { cn, removeLanguagePrefix } from '@/lib/utils';
+import { useRouter } from '@/src/navigation-intl';
 
-const SelectLanguage = ({ lang }: { lang: string }) => {
+const SelectLanguage = ({ className }: { className?: string }) => {
   const locale = useLocale();
-  const { replace } = useRouter();
-
+  const router = useRouter();
+  const pathname = usePathname();
+  const newPathPrefix = removeLanguagePrefix(pathname);
   const handlerChangeSelect = (val: string) => {
-    replace(`/${val}`);
+    router.replace(newPathPrefix, { locale: val });
   };
   return (
     <Select
       defaultValue={locale}
       onValueChange={(val) => handlerChangeSelect(val)}
     >
-      <SelectTrigger className="w-fit text-primary-foreground focus:ring-0 focus:ring-ring focus:ring-offset-0">
+      <SelectTrigger
+        className={cn(
+          'w-fit text-primary-foreground focus:ring-0 focus:ring-ring focus:ring-offset-0 border-0',
+          className
+        )}
+      >
         <SelectValue placeholder="EN" className="text-primary-foreground" />
       </SelectTrigger>
       <SelectContent className="w-fit min-w-fit">
