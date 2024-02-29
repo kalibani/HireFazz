@@ -93,7 +93,8 @@
               "7": "7. Willing to be placed in any cit>"
             },
             "content-2": "How many percentage you wanted to match.",
-            "tips": "Tips: You can add a strict instructions to get a better accuracy, ie: If the requirement no 3 is not fulfilled then the percentage should not more than 30%."
+            "tips": "Tips: You can add a strict instructions to get a better accuracy, ie: If the requirement no 3 is not fulfilled then the percentage should not more than 30%.",
+            "content-3": "Process stopped because you refresh the page, please reanalyze and do not refresh the page"
           },
           "dropzone": {
             "title": "<span>Click to upload</span> or drag and drop",
