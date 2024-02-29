@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import WrapperTranslate from '@/components/wrapper-translate/wrapper-translate';
 const CVAnalyzerPage = () => {
   const t = useTranslations('dashboard');
+
   return (
     <div>
       <Heading

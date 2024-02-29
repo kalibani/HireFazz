@@ -129,7 +129,8 @@ const CvScanner = () => {
       });
       utils.infiniteFiles.refetch();
     } catch (error: any) {
-      console.log('error', error);
+      toast.error(error.message);
+      console.log(error.message);
     }
   };
 
@@ -222,7 +223,9 @@ const CvScanner = () => {
         {/* @ts-ignore */}
         {filesMemo && filesMemo?.length > 0 ? (
           <div className="flex justify-end mt-4 mb-2 mr-1 gap-1">
-            Automatically Sorted by <b>Highest Matched</b>
+            {t.rich('page.cv-scan.matched', {
+              b: (chunks) => <b>{chunks}</b>,
+            })}
           </div>
         ) : null}
 

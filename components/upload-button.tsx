@@ -8,12 +8,12 @@ import {
   ReactPortal,
   useMemo,
   useState,
+  useTransition,
 } from 'react';
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
 import { toast } from 'react-hot-toast';
 
-import Dropzone from 'react-dropzone';
 import { Cloud, File, Loader2, HelpCircle, ChevronDown } from 'lucide-react';
 import { Input } from './ui/input';
 import { Progress } from './ui/progress';
@@ -40,6 +40,8 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/hooks/use-user';
 import { useProModal } from '@/hooks/use-pro-modal';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import Dropzone from 'react-dropzone';
 
 const UploadDropzone = ({
   setIsOpen,
@@ -52,6 +54,7 @@ const UploadDropzone = ({
   onUpload: (v: boolean) => void;
   refetch: () => void;
 }) => {
+  const t = useTranslations('dashboard');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgressArr, setUploadProgressArr] = useState<number[]>([]);
   const orderUploading = useMemo(() => {
@@ -105,11 +108,8 @@ const UploadDropzone = ({
     if (!res) {
       return toast.error('Something went wrong');
     }
-
     const [fileResponse] = res;
-
     const key = fileResponse?.key;
-
     if (!key) {
       return toast.error('Something went wrong on file key');
     }
@@ -169,7 +169,7 @@ const UploadDropzone = ({
       multiple={true}
       onDrop={handleDropFiles}
       accept={acceptedFilesType}
-      disabled={isUploading}
+      disabled={isDisabled || isUploading}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
@@ -201,25 +201,34 @@ const UploadDropzone = ({
                   <>
                     <Cloud className="w-6 h-6 mb-2 text-zinc-500" />
                     <p className="mb-2 text-sm text-zinc-700">
-                      <span className="font-semibold">Click to upload</span> or
-                      drag and drop
+                      {t.rich('page.cv-scan.modal.dropzone.title', {
+                        span: (chunks) => (
+                          <span className="font-semibold">{chunks}</span>
+                        ),
+                      })}
                     </p>
                     <p className="text-xs text-zinc-500">
-                      PDF, DOCX (up to {maxFileSize} MB)
+                      {/* PDF, DOCX (up to {maxFileSize} MB)
+                       */}
+                      {t('page.cv-scan.modal.dropzone.file', {
+                        maxFileSize: maxFileSize,
+                      })}
                     </p>
                     <p className="text-xs text-zinc-500 mt-1">
-                      Maximum {maxFiles} files per upload
+                      {t('page.cv-scan.modal.dropzone.max-upload', {
+                        maxFiles: maxFiles,
+                      })}
                     </p>
                   </>
                 ) : (
                   <>
                     <p className="mb-2 text-sm text-zinc-700">
                       <span className="font-semibold">
-                        Please wait until the process is done.
+                        {t('page.cv-scan.modal.dropzone.warning.1')}
                       </span>
                     </p>
                     <p className="font-semibold text-sm text-zinc-700">
-                      Do not refresh the page!
+                      {t('page.cv-scan.modal.dropzone.warning.2')}
                     </p>
                   </>
                 )}
@@ -304,6 +313,7 @@ const UploadButton = ({
   buttonText: string;
   refetch: () => void;
 }) => {
+  const t = useTranslations('dashboard');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [upload, onUpload] = useState<boolean>(false);
   const {
@@ -314,7 +324,6 @@ const UploadButton = ({
     percentage,
     setPercentage,
   } = useAnalyzer();
-
   return (
     <Dialog
       open={isOpen}
@@ -331,19 +340,20 @@ const UploadButton = ({
       </DialogTrigger>
 
       <DialogContent
-        className=" min-w-fit lg:min-w-[724px] max-h-screen overflow-auto"
+        className=" min-w-fit lg:min-w-[724px] max-h-screen"
         onInteractOutside={(e) => e.preventDefault()}
       >
         <div>
           <div className="px-4 mb-1">
             <label className="text-lg font-semibold">
-              Input Job Title <span className="text-red-400">*</span>
+              {t('page.cv-scan.modal.input-job.1')}
+              <span className="text-red-400">*</span>
             </label>
             <Input
               type="text"
               name="jobTitle"
               className="mt-1"
-              placeholder="Job Title"
+              placeholder={t('page.cv-scan.modal.input-job.2')}
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
             />
@@ -351,33 +361,32 @@ const UploadButton = ({
           <div className="px-4">
             <TooltipProvider>
               <label className="text-lg font-semibold">
-                Input your requirements here{' '}
+                {t('page.cv-scan.modal.input-req.1')}{' '}
                 <span className="text-red-400">*</span>
-                <Tooltip delayDuration={300}>
+                <Tooltip delayDuration={200}>
                   <TooltipTrigger className="cursor-default ml-1.5">
                     <HelpCircle className="w-4 h-4 text-zinc-500" />
                   </TooltipTrigger>
-                  <TooltipContent className="p-2 w-80 ">
+                  <TooltipContent
+                    className="p-2 w-80"
+                    alignOffset={10}
+                    sticky="always"
+                  >
                     <span className="text-xs">
-                      Set your job requirements here, example:
+                      {t('page.cv-scan.modal.tooltip.title')}
                     </span>
                     <ul className="text-xs ">
-                      <li>
-                        1. Bachelor Degree from all major (Marketing major is a
-                        plus)
-                      </li>
-                      <li>2. Get used to work based on target and incentive</li>
-                      <li>3. Min. 1 year experience in a similar position</li>
-                      <li>4. Proficient in Microsoft Office and Excel</li>
-                      <li>5. Have a good communication skill</li>
-                      <li>6. Have a good analytics skill</li>
-                      <li>7. Willing to be placed in any city</li>
+                      {Array.from({ length: 7 }, (_, index) => (
+                        <li key={index}>
+                          {t(
+                            `page.cv-scan.modal.tooltip.content-1.${index + 1}`
+                          )}
+                        </li>
+                      ))}
                     </ul>
 
                     <span className="mt-1 text-xs">
-                      Tips: You can add a strict instructions to get a better
-                      accuracy, i.e: If the requirement no 3 is not fulfilled
-                      then the percentage should not more than 30%.
+                      {t('page.cv-scan.modal.tooltip.tips')}
                     </span>
                   </TooltipContent>
                 </Tooltip>
@@ -385,7 +394,7 @@ const UploadButton = ({
             </TooltipProvider>
             <Textarea
               className="min-h-[150px] max-h-[400px] overflow-auto mt-2"
-              placeholder="Type your requirements here."
+              placeholder={t('page.cv-scan.modal.input-req.2')}
               rows={15}
               cols={40}
               maxLength={10000}
@@ -396,13 +405,14 @@ const UploadButton = ({
           <div className="flex items-center justify-between px-4 mt-4">
             <TooltipProvider>
               <label className="mr-2 text-lg font-semibold">
-                Set Percentage
+                {t('page.cv-scan.modal.input-req.3')}
+
                 <Tooltip delayDuration={300}>
                   <TooltipTrigger className="cursor-default ml-1.5">
                     <HelpCircle className="w-4 h-4 text-zinc-500" />
                   </TooltipTrigger>
                   <TooltipContent className="p-2 w-80">
-                    How many percentage you wanted to match.
+                    {t('page.cv-scan.modal.tooltip.content-2')}
                   </TooltipContent>
                 </Tooltip>
               </label>

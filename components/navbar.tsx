@@ -8,6 +8,7 @@ const Navbar = async () => {
   const { userId } = auth();
   const { count, subscriptionType, isUserAgreedTermsOfService, maxFreeCount } =
     await getUser(userId!);
+
   return (
     <div className=" flex items-center p-4">
       <MobileSidebar

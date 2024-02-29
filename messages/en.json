@@ -63,7 +63,42 @@
         "description": "Scan Hundreds of CVs in Minutes",
         "placeholder": "Start Analyzing",
         "button": "Upload CV",
-        "empty-page": "Pretty empty around here. Let's upload your first document."
+        "empty-page": "Pretty empty around here. Let's upload your first document.",
+        "matched": "Automatically Sorted by <b>Highest Matched</b>",
+        "modal": {
+          "input-job": {
+            "1": "Input Job Title",
+            "2": "Job Title"
+          },
+          "input-req": {
+            "1": "Input your requirements here",
+            "2": "Type your requirements here.",
+            "3": "Set Percentage"
+          },
+          "tooltip": {
+            "title": "Set your job requirements here, example:",
+            "content-1": {
+              "1": "1. Bachelor Degree from all major (Marketing major is a plus)",
+              "2": "2. Get used to work based on target and incentive",
+              "3": "3. Min. 1 year experience in a similar position",
+              "4": "4. Proficient in Microsoft Office and Excel",
+              "5": "5. Have a good communication skill",
+              "6": "6. Have a good analytics skill",
+              "7": "7. Willing to be placed in any cit>"
+            },
+            "content-2": "How many percentage you wanted to match.",
+            "tips": "Tips: You can add a strict instructions to get a better accuracy, ie: If the requirement no 3 is not fulfilled then the percentage should not more than 30%."
+          },
+          "dropzone": {
+            "title": "<span>Click to upload</span> or drag and drop",
+            "file": "PDF, DOCX (up to {maxFileSize} MB)",
+            "max-upload": "Maximum {maxFiles} files per upload",
+            "warning": {
+              "1": "Please wait until the process is done.",
+              "2": "Do not refresh the page!"
+            }
+          }
+        }
       }
     }
   }
