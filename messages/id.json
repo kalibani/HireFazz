@@ -93,7 +93,8 @@
               "7": "7. Bersedia ditempatkan di mana saja"
             },
             "content-2": "Berapa persentase yang ingin Anda sesuaikan.",
-            "tips": "Tips: Anda dapat menambahkan instruksi yang ketat untuk mendapatkan akurasi yang lebih baik, yaitu: Jika persyaratan nomor 3 tidak terpenuhi, maka persentasenya tidak boleh lebih dari 30%."
+            "tips": "Tips: Anda dapat menambahkan instruksi yang ketat untuk mendapatkan akurasi yang lebih baik, yaitu: Jika persyaratan nomor 3 tidak terpenuhi, maka persentasenya tidak boleh lebih dari 30%.",
+            "content-3": "Proses dihentikan karena Anda menyegarkan halaman, mohon dianalisis ulang dan jangan menyegarkan halaman"
           },
           "dropzone": {
             "title": "<span>Klik untuk mengunggah</span> atau seret dan lepaskan",
