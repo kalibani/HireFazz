@@ -209,11 +209,11 @@ const CvScanner = () => {
             </h1>
             {isQuotaLimited || isFreeTrialLimited ? (
               <Button onClick={handleUpgrade}>
-                {t('page.cv-scan.button')}
+                {t('page.cv-scan.button.upload-cv')}
               </Button>
             ) : (
               <UploadButton
-                buttonText={t('page.cv-scan.button')}
+                buttonText={t('page.cv-scan.button.upload-cv')}
                 refetch={() => utils.infiniteFiles.refetch()}
               />
             )}
@@ -282,7 +282,7 @@ const CvScanner = () => {
                                   size="sm"
                                   onClick={() => setSelectedFile(file)}
                                 >
-                                  Reanalyze
+                                  {t('page.cv-scan.button.reanalyze')}
                                 </Button>
                               </DropdownMenuItem>
                               <DropdownMenuItem>
@@ -292,7 +292,7 @@ const CvScanner = () => {
                                   size="sm"
                                   onClick={() => handleDelete(file.id)}
                                 >
-                                  Delete
+                                  {t('page.cv-scan.button.delete')}
                                 </Button>
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -405,7 +405,7 @@ const CvScanner = () => {
                 onClick={() => fetchNextPage()}
                 disabled={isLoading}
               >
-                Load More
+                {t('page.cv-scan.button.load-more')}
               </Button>
             </div>
           )}

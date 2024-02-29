@@ -62,7 +62,13 @@
         "title": "CV Scanner",
         "description": "Scan Hundreds of CVs in Minutes",
         "placeholder": "Start Analyzing",
-        "button": "Upload CV",
+        "button": {
+          "upload-cv": "Upload CV",
+          "submit": "Submit",
+          "reanalyze": "Reanalyze",
+          "delete": "Delete",
+          "load-more": "Load More"
+        },
         "empty-page": "Pretty empty around here. Let's upload your first document.",
         "matched": "Automatically Sorted by <b>Highest Matched</b>",
         "modal": {
@@ -96,6 +102,14 @@
             "warning": {
               "1": "Please wait until the process is done.",
               "2": "Do not refresh the page!"
+            }
+          },
+          "update": {
+            "title": "Update Job Title",
+            "require": "Update Requirements",
+            "placeholder": {
+              "1": "Job Title",
+              "2": "Type your requirements here."
             }
           }
         }

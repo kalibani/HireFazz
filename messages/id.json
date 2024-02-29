@@ -62,7 +62,13 @@
         "title": "Analisa CV",
         "description": "Analisa Ratusan CV dalam Hitungan Menit",
         "placeholder": "Mulai Menganalisis",
-        "button": "Unggah CV",
+        "button": {
+          "upload-cv": "Unggah CV",
+          "submit": "Kirim",
+          "reanalyze": "Analisa lagi",
+          "delete": "Hapus",
+          "load-more": "Lainnya"
+        },
         "empty-page": "Ayo unggah dokumen pertama Anda.",
         "matched": "Otomatis Diurutkan berdasarkan <b>Pencocokan Tertinggi</b>",
         "modal": {
@@ -96,6 +102,14 @@
             "warning": {
               "1": "Harap tunggu hingga proses selesai.",
               "2": "Jangan refresh halaman!"
+            }
+          },
+          "update": {
+            "title": "Perbarui Judul Pekerjaan",
+            "require": "Perbarui Persyaratan",
+            "placeholder": {
+              "1": "Judul Pekerjaan",
+              "2": "Ketik persyaratan Anda di sini."
             }
           }
         }
