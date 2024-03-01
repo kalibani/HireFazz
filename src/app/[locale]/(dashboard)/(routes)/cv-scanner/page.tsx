@@ -3,9 +3,9 @@ import { FileArchiveIcon } from 'lucide-react';
 import CvScanner from './cv.scanner';
 import { useTranslations } from 'next-intl';
 import WrapperTranslate from '@/components/wrapper-translate/wrapper-translate';
-const CVAnalyzerPage = () => {
+import type { SearchParamsProps } from '@/types/types';
+const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
   const t = useTranslations('dashboard');
-
   return (
     <div>
       <Heading
@@ -16,7 +16,7 @@ const CVAnalyzerPage = () => {
         bgColor="bg-blue-300/10"
       />
       <WrapperTranslate section="dashboard">
-        <CvScanner />
+        <CvScanner searchParams={searchParams} />
       </WrapperTranslate>
     </div>
   );

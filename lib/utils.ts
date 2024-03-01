@@ -65,3 +65,22 @@ export const removeLanguagePrefix = (path: string) => {
 
   return newPath;
 };
+
+export const queryString = (queryParams: any) => {
+  //Convert params to a query string
+  const queryString = Object.keys(queryParams)
+    .map((key) => `${key}=${encodeURIComponent(queryParams[key])}`)
+    .join('&');
+  return queryString;
+};
+
+export const removeProperty = <
+  T extends Record<string, any>,
+  K extends keyof T
+>(
+  obj: T,
+  propToDelete: K
+): Omit<T, K> => {
+  const { [propToDelete]: deletedProp, ...rest } = obj;
+  return rest;
+};

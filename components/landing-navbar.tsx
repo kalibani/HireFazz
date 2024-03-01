@@ -26,15 +26,16 @@ export const LandingNavbar = () => {
           BerryLabs
         </h1>
       </Link>
-      <div className="flex items-center gap-x-2">
-        <Link href={isSignedIn ? '/dashboard' : '/sign-up'}>
+      <div className="flex items-center gap-x-2 ">
+        <Link
+          href={isSignedIn ? '/dashboard' : '/sign-up'}
+          className="hidden md:block"
+        >
           <Button variant="outline" className="rounded-full">
             {t('btn-start')}
           </Button>
         </Link>
-        <span className="hidden sm:block">
-          <SelectLanguage />
-        </span>
+        <SelectLanguage />
       </div>
     </nav>
   );
