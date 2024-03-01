@@ -28,10 +28,10 @@ const Page = async () => {
       quotaCharacter: "125.000",
       features: [
         {
-          text: "25 Free Generations",
+          text: "100 Free Generations",
         },
         {
-          text: "Up to 25 Files per Upload",
+          text: "Up to 50 Files per Upload",
         },
         {
           text: "5 pages per File",
@@ -63,10 +63,10 @@ const Page = async () => {
       quotaCharacter: "125.000",
       features: [
         {
-          text: "25 Free Generations",
+          text: "100 Free Generations",
         },
         {
-          text: "Up to 50 Files per Upload",
+          text: "Up to 100 Files per Upload",
         },
         {
           text: "10 pages per File",
@@ -98,10 +98,10 @@ const Page = async () => {
       quotaCharacter: "250.000",
       features: [
         {
-          text: "25 Free Generations",
+          text: "100 Free Generations",
         },
         {
-          text: "Up to 100 Files per Upload",
+          text: "Up to 150 Files per Upload",
         },
         {
           text: "15 pages per File",
@@ -174,10 +174,7 @@ const Page = async () => {
                     <div className="flex items-center">
                       <div>
                         <p className="flex">
-                          {quota}
-                          {plan === "Free"
-                            ? " Files included"
-                            : " Files/mo included"}
+                          {quota} Files included
                           <Tooltip delayDuration={300}>
                             <TooltipTrigger className="cursor-default ml-1.5 mt-0.5 flex">
                               <HelpCircle className="h-4 w-4 text-zinc-500" />

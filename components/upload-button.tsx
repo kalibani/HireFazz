@@ -160,7 +160,12 @@ const UploadDropzone = ({
     // "text/csv": [".csv"],
   };
 
-  const maxFiles = subscriptionType === "PREMIUM" ? 100 : 50;
+  const maxFiles =
+    subscriptionType === "PREMIUM"
+      ? 150
+      : subscriptionType === "PRO"
+      ? 100
+      : 50;
   const maxFileSize = subscriptionType === "PREMIUM" ? 16 : 4;
 
   return (
