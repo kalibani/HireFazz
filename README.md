@@ -6,7 +6,7 @@
 
 ### 1. Document Interaction: - Upload your document then ask everything you wanted.
 
-### 2. Speech Synthesis: - Unleash the power of our cutting-edge technology to generate realistic, captivating speech in a wide range of languages.
+### 2. Speech Synthesis: - Unleash the power of our cutting-edge technology to generate realistic, captivating speech in a wide range of languages
 
 ## Technologies Used:
 
