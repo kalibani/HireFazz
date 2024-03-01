@@ -34,8 +34,8 @@ model userAPILimit {
   subscriptionType             SubscriptionType  @default(FREE)
   currentSubscriptionPeriodEnd DateTime?
   Transactions                 Transactions[]
-  characterCount Int?
   maxFreeCount Int? @default(100)
+  characterCount Int?
   isUserAgreedTermsOfService Boolean @default(false)
 }
 

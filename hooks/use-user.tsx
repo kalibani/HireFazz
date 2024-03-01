@@ -22,7 +22,7 @@ export const useUser = create<useUserStore>()((set) => ({
   subscriptionType: "Basic",
   setUser: (user: any) => set({ user: user }),
   setSubscriptionType: (v: string) => set({ subscriptionType: v }),
-  maxFreeCount: 25,
+  maxFreeCount: 100,
   setMaxFreeCount: (v: number) => set({ maxFreeCount: v }),
   quota: 250,
   setQuota: (v: number) => set({ quota: v }),
