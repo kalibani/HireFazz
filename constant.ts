@@ -10,7 +10,7 @@ import {
   ScrollText,
 } from "lucide-react";
 
-export const MAX_FREE_COUNTS = 19;
+export const MAX_FREE_COUNTS = 100;
 
 export const tools = [
   // {
