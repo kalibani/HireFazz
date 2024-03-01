@@ -32,7 +32,9 @@ export const LandingNavbar = () => {
             {t('btn-start')}
           </Button>
         </Link>
-        <SelectLanguage />
+        <span className="hidden sm:block">
+          <SelectLanguage />
+        </span>
       </div>
     </nav>
   );

@@ -71,9 +71,9 @@ function Contact() {
       >
         {t('contact.title')}
       </h5>
-      <div className="container w-[90%] md:w-[78%] grid grid-cols-1 md:grid-cols-[30%,50%] gap-8 md:gap-[12%] m-auto">
+      <div className="container w-[90%] md:w-[80%] grid grid-cols-1 lg:grid-cols-[40%,50%] gap-8 lg:gap-[5%] m-auto">
         <div className="flex flex-col gap-[1.2rem]">
-          <article className="bg-[#192339] p-[1.2rem] rounded-[1.2rem] text-center border-[1px] border-solid border-transparent transition delay-150 duration-300 ease-in-out hover:border-[#192339]">
+          <article className="bg-[#192339] p-[1.2rem] rounded-[1.2rem] text-center flex flex-col items-center border-[1px] border-solid border-transparent transition delay-150 duration-300 ease-in-out hover:border-[#192339]">
             <Mail className="inline-block text-2xl mb-2" />
             <h4>Email</h4>
             <h5>contact@berrytrada.com</h5>
@@ -97,7 +97,7 @@ function Contact() {
               Send a Message
             </a>
           </article> */}
-          <article className="bg-[#192339] p-[1.2rem] rounded-[1.2rem] text-center border-[1px] border-solid border-transparent transition delay-150 duration-300 ease-in-out hover:border-[#192339]">
+          <article className="bg-[#192339] p-[1.2rem] rounded-[1.2rem] text-center flex flex-col items-center border-[1px] border-solid border-transparent transition delay-150 duration-300 ease-in-out hover:border-[#192339]">
             <MessagesSquare className="inline-block text-2xl mb-2" />
             <h4>Whatsapp</h4>
             <h5>+6282126753060</h5>

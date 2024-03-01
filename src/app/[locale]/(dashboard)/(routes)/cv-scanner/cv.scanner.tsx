@@ -274,7 +274,7 @@ const CvScanner = () => {
                                 <MoreVertical />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-[100px]">
+                            <DropdownMenuContent className="w-fit" align="end">
                               <DropdownMenuItem>
                                 <Button
                                   className="w-full "
