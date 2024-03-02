@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs';
 import { getUser } from '@/lib/api-limit';
 import MobileSidebar from './mobile-sidebar';
 import SelectLanguage from './select-languange';
+import WrapperTranslate from './wrapper-translate/wrapper-translate';
 
 const Navbar = async () => {
   const { userId } = auth();
@@ -11,12 +12,14 @@ const Navbar = async () => {
 
   return (
     <div className=" flex items-center p-4">
-      <MobileSidebar
-        apiLimitCount={count}
-        subscriptionType={subscriptionType}
-        isUserAgreedTermsOfService={isUserAgreedTermsOfService}
-        maxFreeCount={maxFreeCount}
-      />
+      <WrapperTranslate section="dashboard">
+        <MobileSidebar
+          apiLimitCount={count}
+          subscriptionType={subscriptionType}
+          isUserAgreedTermsOfService={isUserAgreedTermsOfService}
+          maxFreeCount={maxFreeCount}
+        />
+      </WrapperTranslate>
       <div className="flex w-full justify-end">
         <UserButton afterSignOutUrl="/" />
         <SelectLanguage className="text-slate-900" />
