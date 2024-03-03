@@ -17,7 +17,7 @@ export const LandingHero = () => {
           <TypewriterComponent
             options={{
               strings: [
-                "Automatic CV Scanner",
+                "Automatic CV Screener",
                 "Bank Statement Analyzer",
                 "Invoice Reviewer",
                 "Loan Application Processor",

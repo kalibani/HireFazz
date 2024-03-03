@@ -20,7 +20,7 @@ export const tools = [
   //   color: "text-pink-300",
   // },
   {
-    label: "CV Scanner",
+    label: "CV Screener",
     icon: FileText,
     href: "/cv-scanner",
     color: "text-blue-500",

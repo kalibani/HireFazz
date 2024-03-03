@@ -36,7 +36,7 @@ const routes = [
     color: "text-sky-500",
   },
   {
-    label: "CV Scanner",
+    label: "CV Screener",
     icon: FileText,
     href: "/cv-scanner",
     color: "text-blue-500",

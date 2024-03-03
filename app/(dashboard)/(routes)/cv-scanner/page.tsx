@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  FileArchiveIcon,
+  FileText,
   MoreHorizontal,
   Plus,
   Check,
@@ -194,16 +194,16 @@ const CVAnalyzerPage = () => {
   return (
     <div>
       <Heading
-        title="CV Scanner"
-        description="Scan Hundreds of CVs in Minutes"
-        icon={FileArchiveIcon}
+        title="CV Screener"
+        description="Screening Hundreds of CVs in mere Minutes"
+        icon={FileText}
         iconColor="text-blue-300"
         bgColor="bg-blue-300/10"
       />
       <div className="p-4 lg:p-8">
         <div>
           <div className="flex items-center justify-between w-full h-16 gap-2 p-4 px-3 border rounded-lg md:px-4 focus-within:shadow-sm">
-            <h1 className="mb-3text-gray-900">Start Analyzing</h1>
+            <h1 className="mb-3text-gray-900">Start Screening</h1>
             {isQuotaLimited || isFreeTrialLimited ? (
               <Button onClick={handleUpgrade}>Upload CV</Button>
             ) : (

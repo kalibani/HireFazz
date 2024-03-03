@@ -37,8 +37,8 @@ const Page = async ({ params }: PageProps) => {
   return (
     <div>
       <Heading
-        title="Analyze Your CV"
-        description="Revolutionizing CV Analysis."
+        title="CV Screener"
+        description="Screening Hundreds of CVs in mere Minutes"
         icon={FileText}
         iconColor="text-blue-300"
         bgColor="bg-blue-300/10"
