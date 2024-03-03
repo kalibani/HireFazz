@@ -217,7 +217,7 @@ const CVAnalyzerPage = () => {
         </div>
         {/* @ts-ignore */}
         {filesMemo && filesMemo?.length > 0 ? (
-          <div className="flex justify-end mt-4 mb-2 mr-1 gap-1">
+          <div className="flex justify-end gap-1 mt-4 mb-2 mr-1">
             Automatically Sorted by <b>Highest Matched</b>
           </div>
         ) : null}
@@ -272,15 +272,17 @@ const CVAnalyzerPage = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-[100px]">
-                              <DropdownMenuItem>
-                                <Button
-                                  className="w-full "
-                                  size="sm"
-                                  onClick={() => setSelectedFile(file)}
-                                >
-                                  Reanalyze
-                                </Button>
-                              </DropdownMenuItem>
+                              {!file.reportOfAnalysis?.matchedPercentage && (
+                                <DropdownMenuItem>
+                                  <Button
+                                    className="w-full "
+                                    size="sm"
+                                    onClick={() => setSelectedFile(file)}
+                                  >
+                                    Reanalyze
+                                  </Button>
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuItem>
                                 <Button
                                   className="w-full text-red-500 border-red-500 hover:text-red-500"
@@ -327,9 +329,9 @@ const CVAnalyzerPage = () => {
 
                           {(jobTitle && !file.reportOfAnalysis) ||
                           reanalyzeIds.includes(file.id) ? (
-                            <div className="flex p-2 text-base text-zinc-900 items-center">
+                            <div className="flex items-center p-2 text-base text-zinc-900">
                               Analyzing
-                              <MoreHorizontal className="ml-1 h-4 w-4 shrink-0 opacity-50 animate-ping text-zinc-900" />
+                              <MoreHorizontal className="w-4 h-4 ml-1 opacity-50 shrink-0 animate-ping text-zinc-900" />
                             </div>
                           ) : (
                             <>
@@ -369,7 +371,7 @@ const CVAnalyzerPage = () => {
                             </>
                           )}
                         </div>
-                        <div className="px-4 pb-1 text-zinc-900 text-sm">
+                        <div className="px-4 pb-1 text-sm text-zinc-900">
                           {file.reportOfAnalysis?.jobTitle}
                         </div>
                         <div className="px-4 pb-4">
