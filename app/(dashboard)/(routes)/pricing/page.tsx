@@ -22,7 +22,7 @@ const Page = async () => {
   const pricingItems = [
     {
       plan: "Basic",
-      price: 249000,
+      price: 449000,
       tagline: "Suitable for Generalists.",
       quota: 250,
       quotaCharacter: "125.000",
@@ -57,7 +57,7 @@ const Page = async () => {
     },
     {
       plan: "Pro",
-      price: 499000,
+      price: 849000,
       tagline: "Suitable For Specialists.",
       quota: 500,
       quotaCharacter: "125.000",
@@ -92,7 +92,7 @@ const Page = async () => {
     },
     {
       plan: "Premium",
-      price: 999000,
+      price: 1490000,
       tagline: "Suitable For Aggressive Specialists.",
       quota: 1000,
       quotaCharacter: "250.000",
