@@ -44,7 +44,7 @@ export const LandingHero = () => {
         </Link>
       </div>
       <div className="text-white text-base md:text-base font-normal">
-        Avoid a Tiring Repetitive Job
+        Transform Your Repetitive Tasks into Effortless Actions!
       </div>
     </div>
   );

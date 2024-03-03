@@ -29,13 +29,14 @@ const Page = async () => {
       features: [
         {
           text: "100 Free Generations",
+          footnote: "100 generations free, added on your first sign-up.",
         },
         {
           text: "Up to 50 Files per Upload",
         },
         {
           text: "5 pages per File",
-          footnote: "The maximum amount of pages per file.",
+          footnote: "Maximum number of pages per file.",
         },
         {
           text: "4MB file size limit",
@@ -64,13 +65,14 @@ const Page = async () => {
       features: [
         {
           text: "100 Free Generations",
+          footnote: "100 generations free, added on your first sign-up.",
         },
         {
           text: "Up to 100 Files per Upload",
         },
         {
           text: "10 pages per File",
-          footnote: "The maximum amount of pages per file.",
+          footnote: "Maximum number of pages per file.",
         },
         {
           text: "4MB file size limit",
@@ -99,13 +101,14 @@ const Page = async () => {
       features: [
         {
           text: "100 Free Generations",
+          footnote: "100 generations free, added on your first sign-up.",
         },
         {
           text: "Up to 150 Files per Upload",
         },
         {
           text: "15 pages per File",
-          footnote: "The maximum amount of pages per file.",
+          footnote: "Maximum number of pages per file.",
         },
         {
           text: "16MB file size limit",
@@ -180,7 +183,7 @@ const Page = async () => {
                               <HelpCircle className="h-4 w-4 text-zinc-500" />
                             </TooltipTrigger>
                             <TooltipContent className="w-80 p-2">
-                              The maximum amount of files upload.
+                              Maximum number of files to upload.
                             </TooltipContent>
                           </Tooltip>
                         </p>
