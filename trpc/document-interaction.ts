@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { pinecone } from "@/lib/pinecone";
 import prismadb from "@/lib/prismadb";
 import { MAX_FREE_COUNTS } from "@/constant";
+import { utapi } from "@/lib/upload-thing-server";
 
 const DocumentInteraction = {
   // get User Files
@@ -135,7 +136,7 @@ const DocumentInteraction = {
       });
 
       if (!file) throw new TRPCError({ code: "NOT_FOUND" });
-
+      await utapi.deleteFiles(input.id);
       await prismadb.file.delete({
         where: {
           id: input.id,
