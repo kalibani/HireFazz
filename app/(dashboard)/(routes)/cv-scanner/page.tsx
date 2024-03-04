@@ -272,7 +272,7 @@ const CVAnalyzerPage = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-[100px]">
-                              {!file.reportOfAnalysis?.matchedPercentage && (
+                              {!file.reportOfAnalysis ? (
                                 <DropdownMenuItem>
                                   <Button
                                     className="w-full "
@@ -282,7 +282,7 @@ const CVAnalyzerPage = () => {
                                     Reanalyze
                                   </Button>
                                 </DropdownMenuItem>
-                              )}
+                              ) : null}
                               <DropdownMenuItem>
                                 <Button
                                   className="w-full text-red-500 border-red-500 hover:text-red-500"
@@ -335,7 +335,8 @@ const CVAnalyzerPage = () => {
                             </div>
                           ) : (
                             <>
-                              {file.reportOfAnalysis?.matchedPercentage ? (
+                              {file.reportOfAnalysis &&
+                              Object.keys(file.reportOfAnalysis).length > 0 ? (
                                 <div className="flex items-center justify-center h-10 gap-1 text-base text-zinc-900">
                                   {/* @ts-ignore */}
                                   {file.reportOfAnalysis?.matchedPercentage}%

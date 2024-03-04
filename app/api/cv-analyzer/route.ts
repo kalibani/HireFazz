@@ -83,42 +83,20 @@ export const POST = async (req: NextRequest) => {
                 
                 Step 6: Output a JSON object structured like: 
                 {
-                  "documentOwner": "full name of the CV owner",
+                  "documentOwner": "full name of the document owner",
                   "matchedPercentage": "calculated match percentage",
                   "reason": "brief explanation of the match percentage"
                 }
+                notes:
+                - if the documentOwner is not specified, returning empty string like documentOwner: ''.
+                - matchedPercentage should in integer format without % symbol
+
+                Step 7: Do not returning each step by step of the process, just the JSON.
                 `,
           },
           {
             role: "user",
-            content: `Use the following pieces of context (or previous conversation if needed) to answer the users question in json format. Please follow to the Instructions and Restrictions below, you have to answer according to it.
-              Instructions:
-              You have to calculate how much is the percentage of this cv match with the requirements.
-              The answer must be in the same language as the language used in the requirements, for example if it is using english then answer in english, if it is using Indonesian language, answer in Indonesian language and so on.
-              The most important factors that affect the calculation result are experience and skills of the document owner.
-              The calculation must count all the aspects provided on the document, like relevant experience, educational background, skills, total years of experience, salary expectation, country of origin, current location, Visa Sponsorship, Age, etc.
-              The result of the calculation must be written on matchedPercentage!
-              The result of the calculation should be different between one and another, depending on the information provided on the cv.
-              Restrictions:
-              IF the requirements is not clearly defined, matchedPercentage should be 0.
-              IF the matched things is not more than 3 things than the matchedPercentage should not more than 60.
-              The reason should not more than 100 words.
-              The output must be on a json format only, for example: 
-              {
-                "documentOwner": "full name of the CV owner",
-                "matchedPercentage": "calculated match percentage",
-                "reason": "brief explanation of the match percentage"
-              }
-              Do not returning each step by step of the process, just the JSON.
-              description:
-              documentOwner = name of the document owner, if the name is more than 2 words and more than 20 characters then print only two words plus the first character of the third words, however if the name is more than 2 words but not more than 20 characters then print all the words.
-              matchedPercentage: result of the matched percentage in example 10, 20, 25, 30, 35, 45, 50 or 60 or 80, or 90 maximum 100
-              reason: reason of the match percentage
-              
-        \n----------------\n
-        
-        \n----------------\n
-        CV Document:
+            content: `CV Document:
         ${results.map((r) => r.pageContent).join("\n\n")}
         
         Requirements Input: ${requirements}`,
