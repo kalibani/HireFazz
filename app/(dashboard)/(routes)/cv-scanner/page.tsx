@@ -1,47 +1,23 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import {
-  FileText,
-  MoreHorizontal,
-  Plus,
-  Check,
-  X,
-  Loader2,
-  MoreVertical,
-  AlertCircle,
-} from "lucide-react";
-import * as formatter from "date-fns";
-import Link from "next/link";
-import Heading from "@/components/headings";
-import axios from "axios";
-import { Button } from "@/components/ui/button";
-import UploadButton from "@/components/upload-button";
+import { useEffect, useMemo, useState } from 'react';
+import { FileText, Loader2 } from 'lucide-react';
+import Heading from '@/components/headings';
+import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import UploadButton from '@/components/upload-button';
 
-import EmptyPage from "@/components/empty";
-import LoaderGeneral from "@/components/loader";
-import { useProModal } from "@/hooks/use-pro-modal";
-import { trpc } from "@/app/_trpc/client";
-import { useUser } from "@/hooks/use-user";
-import { useAnalyzer } from "@/hooks/use-analyzer";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import EmptyPage from '@/components/empty';
+import LoaderGeneral from '@/components/loader';
+import { useProModal } from '@/hooks/use-pro-modal';
+import { trpc } from '@/app/_trpc/client';
+import { useUser } from '@/hooks/use-user';
+import { useAnalyzer } from '@/hooks/use-analyzer';
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-import { ReanalyzeModal } from "@/components/reanalyze-modal";
-import { usePricing } from "@/hooks/use-pricing";
-import { pricing } from "@/lib/utils";
-import toast from "react-hot-toast";
+import { ReanalyzeModal } from '@/components/reanalyze-modal';
+import { usePricing } from '@/hooks/use-pricing';
+import { pricing } from '@/lib/utils';
+import CardCvscanner from '@/components/card-cvscanner';
 
 // temporary set to 100 for testing purpose
 const limit = 100;
@@ -68,7 +44,7 @@ const CVAnalyzerPage = () => {
     .useInfiniteQuery(
       { limit },
       {
-        networkMode: "always",
+        networkMode: 'always',
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       }
     );
@@ -86,7 +62,7 @@ const CVAnalyzerPage = () => {
 
   const { mutate: deleteFile } = trpc.deleteFile.useMutation({
     retry: 3,
-    networkMode: "always",
+    networkMode: 'always',
     onSuccess: () => {
       utils.infiniteFiles.refetch();
     },
@@ -99,7 +75,7 @@ const CVAnalyzerPage = () => {
   });
 
   const isQuotaLimited =
-    subscriptionType !== "FREE" && apiLimitCount === maxFreeCount;
+    subscriptionType !== 'FREE' && apiLimitCount === maxFreeCount;
   const isFreeTrialLimited = apiLimitCount === maxFreeCount;
 
   const { jobTitle, requirements, percentage } = useAnalyzer();
@@ -115,7 +91,7 @@ const CVAnalyzerPage = () => {
     const safeJobTitle = jobTitleProp || jobTitle;
 
     try {
-      await axios.post("/api/cv-analyzer", {
+      await axios.post('/api/cv-analyzer', {
         jobTitle: safeJobTitle,
         fileId: id,
         requirements: safeRequirement,
@@ -123,7 +99,7 @@ const CVAnalyzerPage = () => {
       });
       utils.infiniteFiles.refetch();
     } catch (error: any) {
-      console.log("error", error);
+      console.log('error', error);
     }
   };
 
@@ -224,172 +200,17 @@ const CVAnalyzerPage = () => {
         <div className="">
           {/* @ts-ignore */}
           {filesMemo && filesMemo?.length !== 0 ? (
-            <>
-              <ul className="grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
-                {/* @ts-ignore */}
-                {filesMemo
-                  // @ts-ignore
-                  .sort(
-                    (
-                      a: { reportOfAnalysis: { matchedPercentage: any } },
-                      b: { reportOfAnalysis: { matchedPercentage: any } }
-                    ) =>
-                      Number(b.reportOfAnalysis?.matchedPercentage) -
-                      Number(a.reportOfAnalysis?.matchedPercentage)
-                  )
-                  .map((file: any) => (
-                    <li
-                      key={file.id}
-                      className="col-span-1 transition bg-white divide-y divide-gray-200 rounded-lg shadow hover:shadow-lg"
-                    >
-                      <div className="flex items-center">
-                        <Link
-                          href={`/cv-scanner/${file.id}`}
-                          className="flex flex-col flex-1 gap-2"
-                        >
-                          <div className="flex items-center justify-between max-w-[300px] p-4 space-x-6">
-                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
-                            <div className="flex-1 truncate">
-                              <div className="flex items-center space-x-3">
-                                <p className="text-lg font-medium truncate text-zinc-900">
-                                  {file.name}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                        {deletingIds.includes(file.id) ? (
-                          <Loader2 className="mr-4 text-blue-500 animate-spin" />
-                        ) : (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                className="mr-4"
-                                size="icon"
-                              >
-                                <MoreVertical />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-[100px]">
-                              {!file.reportOfAnalysis ? (
-                                <DropdownMenuItem>
-                                  <Button
-                                    className="w-full "
-                                    size="sm"
-                                    onClick={() => setSelectedFile(file)}
-                                  >
-                                    Reanalyze
-                                  </Button>
-                                </DropdownMenuItem>
-                              ) : null}
-                              <DropdownMenuItem>
-                                <Button
-                                  className="w-full text-red-500 border-red-500 hover:text-red-500"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDelete(file.id)}
-                                >
-                                  Delete
-                                </Button>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
-                      </div>
-                      <div>
-                        <div className="flex justify-between gap-6 px-4 pt-2 text-base text-zinc-900">
-                          <div className="flex items-center gap-2">
-                            {
-                              <>
-                                {/* @ts-ignore */}
-                                {file.reportOfAnalysis ? (
-                                  <>
-                                    <p className="w-48 truncate">
-                                      {/* @ts-ignore */}
-                                      {file.reportOfAnalysis?.documentOwner ||
-                                        file?.name}
-                                    </p>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Plus className="w-4 h-4" />
-                                    <span>
-                                      {/* @ts-ignore */}
-                                      {formatter.format(
-                                        new Date(file.createdAt),
-                                        "MMM yyyy"
-                                      )}
-                                    </span>
-                                  </>
-                                )}
-                              </>
-                            }
-                          </div>
-
-                          {(jobTitle && !file.reportOfAnalysis) ||
-                          reanalyzeIds.includes(file.id) ? (
-                            <div className="flex items-center p-2 text-base text-zinc-900">
-                              Analyzing
-                              <MoreHorizontal className="w-4 h-4 ml-1 opacity-50 shrink-0 animate-ping text-zinc-900" />
-                            </div>
-                          ) : (
-                            <>
-                              {file.reportOfAnalysis &&
-                              Object.keys(file.reportOfAnalysis).length > 0 ? (
-                                <div className="flex items-center justify-center h-10 gap-1 text-base text-zinc-900">
-                                  {/* @ts-ignore */}
-                                  {file.reportOfAnalysis?.matchedPercentage}%
-                                  <p>Match</p>
-                                  {isMoreThanMatchLimit(
-                                    // @ts-ignore
-                                    file.reportOfAnalysis?.percentage,
-                                    // @ts-ignore
-                                    file.reportOfAnalysis?.matchedPercentage
-                                  ) ? (
-                                    <Check className="w-5 h-5 text-green-500 " />
-                                  ) : (
-                                    <X className="w-5 h-5 text-red-500 " />
-                                  )}
-                                </div>
-                              ) : (
-                                <TooltipProvider>
-                                  <label className="mr-2 text-lg font-semibold">
-                                    Please Reanalyze
-                                    <Tooltip delayDuration={300}>
-                                      <TooltipTrigger className="cursor-default ml-1.5">
-                                        <AlertCircle className="w-4 h-4 text-zinc-500" />
-                                      </TooltipTrigger>
-                                      <TooltipContent className="p-2 w-80">
-                                        Process stopped because you refresh the
-                                        page, please reanalyze and do not
-                                        refresh the page
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </label>
-                                </TooltipProvider>
-                              )}
-                            </>
-                          )}
-                        </div>
-                        <div className="px-4 pb-1 text-sm text-zinc-900">
-                          {file.reportOfAnalysis?.jobTitle}
-                        </div>
-                        <div className="px-4 pb-4">
-                          {!reanalyzeIds.includes(file.id) && (
-                            <p className="text-xs text-zinc-500">
-                              {/* @ts-ignore */}
-                              {file.reportOfAnalysis?.reason}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-              </ul>
-            </>
+            <CardCvscanner
+              reanalyzeIds={reanalyzeIds}
+              deletingIds={deletingIds}
+              filesMemo={filesMemo}
+              isMoreThanMatchLimit={isMoreThanMatchLimit}
+              jobTitle={jobTitle}
+              onClickSelectFile={(val) => setSelectedFile(val)}
+              onDelete={(id) => deleteFile({ id })}
+            />
           ) : isLoading ? (
-            <div className="flex items-start justify-center w-full p-8 rounded-lg bg-muted">
+            <div className="flex items-start justify-center w-full p-8 rounded-lg bg-muted mt-8">
               <LoaderGeneral />
             </div>
           ) : (
