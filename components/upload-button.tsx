@@ -336,7 +336,7 @@ const UploadButton = ({
       </DialogTrigger>
 
       <DialogContent
-        className=" min-w-fit lg:min-w-[724px] max-h-screen"
+        className=" min-w-fit lg:min-w-[724px] max-h-screen overflow-y-auto"
         onInteractOutside={(e) => e.preventDefault()}
       >
         <div>
@@ -366,7 +366,7 @@ const UploadButton = ({
                     <span className="text-xs">
                       Set your job requirements here, example:
                     </span>
-                    <ul className="text-xs ">
+                    <ul className="text-xs">
                       <li>
                         1. Bachelor Degree from all major (Marketing major is a
                         plus)
