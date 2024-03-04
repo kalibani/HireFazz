@@ -147,7 +147,7 @@ const CardCvscanner = ({
                   </div>
                 ) : (
                   <>
-                    {file.reportOfAnalysis?.matchedPercentage ? (
+                    {file.reportOfAnalysis ? (
                       <div className="flex lg:items-center lg:justify-center h-10 gap-1 text-base text-zinc-900">
                         {/* @ts-ignore */}
                         {file.reportOfAnalysis?.matchedPercentage}%<p>Match</p>
