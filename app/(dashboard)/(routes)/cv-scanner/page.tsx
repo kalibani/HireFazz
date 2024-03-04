@@ -210,7 +210,7 @@ const CVAnalyzerPage = () => {
               onDelete={(id) => deleteFile({ id })}
             />
           ) : isLoading ? (
-            <div className="flex items-start justify-center w-full p-8 rounded-lg bg-muted">
+            <div className="flex items-start justify-center w-full p-8 rounded-lg bg-muted mt-8">
               <LoaderGeneral />
             </div>
           ) : (
