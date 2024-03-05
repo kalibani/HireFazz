@@ -1,8 +1,8 @@
 export enum fileExtension {
-  "pdf",
-  "csv",
-  "docx",
-  "doc",
+  'pdf',
+  'csv',
+  'docx',
+  'doc',
 }
 
 export enum UploadStatus {
@@ -23,3 +23,7 @@ export type fileTypes = {
   updatedAt: Date;
   userId: string | null;
 };
+
+export interface SearchParamsProps {
+  searchParams: { [key: string]: string | undefined };
+}
