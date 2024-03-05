@@ -90,17 +90,17 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
               />
             )}
           </div>
-          {/* </Form> */}
         </div>
+        {(filesMemo?.length > 0 || !!searchParams?.q) && (
+          <SearchInput searchParams={searchParams} />
+        )}
+
         {/* @ts-ignore */}
-        {filesMemo && filesMemo?.length > 0 ? (
-          <>
-            <SearchInput searchParams={searchParams} />
-            <div className="flex justify-end gap-1 mt-4 mb-2 mr-1">
-              Automatically Sorted by <b>Highest Matched</b>
-            </div>
-          </>
-        ) : null}
+        {filesMemo && filesMemo?.length > 0 && (
+          <div className="flex justify-end gap-1 mt-4 mb-2 mr-1">
+            Automatically Sorted by <b>Highest Matched</b>
+          </div>
+        )}
         <div className="">
           {/* @ts-ignore */}
           {filesMemo && filesMemo?.length !== 0 ? (
