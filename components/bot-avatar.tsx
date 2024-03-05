@@ -1,5 +1,5 @@
-import { AvatarImage } from "@radix-ui/react-avatar";
-import { Avatar } from "./ui/avatar";
+import { AvatarImage } from '@radix-ui/react-avatar';
+import { Avatar } from './ui/avatar';
 
 const BotAvatar = () => {
   return (
