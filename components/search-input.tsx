@@ -42,7 +42,7 @@ const SearchInput = ({ searchParams }: SearchParamsProps) => {
             name="search"
             className="w-full border-0 ring-0 outline-none focus-visible:ring-0 text-lg p-0 h-fit bg-transparent"
             value={searchValue}
-            placeholder="Search"
+            placeholder="Search by name"
             onChange={(e) => setSearchValue(e.target.value)}
           />
           {!!searchValue ? (
