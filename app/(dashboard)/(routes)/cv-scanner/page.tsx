@@ -20,137 +20,36 @@ import { pricing } from '@/lib/utils';
 import CardCvscanner from '@/components/card-cvscanner';
 import SearchInput from '@/components/search-input';
 import { SearchParamsProps } from '@/types/types';
+import { useCvScanner } from '@/hooks/use-cvScanner';
 
-// temporary set to 100 for testing purpose
-const limit = 100;
-interface AnalyzeCV {
-  id: string;
-  jobTitle?: string;
-  requirement?: string;
-  percentage?: number;
-}
 const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
   const { apiLimitCount, onOpen } = useProModal();
   const { subscriptionType, maxFreeCount, setPlan, setQuota, setQuotaLimited } =
     useUser();
-  const [deletingIds, setDeletingIds] = useState<string[]>([]);
-  const [selectedFile, setSelectedFile] = useState({});
-  const [reanalyzeIds, setReanalyzeIds] = useState<string[]>([]);
-  const {
-    data: filesInfinite,
-    isLoading,
-    hasNextPage,
-    fetchNextPage,
-  } = trpc.infiniteFiles
-    // @ts-ignore
-    .useInfiniteQuery(
-      { limit },
-      {
-        networkMode: 'always',
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      }
-    );
-  const filesMemo = useMemo(() => {
-    if (filesInfinite?.pages) {
-      // @ts-ignore
-      return filesInfinite?.pages.reduce((acc, el) => {
-        return [...acc, ...el.items];
-      }, []);
-    }
-    return [];
-  }, [filesInfinite?.pages]);
-
   const utils = trpc.useUtils();
-
-  const { mutate: deleteFile } = trpc.deleteFile.useMutation({
-    retry: 3,
-    networkMode: 'always',
-    onSuccess: () => {
-      utils.infiniteFiles.refetch();
-    },
-    async onMutate({ id }) {
-      setDeletingIds([...deletingIds, id]);
-    },
-    onSettled(data) {
-      setDeletingIds(deletingIds.filter((el) => el !== data?.id));
-    },
-  });
+  const {
+    filesMemo,
+    isLoading,
+    deleteFile,
+    deletingIds,
+    selectedFile,
+    fetchNextPage,
+    handleReanalyze,
+    hasNextPage,
+    jobTitle,
+    reanalyzeIds,
+    setSelectedFile,
+  } = useCvScanner(searchParams);
 
   const isQuotaLimited =
     subscriptionType !== 'FREE' && apiLimitCount === maxFreeCount;
   const isFreeTrialLimited = apiLimitCount === maxFreeCount;
-
-  const { jobTitle, requirements, percentage } = useAnalyzer();
-
-  const analyzeCV = async ({
-    id,
-    jobTitle: jobTitleProp,
-    requirement,
-    percentage: percentageProp,
-  }: AnalyzeCV) => {
-    const safeRequirement = requirement || requirements;
-    const safePercentage = percentageProp || percentage;
-    const safeJobTitle = jobTitleProp || jobTitle;
-
-    try {
-      await axios.post('/api/cv-analyzer', {
-        jobTitle: safeJobTitle,
-        fileId: id,
-        requirements: safeRequirement,
-        percentage: safePercentage,
-      });
-      utils.infiniteFiles.refetch();
-    } catch (error: any) {
-      console.log('error', error);
-    }
-  };
-
-  useEffect(() => {
-    // @ts-ignore
-    if (filesMemo?.length) {
-      filesMemo
-        // @ts-ignore
-        .reduce((acc, item) => {
-          return acc.then(() => {
-            if (item.reportOfAnalysis) {
-              return;
-            }
-            return analyzeCV({ id: item.id });
-          });
-        }, Promise.resolve())
-        // @ts-ignore
-        .then((res) => {})
-        .catch((err: any) => {
-          console.log(err);
-        });
-    }
-  }, [filesMemo]);
 
   const isMoreThanMatchLimit = (
     userPercentage: string,
     matchedPercentage: string
   ) => {
     return Number(matchedPercentage) >= Number(userPercentage);
-  };
-
-  const handleDelete = async (id: string) => {
-    deleteFile({ id });
-  };
-  const handleReanalyze = async (
-    jobTitle: string,
-    requirement: string,
-    percentage: number
-  ) => {
-    // @ts-ignore
-    const fileId = selectedFile.id;
-    setSelectedFile({});
-    try {
-      setReanalyzeIds([...reanalyzeIds, fileId]);
-      await analyzeCV({ id: fileId, jobTitle, requirement, percentage });
-    } catch (error) {
-    } finally {
-      setReanalyzeIds(reanalyzeIds.filter((id) => id !== fileId));
-    }
   };
 
   const { setPrice } = usePricing();
