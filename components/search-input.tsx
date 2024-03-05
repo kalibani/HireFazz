@@ -36,8 +36,8 @@ const SearchInput = ({ searchParams }: SearchParamsProps) => {
   };
   return (
     <>
-      <div className=" border rounded-md mt-4 px-4 py-2 divide-y sticky top-1 bg-white/80 backdrop-blur-md">
-        <div className="flex items-center">
+      <div className="border rounded-md px-4 py-1 divide-y bg-white/80 backdrop-blur-md w-full lg:w-1/2  xl:w-1/3">
+        <div className="flex items-center w-full">
           <Input
             name="search"
             className="w-full border-0 ring-0 outline-none focus-visible:ring-0 text-lg p-0 h-fit bg-transparent"
@@ -49,19 +49,19 @@ const SearchInput = ({ searchParams }: SearchParamsProps) => {
             <Button
               type="submit"
               variant="ghost"
-              className="hover:bg-transparent"
+              className="hover:bg-transparent p-0"
               onClick={() => onSubmit('delete')}
             >
-              <XCircle />
+              <XCircle className="w-5" />
             </Button>
           ) : (
             <Button
               type="submit"
               variant="ghost"
-              className="hover:bg-transparent"
+              className="hover:bg-transparent p-0"
               onClick={() => onSubmit('enter')}
             >
-              <Search />
+              <Search className="w-5" />
             </Button>
           )}
         </div>
