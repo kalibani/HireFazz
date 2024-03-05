@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Search, XCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import router from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import { SearchParamsProps } from '@/types/types';
 import { queryString, removeProperty } from '@/lib/utils';
 

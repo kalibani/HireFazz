@@ -18,6 +18,8 @@ import { ReanalyzeModal } from '@/components/reanalyze-modal';
 import { usePricing } from '@/hooks/use-pricing';
 import { pricing } from '@/lib/utils';
 import CardCvscanner from '@/components/card-cvscanner';
+import SearchInput from '@/components/search-input';
+import { SearchParamsProps } from '@/types/types';
 
 // temporary set to 100 for testing purpose
 const limit = 100;
@@ -27,7 +29,7 @@ interface AnalyzeCV {
   requirement?: string;
   percentage?: number;
 }
-const CVAnalyzerPage = () => {
+const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
   const { apiLimitCount, onOpen } = useProModal();
   const { subscriptionType, maxFreeCount, setPlan, setQuota, setQuotaLimited } =
     useUser();
@@ -193,9 +195,12 @@ const CVAnalyzerPage = () => {
         </div>
         {/* @ts-ignore */}
         {filesMemo && filesMemo?.length > 0 ? (
-          <div className="flex justify-end gap-1 mt-4 mb-2 mr-1">
-            Automatically Sorted by <b>Highest Matched</b>
-          </div>
+          <>
+            <SearchInput searchParams={searchParams} />
+            <div className="flex justify-end gap-1 mt-4 mb-2 mr-1">
+              Automatically Sorted by <b>Highest Matched</b>
+            </div>
+          </>
         ) : null}
         <div className="">
           {/* @ts-ignore */}
