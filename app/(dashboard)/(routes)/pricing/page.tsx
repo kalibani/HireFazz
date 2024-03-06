@@ -1,19 +1,19 @@
-import MaxWidthWrapper from "@/components/max-width-wrapper";
-import UpgradeButton from "@/components/upgrade-button";
-import { buttonVariants } from "@/components/ui/button";
+import MaxWidthWrapper from '@/components/max-width-wrapper';
+import UpgradeButton from '@/components/upgrade-button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 // import { PLANS, subscriptionTypes } from "@/constant";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-import { ArrowRight, Check, HelpCircle, Minus, Asterisk } from "lucide-react";
-import Link from "next/link";
-import { auth } from "@clerk/nextjs";
-import { getUser } from "@/lib/api-limit";
+import { ArrowRight, Check, HelpCircle, Minus, Asterisk } from 'lucide-react';
+import Link from 'next/link';
+import { auth } from '@clerk/nextjs';
+import { getUser } from '@/lib/api-limit';
 
 const Page = async () => {
   const { userId } = auth();
@@ -21,107 +21,107 @@ const Page = async () => {
 
   const pricingItems = [
     {
-      plan: "Basic",
-      price: 449000,
-      tagline: "Suitable for Generalists.",
+      plan: 'Basic',
+      price: 299000,
+      tagline: 'Suitable for Generalists.',
       quota: 250,
-      quotaCharacter: "125.000",
+      quotaCharacter: '125.000',
       features: [
         {
-          text: "100 Free Generations",
-          footnote: "100 generations free, added on your first sign-up.",
+          text: '100 Free Generations',
+          footnote: '100 generations free, added on your first sign-up.',
         },
         {
-          text: "Up to 50 Files per Upload",
+          text: 'Up to 50 Files per Upload',
         },
         {
-          text: "5 pages per File",
-          footnote: "Maximum number of pages per file.",
+          text: '5 pages per File',
+          footnote: 'Maximum number of pages per file.',
         },
         {
-          text: "4MB file size limit",
-          footnote: "The maximum file size of a single file.",
+          text: '4MB file size limit',
+          footnote: 'The maximum file size of a single file.',
         },
         {
-          text: "High-accuracy responses",
+          text: 'High-accuracy responses',
 
           negative: false,
         },
         {
-          text: "Mobile-friendly interface",
+          text: 'Mobile-friendly interface',
         },
         {
-          text: "Priority support",
+          text: 'Priority support',
           negative: false,
         },
       ],
     },
     {
-      plan: "Pro",
-      price: 849000,
-      tagline: "Suitable For Specialists.",
+      plan: 'Pro',
+      price: 590000,
+      tagline: 'Suitable For Specialists.',
       quota: 500,
-      quotaCharacter: "125.000",
+      quotaCharacter: '125.000',
       features: [
         {
-          text: "100 Free Generations",
-          footnote: "100 generations free, added on your first sign-up.",
+          text: '100 Free Generations',
+          footnote: '100 generations free, added on your first sign-up.',
         },
         {
-          text: "Up to 100 Files per Upload",
+          text: 'Up to 100 Files per Upload',
         },
         {
-          text: "10 pages per File",
-          footnote: "Maximum number of pages per file.",
+          text: '10 pages per File',
+          footnote: 'Maximum number of pages per file.',
         },
         {
-          text: "4MB file size limit",
-          footnote: "The maximum file size of a single file.",
+          text: '4MB file size limit',
+          footnote: 'The maximum file size of a single file.',
         },
         {
-          text: "High-accuracy responses",
+          text: 'High-accuracy responses',
 
           negative: false,
         },
         {
-          text: "Mobile-friendly interface",
+          text: 'Mobile-friendly interface',
         },
         {
-          text: "Priority support",
+          text: 'Priority support',
           negative: false,
         },
       ],
     },
     {
-      plan: "Premium",
-      price: 1490000,
-      tagline: "Suitable For Aggressive Specialists.",
+      plan: 'Premium',
+      price: 999000,
+      tagline: 'Suitable For Aggressive Specialists.',
       quota: 1000,
-      quotaCharacter: "250.000",
+      quotaCharacter: '250.000',
       features: [
         {
-          text: "100 Free Generations",
-          footnote: "100 generations free, added on your first sign-up.",
+          text: '100 Free Generations',
+          footnote: '100 generations free, added on your first sign-up.',
         },
         {
-          text: "Up to 150 Files per Upload",
+          text: 'Up to 150 Files per Upload',
         },
         {
-          text: "15 pages per File",
-          footnote: "Maximum number of pages per file.",
+          text: '15 pages per File',
+          footnote: 'Maximum number of pages per file.',
         },
         {
-          text: "16MB file size limit",
-          footnote: "The maximum file size of a single file.",
+          text: '16MB file size limit',
+          footnote: 'The maximum file size of a single file.',
         },
         {
-          text: "High-accuracy responses",
+          text: 'High-accuracy responses',
         },
         {
-          text: "Mobile-friendly interface",
+          text: 'Mobile-friendly interface',
         },
         {
-          text: "Priority support",
+          text: 'Priority support',
         },
       ],
     },
@@ -144,12 +144,12 @@ const Page = async () => {
               return (
                 <div
                   key={plan}
-                  className={cn("relative rounded-2xl bg-white shadow-lg", {
-                    "border-2 border-blue-600 shadow-blue-200": plan === "Pro",
-                    "border border-gray-200": plan !== "Pro",
+                  className={cn('relative rounded-2xl bg-white shadow-lg', {
+                    'border-2 border-blue-600 shadow-blue-200': plan === 'Pro',
+                    'border border-gray-200': plan !== 'Pro',
                   })}
                 >
-                  {plan === "Pro" && (
+                  {plan === 'Pro' && (
                     <div className="absolute -top-5 left-0 right-0 mx-auto w-32 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-3 py-2 text-sm font-medium text-white">
                       Best seller
                     </div>
@@ -217,8 +217,8 @@ const Page = async () => {
                         {footnote ? (
                           <div className="flex items-center space-x-1">
                             <p
-                              className={cn("text-gray-600", {
-                                "text-gray-400": negative,
+                              className={cn('text-gray-600', {
+                                'text-gray-400': negative,
                               })}
                             >
                               {text}
@@ -234,8 +234,8 @@ const Page = async () => {
                           </div>
                         ) : (
                           <p
-                            className={cn("text-gray-600 text-left", {
-                              "text-gray-400": negative,
+                            className={cn('text-gray-600 text-left', {
+                              'text-gray-400': negative,
                             })}
                           >
                             {text}
@@ -249,13 +249,13 @@ const Page = async () => {
                     {subscriptionType?.toLowerCase() === plan.toLowerCase() &&
                     maxFreeCount! > count ? (
                       <Link
-                        href={userId ? "/dashboard" : "/sign-in"}
+                        href={userId ? '/dashboard' : '/sign-in'}
                         className={buttonVariants({
-                          className: "w-full",
-                          variant: "secondary",
+                          className: 'w-full',
+                          variant: 'secondary',
                         })}
                       >
-                        {userId ? "Start Generating" : "Sign up"}
+                        {userId ? 'Start Generating' : 'Sign up'}
                         <ArrowRight className="h-5 w-5 ml-1.5" />
                       </Link>
                     ) : userId ? (
@@ -264,10 +264,10 @@ const Page = async () => {
                       <Link
                         href="/sign-in"
                         className={buttonVariants({
-                          className: "w-full",
+                          className: 'w-full',
                         })}
                       >
-                        {userId ? "Upgrade now" : "Sign up"}
+                        {userId ? 'Upgrade now' : 'Sign up'}
                         <ArrowRight className="h-5 w-5 ml-1.5" />
                       </Link>
                     )}
