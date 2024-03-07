@@ -23,7 +23,7 @@ export const useCvScanner = (searchParams?: {
   const { jobTitle, requirements, percentage } = useAnalyzer();
 
   const queryParams: any = searchParams;
-  console.log(jobTitle);
+
   const {
     data: filesInfinite,
     isLoading,
