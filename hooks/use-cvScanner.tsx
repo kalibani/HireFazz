@@ -124,7 +124,7 @@ export const useCvScanner = (searchParams?: {
             return analyzeCV({
               id: item.id,
               jobTitle,
-              requirements: requirements,
+              requirements,
               percentage,
             });
           });
