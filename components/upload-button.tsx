@@ -54,10 +54,12 @@ const UploadDropzone = ({
 }) => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgressArr, setUploadProgressArr] = useState<number[]>([]);
+
   const orderUploading = useMemo(() => {
     const ongoing = uploadProgressArr.filter((el) => el > 0);
     return ongoing.length;
   }, [uploadProgressArr]);
+
   const { startUpload } = useUploadThing('pdfUploader');
   const router = useRouter();
   const { apiLimitCount } = useProModal();
@@ -319,7 +321,6 @@ const UploadButton = ({
     percentage,
     setPercentage,
   } = useAnalyzer();
-
   return (
     <Dialog
       open={isOpen}

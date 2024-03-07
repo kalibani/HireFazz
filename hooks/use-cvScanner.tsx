@@ -1,13 +1,13 @@
 import { trpc } from '@/app/_trpc/client';
 import axios from 'axios';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAnalyzer } from './use-analyzer';
 
 interface AnalyzeCV {
   id: string;
   jobTitle?: string;
-  requirement?: string;
+  requirements?: string;
   percentage?: number;
 }
 
@@ -20,14 +20,16 @@ export const useCvScanner = (searchParams?: {
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState({});
   const [reanalyzeIds, setReanalyzeIds] = useState<string[]>([]);
+  const { jobTitle, requirements, percentage } = useAnalyzer();
 
   const queryParams: any = searchParams;
-
+  console.log(jobTitle);
   const {
     data: filesInfinite,
     isLoading,
     hasNextPage,
     fetchNextPage,
+    refetch: refetchInfiniteFiles,
   } = trpc.infiniteFiles
     // @ts-ignore
     .useInfiniteQuery(
@@ -65,7 +67,7 @@ export const useCvScanner = (searchParams?: {
     }
 
     return allFiles;
-  }, [filesInfinite?.pages, queryParams]);
+  }, [filesInfinite?.pages, queryParams.q]);
 
   const utils = trpc.useUtils();
 
@@ -83,30 +85,31 @@ export const useCvScanner = (searchParams?: {
     },
   });
 
-  const { jobTitle, requirements, percentage } = useAnalyzer();
+  const analyzeCV = useCallback(
+    async ({
+      id,
+      jobTitle: jobTitleProp,
+      requirements,
+      percentage: percentageProp,
+    }: AnalyzeCV) => {
+      const safeRequirement = requirements;
+      const safePercentage = percentageProp || percentage;
+      const safeJobTitle = jobTitleProp || jobTitle;
 
-  const analyzeCV = async ({
-    id,
-    jobTitle: jobTitleProp,
-    requirement,
-    percentage: percentageProp,
-  }: AnalyzeCV) => {
-    const safeRequirement = requirement || requirements;
-    const safePercentage = percentageProp || percentage;
-    const safeJobTitle = jobTitleProp || jobTitle;
-
-    try {
-      await axios.post('/api/cv-analyzer', {
-        jobTitle: safeJobTitle,
-        fileId: id,
-        requirements: safeRequirement,
-        percentage: safePercentage,
-      });
-      utils.infiniteFiles.refetch();
-    } catch (error: any) {
-      toast.error(error.response.data);
-    }
-  };
+      try {
+        await axios.post('/api/cv-analyzer', {
+          jobTitle: safeJobTitle,
+          fileId: id,
+          requirements: safeRequirement,
+          percentage: safePercentage,
+        });
+        utils.infiniteFiles.refetch();
+      } catch (error: any) {
+        toast.error(error.response.data);
+      }
+    },
+    [jobTitle, percentage, utils.infiniteFiles]
+  );
 
   useEffect(() => {
     // @ts-ignore
@@ -118,7 +121,12 @@ export const useCvScanner = (searchParams?: {
             if (item.reportOfAnalysis) {
               return;
             }
-            return analyzeCV({ id: item.id });
+            return analyzeCV({
+              id: item.id,
+              jobTitle,
+              requirements: requirements,
+              percentage,
+            });
           });
         }, Promise.resolve())
         // @ts-ignore
@@ -131,7 +139,7 @@ export const useCvScanner = (searchParams?: {
 
   const handleReanalyze = async (
     jobTitle: string,
-    requirement: string,
+    requirements: string,
     percentage: number
   ) => {
     // @ts-ignore
@@ -139,7 +147,7 @@ export const useCvScanner = (searchParams?: {
     setSelectedFile({});
     try {
       setReanalyzeIds([...reanalyzeIds, fileId]);
-      await analyzeCV({ id: fileId, jobTitle, requirement, percentage });
+      await analyzeCV({ id: fileId, jobTitle, requirements, percentage });
     } catch (error) {
     } finally {
       setReanalyzeIds(reanalyzeIds.filter((id) => id !== fileId));
@@ -148,6 +156,7 @@ export const useCvScanner = (searchParams?: {
 
   return {
     filesMemo,
+    refetchInfiniteFiles,
     isLoading,
     hasNextPage,
     fetchNextPage,

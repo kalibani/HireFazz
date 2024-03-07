@@ -1,18 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { FileText, Loader2 } from 'lucide-react';
 import Heading from '@/components/headings';
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import UploadButton from '@/components/upload-button';
 
 import EmptyPage from '@/components/empty';
 import LoaderGeneral from '@/components/loader';
 import { useProModal } from '@/hooks/use-pro-modal';
-import { trpc } from '@/app/_trpc/client';
 import { useUser } from '@/hooks/use-user';
-import { useAnalyzer } from '@/hooks/use-analyzer';
 
 import { ReanalyzeModal } from '@/components/reanalyze-modal';
 import { usePricing } from '@/hooks/use-pricing';
@@ -26,7 +23,7 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
   const { apiLimitCount, onOpen } = useProModal();
   const { subscriptionType, maxFreeCount, setPlan, setQuota, setQuotaLimited } =
     useUser();
-  const utils = trpc.useUtils();
+  // const utils = trpc.useUtils();
   const {
     filesMemo,
     isLoading,
@@ -35,6 +32,7 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
     selectedFile,
     fetchNextPage,
     handleReanalyze,
+    refetchInfiniteFiles,
     hasNextPage,
     jobTitle,
     reanalyzeIds,
@@ -86,7 +84,8 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
             ) : (
               <UploadButton
                 buttonText="Upload CV"
-                refetch={() => utils.infiniteFiles.refetch()}
+                // refetch={() => utils.infiniteFiles.refetch()}
+                refetch={refetchInfiniteFiles}
               />
             )}
           </div>
