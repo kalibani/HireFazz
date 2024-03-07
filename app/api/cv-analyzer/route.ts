@@ -76,7 +76,7 @@ export const POST = async (req: NextRequest) => {
                 
                 Step 2: Analyze the CV document to identify information related to the requirements listed in Step 1. Extract all the relevant details.
                 
-                Step 3: Step 3: Calculate the match percentage based on how many of the listed requirements are met by the information found in the CV. The calculation should consider all aspects, with particular emphasis on experience and skills. The match percentage should reflect the degree to which the CV meets the job requirements.
+                Step 3: Calculate the match percentage based on how many of the listed requirements are met by the information found in the CV. The calculation should consider all aspects, with particular emphasis on experience and skills. The match percentage should reflect the degree to which the CV meets the job requirements.
                 
                 Step 4: Provide a brief reason for the match percentage, focusing on key areas where the CV aligns with or diverges from the requirements. This explanation should not exceed 100 words. If the requirement is not clear then return The requirements are not clearly defined.
 
