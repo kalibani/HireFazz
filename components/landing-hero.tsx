@@ -1,49 +1,41 @@
-"use client";
+'use client';
 
-import TypewriterComponent from "typewriter-effect";
-import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
+import TypewriterComponent from 'typewriter-effect';
+import Link from 'next/link';
+import { useAuth } from '@clerk/nextjs';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 export const LandingHero = () => {
   const { isSignedIn } = useAuth();
 
   return (
-    <div className="text-white font-bold py-36 text-center space-y-5">
-      <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
-        <h1>The Best AI Tool for</h1>
-        <div className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-green-600">
+    <div className="text-slate-950 font-bold py-36 text-center ">
+      <div className="text-4xl sm:text-5xl lg:text-6xl space-y-5 font-extrabold">
+        <h1>Say goodbye to repetitive tasks, hello to</h1>
+        <div className="text-primary">
           <TypewriterComponent
             options={{
-              strings: [
-                "Automatic CV Screener",
-                "Bank Statement Analyzer",
-                "Invoice Reviewer",
-                "Loan Application Processor",
-                "Regulatory Auditor",
-                "Contract Checker",
-              ],
+              strings: ['a happier you'],
               autoStart: true,
               loop: true,
             }}
           />
         </div>
       </div>
-      <div className="text-sm md:text-xl font-light text-white">
-        Empower Your Workflow with AI Precision
-      </div>
-      <div>
-        <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
-          <Button
-            variant="premium2"
-            className="md:text-lg p-4 md:p-6 rounded-full font-semibold"
-          >
-            Start Generating For Free
-          </Button>
+      <div className="flex justify-center mt-16 mb-4">
+        <Link href={isSignedIn ? '/dashboard' : '/sign-up'}>
+          <div className="p-[2px] bg-gradient-to-r from-pink-500 to-primary  w-fit rounded-full">
+            <Button
+              variant="premium2"
+              className="md:text-lg p-4 md:p-6 rounded-full font-semibold"
+            >
+              Start Generating For Free
+            </Button>
+          </div>
         </Link>
       </div>
-      <div className="text-white text-base md:text-base font-normal">
+      <div className="text-primary text-base md:text-base font-normal">
         Transform Your Repetitive Tasks into Effortless Actions!
       </div>
     </div>
