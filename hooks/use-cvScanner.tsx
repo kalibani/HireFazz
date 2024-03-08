@@ -1,6 +1,6 @@
 import { trpc } from '@/app/_trpc/client';
 import axios from 'axios';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAnalyzer } from './use-analyzer';
 
@@ -20,7 +20,7 @@ export const useCvScanner = (searchParams?: {
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState({});
   const [reanalyzeIds, setReanalyzeIds] = useState<string[]>([]);
-
+  const idsOnAnalyze = useRef<string[]>([]);
   const queryParams: any = searchParams;
 
   const {
@@ -96,6 +96,7 @@ export const useCvScanner = (searchParams?: {
     const safeJobTitle = jobTitleProp || jobTitle;
 
     try {
+      idsOnAnalyze.current = [...idsOnAnalyze.current, id];
       await axios.post('/api/cv-analyzer', {
         jobTitle: safeJobTitle,
         fileId: id,
@@ -105,18 +106,29 @@ export const useCvScanner = (searchParams?: {
       utils.infiniteFiles.refetch();
     } catch (error: any) {
       toast.error(error.response.data);
+    } finally {
+      idsOnAnalyze.current = [...idsOnAnalyze.current].filter(
+        (el) => el !== id
+      );
     }
   };
 
   useEffect(() => {
     // @ts-ignore
-    if (filesMemo?.length) {
-      filesMemo
+    const allFiles =
+      filesInfinite?.pages.reduce((acc, el) => {
+        return [...acc, ...el.items];
+      }, []) || [];
+    if (allFiles.length) {
+      allFiles
         // @ts-ignore
         .reduce((acc, item) => {
           return acc.then(() => {
             if (item.reportOfAnalysis) {
               return;
+            }
+            if (idsOnAnalyze.current.includes(item.id)) {
+              return Promise.resolve();
             }
             return analyzeCV({ id: item.id });
           });
@@ -127,7 +139,7 @@ export const useCvScanner = (searchParams?: {
           console.log(err);
         });
     }
-  }, [filesMemo]);
+  }, [filesInfinite?.pages]);
 
   const handleReanalyze = async (
     jobTitle: string,

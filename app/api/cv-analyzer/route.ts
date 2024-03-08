@@ -60,7 +60,7 @@ export const POST = async (req: NextRequest) => {
         namespace: fileId,
       });
 
-      const results = await vectorStore.similaritySearch(requirements, 2);
+      const results = await vectorStore.similaritySearch(requirements, 4);
 
       const response = await openai.chat.completions.create({
         model: 'gpt-4-0125-preview',
@@ -72,19 +72,19 @@ export const POST = async (req: NextRequest) => {
             role: 'system',
             content: `Use the following steps to analyze the CV document based on the requirements provided. Please restate each step before proceeding.
             
-                Step 1: List all the requirements specified by the user.
+                Step 1: List all the job description and requirements specified by the user.
                 
-                Step 2: Analyze the CV document to identify information related to the requirements listed in Step 1. Extract all the relevant details.
+                Step 2: Analyze the CV document to identify information related to the job descriptions and requirements listed in Step 1. Extract all the relevant details.
                 
                 Step 3: Calculate the match percentage based on how many of the listed requirements are met by the information found in the CV. The calculation should consider all aspects, with particular emphasis on experience and skills. The match percentage should reflect the degree to which the CV meets the job requirements.
                 
-                Step 4: Provide a brief reason for the match percentage, focusing on key areas where the CV aligns with or diverges from the requirements. This explanation should not exceed 100 words. If the requirement is not clear then return The requirements are not clearly defined.
+                Step 4: Provide a brief reason for the match percentage, focusing on key areas where the CV aligns with or diverges from the job descriptions and requirements. This explanation should not exceed 100 words. If the job descriptions and requirement is not clear then return The requirements are not clearly defined.
 
-                Step 5: Detect what language is used on the requirements. The reason of the match percentage should use the same language as used in requirements, if the requirements is on English then use English, if the requirements is on Indonesian Language then use Indonesian Language.
+                Step 5: Detect what language is used on the job descriptions and requirements. The reason of the match percentage should use the same language as used in requirements, if the requirements is on English then use English, if the requirements is on Indonesian Language then use Indonesian Language.
                 
                 Step 6: Output a JSON object structured like: 
                 {
-                  "documentOwner": "Name of the CV owner, usually placed in top of the document. If the documentOwner is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
+                  "documentOwner": "Name of the CV owner or document author. If the documentOwner is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
                   "matchedPercentage": "calculated match percentage, should in integer format without % symbol",
                   "reason": "brief explanation of the match percentage"
                 }
@@ -95,7 +95,7 @@ export const POST = async (req: NextRequest) => {
             content: `CV Document:
         ${results.map((r) => r.pageContent).join('\n\n')}
         
-        Requirements Input: ${requirements}
+        User Input: ${requirements}
         `,
           },
         ],
