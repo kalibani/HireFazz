@@ -21,6 +21,8 @@ import { useCvScanner } from '@/hooks/use-cvScanner';
 import { trpc } from '@/app/_trpc/client';
 import { useAnalyzer } from '@/hooks/use-analyzer';
 import axios from 'axios';
+import { deleteFile } from '@/trpc/document-interaction';
+import { utils } from '@pinecone-database/pinecone';
 
 interface AnalyzeCV {
   id: string;

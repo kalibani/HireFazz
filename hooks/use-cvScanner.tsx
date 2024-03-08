@@ -3,25 +3,31 @@ import axios from 'axios';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAnalyzer } from './use-analyzer';
+import { SearchParamsProps } from '@/types/types';
+import { pricing } from '@/lib/utils';
+import { usePricing } from './use-pricing';
+import { useProModal } from './use-pro-modal';
+import { useUser } from '@/hooks/use-user';
+import { deleteFile } from '@/trpc/document-interaction';
 
 interface AnalyzeCV {
   id: string;
   jobTitle?: string;
-  requirements?: string;
+  requirement?: string;
   percentage?: number;
 }
 
 // temporary set to 100 for testing purpose
 const limit = 100;
 
-export const useCvScanner = (searchParams?: {
-  [key: string]: string | undefined;
-}) => {
+export const useCvScanner = ({ searchParams }: SearchParamsProps) => {
+  const { apiLimitCount, onOpen } = useProModal();
+  const { subscriptionType, maxFreeCount, setPlan, setQuota, setQuotaLimited } =
+    useUser();
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState({});
   const [reanalyzeIds, setReanalyzeIds] = useState<string[]>([]);
-  const { jobTitle, requirements, percentage } = useAnalyzer();
-
+  const utils = trpc.useUtils();
   const queryParams: any = searchParams;
 
   const {
@@ -29,16 +35,14 @@ export const useCvScanner = (searchParams?: {
     isLoading,
     hasNextPage,
     fetchNextPage,
-    refetch: refetchInfiniteFiles,
-  } = trpc.infiniteFiles
-    // @ts-ignore
-    .useInfiniteQuery(
-      { limit },
-      {
-        networkMode: 'always',
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      }
-    );
+    refetch,
+  } = trpc.infiniteFiles.useInfiniteQuery(
+    { limit },
+    {
+      networkMode: 'always',
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
 
   const filesMemo = useMemo(() => {
     if (!filesInfinite?.pages) {
@@ -65,17 +69,15 @@ export const useCvScanner = (searchParams?: {
 
       return filteredData;
     }
-
     return allFiles;
   }, [filesInfinite?.pages, queryParams.q]);
 
-  const utils = trpc.useUtils();
-
-  const { mutateAsync: deleteFile } = trpc.deleteFile.useMutation({
+  const { mutate: deleteFile } = trpc.deleteFile.useMutation({
     retry: 3,
     networkMode: 'always',
     onSuccess: () => {
-      utils.infiniteFiles.refetch();
+      // utils.infiniteFiles.refetch();
+      refetch();
     },
     async onMutate({ id }) {
       setDeletingIds([...deletingIds, id]);
@@ -85,48 +87,46 @@ export const useCvScanner = (searchParams?: {
     },
   });
 
-  const analyzeCV = useCallback(
-    async ({
-      id,
-      jobTitle: jobTitleProp,
-      requirements,
-      percentage: percentageProp,
-    }: AnalyzeCV) => {
-      const safeRequirement = requirements;
-      const safePercentage = percentageProp || percentage;
-      const safeJobTitle = jobTitleProp || jobTitle;
+  const isQuotaLimited =
+    subscriptionType !== 'FREE' && apiLimitCount === maxFreeCount;
+  const isFreeTrialLimited = apiLimitCount === maxFreeCount;
 
-      try {
-        await axios.post('/api/cv-analyzer', {
-          jobTitle: safeJobTitle,
-          fileId: id,
-          requirements: safeRequirement,
-          percentage: safePercentage,
-        });
-        utils.infiniteFiles.refetch();
-      } catch (error: any) {
-        toast.error(error.response.data);
-      }
-    },
-    [jobTitle, percentage, utils.infiniteFiles]
-  );
+  const { jobTitle, requirements, percentage } = useAnalyzer();
+
+  const analyzeCV = async ({
+    id,
+    jobTitle: jobTitleProp,
+    requirement,
+    percentage: percentageProp,
+  }: AnalyzeCV) => {
+    const safeRequirement = requirement || requirements;
+    const safePercentage = percentageProp || percentage;
+    const safeJobTitle = jobTitleProp || jobTitle;
+
+    try {
+      await axios.post('/api/cv-analyzer', {
+        jobTitle: safeJobTitle,
+        fileId: id,
+        requirements: safeRequirement,
+        percentage: safePercentage,
+      });
+      utils.infiniteFiles.refetch();
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   useEffect(() => {
-    // @ts-ignore
     if (filesMemo?.length) {
-      filesMemo
+      const filesToAnalyze = filesMemo.filter(
+        (item: any) => !item.reportOfAnalysis
+      );
+
+      filesToAnalyze
         // @ts-ignore
         .reduce((acc, item) => {
           return acc.then(() => {
-            if (item.reportOfAnalysis) {
-              return;
-            }
-            return analyzeCV({
-              id: item.id,
-              jobTitle,
-              requirements,
-              percentage,
-            });
+            return analyzeCV({ id: item.id });
           });
         }, Promise.resolve())
         // @ts-ignore
@@ -137,9 +137,20 @@ export const useCvScanner = (searchParams?: {
     }
   }, [filesMemo]);
 
+  const isMoreThanMatchLimit = (
+    userPercentage: string,
+    matchedPercentage: string
+  ) => {
+    return Number(matchedPercentage) >= Number(userPercentage);
+  };
+
+  const handleDelete = async (id: string) => {
+    deleteFile({ id });
+  };
+
   const handleReanalyze = async (
     jobTitle: string,
-    requirements: string,
+    requirement: string,
     percentage: number
   ) => {
     // @ts-ignore
@@ -147,25 +158,44 @@ export const useCvScanner = (searchParams?: {
     setSelectedFile({});
     try {
       setReanalyzeIds([...reanalyzeIds, fileId]);
-      await analyzeCV({ id: fileId, jobTitle, requirements, percentage });
+      await analyzeCV({ id: fileId, jobTitle, requirement, percentage });
     } catch (error) {
     } finally {
       setReanalyzeIds(reanalyzeIds.filter((id) => id !== fileId));
     }
   };
 
+  const { setPrice } = usePricing();
+
+  const handleUpgrade = () => {
+    const subsType = subscriptionType.toUpperCase();
+    // @ts-ignore
+    const price = pricing[subsType];
+    setPrice(price);
+    setPlan(subscriptionType);
+    setQuota(maxFreeCount);
+    onOpen();
+  };
+
+  useEffect(() => {
+    setQuotaLimited(isQuotaLimited);
+  }, [isQuotaLimited]);
+
   return {
     filesMemo,
-    refetchInfiniteFiles,
     isLoading,
     hasNextPage,
     fetchNextPage,
     deletingIds,
     selectedFile,
     setSelectedFile,
-    deleteFile,
+    deleteFile: handleDelete,
     jobTitle,
     reanalyzeIds,
     handleReanalyze,
+    handleUpgrade,
+    isQuotaLimited,
+    isFreeTrialLimited,
+    isMoreThanMatchLimit,
   };
 };
