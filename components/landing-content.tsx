@@ -1,61 +1,40 @@
-"use client";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const testimonials = [
-  {
-    name: "Bima",
-    avatar: "B",
-    title: "Talent Acquisition",
-    description: "Scan hundreds of CVs within minutes, absolutely game changer",
-  },
-  {
-    name: "Rachel",
-    avatar: "R",
-    title: "HeadHunter",
-    description: "This AI Assistant is Saving My Time So Much",
-  },
-  {
-    name: "Muhammad",
-    avatar: "M",
-    title: "HRD",
-    description:
-      "This app has changed my life, say goodbye to the tiring repetitive jobs!",
-  },
-  {
-    name: "Indra",
-    avatar: "I",
-    title: "HRD",
-    description: "Easy to use, super helpful CV scanner",
-  },
-];
+import { ArrowRight } from 'lucide-react';
 
 export const LandingContent = () => {
   return (
-    <div className="px-10 pb-20">
-      <h2 className="text-center text-4xl text-white font-extrabold mb-10">
-        Testimonials
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {testimonials.map((item) => (
-          <Card
-            key={item.description}
-            className="bg-[#192339] border-none text-white"
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center gap-x-2">
-                <div>
-                  <p className="text-lg">{item.name}</p>
-                  <p className="text-zinc-400 text-sm">{item.title}</p>
-                </div>
-              </CardTitle>
-              <CardContent className="pt-4 px-0">
-                {item.description}
-              </CardContent>
-            </CardHeader>
-          </Card>
-        ))}
+    <section className="px-10 pb-20">
+      <h3 className="font-bold text-4xl max-w-[60%] mb-11">
+        Lets see how Berrylabs make your works more efficient
+      </h3>
+      <div className="flex justify-between items-center">
+        <div className="w-[514px] space-y-4">
+          <div className="h-[282px] w-full bg-gray-500">
+            this willbe an image
+          </div>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at
+            magna sit amet urna facilisis ullamcorper. In id velit a leo dictum
+            tincidunt ac vitae dolor. In id velit a leo dictum tincidunt ac
+            vitae dolor. In id velit a leo dictum tincidunt ac vitae dolor.
+          </p>
+        </div>
+        <ArrowRight className="w-16 h-16" />
+        <div className="w-[514px] space-y-4">
+          <div className="h-[282px] w-full bg-gray-500">
+            this willbe an image
+          </div>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at
+            magna sit amet urna facilisis ullamcorper. In id velit a leo dictum
+            tincidunt ac vitae dolor. In id velit a leo dictum tincidunt ac
+            vitae dolor. In id velit a leo dictum tincidunt ac vitae dolor.
+          </p>
+        </div>
       </div>
-    </div>
+
+      <h3 className="font-bold text-4xl max-w-[65%] mt-16">
+        See how different department use Berrylabs!
+      </h3>
+    </section>
   );
 };

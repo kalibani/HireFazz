@@ -10,7 +10,7 @@ export const LandingHero = () => {
   const { isSignedIn } = useAuth();
 
   return (
-    <div className="text-slate-950 font-bold py-36 text-center ">
+    <section className="text-slate-950 font-bold py-36 text-center ">
       <div className="text-4xl sm:text-5xl lg:text-6xl space-y-5 font-extrabold">
         <h1>Say goodbye to repetitive tasks, hello to</h1>
         <div className="text-primary">
@@ -38,6 +38,6 @@ export const LandingHero = () => {
       <div className="text-primary text-base md:text-base font-normal">
         Transform Your Repetitive Tasks into Effortless Actions!
       </div>
-    </div>
+    </section>
   );
 };

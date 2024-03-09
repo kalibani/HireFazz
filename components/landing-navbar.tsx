@@ -23,7 +23,7 @@ export const LandingNavbar = () => {
 
   return (
     <>
-      <nav className="bg-white/10 backdrop-blur-md fixed top-0 w-full right-0">
+      <nav className="bg-white/10 backdrop-blur-md fixed top-0 w-full right-0 z-50">
         <div className="flex items-start justify-between mx-auto max-w-screen-xl py-2 gap-x-4">
           <div className="flex items-start space-x-11 flex-1">
             <Link href="/" className="flex items-center gap-x-4">
