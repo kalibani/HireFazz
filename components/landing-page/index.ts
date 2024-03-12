@@ -1,2 +1,4 @@
 import InfoDepartement from './info-departement';
-export { InfoDepartement };
+import UnlockCard from './unlock-card';
+import Pricing from './pricing';
+export { InfoDepartement, UnlockCard, Pricing };

@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { InfoDepartement } from './landing-page';
+import { InfoDepartement, Pricing, UnlockCard } from './landing-page';
 
 export const LandingContent = () => {
   return (
@@ -43,6 +43,66 @@ export const LandingContent = () => {
         </h3>
         <InfoDepartement />
       </section>
+
+      <section className="px-10 pb-20 mt-16 text-center">
+        <h3 className="font-bold text-4xl  mb-6 ">
+          Unlock the potential of Berrylabs!
+        </h3>
+        <p className="text-2xl">
+          BerryLabs gives you the power to build powerful automations,
+          effortlessly.
+        </p>
+
+        <UnlockCard />
+        <UnlockCard />
+        <UnlockCard />
+        <UnlockCard />
+        <UnlockCard />
+        <UnlockCard />
+      </section>
+
+      <section className="px-10 pb-20 mt-16 text-center">
+        <h3 className="font-bold text-4xl  mb-6 ">Berrylabs Pricing</h3>
+        <p className="text-2xl">
+          Automate Without Breaking the Bank: Affordable Solutions for Every
+          Business.
+        </p>
+
+        <Pricing items={items} />
+      </section>
     </>
   );
 };
+
+const items = [
+  {
+    id: 1,
+    title: 'core features',
+    price: '',
+    benef: ['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4', 'Benefit 5'],
+  },
+  {
+    id: 2,
+    title: 'free',
+    price: 'Rp 0/month',
+    benef: ['Benefit 1', 'Benefit 2', 'no', 'no', 'no'],
+  },
+  {
+    id: 3,
+    title: 'basic',
+    price: 'Rp 299.000/month',
+    benef: ['Benefit 1', 'Benefit 2', 'yes', 'no', 'no'],
+  },
+  {
+    id: 4,
+    title: 'pro',
+    price: 'Rp 590.000/month',
+    benef: ['Benefit 1', 'Benefit 2', 'yes', 'yes', 'no'],
+  },
+  {
+    id: 5,
+    title: 'premium',
+    price: 'Rp 990.000/month',
+    benef: ['Benefit 1', 'Benefit 2', 'yes', 'yes', 'yes'],
+  },
+];
