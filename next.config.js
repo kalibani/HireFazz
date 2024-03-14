@@ -2,9 +2,10 @@
 const nextConfig = {
   images: {
     domains: [
-      "googleusercontent.com",
-      "oaidalleapiprodscus.blob.core.windows.net",
-      "cdn.openai.com",
+      'googleusercontent.com',
+      'oaidalleapiprodscus.blob.core.windows.net',
+      'cdn.openai.com',
+      'lh3.googleusercontent.com',
     ],
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
