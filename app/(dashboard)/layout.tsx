@@ -1,21 +1,21 @@
-import React, { ReactNode } from "react";
-import Navbar from "@/components/navbar";
-import Sidebar from "@/components/sidebar";
-import { getUser } from "@/lib/api-limit";
+import React, { ReactNode } from 'react';
+import Navbar from '@/components/navbar';
+import Sidebar from '@/components/sidebar';
+import { getUser } from '@/lib/api-limit';
 
-import { auth } from "@clerk/nextjs";
-import "react-loading-skeleton/dist/skeleton.css";
-import "simplebar-react/dist/simplebar.min.css";
+import 'react-loading-skeleton/dist/skeleton.css';
+import 'simplebar-react/dist/simplebar.min.css';
+import prismadb from '@/lib/prismadb';
+import { auth } from '@/auth';
 
 type DashboardLayoutProps = {
   children: ReactNode;
 };
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
-  const { userId } = auth();
+  const session = await auth();
   const { count, subscriptionType, maxFreeCount, isUserAgreedTermsOfService } =
-    await getUser(userId!);
-
+    await getUser(session?.user?.id!);
   return (
     <div className="h-full relative">
       <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 bg-gray-900">

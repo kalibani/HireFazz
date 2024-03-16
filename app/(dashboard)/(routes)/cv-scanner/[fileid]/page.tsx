@@ -1,14 +1,13 @@
-import ChatWrapper from "@/components/chat/chat-wrapper";
-import PdfRenderer from "@/components/pdf-renderer";
-import FilesRenderer from "@/components/files-renderer";
-import prismadb from "@/lib/prismadb";
+import ChatWrapper from '@/components/chat/chat-wrapper';
+import PdfRenderer from '@/components/pdf-renderer';
+import FilesRenderer from '@/components/files-renderer';
+import prismadb from '@/lib/prismadb';
 // import { getUserSubscriptionPlan } from "@/lib/stripe";
-import { auth } from "@clerk/nextjs";
-import { notFound, redirect } from "next/navigation";
-import { FileText } from "lucide-react";
+import { notFound, redirect } from 'next/navigation';
+import { FileText } from 'lucide-react';
 
-import Heading from "@/components/headings";
-import { extractExtension } from "@/lib/utils";
+import Heading from '@/components/headings';
+import { extractExtension } from '@/lib/utils';
 
 interface PageProps {
   params: {
@@ -19,12 +18,12 @@ interface PageProps {
 const Page = async ({ params }: PageProps) => {
   const { fileid } = params;
 
-  const { userId } = auth();
+  // const { userId } = auth();
 
   const file = await prismadb.file.findFirst({
     where: {
       id: fileid,
-      userId,
+      // userId,
     },
   });
 
@@ -50,7 +49,7 @@ const Page = async ({ params }: PageProps) => {
           <div className="flex-1 xl:flex">
             <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">
               {/* Main area */}
-              {fileExtension === "pdf" ? (
+              {fileExtension === 'pdf' ? (
                 <PdfRenderer url={file.url} />
               ) : (
                 <FilesRenderer url={file.url} fileExtension={fileExtension!} />

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -7,14 +7,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
+} from './ui/dialog';
 
-import { useState } from "react";
-import { useUser as useSignIn } from "@clerk/nextjs";
-import { Button } from "./ui/button";
-import { useUser } from "@/hooks/use-user";
-import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useUser as useSignIn } from '@clerk/nextjs';
+import { Button } from './ui/button';
+import { useUser } from '@/hooks/use-user';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const ToSModal = () => {
   const { isUserAgreedTermsOfService } = useUser();
@@ -22,7 +22,7 @@ const ToSModal = () => {
   const [isLoading, setLoading] = useState(false);
   const handleClickToS = async () => {
     setLoading(true);
-    const response = await axios.post("/api/update-user-tos", {
+    const response = await axios.post('/api/update-user-tos', {
       isUserAgreedTermsOfService: true,
     });
 
@@ -33,7 +33,7 @@ const ToSModal = () => {
     setLoading(false);
   };
 
-  const { isSignedIn } = useSignIn();
+  // const { isSignedIn } = useSignIn();
 
   const isOpen = false;
 

@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { LoginSchema } from '@/schemas';
-import { useSearchParams } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 import {
   Form,
   FormField,
@@ -21,10 +21,13 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
+import { trpc } from '@/app/_trpc/client';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
+  const callbackUrl: any = searchParams.get('callbackUrl');
+  const { replace } = useRouter();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
       ? 'Email already in use with different provider!'
@@ -34,7 +37,15 @@ const LoginForm = () => {
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
-
+  const { mutate } = trpc.userLogin.useMutation({
+    onSuccess: () => {
+      replace('/dashboard');
+    },
+    onError: (data) => {
+      console.log(data);
+      setError(data.message);
+    },
+  });
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -46,30 +57,17 @@ const LoginForm = () => {
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError('');
     setSuccess('');
-    // startTransition(() => {
-    // login(values, callbackUrl)
-    //   .then((data) => {
-    //     if (data?.error) {
-    //       form.reset();
-    //       setError(data.error);
-    //     }
-    //     if (data?.success) {
-    //       form.reset();
-    //       setSuccess(data.success);
-    //     }
-    //     if (data?.twoFactor) {
-    //       setShowTwoFactor(true);
-    //     }
-    //   })
-    //   .catch(() => setError('Something went wrong'));
-    // });
+    const payload = { ...values, callbackUrl };
+    startTransition(() => {
+      mutate(values);
+    });
   };
 
   return (
     <CardWrapper
       headerLabel="Welcome back"
       backButtonLabel="Don't have an account?"
-      backButtonHref="/register"
+      backButtonHref="/auth/register"
       showSocial
     >
       <Form {...form}>
