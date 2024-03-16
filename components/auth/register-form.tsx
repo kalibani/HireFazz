@@ -19,15 +19,21 @@ import { CardWrapper } from '@/components/auth';
 import { Button } from '@/components/ui/button';
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
-// import { FormError } from "@/components/form-error";
-// import { FormSuccess } from "@/components/form-success";
-// import { register } from "@/actions/register";
+import { trpc } from '@/app/_trpc/client';
+import { Loader2 } from 'lucide-react';
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
-
+  const { mutate } = trpc.userRegister.useMutation({
+    onSuccess: () => {
+      setSuccess('Email Created');
+    },
+    onError: (data) => {
+      setError(data.message);
+    },
+  });
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -42,11 +48,7 @@ export const RegisterForm = () => {
     setSuccess('');
 
     startTransition(() => {
-      // register(values)
-      //   .then((data) => {
-      //     setError(data.error);
-      //     setSuccess(data.success);
-      //   });
+      mutate(values);
     });
   };
 
@@ -54,7 +56,7 @@ export const RegisterForm = () => {
     <CardWrapper
       headerLabel="Create an account"
       backButtonLabel="Already have an account?"
-      backButtonHref="/login"
+      backButtonHref="/auth/login"
       showSocial
     >
       <Form {...form}>
@@ -117,7 +119,7 @@ export const RegisterForm = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            Create an account
+            {isPending ? '...loading' : 'Create an account'}
           </Button>
         </form>
       </Form>

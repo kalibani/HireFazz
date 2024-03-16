@@ -3,10 +3,18 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
+
+
+// datasource db {
+//   provider     = "mysql"
+//   url          = env("DATABASE_URL")
+//   relationMode = "prisma"
+// }
 
 enum SubscriptionType {
   FREE
@@ -21,17 +29,60 @@ enum UserRole {
   USER
 }
 
+enum PACKAGE_TYPE {
+  BASIC
+  PRO
+  PREMIUM
+}
+
+
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  role          UserRole  @default(USER)
-  // accounts      Account[]
-  // isTwoFactorEnabled Boolean @default(false)
-  // twoFactorConfirmation TwoFactorConfirmation?
+  id               String           @id @default(cuid())
+  name             String?
+  email            String?          @unique
+  password         String?
+  isEmailVerified  Boolean          @default(false)
+  secretIv         String?
+  organizationId   String?
+  userOrganizations UserOrganization[]
+
+  Organization     Organization?    @relation(fields: [organizationId], references: [id])
+  @@index([organizationId]) // Add index to organizationId field
+
+}
+model Role {
+  id               String             @id @unique @default(cuid())
+  name             String
+  permissions      Json
+  userOrganizations UserOrganization[]
+}
+
+
+model Organization {
+  id                    String             @id @unique @default(cuid())
+  name                  String
+  packageType           PACKAGE_TYPE
+  limit                 Int
+  used                  Int
+  agreeTermAndCondition Boolean            @default(false)
+  users                 User[]
+  userOrganizations      UserOrganization[]
+
+}
+
+model UserOrganization {
+  id             String       @id @unique @default(cuid())
+  userId         String
+  organizationId String
+  roleId         String
+
+  user           User         @relation(fields: [userId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  role           Role         @relation(fields: [roleId], references: [id])
+  @@index([userId]) // Add index to userId field
+  @@index([organizationId]) // Add index to organizationId field
+  @@index([roleId]) // Add index to role field
+
 }
 
 model userAPILimit {

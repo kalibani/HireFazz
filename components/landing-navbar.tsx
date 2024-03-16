@@ -3,7 +3,6 @@
 import { Montserrat } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuth } from '@clerk/nextjs';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -30,7 +29,7 @@ export const LandingNavbar = () => {
         </h1>
       </Link>
       <div className="flex items-center gap-x-2">
-        <Link href={'/login'}>
+        <Link href={'/auth/login'}>
           <Button variant="outline" className="rounded-full">
             Get Started
           </Button>

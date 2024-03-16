@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { FileText, Loader2 } from 'lucide-react';
 import Heading from '@/components/headings';
 import axios from 'axios';
@@ -12,7 +12,6 @@ import LoaderGeneral from '@/components/loader';
 import { useProModal } from '@/hooks/use-pro-modal';
 import { trpc } from '@/app/_trpc/client';
 import { useUser } from '@/hooks/use-user';
-import { useAnalyzer } from '@/hooks/use-analyzer';
 
 import { ReanalyzeModal } from '@/components/reanalyze-modal';
 import { usePricing } from '@/hooks/use-pricing';

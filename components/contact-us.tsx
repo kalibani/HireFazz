@@ -1,11 +1,10 @@
-"use client";
-import { FormEvent, useState, useEffect, useRef } from "react";
-import { Mail, MessagesSquare } from "lucide-react";
-import emailjs from "@emailjs/browser";
-import toast, { Toaster } from "react-hot-toast";
-import { useUser } from "@clerk/nextjs";
-import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
+'use client';
+import { FormEvent, useState, useEffect, useRef } from 'react';
+import { Mail, MessagesSquare } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+import toast, { Toaster } from 'react-hot-toast';
+import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
 
 function Contact() {
   const [isMobile, setIsMobile] = useState(false);
@@ -14,20 +13,20 @@ function Contact() {
     setIsMobile(isMobile);
   }, []);
   const form = useRef();
-  const submitNotification = (error = "", toastHandler = toast) => {
+  const submitNotification = (error = '', toastHandler = toast) => {
     if (error) {
       toastHandler.error(`Failed to sent message: ${error}`, {
         style: {
-          background: "#eb4034",
-          color: "#fff",
+          background: '#eb4034',
+          color: '#fff',
           maxWidth: 500,
         },
       });
     } else {
       toastHandler.success(`Successfully sent message`, {
         style: {
-          background: "#04111d",
-          color: "#fff",
+          background: '#04111d',
+          color: '#fff',
         },
       });
     }
@@ -56,15 +55,14 @@ function Contact() {
         e.target.reset();
       });
   };
-  const { isSignedIn } = useUser();
 
   return (
     <section className="py-10 sm:pt-16 md:pt-16 text-white" id="contact">
       <Toaster position="top-right" reverseOrder={false} />
       <h5
-        className={cn("text-center text-4xl font-extrabold mb-10", {
-          "text-white": !isSignedIn,
-          "text-[#192339]": isSignedIn,
+        className={cn('text-center text-4xl font-extrabold mb-10', {
+          // 'text-white': !isSignedIn,
+          // 'text-[#192339]': isSignedIn,
         })}
       >
         Get in Touch
@@ -102,8 +100,8 @@ function Contact() {
             <a
               href={
                 isMobile
-                  ? "https://api.whatsapp.com/send?phone=+6282126753060"
-                  : "https://web.whatsapp.com/send?phone=+6282126753060"
+                  ? 'https://api.whatsapp.com/send?phone=+6282126753060'
+                  : 'https://web.whatsapp.com/send?phone=+6282126753060'
               }
               target="_blank"
               className="text-[#4db5ff] transition delay-150 duration-300 ease-in-out hover:text-white mt-3 inline-block text-xs"
@@ -120,9 +118,9 @@ function Contact() {
         >
           <input
             className={cn(
-              "w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none",
+              'w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none',
               {
-                "text-[#192339]": isSignedIn,
+                // 'text-[#192339]': isSignedIn,
               }
             )}
             type="text"
@@ -132,9 +130,9 @@ function Contact() {
           />
           <input
             className={cn(
-              "w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none",
+              'w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none',
               {
-                "text-[#192339]": isSignedIn,
+                // 'text-[#192339]': isSignedIn,
               }
             )}
             type="email"
@@ -148,9 +146,9 @@ function Contact() {
             placeholder="Your Message"
             required
             className={cn(
-              "w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none",
+              'w-full p-6 rounded-lg bg-[transparent] border-[2px] border-solid border-[#4db5ff66] focus:outline-none  focus:border-primary resize-none',
               {
-                "text-[#192339]": isSignedIn,
+                // 'text-[#192339]': isSignedIn,
               }
             )}
           ></textarea>
