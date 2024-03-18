@@ -6,8 +6,15 @@
 export const publicRoutes = ['/', '/auth/new-verification'];
 
 /**
+ * An array of routes that are accessible to the public
+ * These routes open api
+ * @type {string[]}
+ */
+export const openApi: string[] = ['/api/uploadthing', '/api/load-multiples'];
+
+/**
  * An array of routes that are used for authentication
- * These routes will redirect logged in users to /settings
+ * These routes will redirect logged in users to /dashboard
  * @type {string[]}
  */
 export const authRoutes = [

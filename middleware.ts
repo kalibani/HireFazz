@@ -5,6 +5,7 @@ import {
   apiAuthPrefix,
   apiAuthPrefix2,
   authRoutes,
+  openApi,
   publicRoutes,
 } from '@/routes';
 
@@ -18,8 +19,9 @@ export default auth((req): any => {
   const isApiAuthRoute2 = nextUrl.pathname.startsWith(apiAuthPrefix2);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const isOpenApi = openApi.includes(nextUrl.pathname);
 
-  if (isApiAuthRoute || isApiAuthRoute2) {
+  if (isApiAuthRoute || isApiAuthRoute2 || isOpenApi) {
     return null;
   }
   if (isAuthRoute || isPublicRoute) {
