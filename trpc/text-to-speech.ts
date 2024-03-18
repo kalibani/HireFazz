@@ -1,7 +1,7 @@
-import { privateProcedure } from "./trpc";
-import { z } from "zod";
-import { TRPCError } from "@trpc/server";
-import prismadb from "@/lib/prismadb";
+import { privateProcedure } from './trpc';
+import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
+import prismadb from '@/lib/prismadb';
 
 const TextToSpeech = {
   // save history
@@ -33,7 +33,7 @@ const TextToSpeech = {
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
 
-      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       const generatedVoice = await prismadb.generatedVoices.create({
         data: {
@@ -93,7 +93,7 @@ const TextToSpeech = {
             isPaid,
           },
           orderBy: {
-            dateUnix: "desc",
+            dateUnix: 'desc',
           },
           select: {
             id: true,
@@ -123,7 +123,7 @@ const TextToSpeech = {
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
 
-      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       const generatedVoice = await prismadb.generatedVoices.deleteMany({
         where: {
@@ -147,9 +147,9 @@ const TextToSpeech = {
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
 
-      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
-      if (!input.historyItemId) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!input.historyItemId) throw new TRPCError({ code: 'NOT_FOUND' });
 
       const generatedVoice = await prismadb.generatedVoices.findFirst({
         where: {
@@ -166,7 +166,7 @@ const TextToSpeech = {
         });
         return { updatedVoice };
       } else {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new TRPCError({ code: 'NOT_FOUND' });
       }
     }),
 
@@ -179,9 +179,9 @@ const TextToSpeech = {
     .query(async ({ ctx, input }) => {
       const { userId } = ctx;
 
-      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
-      if (!input.historyItemId) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!input.historyItemId) throw new TRPCError({ code: 'NOT_FOUND' });
 
       const generatedVoice = await prismadb.generatedVoices.findFirst({
         where: {
@@ -192,7 +192,7 @@ const TextToSpeech = {
       if (generatedVoice) {
         return { generatedVoice };
       } else {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new TRPCError({ code: 'NOT_FOUND' });
       }
     }),
 };

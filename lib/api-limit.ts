@@ -1,6 +1,6 @@
-import prismadb from "./prismadb";
+import prismadb from './prismadb';
 
-import { MAX_FREE_COUNTS } from "@/constant";
+import { MAX_FREE_COUNTS } from '@/constant';
 
 export const increaseApiLimit = async (userId: string) => {
   if (!userId) {
@@ -52,11 +52,11 @@ export const getUser = async (userId: string) => {
     },
   });
 
-  if (!user) {
+  if (!user || !userId) {
     return {
       count: 0,
       characterCount: 0,
-      subscriptionType: "FREE",
+      subscriptionType: 'FREE',
       maxFreeCount: MAX_FREE_COUNTS,
       isUserAgreedTermsOfService: false,
     };

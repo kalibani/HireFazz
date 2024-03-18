@@ -26,6 +26,9 @@ import {
   updateUserSubscription,
   userRegister,
   userLogin,
+  userNewVerification,
+  userResetPassword,
+  userNewPassword,
 } from './user';
 
 export const appRouter = router({
@@ -97,6 +100,9 @@ export const appRouter = router({
   getGeneratedVoice: getGeneratedVoice,
   userRegister: userRegister,
   userLogin: userLogin,
+  userNewVerification: userNewVerification,
+  userResetPassword: userResetPassword,
+  userNewPassword: userNewPassword,
 });
 // Export type router type signature,
 // NOT the router itself.

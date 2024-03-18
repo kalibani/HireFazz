@@ -4,23 +4,11 @@ import { ArrowRight } from 'lucide-react';
 
 import { tools } from '@/constant';
 import Link from 'next/link';
-import { auth, signOut } from '@/auth';
-import { useCurrentUser } from '@/hooks/use-current-user';
 
 const DashboardPage = async () => {
-  const session = await auth();
   return (
     <div>
       <div className="mb-4 space-y-4">
-        <form
-          action={async () => {
-            'use server';
-            await signOut();
-          }}
-        >
-          <button>Signout</button>
-          <p>{JSON.stringify(session?.user)}</p>
-        </form>
         <h2 className="text-2xl md:text-4xl font-bold text-center">
           Explore the power of AI
         </h2>

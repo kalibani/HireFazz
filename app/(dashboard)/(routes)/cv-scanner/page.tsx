@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { FileText, Loader2 } from 'lucide-react';
 import Heading from '@/components/headings';
-import axios from 'axios';
+
 import { Button } from '@/components/ui/button';
 import UploadButton from '@/components/upload-button';
 
@@ -20,9 +20,13 @@ import CardCvscanner from '@/components/card-cvscanner';
 import SearchInput from '@/components/search-input';
 import { SearchParamsProps } from '@/types/types';
 import { useCvScanner } from '@/hooks/use-cvScanner';
+import { auth } from '@/auth';
+import { currentUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
   const { apiLimitCount, onOpen } = useProModal();
+
   const { subscriptionType, maxFreeCount, setPlan, setQuota, setQuotaLimited } =
     useUser();
   const utils = trpc.useUtils();

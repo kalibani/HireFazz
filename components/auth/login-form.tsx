@@ -38,8 +38,9 @@ const LoginForm = () => {
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
   const { mutate } = trpc.userLogin.useMutation({
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       replace('/dashboard');
+      setSuccess(data?.success);
     },
     onError: (data) => {
       console.log(data);
@@ -59,7 +60,7 @@ const LoginForm = () => {
     setSuccess('');
     const payload = { ...values, callbackUrl };
     startTransition(() => {
-      mutate(values);
+      mutate(payload);
     });
   };
 

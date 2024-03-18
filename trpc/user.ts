@@ -1,14 +1,26 @@
-import { privateProcedure } from './trpc';
+import { privateProcedure, publicProcedure } from './trpc';
 import { z } from 'zod';
 import { signIn } from '@/auth';
 import { TRPCError } from '@trpc/server';
 import prismadb from '@/lib/prismadb';
 import { increaseApiLimit } from '@/lib/api-limit';
-import { LoginSchema, RegisterSchema } from '@/schemas';
+import {
+  LoginSchema,
+  NewPasswordSchema,
+  RegisterSchema,
+  ResetSchema,
+} from '@/schemas';
 import bcrypt from 'bcryptjs';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
-import { getUserByEmail } from '@/lib/data';
+import {
+  getUserByEmail,
+  newPassword,
+  newVerification,
+  reset,
+} from '@/lib/data';
+import { generateVerificationToken } from '@/lib/tokens';
+import { sendVerificationEmail } from '@/lib/mail';
 
 const user = {
   // get history
@@ -77,7 +89,7 @@ const user = {
 
   // delete history
 
-  userRegister: privateProcedure
+  userRegister: publicProcedure
     .input(RegisterSchema)
     .mutation(async ({ ctx, input }) => {
       const validatedField = RegisterSchema.safeParse(input);
@@ -99,7 +111,6 @@ const user = {
           message: 'Email already in use!',
         });
       }
-      console.log({ name, email, password });
       await prismadb.user.create({
         data: {
           email,
@@ -107,10 +118,17 @@ const user = {
           name,
         },
       });
-      return { succes: 'User created' };
+
+      const verificationToken = await generateVerificationToken(email);
+      await sendVerificationEmail(
+        verificationToken.email,
+        verificationToken.token
+      );
+
+      return { success: 'Confirmation email sent!' };
     }),
 
-  userLogin: privateProcedure
+  userLogin: publicProcedure
     .input(LoginSchema)
     .mutation(async ({ ctx, input }) => {
       const validatedField = LoginSchema.safeParse(input);
@@ -123,6 +141,27 @@ const user = {
       }
 
       const { email, password, code, callbackUrl } = validatedField.data;
+      const existingUser = await getUserByEmail(email);
+
+      if (!existingUser || !existingUser.email || !existingUser.password) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Email does not exist!',
+        });
+      }
+
+      if (!existingUser.emailVerified) {
+        const verificationToken = await generateVerificationToken(
+          existingUser.email
+        );
+
+        await sendVerificationEmail(
+          verificationToken.email,
+          verificationToken.token
+        );
+
+        return { success: 'Verify your email first. Confirmation email sent!' };
+      }
 
       try {
         const existingUser = await getUserByEmail(email);
@@ -136,6 +175,7 @@ const user = {
         await signIn('credentials', {
           email,
           password,
+          redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
         });
       } catch (error) {
         if (error instanceof AuthError) {
@@ -153,6 +193,29 @@ const user = {
         }
       }
     }),
+
+  userNewVerification: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { token } = input;
+      await newVerification(token);
+    }),
+
+  userResetPassword: publicProcedure
+    .input(ResetSchema)
+    .mutation(async ({ ctx, input }) => {
+      reset(input);
+    }),
+
+  userNewPassword: publicProcedure
+    .input(NewPasswordSchema)
+    .mutation(async ({ ctx, input }) => {
+      await newPassword(input);
+    }),
 };
 
 export const {
@@ -161,4 +224,7 @@ export const {
   updateUserSubscription,
   userRegister,
   userLogin,
+  userNewVerification,
+  userResetPassword,
+  userNewPassword,
 } = user;

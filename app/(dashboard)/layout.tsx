@@ -5,17 +5,17 @@ import { getUser } from '@/lib/api-limit';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'simplebar-react/dist/simplebar.min.css';
-import prismadb from '@/lib/prismadb';
-import { auth } from '@/auth';
+import { currentUser } from '@/lib/auth';
 
 type DashboardLayoutProps = {
   children: ReactNode;
 };
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
-  const session = await auth();
+  const user = await currentUser();
+
   const { count, subscriptionType, maxFreeCount, isUserAgreedTermsOfService } =
-    await getUser(session?.user?.id!);
+    await getUser(user?.id!);
   return (
     <div className="h-full relative">
       <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 bg-gray-900">
