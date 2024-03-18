@@ -1,3 +1,4 @@
+import { currentUser } from './auth';
 import prismadb from './prismadb';
 
 import { MAX_FREE_COUNTS } from '@/constant';
@@ -45,14 +46,16 @@ export const checkApiLimit = async (userId: string) => {
   }
 };
 
-export const getUser = async (userId: string) => {
+export const getUser = async () => {
+  const current = await currentUser();
+
   const user = await prismadb.userAPILimit.findUnique({
     where: {
-      userId: userId,
+      userId: current?.id,
     },
   });
 
-  if (!user || !userId) {
+  if (!user) {
     return {
       count: 0,
       characterCount: 0,

@@ -15,7 +15,7 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
   const user = await currentUser();
 
   const { count, subscriptionType, maxFreeCount, isUserAgreedTermsOfService } =
-    await getUser(user?.id!);
+    await getUser();
   return (
     <div className="h-full relative">
       <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 bg-gray-900">
