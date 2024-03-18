@@ -1,5 +1,4 @@
-import { auth } from '@/auth';
-import { useCurrentUser } from '@/hooks/use-current-user';
+import { currentUser } from '@/lib/auth';
 import { initTRPC } from '@trpc/server';
 // import { auth } from '@clerk/nextjs';
 
@@ -12,13 +11,10 @@ const t = initTRPC.create();
 const middleware = t.middleware;
 
 const isAuth = middleware(async (opts) => {
-  const session = await auth();
-  // const { userId } = useCurrentUser();
-  const user = session?.user;
+  const user = await currentUser();
   if (!user?.id) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
-
   return opts.next({
     ctx: {
       userId: user?.id,

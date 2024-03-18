@@ -1,11 +1,12 @@
 import { getUser } from '@/lib/api-limit';
 import MobileSidebar from './mobile-sidebar';
-import { auth } from '@/auth';
+import { currentUser } from '@/lib/auth';
+import { UserButton } from '@/components/auth';
 
 const Navbar = async () => {
-  const session = await auth();
+  const user = await currentUser();
   const { count, subscriptionType, isUserAgreedTermsOfService, maxFreeCount } =
-    await getUser(session?.user?.id!);
+    await getUser(user?.id!);
   return (
     <div className=" flex items-center p-4">
       <MobileSidebar>
@@ -17,8 +18,7 @@ const Navbar = async () => {
         />
       </MobileSidebar>
       <div className="flex w-full justify-end">
-        {/* <UserButton afterSignOutUrl="/" /> */}
-        <p>{session?.user?.name}</p>
+        <UserButton />
       </div>
     </div>
   );

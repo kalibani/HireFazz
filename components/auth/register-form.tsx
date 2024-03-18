@@ -27,8 +27,8 @@ export const RegisterForm = () => {
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
   const { mutate } = trpc.userRegister.useMutation({
-    onSuccess: () => {
-      setSuccess('Email Created');
+    onSuccess: (data) => {
+      setSuccess(data?.success);
     },
     onError: (data) => {
       setError(data.message);

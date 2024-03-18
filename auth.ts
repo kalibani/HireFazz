@@ -10,45 +10,50 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  pages: { signIn: '/auth/login' },
+  pages: { signIn: '/auth/login', error: '/auth/error' },
+  events: {
+    async linkAccount({ user }) {
+      await prismadb.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
   callbacks: {
     async signIn({ user, account }) {
       // Allow OAuth without email verification
       if (account?.provider !== 'credentials') return true;
-      const existingUser = await getUserById(user.id);
-      // Prevent sign in without email verification
-      // if (!existingUser?.isEmailVerified) return false;
 
-      // if (existingUser.isTwoFactorEnabled) {
-      //   const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
-      //     existingUser.id
-      //   );
-      //   if (!twoFactorConfirmation) return false;
-      //   // Delete two factor confirmation for next sign in
-      //   await db.twoFactorConfirmation.delete({
-      //     where: { id: twoFactorConfirmation.id },
-      //   });
-      // }
-      console.log(existingUser?.isEmailVerified);
+      const existingUser = await getUserById(user.id!);
+
+      // Prevent sign in without email verification
+      if (!existingUser?.emailVerified) return false;
+
       return true;
     },
-    async jwt({ token }) {
-      return token;
-    },
+
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
-        // session.user.role = token.role as UserRole;
-        // session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-        session.user.name = token.name;
-        // session.user.email = token.email;
-        // session.user.isOAuth = token.isOAuth as boolean;
       }
-      console.log({ session });
+
+      if (session.user) {
+        session.user.name = token.name;
+      }
       return session;
     },
+
+    async jwt({ token }) {
+      if (!token.sub) return token;
+      // const existingUser = await getUserById(token.sub.toString());
+      // if (!existingUser) return token;
+
+      return token;
+    },
   },
+
   adapter: PrismaAdapter(prismadb),
-  session: { strategy: 'jwt' },
   ...authConfig,
+  debug: process.env.NODE_ENV === 'development',
+  session: { strategy: 'jwt' },
 });
