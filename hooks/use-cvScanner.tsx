@@ -65,7 +65,7 @@ export const useCvScanner = (searchParams?: {
     }
 
     return allFiles;
-  }, [filesInfinite?.pages, queryParams]);
+  }, [filesInfinite?.pages, queryParams.q]);
 
   const utils = trpc.useUtils();
 
@@ -119,27 +119,24 @@ export const useCvScanner = (searchParams?: {
       filesInfinite?.pages.reduce((acc, el) => {
         return [...acc, ...el.items];
       }, []) || [];
+
     // @ts-ignore
-    if (allFiles.length) {
-      allFiles
-        // @ts-ignore
-        .reduce((acc, item) => {
-          return acc.then(() => {
-            if (item.reportOfAnalysis) {
-              return;
-            }
-            if (idsOnAnalyze.current.includes(item.id)) {
-              return Promise.resolve();
-            }
-            return analyzeCV({ id: item.id });
-          });
-        }, Promise.resolve())
-        // @ts-ignore
-        .then((res) => {})
-        .catch((err: any) => {
-          console.log(err);
+    const filesToAnalyze = allFiles.filter(
+      (item: any) => !item.reportOfAnalysis
+    );
+
+    filesToAnalyze
+      // @ts-ignore
+      .reduce((acc, item) => {
+        return acc.then(() => {
+          return analyzeCV({ id: item.id });
         });
-    }
+      }, Promise.resolve())
+      // @ts-ignore
+      .then((res) => {})
+      .catch((err: any) => {
+        console.log(err);
+      });
   }, [filesInfinite?.pages]);
 
   const handleReanalyze = async (

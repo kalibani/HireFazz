@@ -12,12 +12,12 @@ import { cn } from '@/lib/utils';
 
 import { ArrowRight, Check, HelpCircle, Minus, Asterisk } from 'lucide-react';
 import Link from 'next/link';
-import { auth } from '@clerk/nextjs';
 import { getUser } from '@/lib/api-limit';
+import { currentUser } from '@/lib/auth';
 
 const Page = async () => {
-  const { userId } = auth();
-  const { subscriptionType, maxFreeCount, count } = await getUser(userId!);
+  const user = await currentUser();
+  const { subscriptionType, maxFreeCount, count } = await getUser();
 
   const pricingItems = [
     {
@@ -249,16 +249,16 @@ const Page = async () => {
                     {subscriptionType?.toLowerCase() === plan.toLowerCase() &&
                     maxFreeCount! > count ? (
                       <Link
-                        href={userId ? '/dashboard' : '/sign-in'}
+                        href={user?.id ? '/dashboard' : '/sign-in'}
                         className={buttonVariants({
                           className: 'w-full',
                           variant: 'secondary',
                         })}
                       >
-                        {userId ? 'Start Generating' : 'Sign up'}
+                        {user?.id ? 'Start Generating' : 'Sign up'}
                         <ArrowRight className="h-5 w-5 ml-1.5" />
                       </Link>
-                    ) : userId ? (
+                    ) : user?.id ? (
                       <UpgradeButton plan={plan} price={price} quota={quota} />
                     ) : (
                       <Link
@@ -267,7 +267,7 @@ const Page = async () => {
                           className: 'w-full',
                         })}
                       >
-                        {userId ? 'Upgrade now' : 'Sign up'}
+                        {user?.id ? 'Upgrade now' : 'Sign up'}
                         <ArrowRight className="h-5 w-5 ml-1.5" />
                       </Link>
                     )}
