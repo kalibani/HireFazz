@@ -1,33 +1,21 @@
-"use client";
+// 'use client';
 
-import { useEffect, useState } from "react";
-import { Menu } from "lucide-react";
-import { Button } from "./ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import Sidebar from "./sidebar";
+// import { useEffect, useState } from 'react';
+import { Menu } from 'lucide-react';
+import { Button } from './ui/button';
+import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 
-type MobileSidebarProps = {
-  apiLimitCount: number;
-  subscriptionType: string;
-  isUserAgreedTermsOfService: boolean;
-  maxFreeCount: number | null;
-};
+const MobileSidebar = ({ children }: { children: React.ReactNode }) => {
+  // const [isMounted, setIsMounted] = useState(false);
 
-const MobileSidebar = ({
-  apiLimitCount = 0,
-  subscriptionType,
-  isUserAgreedTermsOfService,
-  maxFreeCount,
-}: MobileSidebarProps) => {
-  const [isMounted, setIsMounted] = useState(false);
+  // useEffect(() => {
+  //   setIsMounted(true);
+  // }, []);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  // if (!isMounted) {
+  //   return null;
+  // }
 
-  if (!isMounted) {
-    return null;
-  }
   return (
     <Sheet>
       <SheetTrigger>
@@ -36,12 +24,7 @@ const MobileSidebar = ({
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0">
-        <Sidebar
-          apiLimitCount={apiLimitCount}
-          subscriptionType={subscriptionType}
-          isUserAgreedTermsOfService={isUserAgreedTermsOfService}
-          maxFreeCount={maxFreeCount}
-        />
+        {children}
       </SheetContent>
     </Sheet>
   );
