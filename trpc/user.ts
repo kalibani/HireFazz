@@ -150,18 +150,19 @@ const user = {
         });
       }
 
-      if (!existingUser.emailVerified) {
-        const verificationToken = await generateVerificationToken(
-          existingUser.email
-        );
+      // check if have emailVerified first
+      // if (!existingUser.emailVerified) {
+      //   const verificationToken = await generateVerificationToken(
+      //     existingUser.email
+      //   );
 
-        await sendVerificationEmail(
-          verificationToken.email,
-          verificationToken.token
-        );
+      //   await sendVerificationEmail(
+      //     verificationToken.email,
+      //     verificationToken.token
+      //   );
 
-        return { success: 'Verify your email first. Confirmation email sent!' };
-      }
+      //   return { success: 'Verify your email first. Confirmation email sent!' };
+      // }
 
       try {
         const existingUser = await getUserByEmail(email);
@@ -208,7 +209,7 @@ const user = {
   userResetPassword: publicProcedure
     .input(ResetSchema)
     .mutation(async ({ ctx, input }) => {
-      reset(input);
+      await reset(input);
     }),
 
   userNewPassword: publicProcedure

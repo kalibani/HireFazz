@@ -1,5 +1,4 @@
 import Google from 'next-auth/providers/google';
-import GitHub from 'next-auth/providers/github';
 
 import bcrypt from 'bcryptjs';
 import Credentials from 'next-auth/providers/credentials';
