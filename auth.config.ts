@@ -12,6 +12,15 @@ export default {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      account: (account) => {
+        return {
+          accessToken: account.access_token,
+          expiresAt: account.expires_at,
+          refreshToken: account.refresh_token,
+          tokenType: account.token_type,
+          idToken: account.id_token,
+        };
+      },
     }),
     Credentials({
       async authorize(credentials) {
