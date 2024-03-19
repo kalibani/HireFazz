@@ -21,6 +21,7 @@ import {
 } from '@/lib/data';
 import { generateVerificationToken } from '@/lib/tokens';
 import { sendVerificationEmail } from '@/lib/mail';
+import { PACKAGE_TYPE } from '@prisma/client';
 
 const user = {
   // get history
@@ -99,7 +100,6 @@ const user = {
           message: 'Error field!',
         });
       }
-
       const { email, password, name } = validatedField.data;
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -116,14 +116,24 @@ const user = {
           email,
           password: hashedPassword,
           name,
+          Organization: {
+            create: {
+              name: '',
+              limit: 100,
+              used: 0,
+              agreeTermAndCondition: true,
+              packageType: PACKAGE_TYPE.BASIC,
+            },
+          },
         },
       });
+      // nnti lngsung sign.in
 
-      const verificationToken = await generateVerificationToken(email);
-      await sendVerificationEmail(
-        verificationToken.email,
-        verificationToken.token
-      );
+      // const verificationToken = await generateVerificationToken(email);
+      // await sendVerificationEmail(
+      //   verificationToken.email,
+      //   verificationToken.token
+      // );
 
       return { success: 'Confirmation email sent!' };
     }),

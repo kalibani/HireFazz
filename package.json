@@ -55,6 +55,7 @@
     "eslint": "8.45.0",
     "eslint-config-next": "^14.1.3",
     "immer": "^10.0.3",
+    "jsonwebtoken": "^9.0.2",
     "langchain": "^0.0.200",
     "lucide-react": "^0.334.0",
     "mammoth": "^1.6.0",
@@ -94,6 +95,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/papaparse": "^5.3.14",
     "@types/pdf-parse": "^1.1.4",
     "prisma": "^5.11.0"

@@ -5,11 +5,11 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { sendPasswordResetEmail } from '../mail';
 import bcrypt from 'bcryptjs';
+import { currentUser } from '../auth';
 
 export const getUserByEmail = async (email: string) => {
   try {
     const user = await prismadb.user.findUnique({ where: { email } });
-
     return user;
   } catch {
     return null;

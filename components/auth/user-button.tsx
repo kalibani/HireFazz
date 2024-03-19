@@ -1,6 +1,5 @@
 'use client';
 
-import { signOut } from '@/auth';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -33,7 +32,7 @@ const UserButton = () => {
       <DropdownMenuContent className="w-40" align="end">
         <span onClick={onClick} className="cursor-pointer">
           <DropdownMenuItem>
-            <ExitIcon className="h-4 w-4 mr-2" />
+            <ExitIcon className="w-4 h-4 mr-2" />
             Logout
           </DropdownMenuItem>
         </span>
