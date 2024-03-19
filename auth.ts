@@ -3,6 +3,7 @@ import authConfig from './auth.config';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prismadb from './lib/prismadb';
 import { getUserById } from './lib/data';
+import jwt from 'jsonwebtoken';
 
 export const {
   handlers: { GET, POST },
@@ -10,6 +11,29 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  // jwt: {
+  //   async encode({ token, secret }) {
+  //     const data = await prismadb.user.findUnique({
+  //       where: { email: token?.email || '' },
+  //     });
+  //     const secretJwt = Array.isArray(secret) ? secret[0] : secret;
+  //     const encodedToken = jwt.sign(
+  //       { ...token, orgId: data?.organizationId },
+  //       secretJwt,
+  //       {
+  //         algorithm: 'HS512',
+  //       }
+  //     );
+
+  //     return encodedToken;
+  //   },
+  //   decode: async ({ secret, token }) => {
+  //     const secretJwt = Array.isArray(secret) ? secret[0] : secret;
+  //     const verify = jwt.verify(token || '', secretJwt);
+
+  //     return verify;
+  //   },
+  // },
   pages: { signIn: '/auth/login', error: '/auth/error' },
   events: {
     async linkAccount({ user, account, profile }) {
@@ -23,7 +47,6 @@ export const {
     async signIn({ user, account, credentials, profile }) {
       // Allow OAuth without email verification
       if (account?.provider !== 'credentials') return true;
-
       // Prevent sign in without email verification
       // const existingUser = await getUserById(user.id!);
       // if (!existingUser?.emailVerified) return false;
@@ -35,7 +58,6 @@ export const {
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
-
       if (session.user) {
         session.user.name = token.name;
       }
