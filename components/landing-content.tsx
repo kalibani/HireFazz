@@ -1,108 +1,104 @@
-import { ArrowRight } from 'lucide-react';
-import { InfoDepartement, Pricing, UnlockCard } from './landing-page';
+import Image from 'next/image';
+import {
+  CardDiscover,
+  InfoDepartement,
+  Pricing,
+  UnlockCard,
+  WrapperSection,
+} from './landing-page';
+import chatImage from '@/public/image/work-chat.png';
+import {
+  pricing,
+  discoverContent,
+  discoverContentRight,
+  unlockContent,
+} from '@/constant';
 
 export const LandingContent = () => {
   return (
     <>
-      <section className="px-10 pb-20">
-        <h3 className="font-bold text-4xl max-w-[60%] mb-11">
-          Lets see how Berrylabs make your works more efficient
-        </h3>
-        <div className="flex justify-between items-center">
-          <div className="w-[514px] space-y-4">
-            <div className="h-[282px] w-full bg-gray-500">
-              this willbe an image
+      <div className=" bg-[#F7FAFC] ">
+        <WrapperSection className="justify-centerpx-16 flex flex-col items-center py-14">
+          <h3 className="mb-11 text-center text-4xl font-bold">
+            Discover how Berrylabs can enhance your work efficiency.
+          </h3>
+          <div className="relative mt-28 flex h-[500px] w-full items-center justify-center">
+            <div className="relative z-10 flex w-full justify-between">
+              <div className="space-y-4 text-left">
+                <h3 className="mb-9 text-3xl font-bold text-primary">
+                  Without Berrylabs
+                </h3>
+                {discoverContent.map((item) => (
+                  <CardDiscover
+                    key={item.title}
+                    title={item.title}
+                    description={item.desc}
+                  />
+                ))}
+              </div>
+              <div className="space-y-4 text-right">
+                <h3 className="mb-9 text-3xl font-bold text-primary">
+                  With Berrylabs
+                </h3>
+                {discoverContentRight.map((item) => (
+                  <CardDiscover
+                    key={item.title}
+                    title={item.title}
+                    description={item.desc}
+                  />
+                ))}
+              </div>
             </div>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at
-              magna sit amet urna facilisis ullamcorper. In id velit a leo
-              dictum tincidunt ac vitae dolor. In id velit a leo dictum
-              tincidunt ac vitae dolor. In id velit a leo dictum tincidunt ac
-              vitae dolor.
-            </p>
-          </div>
-          <ArrowRight className="w-16 h-16" />
-          <div className="w-[514px] space-y-4">
-            <div className="h-[282px] w-full bg-gray-500">
-              this willbe an image
+            <div className="absolute top-0">
+              <Image
+                src={chatImage}
+                alt="picture"
+                quality={80}
+                sizes="100%"
+                className="opacity-40"
+              />
             </div>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at
-              magna sit amet urna facilisis ullamcorper. In id velit a leo
-              dictum tincidunt ac vitae dolor. In id velit a leo dictum
-              tincidunt ac vitae dolor. In id velit a leo dictum tincidunt ac
-              vitae dolor.
-            </p>
           </div>
-        </div>
-      </section>
+        </WrapperSection>
+      </div>
 
-      <section className="px-10 pb-20 mt-16">
-        <h3 className="font-bold text-4xl max-w-[65%] mb-6 ">
-          See how different department use Berrylabs!
+      <WrapperSection className="mt-16 px-16 pb-20">
+        <h3 className="mb-6 max-w-[65%] text-4xl font-bold ">
+          See how different departments use Berrylabs!
         </h3>
         <InfoDepartement />
-      </section>
+      </WrapperSection>
 
-      <section className="px-10 pb-20 mt-16 text-center">
-        <h3 className="font-bold text-4xl  mb-6 ">
-          Unlock the potential of Berrylabs!
-        </h3>
-        <p className="text-2xl">
-          BerryLabs gives you the power to build powerful automations,
-          effortlessly.
-        </p>
+      <div className="bg-[#F7FAFC]">
+        <WrapperSection className="px-16  pb-20 pt-14 text-center">
+          <div className="mx-auto max-w-[600px]">
+            <h3 className="mb-16 text-4xl font-bold ">
+              Unlock the potential of Berrylabs!
+            </h3>
+            <p className="text-second-text mb-16 text-center text-2xl">
+              Experience the seamless power of BerryLabs in effortlessly
+              creating powerful automations.
+            </p>
+          </div>
+          {unlockContent.map((item) => (
+            <UnlockCard
+              key={item.title}
+              title={item.title}
+              desc={item.desc}
+              image={item.image}
+            />
+          ))}
+        </WrapperSection>
+      </div>
 
-        <UnlockCard />
-        <UnlockCard />
-        <UnlockCard />
-        <UnlockCard />
-        <UnlockCard />
-        <UnlockCard />
-      </section>
-
-      <section className="px-10 pb-20 mt-16 text-center">
-        <h3 className="font-bold text-4xl  mb-6 ">Berrylabs Pricing</h3>
-        <p className="text-2xl">
+      <WrapperSection className="mt-16 px-4 pb-20 text-center sm:px-10">
+        <h3 className="mb-6 text-4xl font-bold ">Berrylabs Pricing</h3>
+        <p className="text-second-text text-2xl">
           Automate Without Breaking the Bank: Affordable Solutions for Every
           Business.
         </p>
-
-        <Pricing items={items} />
-      </section>
+        <Pricing items={pricing} />
+      </WrapperSection>
     </>
   );
 };
-
-const items = [
-  {
-    id: 1,
-    title: 'core features',
-    price: '',
-    benef: ['Benefit 1', 'Benefit 2', 'Benefit 3', 'Benefit 4', 'Benefit 5'],
-  },
-  {
-    id: 2,
-    title: 'free',
-    price: 'Rp 0/month',
-    benef: ['Benefit 1', 'Benefit 2', 'no', 'no', 'no'],
-  },
-  {
-    id: 3,
-    title: 'basic',
-    price: 'Rp 299.000/month',
-    benef: ['Benefit 1', 'Benefit 2', 'yes', 'no', 'no'],
-  },
-  {
-    id: 4,
-    title: 'pro',
-    price: 'Rp 590.000/month',
-    benef: ['Benefit 1', 'Benefit 2', 'yes', 'yes', 'no'],
-  },
-  {
-    id: 5,
-    title: 'premium',
-    price: 'Rp 990.000/month',
-    benef: ['Benefit 1', 'Benefit 2', 'yes', 'yes', 'yes'],
-  },
-];

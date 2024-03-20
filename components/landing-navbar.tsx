@@ -24,7 +24,7 @@ export const LandingNavbar = () => {
 
   return (
     <>
-      <nav className="bg-white/10 backdrop-blur-md fixed top-0 w-full right-0 z-50 px-4 sm:px-10">
+      <nav className="bg-white/10 backdrop-blur-md fixed top-0 w-full right-0 z-50 px-4 sm:px-16">
         <div className="flex items-start justify-between mx-auto max-w-screen-xl py-2 gap-x-4">
           <div className="flex items-start space-x-11 flex-1">
             <Link href="/" className="flex items-center gap-x-4">
@@ -33,8 +33,9 @@ export const LandingNavbar = () => {
               </div>
               <h1 className={cn('text-xl text-slate-950')}>BerryLabs.io</h1>
             </Link>
-
-            {/* <NavigationMenuTop /> */}
+            <div className="hidden sm:block">
+              <NavigationMenuTop />
+            </div>
           </div>
           <div className=" flex items-center">
             <MobileSidebar>
@@ -42,7 +43,11 @@ export const LandingNavbar = () => {
             </MobileSidebar>
           </div>
           <div className=" items-center gap-x-2 hidden sm:flex">
-            <Link href={isSignedIn ? '/dashboard' : '/sign-up'}>
+            <Link
+              href={isSignedIn ? '/dashboard' : '/sign-up'}
+              legacyBehavior
+              passHref
+            >
               <Button className="rounded-sm font-semibold text-base hover:text-primary hover:bg-secondary">
                 Get Started
               </Button>
@@ -54,30 +59,42 @@ export const LandingNavbar = () => {
   );
 };
 
-const ListItem = React.forwardRef<
-  React.ElementRef<'a'>,
-  React.ComponentPropsWithoutRef<'a'>
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
+interface ListItemProps extends React.ComponentPropsWithoutRef<'a'> {
+  title: string;
+  isComingSoon?: boolean;
+}
+const ListItem = React.forwardRef<React.ElementRef<'a'>, ListItemProps>(
+  ({ className, title, children, isComingSoon, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink>
+          <a
+            ref={ref}
+            className={cn(
+              'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+              className
+            )}
+            {...props}
+          >
+            <div className=" flex items-center   space-x-2">
+              <p className="text-sm font-bold leading-none">{title}</p>
+              {isComingSoon && (
+                <div className="text-sm font-bold leading-none py-[2px] px-[4px] bg-primary rounded-sm">
+                  <p className="text-[8px] font-normal text-white">
+                    Coming Soon
+                  </p>
+                </div>
+              )}
+            </div>
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+              {children}
+            </p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
 ListItem.displayName = 'ListItem';
 
 const NavigationMenuTop = () => {
@@ -95,6 +112,7 @@ const NavigationMenuTop = () => {
                   key={component.title}
                   title={component.title}
                   href={component.href}
+                  isComingSoon={component.isComingSoon}
                 >
                   {component.description}
                 </ListItem>
@@ -127,10 +145,7 @@ const NavigationMenuTop = () => {
             passHref
             className="flex px-4 py-2 bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10"
           >
-            <NavigationMenuLink
-              // className={navigationMenuTriggerStyle()}
-              className="flex px-4 py-2 bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10 font-medium text-sm"
-            >
+            <NavigationMenuLink className="flex px-4 py-2 bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10 font-medium text-sm">
               Pricing
             </NavigationMenuLink>
           </Link>
@@ -140,37 +155,48 @@ const NavigationMenuTop = () => {
   );
 };
 
-const components: { title: string; href: string; description: string }[] = [
+const components: {
+  title: string;
+  href: string;
+  description: string;
+  isComingSoon: boolean;
+}[] = [
   {
-    title: 'CV Scanner',
-    href: '/cv-scanner',
+    title: 'Recruitment',
+    href: '/recruitment',
+    isComingSoon: false,
     description:
-      'A modal dialog that interrupts the user with important content and expects a response.',
+      'Lorem Ipsum is simply dummy text of the printing and  typesetting industry.',
   },
   {
-    title: 'Hover Card',
-    href: '/docs/primitives/hover-card',
+    title: 'Legal',
+    isComingSoon: true,
+    href: '/coming-soon',
     description:
-      'For sighted users to preview content available behind a link.',
+      'Lorem Ipsum is simply dummy text of the printing and  typesetting industry.',
   },
   {
-    title: 'Progress',
-    href: '/docs/primitives/progress',
+    isComingSoon: true,
+    title: 'Finance',
+    href: '/coming-soon',
     description:
-      'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+      'Lorem Ipsum is simply dummy text of the printing and  typesetting industry.',
   },
   {
+    isComingSoon: true,
     title: 'Scroll-area',
     href: '/docs/primitives/scroll-area',
     description: 'Visually or semantically separates content.',
   },
   {
+    isComingSoon: true,
     title: 'Tabs',
     href: '/docs/primitives/tabs',
     description:
       'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
   },
   {
+    isComingSoon: true,
     title: 'Tooltip',
     href: '/docs/primitives/tooltip',
     description:

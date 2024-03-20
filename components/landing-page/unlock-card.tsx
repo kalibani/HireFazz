@@ -1,20 +1,27 @@
+import Image from 'next/image';
 import React from 'react';
 
-const UnlockCard = () => {
+interface UnlockProps {
+  image: any;
+  title: string;
+  desc: string;
+}
+
+const UnlockCard = ({ image, title, desc }: UnlockProps) => {
   return (
-    <div className="flex gap-x-10 mt-16 items-center">
-      <div className="relative">
-        <div className="w-[640px] h-[334px] bg-gray-400 rounded-md z-10 relative"></div>
-        <div className="w-[640px] h-[334px] bg-primary rounded-md -top-[0.5rem] -left-[0.5rem] absolute "></div>
+    <div className="mt-16 flex items-center gap-x-10">
+      <div className="w-1/2">
+        <Image
+          alt={`picture-${image}`}
+          quality={60}
+          src={image}
+          height={300}
+          width={500}
+        />
       </div>
-      <div className="text-left space-y-4">
-        <h4 className="text-3xl font-medium">Screening CV automation</h4>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at magna
-          sit amet urna facilisis ullamcorper. In id velit a leo dictum
-          tincidunt ac vitae dolor. In id velit a leo dictum tincidunt ac vitae
-          dolor. In id velit a leo dictum tincidunt ac vitae dolor.
-        </p>
+      <div className="w-1/2 space-y-4 text-left">
+        <h4 className="text-3xl font-medium">{title}</h4>
+        <p className="text-second-text text-lg">{desc}</p>
       </div>
     </div>
   );

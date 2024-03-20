@@ -5,39 +5,70 @@ import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
 
 import { Button } from '@/components/ui/button';
+import { WrapperSection } from '@/components/landing-page';
+import { cn } from '@/lib/utils';
 
-export const LandingHero = () => {
+interface LandingHeroProps {
+  title: string;
+  isPoint?: boolean;
+  btnTitle: string;
+  variant:
+    | 'link'
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'premium'
+    | 'premium2'
+    | null
+    | undefined;
+  tagline: string;
+  href: string;
+  classNameH1?: string;
+}
+
+export const LandingHero = ({
+  title,
+  btnTitle,
+  isPoint = false,
+  tagline,
+  variant,
+  href,
+  classNameH1,
+}: LandingHeroProps) => {
   const { isSignedIn } = useAuth();
-
+  const linkRef = isSignedIn ? '/dashboard' : '/sign-up';
   return (
-    <section className="text-slate-950 font-bold py-36 text-center ">
-      <div className="text-4xl sm:text-5xl lg:text-6xl space-y-5 font-extrabold">
-        <h1>Say goodbye to repetitive tasks, hello to</h1>
-        <div className="text-primary">
-          <TypewriterComponent
-            options={{
-              strings: ['a happier you'],
-              autoStart: true,
-              loop: true,
-            }}
-          />
-        </div>
+    <WrapperSection className="pb-14 pt-36 text-center font-bold  text-slate-950">
+      <div className="space-y-5 text-4xl font-bold sm:text-6xl lg:text-6xl">
+        <h1 className={cn('mx-auto', classNameH1)}>{title}</h1>
+        {isPoint && <div className="text-primary">a happier you</div>}
       </div>
-      <div className="flex justify-center mt-16 mb-4">
-        <Link href={isSignedIn ? '/dashboard' : '/sign-up'}>
-          <div className="p-[2px] bg-gradient-to-r from-pink-500 to-primary  w-fit rounded-full">
+      <div className="mb-6 mt-16 flex justify-center">
+        {isPoint ? (
+          <Link href={linkRef} legacyBehavior passHref>
             <Button
-              variant="premium2"
-              className="md:text-lg p-4 md:p-6 rounded-full font-semibold"
+              className="p-4 px-36 py-24 text-4xl font-bold md:p-6 md:text-lg"
+              variant={variant}
             >
-              Start Generating For Free
+              {btnTitle}
             </Button>
-          </div>
-        </Link>
+          </Link>
+        ) : (
+          <Link href={href} legacyBehavior passHref>
+            <Button
+              className="p-4 px-36 py-24 text-4xl font-bold md:p-6 md:text-lg"
+              variant={variant}
+            >
+              {btnTitle}
+            </Button>
+          </Link>
+        )}
       </div>
-      <div className="text-primary text-base md:text-base font-normal">
-        Transform Your Repetitive Tasks into Effortless Actions!
+      <div className="text-base font-normal text-foreground md:text-base">
+        {tagline}
       </div>
-    </section>
+    </WrapperSection>
   );
 };
