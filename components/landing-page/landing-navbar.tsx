@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
-import logo from './../public/BerryLabs.png';
+import logo from '@/public/BerryLabs.png';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -17,18 +17,18 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import React from 'react';
-import MobileSidebar from './mobile-sidebar';
+import MobileSidebar from '../mobile-sidebar';
 
 export const LandingNavbar = () => {
   const { isSignedIn } = useAuth();
 
   return (
     <>
-      <nav className="bg-white/10 backdrop-blur-md fixed top-0 w-full right-0 z-50 px-4 sm:px-16">
-        <div className="flex items-start justify-between mx-auto max-w-screen-xl py-2 gap-x-4">
-          <div className="flex items-start space-x-11 flex-1">
+      <nav className="fixed right-0 top-0 z-50 w-full bg-white/10 px-4 backdrop-blur-md sm:px-16">
+        <div className="mx-auto flex max-w-screen-xl items-start justify-between gap-x-4 py-2">
+          <div className="flex flex-1 items-start space-x-11">
             <Link href="/" className="flex items-center gap-x-4">
-              <div className="flex w-10 justify-center items-center">
+              <div className="flex w-10 items-center justify-center">
                 <Image alt="Logo" src={logo} className="ring-0" />
               </div>
               <h1 className={cn('text-xl text-slate-950')}>BerryLabs.io</h1>
@@ -37,18 +37,18 @@ export const LandingNavbar = () => {
               <NavigationMenuTop />
             </div>
           </div>
-          <div className=" flex items-center">
+          <div className="flex items-center">
             <MobileSidebar>
               <NavigationMenuTop />
             </MobileSidebar>
           </div>
-          <div className=" items-center gap-x-2 hidden sm:flex">
+          <div className=" hidden items-center sm:flex">
             <Link
               href={isSignedIn ? '/dashboard' : '/sign-up'}
               legacyBehavior
               passHref
             >
-              <Button className="rounded-sm font-semibold text-base hover:text-primary hover:bg-secondary">
+              <Button className="rounded-sm px-2 text-base font-semibold hover:bg-secondary hover:text-primary">
                 Get Started
               </Button>
             </Link>
@@ -79,7 +79,7 @@ const ListItem = React.forwardRef<React.ElementRef<'a'>, ListItemProps>(
             <div className=" flex items-center   space-x-2">
               <p className="text-sm font-bold leading-none">{title}</p>
               {isComingSoon && (
-                <div className="text-sm font-bold leading-none py-[2px] px-[4px] bg-primary rounded-sm">
+                <div className="rounded-sm bg-primary px-[4px] py-[2px] text-sm font-bold leading-none">
                   <p className="text-[8px] font-normal text-white">
                     Coming Soon
                   </p>
@@ -102,7 +102,7 @@ const NavigationMenuTop = () => {
     <NavigationMenu>
       <NavigationMenuList className={cn('flex')}>
         <NavigationMenuItem className="">
-          <NavigationMenuTrigger className="flex px-4 py-2 bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent">
+          <NavigationMenuTrigger className="flex bg-transparent px-4 py-2 hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent">
             Products
           </NavigationMenuTrigger>
           <NavigationMenuContent className=" rounded-md">
@@ -121,11 +121,11 @@ const NavigationMenuTop = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem className="">
-          <NavigationMenuTrigger className="flex px-4 py-2 bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10">
+          <NavigationMenuTrigger className="flex bg-transparent px-4 py-2 hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10">
             Solution
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] border rounded-md bg-white/80 backdrop-blur-md ">
+            <ul className="grid w-[400px] gap-3 rounded-md border bg-white/80 p-4 backdrop-blur-md md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
               {components.map((component) => (
                 <ListItem
                   key={component.title}
@@ -143,9 +143,9 @@ const NavigationMenuTop = () => {
             href="#"
             legacyBehavior
             passHref
-            className="flex px-4 py-2 bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10"
+            className="flex bg-transparent px-4 py-2 hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10"
           >
-            <NavigationMenuLink className="flex px-4 py-2 bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10 font-medium text-sm">
+            <NavigationMenuLink className="flex bg-transparent px-4 py-2 text-sm font-medium hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10">
               Pricing
             </NavigationMenuLink>
           </Link>

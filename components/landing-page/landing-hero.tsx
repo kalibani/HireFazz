@@ -41,15 +41,15 @@ export const LandingHero = ({
   const linkRef = isSignedIn ? '/dashboard' : '/sign-up';
   return (
     <WrapperSection className="pb-14 pt-36 text-center font-bold  text-slate-950">
-      <div className="space-y-5 text-4xl font-bold sm:text-6xl lg:text-6xl">
-        <h1 className={cn('mx-auto', classNameH1)}>{title}</h1>
+      <div className="text-4xl font-bold sm:space-y-5 sm:text-6xl lg:text-6xl">
+        <h1 className={cn('mx-auto sm:p-10', classNameH1)}>{title}</h1>
         {isPoint && <div className="text-primary">a happier you</div>}
       </div>
       <div className="mb-6 mt-16 flex justify-center">
         {isPoint ? (
           <Link href={linkRef} legacyBehavior passHref>
             <Button
-              className="p-4 px-36 py-24 text-4xl font-bold md:p-6 md:text-lg"
+              className="p-4 py-8 text-xl font-bold sm:px-36 sm:py-24 sm:text-4xl md:p-6"
               variant={variant}
             >
               {btnTitle}
@@ -58,7 +58,7 @@ export const LandingHero = ({
         ) : (
           <Link href={href} legacyBehavior passHref>
             <Button
-              className="p-4 px-36 py-24 text-4xl font-bold md:p-6 md:text-lg"
+              className="p-4 py-8 text-xl font-bold sm:px-36 sm:py-24 sm:text-4xl md:p-6 md:text-lg"
               variant={variant}
             >
               {btnTitle}
@@ -66,7 +66,7 @@ export const LandingHero = ({
           </Link>
         )}
       </div>
-      <div className="text-base font-normal text-foreground md:text-base">
+      <div className="p-4 text-base font-normal text-foreground md:text-base">
         {tagline}
       </div>
     </WrapperSection>

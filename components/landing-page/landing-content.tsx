@@ -5,7 +5,7 @@ import {
   Pricing,
   UnlockCard,
   WrapperSection,
-} from './landing-page';
+} from '.';
 import chatImage from '@/public/image/work-chat.png';
 import {
   pricing,
@@ -18,13 +18,13 @@ export const LandingContent = () => {
   return (
     <>
       <div className=" bg-[#F7FAFC] ">
-        <WrapperSection className="justify-centerpx-16 flex flex-col items-center py-14">
-          <h3 className="mb-11 text-center text-4xl font-bold">
+        <WrapperSection className="flex flex-col items-center justify-center px-4 py-14 sm:px-16">
+          <h3 className="text-center text-4xl font-bold lg:mb-11">
             Discover how Berrylabs can enhance your work efficiency.
           </h3>
-          <div className="relative mt-28 flex h-[500px] w-full items-center justify-center">
-            <div className="relative z-10 flex w-full justify-between">
-              <div className="space-y-4 text-left">
+          <div className="mt-8 flex w-full items-center justify-center lg:relative lg:mt-28 lg:h-[500px] ">
+            <div className="flex w-full flex-col justify-between  lg:relative lg:z-10 lg:flex-row">
+              <div className="w-full space-y-4  text-left lg:w-fit">
                 <h3 className="mb-9 text-3xl font-bold text-primary">
                   Without Berrylabs
                 </h3>
@@ -36,7 +36,7 @@ export const LandingContent = () => {
                   />
                 ))}
               </div>
-              <div className="space-y-4 text-right">
+              <div className="mt-10 w-full space-y-4  text-right  lg:mt-0 lg:w-fit">
                 <h3 className="mb-9 text-3xl font-bold text-primary">
                   With Berrylabs
                 </h3>
@@ -49,7 +49,7 @@ export const LandingContent = () => {
                 ))}
               </div>
             </div>
-            <div className="absolute top-0">
+            <div className="top-0 hidden lg:absolute lg:block">
               <Image
                 src={chatImage}
                 alt="picture"
@@ -70,9 +70,9 @@ export const LandingContent = () => {
       </WrapperSection>
 
       <div className="bg-[#F7FAFC]">
-        <WrapperSection className="px-16  pb-20 pt-14 text-center">
+        <WrapperSection className="px-4 pb-20  pt-14 text-center md:px-16">
           <div className="mx-auto max-w-[600px]">
-            <h3 className="mb-16 text-4xl font-bold ">
+            <h3 className="mb-8 text-4xl font-bold lg:mb-16 ">
               Unlock the potential of Berrylabs!
             </h3>
             <p className="text-second-text mb-16 text-center text-2xl">

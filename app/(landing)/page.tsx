@@ -1,12 +1,12 @@
-import { LandingNavbar } from '@/components/landing-navbar';
-import { LandingHero } from '@/components/landing-hero';
-import { LandingContent } from '@/components/landing-content';
+import { LandingNavbar } from '@/components/landing-page/landing-navbar';
+import { LandingHero } from '@/components/landing-page/landing-hero';
+import { LandingContent } from '@/components/landing-page/landing-content';
 import ContactUs from '@/components/contact-us';
+import { Footer } from '@/components/landing-page';
 
 const LandingPage = () => {
   return (
     <>
-      <LandingNavbar />
       <LandingHero
         btnTitle="Get Started for Free"
         tagline="Transform Your Repetitive Tasks into Effortless Actions!"
@@ -24,7 +24,6 @@ const LandingPage = () => {
         classNameH1="max-w-4xl"
         href="/expert"
       />
-      <ContactUs />
     </>
   );
 };
