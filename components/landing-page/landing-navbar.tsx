@@ -48,7 +48,7 @@ export const LandingNavbar = () => {
               legacyBehavior
               passHref
             >
-              <Button className="rounded-sm px-2 text-base font-semibold hover:bg-secondary hover:text-primary">
+              <Button className="rounded-sm px-4 text-base font-semibold hover:bg-secondary hover:text-primary">
                 Get Started
               </Button>
             </Link>
