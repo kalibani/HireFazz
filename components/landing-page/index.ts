@@ -4,6 +4,7 @@ import Pricing from './pricing';
 import CardDiscover from './card-discover';
 import WrapperSection from './wrapper-section';
 import Footer from './footer';
+import LandingExpert from './landing-expert';
 export {
   InfoDepartement,
   UnlockCard,
@@ -11,4 +12,5 @@ export {
   CardDiscover,
   WrapperSection,
   Footer,
+  LandingExpert,
 };

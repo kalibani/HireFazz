@@ -25,30 +25,32 @@ export const LandingNavbar = () => {
   return (
     <>
       <nav className="fixed right-0 top-0 z-50 w-full bg-white/10 px-4 backdrop-blur-md sm:px-16">
-        <div className="mx-auto flex max-w-screen-xl items-start justify-between gap-x-4 py-2">
-          <div className="flex flex-1 items-start space-x-11">
+        <div className="mx-auto flex max-w-screen-xl  items-center justify-between gap-x-4 py-2">
+          <div className="flex items-center space-x-11 ">
             <Link href="/" className="flex items-center gap-x-4">
               <div className="flex w-10 items-center justify-center">
                 <Image alt="Logo" src={logo} className="ring-0" />
               </div>
               <h1 className={cn('text-xl text-slate-950')}>BerryLabs.io</h1>
             </Link>
-            <div className="hidden sm:block">
+            <div className="hidden lg:block">
               <NavigationMenuTop />
             </div>
           </div>
-          <div className="flex items-center">
-            <MobileSidebar>
-              <NavigationMenuTop />
-            </MobileSidebar>
-          </div>
-          <div className=" hidden items-center sm:flex">
+          <MobileSidebar>
+            <div className="flex h-full flex-col space-y-4 bg-[#111827] py-4 text-white">
+              <div className="flex-1 px-3 py-2">
+                <p>hhh</p>
+              </div>
+            </div>
+          </MobileSidebar>
+          <div className=" hidden items-center lg:flex">
             <Link
               href={isSignedIn ? '/dashboard' : '/sign-up'}
               legacyBehavior
               passHref
             >
-              <Button className="rounded-sm px-4 text-base font-semibold hover:bg-secondary hover:text-primary">
+              <Button className="h-auto rounded-sm px-6 py-2 text-xl font-semibold   hover:bg-secondary hover:text-primary xl:px-8 xl:py-4 xl:text-2xl">
                 Get Started
               </Button>
             </Link>
@@ -102,7 +104,7 @@ const NavigationMenuTop = () => {
     <NavigationMenu>
       <NavigationMenuList className={cn('flex')}>
         <NavigationMenuItem className="">
-          <NavigationMenuTrigger className="flex bg-transparent px-4 py-2 hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent">
+          <NavigationMenuTrigger className="flex bg-transparent px-4 py-2 text-xl hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent xl:text-2xl">
             Products
           </NavigationMenuTrigger>
           <NavigationMenuContent className=" rounded-md">
@@ -121,7 +123,7 @@ const NavigationMenuTop = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem className="">
-          <NavigationMenuTrigger className="flex bg-transparent px-4 py-2 hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10">
+          <NavigationMenuTrigger className="flex bg-transparent px-4 py-2 text-xl  hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10 xl:text-2xl">
             Solution
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -145,7 +147,7 @@ const NavigationMenuTop = () => {
             passHref
             className="flex bg-transparent px-4 py-2 hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10"
           >
-            <NavigationMenuLink className="flex bg-transparent px-4 py-2 text-sm font-medium hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10">
+            <NavigationMenuLink className="flex bg-transparent px-4 py-2 text-xl font-medium  hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10 xl:text-2xl">
               Pricing
             </NavigationMenuLink>
           </Link>
