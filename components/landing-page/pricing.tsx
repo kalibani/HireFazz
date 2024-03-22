@@ -5,22 +5,32 @@ import {
   TooltipContent,
   TooltipProvider,
 } from '@/components/ui/tooltip';
+import check from '@/public/icon/checked.svg';
+
 import { HelpCircle } from 'lucide-react';
 import React from 'react';
+import { ScrollArea, ScrollBar } from '../ui/scroll-area';
+import Image from 'next/image';
 
 // temporary type any
 const Pricing = ({ items }: { items: any[] }) => {
   return (
-    <div className=" overflow-y-auto">
+    <ScrollArea className=" w-full whitespace-nowrap">
       <div className="mx-auto mt-11  grid w-[1024px] grid-cols-5 text-center">
         {items.map((item, index) => (
           <div
             key={item.id}
             className={cn(
               'flex flex-col items-center rounded-md  text-center',
-              index % 2 !== 0 ? 'bg-[#F7FAFC]' : 'bg-white'
+              index % 2 !== 0 ? 'bg-[#F7FAFC]' : 'bg-white',
+              item.id === 4 && 'relative border border-primary'
             )}
           >
+            {item.title === 'pro' && (
+              <div className="absolute -top-5  left-0 right-0 mx-auto w-fit rounded-full bg-primary px-6 py-2 text-xs font-light text-white">
+                <p>Best Seller</p>
+              </div>
+            )}
             <div className="my-5 mb-6 flex  flex-col items-center justify-end gap-y-5">
               <h4
                 className={cn(
@@ -40,8 +50,8 @@ const Pricing = ({ items }: { items: any[] }) => {
               </p>
               <p
                 className={cn(
-                  'text-3xl font-semibold',
-                  item.id === 1 && 'mb-2 text-lg font-medium capitalize'
+                  'text-2xl font-semibold ',
+                  index === 0 && 'mb-2 text-lg font-medium capitalize '
                 )}
               >
                 {item.price}
@@ -49,7 +59,7 @@ const Pricing = ({ items }: { items: any[] }) => {
             </div>
             <div
               className={cn(
-                'flex w-full items-center justify-center gap-x-1 py-6',
+                'flex w-full items-center justify-center py-6',
                 index !== 0 && index % 2 === 0 ? 'bg-[#F7FAFC]' : 'bg-white'
               )}
             >
@@ -69,7 +79,7 @@ const Pricing = ({ items }: { items: any[] }) => {
             </div>
             <div
               className={cn(
-                'flex w-full items-center justify-center gap-x-1 py-6',
+                'flex w-full items-center justify-center  py-6',
                 index % 2 !== 0 ? 'bg-[#F7FAFC]' : 'bg-white'
               )}
             >
@@ -90,18 +100,31 @@ const Pricing = ({ items }: { items: any[] }) => {
             </div>
             <div
               className={cn(
-                'flex w-full flex-col items-center justify-center gap-x-1 gap-y-4 py-6',
+                'flex w-full flex-col items-center justify-center gap-x-1 gap-y-10 py-6',
                 index % 2 !== 0 ? 'bg-[#F7FAFC]' : 'bg-white'
               )}
             >
-              <p>{item.upload}</p>
-              <p>{item.upload}</p>
-              <p>{item.upload}</p>
+              {item.benef.map((item: string, index: number) => (
+                <>
+                  {item === 'check' ? (
+                    <Image
+                      alt="icon"
+                      src={check}
+                      sizes="100%"
+                      width={20}
+                      height={20}
+                    />
+                  ) : (
+                    <p key={item}>{item}</p>
+                  )}
+                </>
+              ))}
             </div>
           </div>
         ))}
       </div>
-    </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };
 

@@ -10,7 +10,7 @@ export const LandingHero = () => {
   const { isSignedIn } = useAuth();
   const linkRef = isSignedIn ? '/dashboard' : '/sign-up';
   return (
-    <WrapperSection className="pb-14 pt-36 text-center font-bold  text-slate-950">
+    <WrapperSection className="pb-14 pt-24 text-center font-bold text-slate-950  lg:pt-36">
       <div className="px-4 text-3xl font-bold md:text-4xl lg:text-5xl xl:text-6xl">
         <h1 className="mx-auto">Say goodbye to repetitive tasks, hello to</h1>
         <div className="text-primary">a happier you</div>

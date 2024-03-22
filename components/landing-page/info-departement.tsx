@@ -5,45 +5,62 @@ import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 import talent from '@/public/image/talent-acquisition.png';
 import Image from 'next/image';
+import { ScrollArea, ScrollBar } from '../ui/scroll-area';
+import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar';
 
 const InfoDepartement = () => {
   const [position, setPosition] = useState(titleButton[0]);
   return (
     <div className="space-y-6">
-      <div className="w-full space-x-6">
-        {titleButton.map((item) => (
-          <Button
-            onClick={() => setPosition(item)}
-            variant={item.id !== position.id ? 'outline' : 'default'}
-            className={cn(
-              'min-h-[84px] min-w-[300px] text-2xl font-medium transition-all delay-100 ease-in-out hover:bg-primary hover:font-medium hover:text-white ',
-              item.id !== position.id && 'border-primary font-light'
-            )}
-            key={item.id}
-          >
-            {item.title}
-          </Button>
-        ))}
-      </div>
-      <div className="border-primar flex w-full items-center overflow-hidden border  bg-[#F7FAFC]  px-10 py-9 transition-transform delay-300 ease-in-out">
-        <div className="relative z-10 flex gap-x-4">
-          <div className="flex w-1/2 flex-col gap-y-4">
-            <h4 className="text-3xl font-medium">{position.title}</h4>
-            <p>{position.content}</p>
+      <ScrollArea className="w-full whitespace-nowrap">
+        <div className="flex w-max space-x-6">
+          {titleButton.map((item) => (
+            <Button
+              onClick={() => setPosition(item)}
+              variant={item.id !== position.id ? 'outline' : 'default'}
+              className={cn(
+                'h-auto transition-all delay-100 ease-in-out hover:bg-primary  hover:font-medium hover:text-white md:px-8 md:py-5 md:text-xl lg:text-2xl  xl:py-7',
+                item.id !== position.id && 'border-primary font-light'
+              )}
+              key={item.id}
+            >
+              {item.btn}
+            </Button>
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+      <div className="border-primar w-full  items-center overflow-hidden rounded-md border bg-[#F7FAFC] p-4 transition-transform  delay-300 ease-in-out md:px-10 md:py-9">
+        <div className="flex flex-col-reverse gap-x-4 gap-y-4 lg:flex-row">
+          <div className="flex w-full flex-col gap-y-4 lg:w-1/2 ">
+            <h4 className="font-medium lg:text-xl xl:text-3xl">
+              {position.title}
+            </h4>
+            <p className="text-sm text-second-text xl:text-lg">
+              {position.content}
+            </p>
             <div className="flex gap-x-4">
-              <div className="h-20 w-20 rounded-full bg-gray-400"></div>
+              {/* <div className="h-20 w-20 rounded-full bg-gray-400"></div> */}
+              <Avatar>
+                <AvatarImage
+                  src="https://github.com/shadcn.png"
+                  alt="@shadcn"
+                  className="w-16 rounded-full xl:w-20"
+                />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
               <div>
-                <p className="text-lg font-medium">{position.name}</p>
-                <p className="max-w-[400px] font-light">
+                <p className="text-sm font-medium md:text-base xl:text-lg">
+                  {position.name}
+                </p>
+                <p className="max-w-[500px] text-xs font-light md:text-sm xl:text-base">
                   {position.testimonial}
                 </p>
               </div>
             </div>
           </div>
-          <div className="w-1/2 ">
-            <div className="h-[277px] w-[552px]">
-              <Image alt="picture" src={talent} sizes="100%" quality={60} />
-            </div>
+          <div className="w-full lg:w-1/2 ">
+            <Image alt="picture" src={talent} sizes="100%" quality={60} />
           </div>
         </div>
       </div>
@@ -55,6 +72,7 @@ export default InfoDepartement;
 
 const titleButton = [
   {
+    btn: 'Talent Acquisition',
     title: 'Checking CV so much easier now',
     id: 1,
     content:
@@ -64,12 +82,14 @@ const titleButton = [
       'Berrylabs has revolutionized our tech recruitment by transforming our hiring process from taking weeks to mere days, making it a complete game-changer.',
   },
   {
+    btn: 'Human resources',
     title: 'Human resources',
     id: 2,
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at magna sit amet urna facilisis ullamcorper. In id velit a leo dictum tincidunt ac vitae dolor. In id velit a leo dictum tincidunt ac vitae dolor. In id velit a leo dictum tincidunt ac vitae dolor.',
   },
   {
+    btn: 'Job Platform Company',
     title: 'Job Platform Company',
     id: 3,
     content:

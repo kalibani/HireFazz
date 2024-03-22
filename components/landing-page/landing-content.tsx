@@ -17,15 +17,15 @@ import {
 export const LandingContent = () => {
   return (
     <>
-      <div className=" bg-[#F7FAFC] ">
-        <WrapperSection className="flex flex-col items-center justify-center px-4 py-14 sm:px-16">
-          <h3 className="text-center text-4xl font-bold lg:mb-11">
+      <div className="bg-[#F7FAFC] py-8 lg:h-[900px]">
+        <WrapperSection className="flex h-fit  flex-col items-center justify-center px-4 sm:px-16">
+          <h3 className="text-center text-2xl font-bold lg:mb-11 lg:text-4xl">
             Discover how Berrylabs can enhance your work efficiency.
           </h3>
           <div className="mt-8 flex w-full items-center justify-center lg:relative lg:mt-28 lg:h-[500px] ">
             <div className="flex w-full flex-col justify-between  lg:relative lg:z-10 lg:flex-row">
               <div className="w-full space-y-4  text-left lg:w-fit">
-                <h3 className="mb-9 text-3xl font-bold text-primary">
+                <h3 className="text-xl font-bold text-primary lg:mb-9 lg:text-3xl">
                   Without Berrylabs
                 </h3>
                 {discoverContent.map((item) => (
@@ -36,8 +36,8 @@ export const LandingContent = () => {
                   />
                 ))}
               </div>
-              <div className="mt-10 w-full space-y-4  text-right  lg:mt-0 lg:w-fit">
-                <h3 className="mb-9 text-3xl font-bold text-primary">
+              <div className="mt-8 w-full space-y-4  text-right  lg:mt-0 lg:w-fit">
+                <h3 className="text-xl font-bold text-primary lg:mb-9 lg:text-3xl">
                   With Berrylabs
                 </h3>
                 {discoverContentRight.map((item) => (
@@ -62,8 +62,8 @@ export const LandingContent = () => {
         </WrapperSection>
       </div>
 
-      <WrapperSection className="mt-16 px-16 pb-20">
-        <h3 className="mb-6 max-w-[65%] text-4xl font-bold ">
+      <WrapperSection className="mt-16 px-4 pb-20 md:px-16">
+        <h3 className="mb-6 text-xl font-bold md:text-3xl lg:text-4xl ">
           See how different departments use Berrylabs!
         </h3>
         <InfoDepartement />
@@ -72,10 +72,10 @@ export const LandingContent = () => {
       <div className="bg-[#F7FAFC]">
         <WrapperSection className="px-4 pb-20  pt-14 text-center md:px-16">
           <div className="mx-auto max-w-[600px]">
-            <h3 className="mb-8 text-4xl font-bold lg:mb-16 ">
+            <h3 className="mb-8 text-2xl font-bold lg:mb-16 lg:text-4xl ">
               Unlock the potential of Berrylabs!
             </h3>
-            <p className="text-second-text mb-16 text-center text-2xl">
+            <p className="text-center text-second-text lg:mb-16 lg:text-2xl">
               Experience the seamless power of BerryLabs in effortlessly
               creating powerful automations.
             </p>
@@ -92,8 +92,10 @@ export const LandingContent = () => {
       </div>
 
       <WrapperSection className="mt-16 px-4 pb-20 text-center sm:px-10">
-        <h3 className="mb-6 text-4xl font-bold ">Berrylabs Pricing</h3>
-        <p className="text-second-text text-2xl">
+        <h3 className="mb-4 text-2xl font-bold lg:mb-6 lg:text-4xl ">
+          Berrylabs Pricing
+        </h3>
+        <p className="text-lg text-second-text lg:text-2xl">
           Automate Without Breaking the Bank: Affordable Solutions for Every
           Business.
         </p>
