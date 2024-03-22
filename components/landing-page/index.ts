@@ -7,6 +7,7 @@ import Footer from './footer';
 import LandingExpert from './landing-expert';
 import MobileNavbar from './mobile-navbar';
 import DropdownMenuMobile from './dropdown-menu';
+import CommingSoon from './comming-soon';
 export {
   InfoDepartement,
   UnlockCard,
@@ -17,4 +18,5 @@ export {
   LandingExpert,
   MobileNavbar,
   DropdownMenuMobile,
+  CommingSoon,
 };

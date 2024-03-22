@@ -11,6 +11,7 @@ import { HelpCircle } from 'lucide-react';
 import React from 'react';
 import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 import Image from 'next/image';
+import { Button } from '../ui/button';
 
 // temporary type any
 const Pricing = ({ items }: { items: any[] }) => {
@@ -23,6 +24,7 @@ const Pricing = ({ items }: { items: any[] }) => {
             className={cn(
               'flex flex-col items-center rounded-md  text-center',
               index % 2 !== 0 ? 'bg-[#F7FAFC]' : 'bg-white',
+              index === 0 && 'items-start justify-start',
               item.id === 4 && 'relative border border-primary'
             )}
           >
@@ -60,6 +62,7 @@ const Pricing = ({ items }: { items: any[] }) => {
             <div
               className={cn(
                 'flex w-full items-center justify-center py-6',
+                index === 0 && 'items-start justify-start',
                 index !== 0 && index % 2 === 0 ? 'bg-[#F7FAFC]' : 'bg-white'
               )}
             >
@@ -80,6 +83,7 @@ const Pricing = ({ items }: { items: any[] }) => {
             <div
               className={cn(
                 'flex w-full items-center justify-center  py-6',
+                index === 0 && 'items-start justify-start',
                 index % 2 !== 0 ? 'bg-[#F7FAFC]' : 'bg-white'
               )}
             >
@@ -101,6 +105,7 @@ const Pricing = ({ items }: { items: any[] }) => {
             <div
               className={cn(
                 'flex w-full flex-col items-center justify-center gap-x-1 gap-y-10 py-6',
+                index === 0 && 'items-start justify-start',
                 index % 2 !== 0 ? 'bg-[#F7FAFC]' : 'bg-white'
               )}
             >
@@ -119,6 +124,19 @@ const Pricing = ({ items }: { items: any[] }) => {
                   )}
                 </>
               ))}
+            </div>
+            <div
+              className={cn('mb-6 mt-12 w-full px-10', index === 0 && 'hidden')}
+            >
+              <Button
+                className={cn(
+                  'w-fit text-sm font-semibold hover:bg-primary hover:text-white',
+                  index > 1 ? 'font-normal' : 'font-semibold'
+                )}
+                variant={index > 1 ? 'outline' : 'default'}
+              >
+                {index > 1 ? 'select' : 'Get Started Free'}
+              </Button>
             </div>
           </div>
         ))}

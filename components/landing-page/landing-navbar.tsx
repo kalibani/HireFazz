@@ -14,7 +14,6 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
-  navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import React from 'react';
 import { MobileNavbar } from '.';
@@ -44,7 +43,7 @@ export const LandingNavbar = () => {
               legacyBehavior
               passHref
             >
-              <Button className="h-auto rounded-sm px-6 py-2 text-base  hover:bg-secondary hover:text-primary xl:px-8  xl:py-3 xl:text-xl">
+              <Button className="h-auto rounded-sm px-6 py-2 text-base  hover:bg-secondary hover:text-primary xl:px-8  xl:py-2 xl:text-xl">
                 Get Started
               </Button>
             </Link>
@@ -161,19 +160,19 @@ const components: {
   {
     title: 'Legal',
     isComingSoon: true,
-    href: '/coming-soon',
+    href: '/comming',
     description: 'Navigate Contracts, Manage Compliance, Resolve Disputes',
   },
   {
     isComingSoon: true,
     title: 'Finance',
-    href: '/coming-soon',
+    href: '/comming',
     description: 'Track, grow, manage debt, and plan your financial future',
   },
   {
     isComingSoon: true,
     title: 'HR Management',
-    href: '/coming-soon',
+    href: '/comming',
     description: 'Simplify your HR, manage performance & payroll, etc.',
   },
 ];

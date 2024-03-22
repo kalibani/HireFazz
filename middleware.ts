@@ -10,6 +10,7 @@ export default authMiddleware({
     '/settings',
     '/api/load-multiples',
     '/expert',
+    '/comming',
   ],
 });
 
