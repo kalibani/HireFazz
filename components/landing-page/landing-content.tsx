@@ -90,8 +90,10 @@ export const LandingContent = () => {
           ))}
         </WrapperSection>
       </div>
-
-      <WrapperSection className="mt-16 px-4 pb-20 text-center sm:px-10">
+      <WrapperSection
+        className="mt-16 px-4 pb-20 pt-20 text-center sm:px-10"
+        id="pricing"
+      >
         <h3 className="mb-4 text-2xl font-bold lg:mb-6 lg:text-4xl ">
           Berrylabs Pricing
         </h3>

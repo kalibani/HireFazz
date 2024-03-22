@@ -74,10 +74,12 @@ const Footer = () => {
               ))}
             </div>
           </div>
-          <div className="grid auto-cols-auto grid-flow-col gap-x-4">
+          <div className="grid gap-x-4 gap-y-4 sm:auto-cols-auto sm:grid-flow-col sm:gap-y-0">
             {footerContent.map((footer) => (
               <div className="flex flex-col md:min-w-[100px]" key={footer.id}>
-                <h5 className="mb-9 text-lg font-bold">{footer.title}</h5>
+                <h5 className="mb-4 text-lg font-bold sm:mb-9">
+                  {footer.title}
+                </h5>
                 <div className="space-y-3">
                   {footer.content.map((content, index) => (
                     <div className="flex gap-x-2" key={index}>

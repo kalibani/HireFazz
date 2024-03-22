@@ -8,6 +8,10 @@ import LandingExpert from './landing-expert';
 import MobileNavbar from './mobile-navbar';
 import DropdownMenuMobile from './dropdown-menu';
 import CommingSoon from './comming-soon';
+import NavPricing from './nav-pricing';
+import RecruitmentHero from './recruitment-hero';
+import RecruitmentContent from './recruitment-content';
+
 export {
   InfoDepartement,
   UnlockCard,
@@ -19,4 +23,7 @@ export {
   MobileNavbar,
   DropdownMenuMobile,
   CommingSoon,
+  NavPricing,
+  RecruitmentHero,
+  RecruitmentContent,
 };

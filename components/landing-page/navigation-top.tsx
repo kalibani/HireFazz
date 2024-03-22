@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils';
 
-import Link from 'next/link';
 import React from 'react';
 import {
   NavigationMenu,
@@ -12,6 +11,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import { components } from '@/constant';
 import ListItem from './list-item';
+import NavPricing from './nav-pricing';
 
 const NavigationMenuTop = () => {
   return (
@@ -47,16 +47,9 @@ const NavigationMenuTop = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem className="">
-          <Link
-            href="#"
-            legacyBehavior
-            passHref
-            className="flex bg-transparent px-4 py-2 font-normal hover:bg-transparent data-[active]:bg-transparent data-[state=open]:font-normal"
-          >
-            <NavigationMenuLink className="flex bg-transparent px-4 py-2 text-lg font-normal  hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10 ">
-              Pricing
-            </NavigationMenuLink>
-          </Link>
+          <NavigationMenuLink className="flex bg-transparent px-4 py-2 text-lg font-normal  hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10 ">
+            <NavPricing />
+          </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>

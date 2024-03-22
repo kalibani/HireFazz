@@ -1,3 +1,5 @@
+'use client';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,7 +8,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { Handshake, Scroll, HandCoins, Layers } from 'lucide-react';
-import Link from 'next/link';
+import { SheetClose } from '../ui/sheet';
+import { NavPricing } from '.';
+import { useRouter } from 'next/navigation';
 
 const routes = [
   {
@@ -31,42 +35,63 @@ const routes = [
     id: 3,
     label: 'Pricing',
     icon: HandCoins,
-    href: '/comming',
-    sub: [{ label: 'Comming soon', href: '/comming' }],
-  },
-  {
-    id: 4,
-    icon: Layers,
-    label: 'HR Management',
-    href: '/comming',
+    href: '/?section=pricing',
     sub: [{ label: 'Comming soon', href: '/comming' }],
   },
 ];
-const DropdownMenuMobile = () => (
-  <>
-    {routes.map((route) => (
-      <DropdownMenu key={route.id}>
-        <div
-          className={cn(
-            'group flex w-full cursor-pointer rounded-lg p-3 text-sm font-medium transition hover:bg-white/10 hover:text-white'
-          )}
-        >
-          <DropdownMenuTrigger className="flex flex-1 items-center">
-            <route.icon className={cn(' mr-3 h-5 w-5')} />
-            <p>{route.label}</p>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="w-fit px-4">
-            {route.sub.map((item: any, index) => (
-              <Link key={index} href={item.href} passHref legacyBehavior>
-                <DropdownMenuItem>{item.label}</DropdownMenuItem>
-              </Link>
-            ))}
-          </DropdownMenuContent>
-        </div>
-      </DropdownMenu>
-    ))}
-  </>
-);
+const DropdownMenuMobile = () => {
+  const { push } = useRouter();
+  const handleClick = (href?: string) => {
+    if (href) {
+      push(href);
+    } else {
+      push('/?section=pricing', { scroll: false });
+      document
+        .getElementById('pricing')
+        ?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  return (
+    <>
+      {routes.map((route) => (
+        <DropdownMenu key={route.id}>
+          <div
+            className={cn(
+              'group flex w-full cursor-pointer rounded-lg p-3 text-sm font-medium transition hover:bg-white/10 hover:text-white'
+            )}
+          >
+            <DropdownMenuTrigger className="flex flex-1 items-center">
+              <>
+                {route.icon && <route.icon className={cn(' mr-3 h-5 w-5')} />}
+                {route.label === 'Pricing' ? (
+                  <SheetClose asChild onClick={() => handleClick()}>
+                    <p>{route.label}</p>
+                  </SheetClose>
+                ) : (
+                  <p>{route.label}</p>
+                )}
+              </>
+            </DropdownMenuTrigger>
+            {route.label !== 'Pricing' && (
+              <DropdownMenuContent className="flex w-fit flex-col items-start justify-start">
+                {route.sub.map((item, index) => (
+                  // <Link href={item.href} passHref key={index} legacyBehavior>
+                  <SheetClose
+                    asChild
+                    key={index}
+                    onClick={() => handleClick(item.href)}
+                  >
+                    <DropdownMenuItem>{item.label}</DropdownMenuItem>
+                  </SheetClose>
+                  // </Link>
+                ))}
+              </DropdownMenuContent>
+            )}
+          </div>
+        </DropdownMenu>
+      ))}
+    </>
+  );
+};
 
 export default DropdownMenuMobile;
