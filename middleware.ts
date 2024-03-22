@@ -9,7 +9,7 @@ export default authMiddleware({
     '/api/uploadthing',
     '/settings',
     '/api/load-multiples',
-    '/expert',
+    '/recruitment',
     '/comming',
   ],
 });
