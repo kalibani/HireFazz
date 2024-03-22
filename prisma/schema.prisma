@@ -41,8 +41,6 @@ model User {
   accounts      Account[]
   emailVerified DateTime?
   secretIv         String?
-  organizationId   String?
-  Organization     Organization?      @relation(fields: [organizationId], references: [id])
   UserOrganization UserOrganization[]
 }
 
@@ -100,18 +98,17 @@ model Organization {
   packageType           PACKAGE_TYPE
   limit                 Int
   used                  Int
-  agreeTermAndCondition Boolean            @default(false)
-  users                 User[]             // Replaced 'UserOrganization' with 'User' here
-  UserOrganization      UserOrganization[]
+  agreeTermAndCondition Boolean            @default(false)          
+  userOrganization      UserOrganization[]
 }
 
 model UserOrganization {
   id             String       @id @default(cuid())
   userId         String
-  user           User         @relation(fields: [userId], references: [id])
   organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
   roleId         String
+  user           User         @relation(fields: [userId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
   role           Role         @relation(fields: [roleId], references: [id])
 }
 
@@ -144,6 +141,40 @@ enum UploadStatus {
   FAILED
   SUCCESS
 }
+
+
+
+model CvAnalysis {
+  id                String  @id @default(cuid())
+  cvId              String
+  orgId             String
+  batchId           String
+  batch             Batch  @relation(fields: [batchId], references: [id])
+  reportOfAnalysis  Json?
+  cv                Cv  @relation(fields: [cvId], references: [id])
+}
+
+model Cv {
+  id           String        @id @default(cuid())
+  name         String
+  uploadStatus UploadStatus  @default(PENDING)
+  url          String
+  key          String
+  createdAt    DateTime      @default(now())
+  orgId        String
+  analyses     CvAnalysis[]
+}
+
+model Batch {
+  id             String @id @default(cuid())
+  jobName        String
+  status         String
+  orgId          String
+  jobDescription String
+  createdAt      DateTime @default(now())
+  cvAnalysis     CvAnalysis[]
+}
+
 
 model File {
   id   String @id @default(cuid())
