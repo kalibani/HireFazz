@@ -321,3 +321,35 @@ export const unlockContent = [
     image: timeCost,
   },
 ];
+
+export const components = [
+  {
+    id: 1,
+    title: 'Recruitment',
+    href: '/recruitment',
+    isComingSoon: false,
+    description:
+      'Attract top talent, streamline hiring with AI, collaborate as a team, and make data-driven decisions. All on one platform.',
+  },
+  {
+    id: 2,
+    title: 'Legal',
+    isComingSoon: true,
+    href: '/comming',
+    description: 'Navigate Contracts, Manage Compliance, Resolve Disputes',
+  },
+  {
+    id: 3,
+    isComingSoon: true,
+    title: 'Finance',
+    href: '/comming',
+    description: 'Track, grow, manage debt, and plan your financial future',
+  },
+  {
+    id: 4,
+    isComingSoon: true,
+    title: 'HR Management',
+    href: '/comming',
+    description: 'Simplify your HR, manage performance & payroll, etc.',
+  },
+];

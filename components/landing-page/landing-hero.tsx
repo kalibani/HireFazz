@@ -24,17 +24,6 @@ export const LandingHero = () => {
             Get Started for Free
           </Button>
         </Link>
-        {/* <div className="p-4 text-lg font-normal text-foreground sm:p-0 sm:text-xl lg:text-2xl">
-              {tagline}
-            </div>
-            <Link href={href} legacyBehavior passHref>
-              <Button
-                className="h-auto px-9 py-4 text-2xl font-medium"
-                variant={variant}
-              >
-                {btnTitle}
-              </Button>
-            </Link> */}
       </div>
       <div className="p-4 text-lg font-normal text-foreground sm:p-0 sm:text-xl lg:text-2xl">
         Transform Your Repetitive Tasks into Effortless Actions!"

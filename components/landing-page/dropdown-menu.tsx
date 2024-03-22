@@ -1,16 +1,7 @@
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
@@ -38,7 +29,6 @@ const routes = [
   },
   {
     id: 3,
-
     label: 'Pricing',
     icon: HandCoins,
     href: '/comming',
@@ -55,7 +45,7 @@ const routes = [
 const DropdownMenuMobile = () => (
   <>
     {routes.map((route) => (
-      <DropdownMenu key={route.label}>
+      <DropdownMenu key={route.id}>
         <div
           className={cn(
             'group flex w-full cursor-pointer rounded-lg p-3 text-sm font-medium transition hover:bg-white/10 hover:text-white'
@@ -67,8 +57,8 @@ const DropdownMenuMobile = () => (
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="w-fit px-4">
-            {route.sub.map((item: any) => (
-              <Link key={item.label} href={item.href}>
+            {route.sub.map((item: any, index) => (
+              <Link key={index} href={item.href} passHref legacyBehavior>
                 <DropdownMenuItem>{item.label}</DropdownMenuItem>
               </Link>
             ))}

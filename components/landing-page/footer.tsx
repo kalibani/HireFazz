@@ -12,10 +12,16 @@ import instagram from '@/public/icon/instagram.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const social = [facebook, twitter, linkedin, instagram];
+const social = [
+  { id: 1, icon: facebook },
+  { id: 2, icon: twitter },
+  { id: 3, icon: linkedin },
+  { id: 4, icon: instagram },
+];
 
 const footerContent = [
   {
+    id: 1,
     title: 'pages',
     content: [
       { title: 'Home', href: '/', icon: '' },
@@ -25,6 +31,7 @@ const footerContent = [
     ],
   },
   {
+    id: 2,
     title: 'service',
     content: [
       { title: 'CV Screening', href: '/', icon: '' },
@@ -34,6 +41,7 @@ const footerContent = [
     ],
   },
   {
+    id: 3,
     title: 'contact',
     content: [
       { title: '+6282126753060', href: '/', icon: call },
@@ -62,17 +70,17 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-x-2">
               {social.map((item) => (
-                <Image src={item} alt="icon" key={item} />
+                <Image src={item.icon} alt="icon" key={item.id} />
               ))}
             </div>
           </div>
           <div className="grid auto-cols-auto grid-flow-col gap-x-4">
             {footerContent.map((footer) => (
-              <div className="flex min-w-[100px] flex-col" key={footer.title}>
+              <div className="flex flex-col md:min-w-[100px]" key={footer.id}>
                 <h5 className="mb-9 text-lg font-bold">{footer.title}</h5>
                 <div className="space-y-3">
-                  {footer.content.map((content) => (
-                    <div className="flex gap-x-2" key={content.title}>
+                  {footer.content.map((content, index) => (
+                    <div className="flex gap-x-2" key={index}>
                       {footer.title === 'contact' && (
                         <Image alt="icon" src={content.icon} />
                       )}

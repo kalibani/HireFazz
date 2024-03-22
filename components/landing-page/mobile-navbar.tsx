@@ -17,20 +17,6 @@ const MobileNavbar = () => {
           </div>
           <h1 className={cn('text-lg text-slate-950')}>BerryLabs.io</h1>
         </Link>
-        {/* {routes.map((route) => (
-            <Link
-              href={route.href}
-              key={route.href}
-              className={cn(
-                'group flex w-full cursor-pointer rounded-lg p-3 text-sm font-medium transition hover:bg-white/10 hover:text-white'
-              )}
-            >
-              <div className="flex flex-1 items-center">
-                <route.icon className={cn(' mr-3 h-5 w-5')} />
-                {route.label}
-              </div>
-            </Link>
-          ))} */}
         <DropdownMenuMobile />
       </div>
     </MobileSidebar>

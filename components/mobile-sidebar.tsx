@@ -19,8 +19,8 @@ const MobileSidebar = ({ children }: { children: React.ReactNode }) => {
   return (
     <Sheet>
       <SheetTrigger>
-        <Button variant="ghost" size="icon" className="lg:hidden">
-          <Menu />
+        <Button variant="ghost" size="icon" className="lg:hidden" asChild>
+          <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0">
