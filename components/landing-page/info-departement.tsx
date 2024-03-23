@@ -40,12 +40,13 @@ const InfoDepartement = () => {
               {position.content}
             </p>
             <div className="flex gap-x-4">
-              {/* <div className="h-20 w-20 rounded-full bg-gray-400"></div> */}
               <Avatar>
                 <AvatarImage
                   src="https://github.com/shadcn.png"
                   alt="@shadcn"
                   className="w-16 rounded-full xl:w-20"
+                  width={20}
+                  height={20}
                 />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>

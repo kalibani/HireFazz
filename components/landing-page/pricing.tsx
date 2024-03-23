@@ -17,7 +17,7 @@ import { Button } from '../ui/button';
 const Pricing = ({ items }: { items: any[] }) => {
   return (
     <ScrollArea className="w-full whitespace-nowrap">
-      <div className="mx-auto mt-11 grid w-screen  text-center lg:w-[1200px] lg:grid-cols-5">
+      <div className="mx-auto mt-11 grid w-[1200px] grid-cols-5 text-center">
         {items.map((item, index) => (
           <div
             key={item.id}

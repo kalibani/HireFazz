@@ -53,9 +53,10 @@ export const LandingContent = () => {
               <Image
                 src={chatImage}
                 alt="picture"
-                quality={80}
+                quality={50}
                 sizes="100%"
                 className="opacity-40"
+                placeholder="blur"
               />
             </div>
           </div>
