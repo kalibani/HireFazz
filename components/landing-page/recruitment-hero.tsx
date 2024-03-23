@@ -5,28 +5,28 @@ import Image from 'next/image';
 import Link from 'next/link';
 function RecruitmentHero() {
   return (
-    <div className="flex items-center justify-between gap-x-6">
-      <div className="flex w-[60%] flex-col gap-y-6">
-        <h2 className="text-4xl font-bold">
+    <div className="flex flex-col-reverse items-center justify-between gap-x-6 lg:flex-row">
+      <div className="flex w-full flex-col gap-y-6 lg:w-[65%]">
+        <h2 className="text-2xl font-bold md:text-4xl">
           Enhance Recruitment Efficiency Using AI Matching Score
         </h2>
-        <p className="text-base text-second-text">
+        <p className="text-sm text-second-text md:text-base">
           Drowning in resumes? AI Matching Scores use smarts, not hunches, to
           identify top talent. Save time, reduce bias, and find the perfect fit
           faster - all with the power of AI.
         </p>
         <div className="flex gap-x-5">
           <Link href="/sign-up">
-            <Button className="text-base font-normal ">
+            <Button className="text-sm font-normal md:text-base ">
               Get Started for Free
             </Button>
           </Link>
-          <Button variant="ghost" className="text-base font-bold">
+          <Button variant="ghost" className="text-sm font-bold md:text-base">
             Or book demo.
           </Button>
         </div>
       </div>
-      <Image src={enhance} alt="picture" sizes="100%" quality={60} />
+      <Image src={enhance} alt="picture" sizes="100%" quality={80} />
     </div>
   );
 }

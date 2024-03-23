@@ -14,6 +14,11 @@ import custome from '@/public/image/custom.png';
 import collaborative from '@/public/image/collaborative.png';
 import dataDriven from '@/public/image/dataDriven.png';
 import timeCost from '@/public/image/timeCost.png';
+import jobAdv from '@/public/image/job-adv.png';
+import automated from '@/public/image/automated.png';
+import mass from '@/public/image/mass.png';
+import team from '@/public/image/team.png';
+import insight from '@/public/image/insight.png';
 
 export const MAX_FREE_COUNTS = 100;
 
@@ -370,5 +375,47 @@ export const components = [
     title: 'HR Management',
     href: '/comming',
     description: 'Simplify your HR, manage performance & payroll, etc.',
+  },
+];
+
+export const contentRecruitment = [
+  {
+    image: jobAdv,
+    id: '1',
+    title: 'Job Advertisement Creation and Publication:',
+    tagline: 'Easily craft and disseminate job postings to attract top talent',
+    desc: 'Struggling to write captivating job ads that attract the best candidates? Look no further! Our platform empowers you to craft compelling job descriptions with ease, then seamlessly post them across top job boards. Find your perfect hire faster with our streamlined recruitment solution.',
+  },
+  {
+    id: '2',
+    image: automated,
+    title: 'Automated Resume Analysis: ',
+    tagline:
+      'Streamline your hiring process with our advanced tool that automatically evaluates and ranks multiple candidate resumes.',
+    desc: 'Forget the resume pile-up!  Our advanced AI analyzes and ranks a flood of resumes in seconds.  It dives deep, assessing candidate skills and experience against your specific job criteria.  This automated analysis delivers a shortlist of top matches, saving you time and ensuring you focus on the most qualified applicants.',
+  },
+  {
+    id: '3',
+    image: mass,
+    title: 'Mass Candidate Outreach:',
+    tagline:
+      'Effortlessly contact numerous potential candidates with our automated communication feature.',
+    desc: 'asting a wide net for top talent? Our automated outreach feature streamlines the process. Craft a personalized message once, then effortlessly reach out to a multitude of qualified candidates. Track responses, schedule interviews, and manage the entire hiring pipeline – all within a single, user-friendly platform.',
+  },
+  {
+    id: '4',
+    image: team,
+    title: 'Team-Based Recruitment: ',
+    tagline:
+      'Enhance hiring outcomes through collaborative decision-making with our integrated team hiring tools.',
+    desc: 'Ditch the siloed hiring process!  Empower your team to collaborate seamlessly with our integrated tools.  Recruiters, hiring managers, and team members can share candidate profiles, provide feedback, and collectively make informed hiring decisions. This fosters a transparent and efficient process, ensuring you land the perfect fit for every role.',
+  },
+  {
+    id: '5',
+    image: insight,
+    title: 'Mass Candidate Outreach:',
+    tagline:
+      'Make informed hiring decisions with actionable data and analytics tailored to your recruitment needs.',
+    desc: 'Beyond just filling positions, unlock the power of data-driven recruitment! Gain valuable insights into your hiring process with our comprehensive analytics suite. Track key metrics, identify trends in candidate pools, and tailor your strategies for maximum impact. Make informed decisions backed by real data, ensuring you build a high-performing team that drives your business forward.',
   },
 ];

@@ -16,8 +16,8 @@ export const LandingNavbar = () => {
 
   return (
     <>
-      <nav className="fixed right-0 top-0 z-50 w-full bg-white/10 px-4 backdrop-blur-md sm:px-12 xl:px-16">
-        <div className="mx-auto flex max-w-screen-xl items-center justify-between gap-x-2 py-4 xl:gap-x-4">
+      <div className="fixed right-0 top-0 z-50 w-full bg-white/10 px-4 backdrop-blur-md sm:px-12 xl:px-16">
+        <div className="mx-auto flex max-w-screen-xl  items-center justify-between gap-x-2 py-2 xl:gap-x-4">
           <div className="flex items-center space-x-5 xl:space-x-10 ">
             <Link href="/" className="flex items-center gap-x-2">
               <div className="flex w-10 items-center justify-center">
@@ -38,7 +38,7 @@ export const LandingNavbar = () => {
             </Link>
           </div>
         </div>
-      </nav>
+      </div>
     </>
   );
 };
