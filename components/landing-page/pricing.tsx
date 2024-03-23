@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/tooltip';
 import check from '@/public/icon/checked.svg';
 
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, XCircle } from 'lucide-react';
 import React from 'react';
 import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 import Image from 'next/image';
@@ -16,8 +16,8 @@ import { Button } from '../ui/button';
 // temporary type any
 const Pricing = ({ items }: { items: any[] }) => {
   return (
-    <ScrollArea className=" w-full whitespace-nowrap">
-      <div className="mx-auto mt-11  grid w-[1024px] grid-cols-5 text-center">
+    <ScrollArea className="w-full whitespace-nowrap">
+      <div className="mx-auto mt-11 grid w-screen grid-cols-1 text-center lg:w-[1200px] lg:grid-cols-5">
         {items.map((item, index) => (
           <div
             key={item.id}
@@ -44,37 +44,46 @@ const Pricing = ({ items }: { items: any[] }) => {
               </h4>
               <p
                 className={cn(
-                  'text-xs text-[#4F525A]',
+                  'text-sm text-[#4F525A]',
                   item.id === 1 && 'opacity-0'
                 )}
               >
                 {item.desc}
               </p>
-              <p
-                className={cn(
-                  'text-2xl font-semibold ',
-                  index === 0 && 'mb-2 text-lg font-medium capitalize '
-                )}
-              >
-                {item.price}
+              <p className={cn('text-2xl font-semibold')}>
+                {item.price || item.price === 0
+                  ? `IDR ${item.price.toLocaleString()}`
+                  : ''}
               </p>
             </div>
             <div
               className={cn(
-                'flex w-full items-center justify-center py-6',
+                'flex w-full items-start justify-start py-4',
+                index === 0 && 'mt-5 text-xl font-semibold',
+                index !== 0 && '-mt-2.5 opacity-0'
+              )}
+            >
+              <p>Core Features</p>
+            </div>
+            <div
+              className={cn(
+                'flex w-full items-center justify-center py-4',
                 index === 0 && 'items-start justify-start',
+                index !== 0 && 'pb-3 pt-5',
                 index !== 0 && index % 2 === 0 ? 'bg-[#F7FAFC]' : 'bg-white'
               )}
             >
-              <p>{item.files} cvs</p>
+              <p>
+                {item.jobs} {index !== 0 && 'Jobs'}
+              </p>
               {item.id !== 1 && (
                 <TooltipProvider>
                   <Tooltip delayDuration={300}>
                     <TooltipTrigger className="ml-1.5 mt-0.5 flex cursor-default">
                       <HelpCircle className="h-3 w-3 text-zinc-500" />
                     </TooltipTrigger>
-                    <TooltipContent className="w-80 p-2">
-                      Screening CV Automatically up to {item.files} Candidates
+                    <TooltipContent className="w-full p-2">
+                      Create up to {item.jobs} Captivating Jobs with AI.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -82,21 +91,23 @@ const Pricing = ({ items }: { items: any[] }) => {
             </div>
             <div
               className={cn(
-                'flex w-full items-center justify-center  py-6',
+                'flex w-full items-center justify-center py-4',
                 index === 0 && 'items-start justify-start',
+                index !== 0 && 'py-5',
                 index % 2 !== 0 ? 'bg-[#F7FAFC]' : 'bg-white'
               )}
             >
-              <p>{item.generate}</p>
+              <p>
+                {item.files} {index !== 0 && 'CVs'}
+              </p>
               {item.id !== 1 && (
                 <TooltipProvider>
                   <Tooltip delayDuration={300}>
                     <TooltipTrigger className="ml-1.5 mt-0.5 flex cursor-default">
                       <HelpCircle className="h-3 w-3 text-zinc-500" />
                     </TooltipTrigger>
-                    <TooltipContent className="w-80 p-2">
-                      Screening CV Automatically up to {item.generate}{' '}
-                      Candidates.
+                    <TooltipContent className="w-full p-2">
+                      Screening CV Automatically up to {item.files} CVs
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -104,7 +115,7 @@ const Pricing = ({ items }: { items: any[] }) => {
             </div>
             <div
               className={cn(
-                'flex w-full flex-col items-center justify-center gap-x-1 gap-y-10 py-6',
+                'flex w-full flex-col items-center justify-center gap-x-1 gap-y-8 py-4',
                 index === 0 && 'items-start justify-start',
                 index % 2 !== 0 ? 'bg-[#F7FAFC]' : 'bg-white'
               )}
@@ -118,7 +129,10 @@ const Pricing = ({ items }: { items: any[] }) => {
                       sizes="100%"
                       width={20}
                       height={20}
+                      className="my-0.5"
                     />
+                  ) : item === 'uncheck' ? (
+                    <XCircle className="h-6 w-6 text-red-600" />
                   ) : (
                     <p key={item}>{item}</p>
                   )}

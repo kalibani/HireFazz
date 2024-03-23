@@ -47,7 +47,7 @@ const NavigationMenuTop = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem className="">
-          <NavigationMenuLink className="flex bg-transparent px-4 py-2 text-lg font-normal  hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10 ">
+          <NavigationMenuLink className="flex cursor-pointer bg-transparent px-4 py-2 text-lg font-normal hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-white/10">
             <NavPricing />
           </NavigationMenuLink>
         </NavigationMenuItem>
