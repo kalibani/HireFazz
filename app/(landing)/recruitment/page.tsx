@@ -19,9 +19,7 @@ const recruitmentPage = () => {
           Dont worry, it’s free as get started to say goodbye for repetitive
           task in recruitment.
         </p>
-        <Button className="h-auto text-lg font-normal lg:px-9 lg:py-4 lg:text-2xl">
-          Take me There !
-        </Button>
+        <Button className=" font-normal">Take me There !</Button>
       </div>
     </WrapperSection>
   );

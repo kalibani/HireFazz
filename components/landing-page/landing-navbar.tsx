@@ -32,7 +32,7 @@ export const LandingNavbar = () => {
           <MobileNavbar />
           <div className=" hidden items-center lg:flex">
             <Link href={isSignedIn ? '/dashboard' : '/sign-up'}>
-              <Button className="h-auto rounded-lg px-6 py-2 text-base  hover:bg-secondary hover:text-primary xl:px-8  xl:py-2 xl:text-xl">
+              <Button className="rounded-lg text-base font-normal  hover:bg-secondary hover:text-primary">
                 Get Started
               </Button>
             </Link>

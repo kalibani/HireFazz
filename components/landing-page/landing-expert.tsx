@@ -15,7 +15,7 @@ const LandingExpert = () => {
       </p>
       <div className="mb-6 mt-9 flex justify-center">
         <Link href="/comming" legacyBehavior passHref>
-          <Button className="h-auto px-7 py-2 text-lg font-medium sm:text-xl lg:px-9 lg:py-4 lg:text-xl">
+          <Button className="text-lg font-medium hover:bg-primary">
             Talk to Expert
           </Button>
         </Link>

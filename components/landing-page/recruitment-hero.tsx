@@ -17,7 +17,7 @@ function RecruitmentHero() {
         </p>
         <div className="flex gap-x-5">
           <Link href="/sign-up">
-            <Button className="text-sm font-normal md:text-base ">
+            <Button className="h-auto  text-base font-normal">
               Get Started for Free
             </Button>
           </Link>

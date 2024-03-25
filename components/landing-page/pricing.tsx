@@ -144,8 +144,8 @@ const Pricing = ({ items }: { items: any[] }) => {
             >
               <Button
                 className={cn(
-                  'w-fit text-sm font-semibold hover:bg-primary hover:text-white',
-                  index > 1 ? 'font-normal' : 'font-semibold'
+                  'w-fit text-sm hover:bg-primary hover:text-white',
+                  index > 1 ? 'font-normal' : 'font-medium'
                 )}
                 variant={index > 1 ? 'outline' : 'default'}
               >

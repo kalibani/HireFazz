@@ -20,9 +20,7 @@ const ListItem = React.forwardRef<React.ElementRef<'a'>, ListItemProps>(
             {...props}
           >
             <div className=" flex items-center   space-x-2">
-              <p className="text-lg font-bold leading-none xl:text-xl">
-                {title}
-              </p>
+              <p className="text-lg font-medium leading-none">{title}</p>
               {isComingSoon && (
                 <div className="rounded-sm bg-primary p-[4px] text-sm font-bold leading-none">
                   <p className="text-[8px] font-normal text-white">
@@ -31,7 +29,7 @@ const ListItem = React.forwardRef<React.ElementRef<'a'>, ListItemProps>(
                 </div>
               )}
             </div>
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground text-second-text xl:text-base">
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground text-second-text">
               {children}
             </p>
           </a>

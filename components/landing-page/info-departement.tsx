@@ -19,7 +19,7 @@ const InfoDepartement = () => {
               onClick={() => setPosition(item)}
               variant={item.id !== position.id ? 'outline' : 'default'}
               className={cn(
-                'h-auto transition-all delay-100 ease-in-out hover:bg-primary  hover:font-medium hover:text-white md:px-8 md:py-5 md:text-xl lg:text-2xl  xl:py-7',
+                'h-auto py-4 font-normal transition-all delay-100 ease-in-out [font-size:_clamp(14px,10vw,18px)]  hover:bg-primary hover:font-normal hover:text-white',
                 item.id !== position.id && 'border-primary font-light'
               )}
               key={item.id}
