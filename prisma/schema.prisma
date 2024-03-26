@@ -32,6 +32,23 @@ enum PACKAGE_TYPE {
 }
 
 
+enum WORK_MODEL {
+  ONSITE
+  REMOTE
+  HYBRID
+}
+
+enum CV_SOURCE {
+  UPLOAD
+  LINKEDIN
+}
+
+enum ANALYSYS_STATUS {
+  ANALYSYS
+  REJECTED
+  INTERVIEW
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -148,10 +165,12 @@ model CvAnalysis {
   id                String  @id @default(cuid())
   cvId              String
   orgId             String
-  batchId           String
-  batch             Batch  @relation(fields: [batchId], references: [id])
+  batchJobId        String
+  batch             BatchJob  @relation(fields: [batchJobId], references: [id])
   reportOfAnalysis  Json?
   cv                Cv  @relation(fields: [cvId], references: [id])
+  status            ANALYSYS_STATUS
+  isQualified       Boolean @default(false)
 }
 
 model Cv {
@@ -162,17 +181,26 @@ model Cv {
   key          String
   createdAt    DateTime      @default(now())
   orgId        String
+  title        String?
   analyses     CvAnalysis[]
+  source       CV_SOURCE
 }
 
-model Batch {
-  id             String @id @default(cuid())
-  jobName        String
-  status         String
-  orgId          String
-  jobDescription String
-  createdAt      DateTime @default(now())
-  cvAnalysis     CvAnalysis[]
+model BatchJob {
+  id              String @id @default(cuid())
+  jobName         String
+  status          String
+  orgId           String
+  jobDescription  String
+  location        String
+  createdAt       DateTime @default(now())
+  salaryCurrency  String?
+  salaryRangeFrom Int?
+  salaryRangeEnd  Int?
+  experience      Int?
+  companyName     String
+  workModel       WORK_MODEL
+  cvAnalysis      CvAnalysis[]
 }
 
 
