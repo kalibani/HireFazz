@@ -114,11 +114,12 @@ export const useCvScanner = (searchParams?: {
   };
 
   useEffect(() => {
-    // @ts-ignore
     const allFiles =
+      // @ts-ignore
       filesInfinite?.pages.reduce((acc, el) => {
         return [...acc, ...el.items];
       }, []) || [];
+    // @ts-ignore
     if (allFiles.length) {
       allFiles
         // @ts-ignore

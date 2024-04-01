@@ -1,17 +1,17 @@
-import "./globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import ModalProvider from "@/components/modal-provider";
-import { ToasterProvider } from "@/components/toasterProvider";
-import Providers from "@/components/Providers";
+import './globals.css';
+import type { Metadata } from 'next';
+import { Outfit } from 'next/font/google';
+import { ClerkProvider } from '@clerk/nextjs';
+import ModalProvider from '@/components/modal-provider';
+import { ToasterProvider } from '@/components/toasterProvider';
+import Providers from '@/components/Providers';
 
-const inter = Inter({ subsets: ["latin"] });
+const outfit = Outfit({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "BerryLabs - AI-Powered Solutions, Human-Centered Results",
+  title: 'BerryLabs - AI-Powered Solutions, Human-Centered Results',
   description:
-    "BerryLabs harnesses the power of artificial intelligence to revolutionize your document handling processes. Our platform offers a suite of tools designed to automate and optimize your repetitive tasks, from scanning CVs and analyzing bank statements to reviewing contracts and ensuring regulatory compliance. Transform your business operations with BerryLabs and make data-driven decisions faster and more accurately.",
+    'BerryLabs harnesses the power of artificial intelligence to revolutionize your document handling processes. Our platform offers a suite of tools designed to automate and optimize your repetitive tasks, from scanning CVs and analyzing bank statements to reviewing contracts and ensuring regulatory compliance. Transform your business operations with BerryLabs and make data-driven decisions faster and more accurately.',
 };
 
 export default function RootLayout({
@@ -43,7 +43,7 @@ export default function RootLayout({
               type="image/png"
             />
           </head>
-          <body className={inter.className}>
+          <body className={outfit.className}>
             <ToasterProvider />
             <ModalProvider />
             {children}

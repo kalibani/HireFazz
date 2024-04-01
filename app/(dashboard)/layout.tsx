@@ -1,11 +1,11 @@
-import React, { ReactNode } from "react";
-import Navbar from "@/components/navbar";
-import Sidebar from "@/components/sidebar";
-import { getUser } from "@/lib/api-limit";
+import React, { ReactNode } from 'react';
+import Navbar from '@/components/navbar';
+import Sidebar from '@/components/sidebar';
+import { getUser } from '@/lib/api-limit';
 
-import { auth } from "@clerk/nextjs";
-import "react-loading-skeleton/dist/skeleton.css";
-import "simplebar-react/dist/simplebar.min.css";
+import { auth } from '@clerk/nextjs';
+import 'react-loading-skeleton/dist/skeleton.css';
+import 'simplebar-react/dist/simplebar.min.css';
 
 type DashboardLayoutProps = {
   children: ReactNode;

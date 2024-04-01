@@ -1,7 +1,8 @@
-import { UserButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs";
-import { getUser } from "@/lib/api-limit";
-import MobileSidebar from "./mobile-sidebar";
+import { UserButton } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs';
+import { getUser } from '@/lib/api-limit';
+import MobileSidebar from './mobile-sidebar';
+import Sidebar from './sidebar';
 
 const Navbar = async () => {
   const { userId } = auth();
@@ -9,12 +10,14 @@ const Navbar = async () => {
     await getUser(userId!);
   return (
     <div className=" flex items-center p-4">
-      <MobileSidebar
-        apiLimitCount={count}
-        subscriptionType={subscriptionType}
-        isUserAgreedTermsOfService={isUserAgreedTermsOfService}
-        maxFreeCount={maxFreeCount}
-      />
+      <MobileSidebar>
+        <Sidebar
+          apiLimitCount={count}
+          subscriptionType={subscriptionType}
+          isUserAgreedTermsOfService={isUserAgreedTermsOfService}
+          maxFreeCount={maxFreeCount}
+        />
+      </MobileSidebar>
       <div className="flex w-full justify-end">
         <UserButton afterSignOutUrl="/" />
       </div>

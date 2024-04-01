@@ -160,12 +160,7 @@ const UploadDropzone = ({
     // "text/csv": [".csv"],
   };
 
-  const maxFiles =
-    subscriptionType === 'PREMIUM'
-      ? 150
-      : subscriptionType === 'PRO'
-      ? 100
-      : 50;
+  const maxFiles = subscriptionType === 'PREMIUM' ? 150 : 100;
   const maxFileSize = subscriptionType === 'PREMIUM' ? 16 : 4;
 
   return (
@@ -179,7 +174,7 @@ const UploadDropzone = ({
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
           {...getRootProps()}
-          className="border min-h-64 max-h-[400px] m-4 border-dashed border-gray-300 rounded-lg overflow-auto relative"
+          className="border min-h-64 max-h-[400px] border-dashed mt-1 border-gray-300 rounded-lg overflow-auto relative"
         >
           {isUploading && (
             <div className="sticky top-0">
@@ -340,7 +335,7 @@ const UploadButton = ({
         onInteractOutside={(e) => e.preventDefault()}
       >
         <div>
-          <div className="px-4 mb-1">
+          <div className="px-4 mb-2">
             <label className="text-lg font-semibold">
               Input Job Title <span className="text-red-400">*</span>
             </label>
@@ -353,7 +348,7 @@ const UploadButton = ({
               onChange={(e) => setJobTitle(e.target.value)}
             />
           </div>
-          <div className="px-4">
+          <div className="px-4 mb-2">
             <TooltipProvider>
               <label className="text-lg font-semibold">
                 Input your requirements here{' '}
@@ -389,7 +384,7 @@ const UploadButton = ({
               </label>
             </TooltipProvider>
             <Textarea
-              className="min-h-[150px] max-h-[400px] overflow-auto mt-2"
+              className="min-h-[150px] max-h-[350px] overflow-auto mt-2"
               placeholder="Type your requirements here."
               rows={15}
               cols={40}
@@ -398,16 +393,17 @@ const UploadButton = ({
               onChange={(e) => setRequirements(e.target.value)}
             />
           </div>
-          <div className="flex items-center justify-between px-4 mt-4">
+          <div className="flex items-center justify-between px-4 mt-6">
             <TooltipProvider>
               <label className="mr-2 text-lg font-semibold">
-                Set Percentage
+                Set Match Percentage
                 <Tooltip delayDuration={300}>
                   <TooltipTrigger className="cursor-default ml-1.5">
                     <HelpCircle className="w-4 h-4 text-zinc-500" />
                   </TooltipTrigger>
                   <TooltipContent className="p-2 w-80">
-                    How many percentage you wanted to match.
+                    What percentage you wanted the candidates matched with
+                    requirements.
                   </TooltipContent>
                 </Tooltip>
               </label>
@@ -442,13 +438,19 @@ const UploadButton = ({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <UploadDropzone
-            setIsOpen={setIsOpen}
-            onUpload={onUpload}
-            // @ts-ignore
-            isDisabled={!requirements || !jobTitle}
-            refetch={refetch}
-          />
+          <div className="px-4 mt-4">
+            <label className="text-lg font-semibold">
+              Upload Hundreds of CVs at Once to See the Magic
+              <span className="text-red-400 ml-1">*</span>
+            </label>
+            <UploadDropzone
+              setIsOpen={setIsOpen}
+              onUpload={onUpload}
+              // @ts-ignore
+              isDisabled={!requirements || !jobTitle}
+              refetch={refetch}
+            />
+          </div>
         </div>
       </DialogContent>
     </Dialog>

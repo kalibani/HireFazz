@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 type useAnalyzerStore = {
   requirements: string;
@@ -10,10 +10,10 @@ type useAnalyzerStore = {
 };
 
 export const useAnalyzer = create<useAnalyzerStore>()((set) => ({
-  requirements: "",
+  requirements: '',
   setRequirements: (v) => set({ requirements: v }),
-  percentage: 60,
+  percentage: 80,
   setPercentage: (v) => set({ percentage: v }),
-  jobTitle: "",
+  jobTitle: '',
   setJobTitle: (v: string) => set({ jobTitle: v }),
 }));
