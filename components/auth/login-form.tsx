@@ -23,6 +23,8 @@ import { FormSuccess } from '../form-success';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { userLoginAction } from '@/lib/actions/auth';
+import Image from 'next/image';
+import logo from '@/public/icons/logo.svg';
 
 const LoginForm = () => {
   const searchParams = useSearchParams();
@@ -69,7 +71,7 @@ const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Welcome back"
+      headerLabel="Login"
       backButtonLabel="Don't have an account?"
       backButtonHref="/auth/register"
       showSocial
