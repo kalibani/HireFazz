@@ -10,7 +10,6 @@ import UploadButton from '@/components/upload-button';
 import EmptyPage from '@/components/empty';
 import LoaderGeneral from '@/components/loader';
 import { useProModal } from '@/hooks/use-pro-modal';
-import { trpc } from '@/app/_trpc/client';
 import { useUser } from '@/hooks/use-user';
 
 import { ReanalyzeModal } from '@/components/reanalyze-modal';
@@ -29,9 +28,9 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
 
   const { subscriptionType, maxFreeCount, setPlan, setQuota, setQuotaLimited } =
     useUser();
-  const utils = trpc.useUtils();
   const {
     filesMemo,
+    refetch,
     isLoading,
     deleteFile,
     deletingIds,
@@ -89,7 +88,7 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
             ) : (
               <UploadButton
                 buttonText="Upload CV"
-                refetch={() => utils.infiniteFiles.refetch()}
+                refetch={() => console.log('refetch')}
               />
             )}
           </div>
@@ -109,12 +108,14 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
           {filesMemo && filesMemo?.length !== 0 ? (
             <CardCvscanner
               reanalyzeIds={reanalyzeIds}
-              deletingIds={deletingIds}
+              // deletingIds={deletingIds}
+              deletingIds={['2']}
               filesMemo={filesMemo}
               isMoreThanMatchLimit={isMoreThanMatchLimit}
               jobTitle={jobTitle}
               onClickSelectFile={(val) => setSelectedFile(val)}
-              onDelete={(id) => deleteFile({ id })}
+              // onClickSelectFile={(val) => console.log(val, '<<< selected card')}
+              onDelete={(id) => deleteFile(id)}
             />
           ) : isLoading ? (
             <div className="flex items-start justify-center w-full p-8 rounded-lg bg-muted mt-8">
@@ -130,6 +131,7 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
                 className="text-blue-400"
                 onClick={() => fetchNextPage()}
                 disabled={isLoading}
+                asChild
               >
                 Load More
               </Button>

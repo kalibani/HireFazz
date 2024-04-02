@@ -6,7 +6,7 @@ import { useState, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { NewPasswordSchema } from '@/schemas';
+import { NewPasswordSchema } from '@/lib/validators/auth';
 import { Input } from '@/components/ui/input';
 import {
   Form,

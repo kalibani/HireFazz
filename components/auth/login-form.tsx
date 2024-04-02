@@ -5,7 +5,7 @@ import CardWrapper from './card-wrapper';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { LoginSchema } from '@/schemas';
+import { LoginSchema } from '@/lib/validators/auth';
 import { useSearchParams } from 'next/navigation';
 import {
   Form,
@@ -20,8 +20,9 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
-import { trpc } from '@/app/_trpc/client';
 import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import { userLoginAction } from '@/lib/actions/auth';
 
 const LoginForm = () => {
   const searchParams = useSearchParams();
@@ -37,16 +38,18 @@ const LoginForm = () => {
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
 
-  const { mutate } = trpc.userLogin.useMutation({
+  const { mutate } = useMutation({
+    mutationFn: userLoginAction,
     onSuccess: (data: any) => {
+      if (data.error) {
+        setError(data.error);
+      }
       replace('/dashboard');
-      setSuccess(data?.success);
     },
-    onError: (data) => {
-      setError(data.message);
+    onError: ({ error }) => {
+      setError(error);
     },
   });
-
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {

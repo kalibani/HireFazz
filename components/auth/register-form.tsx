@@ -5,7 +5,7 @@ import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { RegisterSchema } from '@/schemas';
+import { RegisterSchema } from '@/lib/validators/auth';
 import { Input } from '@/components/ui/input';
 import {
   Form,
@@ -19,21 +19,27 @@ import { CardWrapper } from '@/components/auth';
 import { Button } from '@/components/ui/button';
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
-import { trpc } from '@/app/_trpc/client';
 import { Loader2 } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { userRegisterAction } from '@/lib/actions/auth';
+import { useRouter } from 'next/navigation';
 
 export const RegisterForm = () => {
+  const { replace } = useRouter();
+
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
-  const { mutate } = trpc.userRegister.useMutation({
-    onSuccess: (data) => {
-      setSuccess(data?.success);
-    },
-    onError: (data) => {
-      setError(data.message);
+
+  const { mutate } = useMutation(userRegisterAction, {
+    onSuccess: (data: any) => {
+      if (data.error) {
+        setError(data?.error);
+      }
+      replace('/dashboard');
     },
   });
+
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {

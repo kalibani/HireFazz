@@ -2,7 +2,7 @@
 
 import {
   JSXElementConstructor,
-  PromiseLikeOfReactNode,
+  // PromiseLikeOfReactNode,
   ReactElement,
   ReactNode,
   ReactPortal,
@@ -40,6 +40,9 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/hooks/use-user';
 import { useProModal } from '@/hooks/use-pro-modal';
 import { cn } from '@/lib/utils';
+import { getFileAction } from '@/lib/actions/cv-scanner';
+import { useMutation } from '@tanstack/react-query';
+import { error } from 'winston';
 
 const UploadDropzone = ({
   setIsOpen,
@@ -63,19 +66,34 @@ const UploadDropzone = ({
   const { apiLimitCount } = useProModal();
   const { maxFreeCount, subscriptionType } = useUser();
   // @ts-ignore
-  const { mutate: startPolling } = trpc.getFile.useMutation({
-    onSuccess: (file) => {
-      if (file.uploadStatus === 'SUCCESS') {
+  // const { mutate: startPolling } = trpc.getFile.useMutation({
+  //   onSuccess: (file) => {
+  //     if (file.uploadStatus === 'SUCCESS') {
+  //       refetch();
+  //       router.refresh();
+  //     }
+  //   },
+  //   retry: true,
+  //   onError(error, variables, context) {
+  //     console.log('e', error, 'v', variables, 'c', context);
+  //   },
+  //   retryDelay: 200,
+  //   networkMode: 'always',
+  // });
+
+  const { mutate: startPolling } = useMutation({
+    mutationFn: (val: string) => getFileAction({ key: val }),
+    onSuccess: (file: any) => {
+      if (file?.uploadStatus === 'SUCCESS') {
         refetch();
         router.refresh();
       }
     },
-    retry: true,
     onError(error, variables, context) {
       console.log('e', error, 'v', variables, 'c', context);
     },
     retryDelay: 200,
-    networkMode: 'always',
+    // networkMode: 'always',
   });
 
   const startSimulatedProgress = (idx: number) => {
@@ -100,6 +118,7 @@ const UploadDropzone = ({
 
   const handleUpload = async (file: File[], idx: number) => {
     const progressInterval = startSimulatedProgress(idx);
+
     // @ts-ignore
     const res = await startUpload([file]);
     if (!res) {
@@ -109,12 +128,11 @@ const UploadDropzone = ({
     const [fileResponse] = res;
 
     const key = fileResponse?.key;
-
     if (!key) {
       return toast.error('Something went wrong on file key');
     }
     clearInterval(progressInterval);
-    startPolling({ key });
+    startPolling(key);
   };
 
   const handleDropFiles = async (acceptedFiles: any[]) => {
@@ -239,7 +257,7 @@ const UploadDropzone = ({
                             >
                           | Iterable<ReactNode>
                           | ReactPortal
-                          | PromiseLikeOfReactNode
+                          // | PromiseLikeOfReactNode
                           | null
                           | undefined;
                       },

@@ -2,7 +2,7 @@ import Google from 'next-auth/providers/google';
 
 import bcrypt from 'bcryptjs';
 import Credentials from 'next-auth/providers/credentials';
-import { LoginSchema } from './schemas';
+import { LoginSchema } from '@/lib/validators/auth';
 
 import type { NextAuthConfig } from 'next-auth';
 import { getUserByEmail } from './lib/data';
@@ -33,7 +33,9 @@ export default {
           if (!user || !user.password) return null;
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
-          if (passwordsMatch) return user;
+          if (passwordsMatch) {
+            return user;
+          }
         }
         return null;
       },
