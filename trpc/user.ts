@@ -20,7 +20,7 @@ import {
   reset,
 } from '@/lib/data';
 import { generateVerificationToken } from '@/lib/tokens';
-import { sendVerificationEmail } from '@/lib/mail';
+// import { sendVerificationEmail } from '@/lib/mail';
 import { PACKAGE_TYPE } from '@prisma/client';
 
 const user = {

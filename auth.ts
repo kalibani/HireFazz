@@ -74,12 +74,11 @@ export const {
     },
   },
 
+  ...authConfig,
   adapter: PrismaAdapter(prismadb),
-
   // adapter: {
   //   ...PrismaAdapter(prismadb),
   // },
-  ...authConfig,
   debug: process.env.NODE_ENV === 'development',
   session: { strategy: 'jwt' },
 });

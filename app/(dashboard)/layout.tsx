@@ -5,15 +5,12 @@ import { getUser } from '@/lib/api-limit';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'simplebar-react/dist/simplebar.min.css';
-import { currentUser } from '@/lib/auth';
 
 type DashboardLayoutProps = {
   children: ReactNode;
 };
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
-  const user = await currentUser();
-
   const { count, subscriptionType, maxFreeCount, isUserAgreedTermsOfService } =
     await getUser();
   return (
