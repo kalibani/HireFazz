@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { productName } from '@/constant';
+import { format, fromUnixTime } from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -76,11 +77,21 @@ export const queryString = (queryParams: any) => {
 
 export const removeProperty = <
   T extends Record<string, any>,
-  K extends keyof T
+  K extends keyof T,
 >(
   obj: T,
   propToDelete: K
 ): Omit<T, K> => {
   const { [propToDelete]: deletedProp, ...rest } = obj;
   return rest;
+};
+
+export const formatDateStringToDate = (inputDateString: string) => {
+  // Convert the input string to a JavaScript Date object
+  const date = fromUnixTime(parseInt(inputDateString) / 1000); // Divide by 1000 to convert milliseconds to seconds
+
+  // Format the date using the desired format
+  const formattedDate = format(date, 'dd MMM, yyyy'); // Format example: '20 Mar, 2024'
+
+  return formattedDate;
 };
