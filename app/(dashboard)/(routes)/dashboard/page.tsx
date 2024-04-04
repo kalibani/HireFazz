@@ -11,7 +11,15 @@ import dashboard from '@/public/icon/icon-banner-dashboard.svg';
 import { Banner } from '@/components/share';
 import { CardFeature, CardTotal, DashboardTable } from '@/components/dashboard';
 import { CardTotalProp } from '@/components/dashboard/card-total';
-import { ListChecks, FileText, Scan, Users } from 'lucide-react';
+import {
+  ListChecks,
+  FileText,
+  Scan,
+  Users,
+  ArrowUpRight,
+  ArrowRight,
+} from 'lucide-react';
+import router from 'next/router';
 
 const DashboardPage = () => {
   return (
@@ -43,6 +51,9 @@ const DashboardPage = () => {
           </p>
         </div>
         <DashboardTable />
+        <Button variant="link" className="p-0 text-sm font-normal">
+          View More Job <ArrowUpRight className="w-4" />
+        </Button>
       </div>
     </div>
   );
