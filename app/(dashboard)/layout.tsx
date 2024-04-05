@@ -17,16 +17,18 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
     await getUser(userId!);
 
   return (
-    <div className="h-full relative bg-[#F2F2F7]">
-      <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 bg-gray-900">
+    <div className=" flex h-full bg-[#F2F2F7]">
+      {/* <div className="hidden h-full bg-gray-900 md:fixed md:inset-y-0 md:flex md:w-72 md:flex-col">
         <Sidebar
           apiLimitCount={count}
           subscriptionType={subscriptionType}
           maxFreeCount={maxFreeCount!}
           isUserAgreedTermsOfService={isUserAgreedTermsOfService}
         />
-      </div>
-      <main className="md:pl-72 overflow-clip">
+
+      </div> */}
+      <Sidebar />
+      <main className="w-full overflow-clip">
         <Navbar />
         {children}
       </main>
