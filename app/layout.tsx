@@ -1,12 +1,12 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Outfit } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import ModalProvider from '@/components/modal-provider';
 import { ToasterProvider } from '@/components/toasterProvider';
 import Providers from '@/components/Providers';
 
-const outfit = Outfit({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'BerryLabs - AI-Powered Solutions, Human-Centered Results',
@@ -43,7 +43,7 @@ export default function RootLayout({
               type="image/png"
             />
           </head>
-          <body className={outfit.className}>
+          <body className={inter.className}>
             <ToasterProvider />
             <ModalProvider />
             {children}
