@@ -1,6 +1,7 @@
 import { getUser } from '@/lib/api-limit';
 import MobileSidebar from './mobile-sidebar';
 import { UserButton } from '@/components/auth';
+import Sidebar from './sidebar';
 
 const Navbar = async () => {
   const { count, subscriptionType, isUserAgreedTermsOfService, maxFreeCount } =

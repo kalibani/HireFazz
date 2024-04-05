@@ -22,8 +22,9 @@ export default auth((req): any => {
   if (isApiAuthRoute || isOpenApi) {
     return null;
   }
-  if (isAuthRoute) {
+  if (isAuthRoute || isPublicRoute) {
     if (isLoggedIn) {
+      console.log("middleware", isLoggedIn)
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
     return null;

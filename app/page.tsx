@@ -1,6 +1,6 @@
 import { LandingNavbar } from '@/components/landing-navbar';
 import { LandingHero } from '@/components/landing-hero';
-import { LandingContent } from '@/components/landing-content';
+// import { LandingContent } from '@/components/landing-content';
 import ContactUs from '@/components/contact-us';
 
 const LandingPage = () => {
@@ -10,7 +10,7 @@ const LandingPage = () => {
         {/* <div className="h-full "> */}
         <LandingNavbar />
         <LandingHero />
-        <LandingContent />
+        {/* <LandingContent /> */}
         <ContactUs />
         {/* </div> */}
       </div>

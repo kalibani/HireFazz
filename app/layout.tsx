@@ -45,7 +45,7 @@ export default async function RootLayout({
               type="image/png"
             />
           </head>
-          <body className={outfit.className}>
+          <body className={inter.className}>
             <ToasterProvider />
             <ModalProvider />
             {children}
