@@ -17,13 +17,13 @@ import {
   Scan,
   Users,
   ArrowUpRight,
-  ArrowRight,
+  SearchCheck,
 } from 'lucide-react';
 import router from 'next/router';
 
 const DashboardPage = () => {
   return (
-    <div className="space-y-3 p-4">
+    <section className="space-y-4 p-4">
       <Banner
         title="Welcome, Dikta Wicaksono"
         desc="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book."
@@ -55,7 +55,7 @@ const DashboardPage = () => {
           View More Job <ArrowUpRight className="w-4" />
         </Button>
       </div>
-    </div>
+    </section>
   );
 };
 
@@ -81,7 +81,7 @@ const dummyTotal: CardTotalProp[] = [
     link: '/total-job',
     linkTitle: 'view Quota',
     total: 50,
-    icon: <Scan />,
+    icon: <SearchCheck />,
   },
   {
     title: 'total member',
