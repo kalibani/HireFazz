@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { startTransition, useState, useTransition } from 'react';
 import CardWrapper from './card-wrapper';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,13 +23,10 @@ import { FormSuccess } from '../form-success';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { userLoginAction } from '@/lib/actions/auth';
-import Image from 'next/image';
-import logo from '@/public/icons/logo.svg';
 
 const LoginForm = () => {
   const searchParams = useSearchParams();
-  const callbackUrl: any = searchParams.get('callbackUrl');
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
       ? 'Email already in use with different provider!'
@@ -41,12 +38,14 @@ const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
 
   const { mutate } = useMutation({
-    mutationFn: userLoginAction,
+    mutationKey: ["signIn"],
+    mutationFn:  (payload: z.infer<typeof LoginSchema>)=>  userLoginAction(payload),
     onSuccess: (data: any) => {
       if (data.error) {
         setError(data.error);
+      }else{
+        push('/dashboard');
       }
-      replace('/dashboard');
     },
     onError: ({ error }) => {
       setError(error);
@@ -63,9 +62,9 @@ const LoginForm = () => {
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError('');
     setSuccess('');
-    const payload = { ...values, callbackUrl };
     startTransition(() => {
-      mutate(payload);
+      mutate(values)
+    
     });
   };
 
@@ -79,28 +78,6 @@ const LoginForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
-            {showTwoFactor && (
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Two Factor Code</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        disabled={isPending}
-                        placeholder="123456"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {!showTwoFactor && (
-              <>
                 <FormField
                   control={form.control}
                   name="email"
@@ -145,8 +122,6 @@ const LoginForm = () => {
                     </FormItem>
                   )}
                 />
-              </>
-            )}
           </div>
           <FormError message={error || urlError} />
           <FormSuccess message={success} />

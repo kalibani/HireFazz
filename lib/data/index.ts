@@ -3,8 +3,8 @@ import { NewPasswordSchema, ResetSchema } from '@/lib/validators/auth';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-// import { sendPasswordResetEmail } from '../mail';
 import bcrypt from 'bcryptjs';
+import { sendPasswordResetEmail } from '../mail';
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -160,10 +160,10 @@ export const reset = async (values: z.infer<typeof ResetSchema>) => {
   }
 
   const passwordResetToken = await generatePasswordResetToken(email);
-  // await sendPasswordResetEmail(
-  //   passwordResetToken.email,
-  //   passwordResetToken.token
-  // );
+  await sendPasswordResetEmail(
+    passwordResetToken.email,
+    passwordResetToken.token
+  );
 
   return { success: 'Reset email sent!' };
 };

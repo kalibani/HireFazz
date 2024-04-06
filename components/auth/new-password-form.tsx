@@ -20,7 +20,10 @@ import { Button } from '@/components/ui/button';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import { CardWrapper } from '.';
-import { trpc } from '@/app/_trpc/client';
+import { useMutation } from '@tanstack/react-query';
+import { newPasswordAction } from '@/lib/actions/auth';
+import { error } from 'winston';
+
 
 const NewPasswordForm = () => {
   const { replace } = useRouter();
@@ -30,13 +33,15 @@ const NewPasswordForm = () => {
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
-  const { mutate } = trpc.userNewPassword.useMutation({
+
+  const { mutate } = useMutation({
+    mutationFn:newPasswordAction,
     onSuccess: () => {
       setSuccess('Password updated!');
       replace('/auth/login');
     },
-    onError: (data) => {
-      setError(data.message);
+    onError: ({error}) => {
+      setError(error);
     },
   });
   const form = useForm<z.infer<typeof NewPasswordSchema>>({

@@ -23,6 +23,7 @@ import { Loader2 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { userRegisterAction } from '@/lib/actions/auth';
 import { useRouter } from 'next/navigation';
+import { error } from 'winston';
 
 export const RegisterForm = () => {
   const { replace } = useRouter();
@@ -35,8 +36,13 @@ export const RegisterForm = () => {
     onSuccess: (data: any) => {
       if (data.error) {
         setError(data?.error);
+      }else{
+        replace('/dashboard');
       }
-      replace('/dashboard');
+    },
+    onError:({error})=>{
+        setError(error)
+
     },
   });
 

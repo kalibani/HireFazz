@@ -22,6 +22,7 @@ export default auth((req): any => {
   if (isApiAuthRoute || isOpenApi) {
     return null;
   }
+  
   if (isAuthRoute || isPublicRoute) {
     if (isLoggedIn) {
       console.log("middleware", isLoggedIn)

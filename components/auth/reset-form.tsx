@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useState, useTransition } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { ResetSchema } from '@/schemas';
+import { ResetSchema } from '@/lib/validators/auth';
 import { Input } from '@/components/ui/input';
 import {
   Form,
@@ -20,19 +20,21 @@ import { Button } from '@/components/ui/button';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import { CardWrapper } from '.';
-import { trpc } from '@/app/_trpc/client';
+import { useMutation } from '@tanstack/react-query';
+import { resetPasswordAction } from '@/lib/actions/auth';
 
 export const ResetForm = () => {
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
 
-  const { mutate } = trpc.userResetPassword.useMutation({
-    onSuccess: (data: { success: string }) => {
-      setSuccess(data.success);
+  const { mutate } = useMutation({
+    mutationFn:(payload:z.infer<typeof ResetSchema>)=>resetPasswordAction(payload),
+    onSuccess: ({success}) => {
+      setSuccess(success);
     },
-    onError: (data) => {
-      setError(data.message);
+    onError: ({error}) => {
+      setError(error);
     },
   });
   const form = useForm<z.infer<typeof ResetSchema>>({

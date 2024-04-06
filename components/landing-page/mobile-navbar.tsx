@@ -4,7 +4,6 @@ import MobileSidebar from '../mobile-sidebar';
 import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/public/BerryLabs.png';
-import { Handshake, Scroll, HandCoins, Layers } from 'lucide-react';
 import { DropdownMenuMobile } from '.';
 import { SheetClose } from '../ui/sheet';
 
