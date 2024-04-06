@@ -5,7 +5,7 @@ import Credentials from 'next-auth/providers/credentials';
 import { LoginSchema } from '@/lib/validators/auth';
 
 import type { NextAuthConfig } from 'next-auth';
-import { getUserByEmail } from './lib/data';
+import { getUserByEmail } from '@/lib/data';
 
 export default {
   providers: [

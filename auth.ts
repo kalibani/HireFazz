@@ -1,8 +1,8 @@
 import NextAuth from 'next-auth';
+import { getUserById } from '@/lib/actions/auth';
 import authConfig from './auth.config';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prismadb from './lib/prismadb';
-import { getUserById } from './lib/data';
 import jwt from 'jsonwebtoken';
 
 export const {
