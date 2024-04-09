@@ -2,7 +2,7 @@
 
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
-import { useState, useTransition } from 'react';
+import { startTransition, useState, useTransition } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { ResetSchema } from '@/lib/validators/auth';
@@ -30,11 +30,12 @@ export const ResetForm = () => {
 
   const { mutate } = useMutation({
     mutationFn:(payload:z.infer<typeof ResetSchema>)=>resetPasswordAction(payload),
-    onSuccess: ({success}) => {
-      setSuccess(success);
-    },
-    onError: ({error}) => {
-      setError(error);
+    onSuccess: (data:any) => {
+      if(data.error){
+        setError(data.error)
+      }else{
+        setSuccess(data.success)
+      }
     },
   });
   const form = useForm<z.infer<typeof ResetSchema>>({
