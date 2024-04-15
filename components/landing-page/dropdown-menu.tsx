@@ -7,9 +7,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { Handshake, Scroll, HandCoins, Layers } from 'lucide-react';
+import { Handshake, Scroll, HandCoins } from 'lucide-react';
 import { SheetClose } from '../ui/sheet';
-import { NavPricing } from '.';
 import { useRouter } from 'next/navigation';
 
 const routes = [

@@ -1,8 +1,6 @@
-'use client';
-
+'use client'
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuth } from '@clerk/nextjs';
 import logo from '@/public/BerryLabs.png';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -12,10 +10,8 @@ import { MobileNavbar } from '.';
 import NavigationMenuTop from './navigation-top';
 
 export const LandingNavbar = () => {
-  const { isSignedIn } = useAuth();
 
   return (
-    <>
       <div className="fixed right-0 top-0 z-50 w-full bg-white/10 px-4 backdrop-blur-md sm:px-12 xl:px-16">
         <div className="mx-auto flex max-w-screen-xl  items-center justify-between gap-x-2 py-2 xl:gap-x-4">
           <div className="flex items-center space-x-5 xl:space-x-10 ">
@@ -31,7 +27,7 @@ export const LandingNavbar = () => {
           </div>
           <MobileNavbar />
           <div className=" hidden items-center lg:flex">
-            <Link href={isSignedIn ? '/dashboard' : '/sign-up'}>
+            <Link href= '/auth/login'>
               <Button className="rounded-lg text-base font-normal  hover:bg-secondary hover:text-primary">
                 Get Started
               </Button>
@@ -39,6 +35,5 @@ export const LandingNavbar = () => {
           </div>
         </div>
       </div>
-    </>
   );
 };

@@ -1,6 +1,10 @@
+
+
+
 generator client {
   provider = "prisma-client-js"
 }
+
 
 datasource db {
   provider     = "mysql"
@@ -14,6 +18,115 @@ enum SubscriptionType {
   BASIC
   PRO
   PREMIUM
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum PACKAGE_TYPE {
+  BASIC
+  PRO
+  PREMIUM
+}
+
+
+enum WORK_MODEL {
+  ONSITE
+  REMOTE
+  HYBRID
+}
+
+enum CV_SOURCE {
+  UPLOAD
+  LINKEDIN
+}
+
+enum ANALYSYS_STATUS {
+  ANALYSYS
+  REJECTED
+  INTERVIEW
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  password      String?
+  image         String?
+  accounts      Account[]
+  emailVerified DateTime?
+  secretIv         String?
+  UserOrganization UserOrganization[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refreshToken      String?  @db.Text
+  accessToken       String?  @db.Text
+  expiresAt         Int?
+  tokenType         String?
+  scope              String?
+  idToken           String?  @db.Text
+  sessionState      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+
+model VerificationToken {
+  id String @id @default(cuid())
+  email String
+  token String @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+
+model PasswordResetToken {
+  id String @id @default(cuid())
+  email String
+  token String @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+
+
+model Role {
+  id               String             @id @default(cuid())
+  name             String
+  permissions      Json
+  UserOrganization UserOrganization[]
+}
+
+model Organization {
+  id                    String             @id @default(cuid())
+  name                  String
+  packageType           PACKAGE_TYPE
+  limit                 Int
+  used                  Int
+  agreeTermAndCondition Boolean            @default(false)          
+  userOrganization      UserOrganization[]
+}
+
+model UserOrganization {
+  id             String       @id @default(cuid())
+  userId         String
+  organizationId String
+  roleId         String
+  user           User         @relation(fields: [userId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  role           Role         @relation(fields: [roleId], references: [id])
 }
 
 model userAPILimit {
@@ -45,6 +158,51 @@ enum UploadStatus {
   FAILED
   SUCCESS
 }
+
+
+
+model CvAnalysis {
+  id                String  @id @default(cuid())
+  cvId              String
+  orgId             String
+  batchJobId        String
+  batch             BatchJob  @relation(fields: [batchJobId], references: [id])
+  reportOfAnalysis  Json?
+  cv                Cv  @relation(fields: [cvId], references: [id])
+  status            ANALYSYS_STATUS
+  isQualified       Boolean @default(false)
+}
+
+model Cv {
+  id           String        @id @default(cuid())
+  name         String
+  uploadStatus UploadStatus  @default(PENDING)
+  url          String
+  key          String
+  createdAt    DateTime      @default(now())
+  orgId        String
+  title        String?
+  analyses     CvAnalysis[]
+  source       CV_SOURCE
+}
+
+model BatchJob {
+  id              String @id @default(cuid())
+  jobName         String
+  status          String
+  orgId           String
+  jobDescription  String
+  location        String
+  createdAt       DateTime @default(now())
+  salaryCurrency  String?
+  salaryRangeFrom Int?
+  salaryRangeEnd  Int?
+  experience      Int?
+  companyName     String
+  workModel       WORK_MODEL
+  cvAnalysis      CvAnalysis[]
+}
+
 
 model File {
   id   String @id @default(cuid())

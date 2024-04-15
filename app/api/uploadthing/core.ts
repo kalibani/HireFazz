@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import prismadb from '@/lib/prismadb';
 
@@ -15,23 +14,25 @@ import { NextResponse } from 'next/server';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
 import { increaseApiLimit } from '@/lib/api-limit';
+import { currentUser } from '@/lib/auth';
 
 const f = createUploadthing();
 
 // const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
 
 const middleware = async () => {
-  const { userId } = auth();
+  const user = await currentUser();
 
-  if (!userId) throw new Error('Unauthorized');
+  if (!user?.id) throw new Error('Unauthorized');
 
   // const freeTrial = await checkApiLimit();
 
   // if (!freeTrial) throw new Error("Free Trial has expired");
+  console.log({ middleware: user.id });
 
   return {
     // freeTrial: freeTrial,
-    userId: userId,
+    userId: user?.id,
   };
 };
 
@@ -53,7 +54,6 @@ const onUploadComplete = async ({
   // });
 
   // if (isFileExist) return;
-
   try {
     const fileUrl = `https://uploadthing-prod-icn1.s3.ap-northeast-2.amazonaws.com/${file.key}`;
     const fileExtension = extractExtension(fileUrl);

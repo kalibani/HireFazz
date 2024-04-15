@@ -1,8 +1,18 @@
-import { trpc } from '@/app/_trpc/client';
+'use client';
+
 import axios from 'axios';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAnalyzer } from './use-analyzer';
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
+import {
+  deleteFileAction,
+  infiniteFilesAction,
+} from '@/lib/actions/cv-scanner';
+// import { deleteFile } from '@/trpc/document-interaction';
+import { trpc } from '@/app/_trpc/client';
+import { utils } from '@pinecone-database/pinecone';
+import { deleteFileById } from '@/lib/validators/cv-scanner';
 
 interface AnalyzeCV {
   id: string;
@@ -23,20 +33,34 @@ export const useCvScanner = (searchParams?: {
   const idsOnAnalyze = useRef<string[]>([]);
   const queryParams: any = searchParams;
 
+  // const {
+  //   data: filesInfinite,
+  //   isLoading,
+  //   hasNextPage,
+  //   fetchNextPage,
+  // } = trpc.infiniteFiles
+  //   // @ts-ignore
+  //   .useInfiniteQuery(
+  //     { limit },
+  //     {
+  //       networkMode: 'always',
+  //       getNextPageParam: (lastPage) => lastPage.nextCursor,
+  //     }
+  //   );
+
   const {
     data: filesInfinite,
     isLoading,
     hasNextPage,
     fetchNextPage,
-  } = trpc.infiniteFiles
-    // @ts-ignore
-    .useInfiniteQuery(
-      { limit },
-      {
-        networkMode: 'always',
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      }
-    );
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ['files-infinite'],
+    queryFn: () => infiniteFilesAction({ limit }),
+    // networkMode: 'always',
+
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
 
   const filesMemo = useMemo(() => {
     if (!filesInfinite?.pages) {
@@ -65,20 +89,31 @@ export const useCvScanner = (searchParams?: {
     }
 
     return allFiles;
-  }, [filesInfinite?.pages, queryParams]);
+  }, [filesInfinite?.pages, queryParams.q]);
 
-  const utils = trpc.useUtils();
+  // const utils = trpc.useUtils();
+  // const { mutateAsync: deleteFile } = trpc.deleteFile.useMutation({
+  //   retry: 3,
+  //   networkMode: 'always',
+  //   onSuccess: () => {
+  //     utils.infiniteFiles.refetch();
+  //   },
+  //   async onMutate({ id }) {
+  //     setDeletingIds([...deletingIds, id]);
+  //   },
+  //   onSettled(data) {
+  //     setDeletingIds(deletingIds.filter((el) => el !== data?.id));
+  //   },
+  // });
 
-  const { mutateAsync: deleteFile } = trpc.deleteFile.useMutation({
-    retry: 3,
-    networkMode: 'always',
+  const { mutate: deleteFile } = useMutation({
     onSuccess: () => {
-      utils.infiniteFiles.refetch();
+      refetch();
     },
-    async onMutate({ id }) {
+    onMutate: async (id) => {
       setDeletingIds([...deletingIds, id]);
     },
-    onSettled(data) {
+    onSettled: (data) => {
       setDeletingIds(deletingIds.filter((el) => el !== data?.id));
     },
   });
@@ -103,7 +138,7 @@ export const useCvScanner = (searchParams?: {
         requirements: safeRequirement,
         percentage: safePercentage,
       });
-      utils.infiniteFiles.refetch();
+      refetch();
     } catch (error: any) {
       toast.error(error.response.data);
     } finally {
@@ -119,27 +154,24 @@ export const useCvScanner = (searchParams?: {
       filesInfinite?.pages.reduce((acc, el) => {
         return [...acc, ...el.items];
       }, []) || [];
+
     // @ts-ignore
-    if (allFiles.length) {
-      allFiles
-        // @ts-ignore
-        .reduce((acc, item) => {
-          return acc.then(() => {
-            if (item.reportOfAnalysis) {
-              return;
-            }
-            if (idsOnAnalyze.current.includes(item.id)) {
-              return Promise.resolve();
-            }
-            return analyzeCV({ id: item.id });
-          });
-        }, Promise.resolve())
-        // @ts-ignore
-        .then((res) => {})
-        .catch((err: any) => {
-          console.log(err);
+    const filesToAnalyze = allFiles.filter(
+      (item: any) => !item.reportOfAnalysis
+    );
+
+    filesToAnalyze
+      // @ts-ignore
+      .reduce((acc, item) => {
+        return acc.then(() => {
+          return analyzeCV({ id: item.id });
         });
-    }
+      }, Promise.resolve())
+      // @ts-ignore
+      .then((res) => {})
+      .catch((err: any) => {
+        console.log(err);
+      });
   }, [filesInfinite?.pages]);
 
   const handleReanalyze = async (
@@ -161,6 +193,7 @@ export const useCvScanner = (searchParams?: {
 
   return {
     filesMemo,
+    refetch,
     isLoading,
     hasNextPage,
     fetchNextPage,

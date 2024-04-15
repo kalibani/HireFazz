@@ -1,18 +1,16 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { FileText, Loader2 } from 'lucide-react';
 import Heading from '@/components/headings';
-import axios from 'axios';
+
 import { Button } from '@/components/ui/button';
 import UploadButton from '@/components/upload-button';
 
 import EmptyPage from '@/components/empty';
 import LoaderGeneral from '@/components/loader';
 import { useProModal } from '@/hooks/use-pro-modal';
-import { trpc } from '@/app/_trpc/client';
 import { useUser } from '@/hooks/use-user';
-import { useAnalyzer } from '@/hooks/use-analyzer';
 
 import { ReanalyzeModal } from '@/components/reanalyze-modal';
 import { usePricing } from '@/hooks/use-pricing';
@@ -21,14 +19,18 @@ import CardCvscanner from '@/components/card-cvscanner';
 import SearchInput from '@/components/search-input';
 import { SearchParamsProps } from '@/types/types';
 import { useCvScanner } from '@/hooks/use-cvScanner';
+import { auth } from '@/auth';
+import { currentUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
   const { apiLimitCount, onOpen } = useProModal();
+
   const { subscriptionType, maxFreeCount, setPlan, setQuota, setQuotaLimited } =
     useUser();
-  const utils = trpc.useUtils();
   const {
     filesMemo,
+    refetch,
     isLoading,
     deleteFile,
     deletingIds,
@@ -86,7 +88,7 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
             ) : (
               <UploadButton
                 buttonText="Upload CV"
-                refetch={() => utils.infiniteFiles.refetch()}
+                refetch={() => console.log('refetch')}
               />
             )}
           </div>
@@ -106,12 +108,14 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
           {filesMemo && filesMemo?.length !== 0 ? (
             <CardCvscanner
               reanalyzeIds={reanalyzeIds}
-              deletingIds={deletingIds}
+              // deletingIds={deletingIds}
+              deletingIds={['2']}
               filesMemo={filesMemo}
               isMoreThanMatchLimit={isMoreThanMatchLimit}
               jobTitle={jobTitle}
               onClickSelectFile={(val) => setSelectedFile(val)}
-              onDelete={(id) => deleteFile({ id })}
+              // onClickSelectFile={(val) => console.log(val, '<<< selected card')}
+              onDelete={(id) => deleteFile(id)}
             />
           ) : isLoading ? (
             <div className="flex items-start justify-center w-full p-8 rounded-lg bg-muted mt-8">
@@ -127,6 +131,7 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
                 className="text-blue-400"
                 onClick={() => fetchNextPage()}
                 disabled={isLoading}
+                asChild
               >
                 Load More
               </Button>

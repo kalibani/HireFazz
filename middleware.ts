@@ -1,19 +1,48 @@
-import { authMiddleware } from '@clerk/nextjs';
+import NextAuth from 'next-auth';
+import authConfig from '@/auth.config';
+import {
+  DEFAULT_LOGIN_REDIRECT,
+  apiAuthPrefix,
+  authRoutes,
+  openApi,
+  publicRoutes,
+} from '@/routes';
 
-// This example protects all routes including api/trpc routes
-// Please edit this to allow other routes to be public as needed.
-// See https://clerk.com/docs/nextjs/middleware for more information about configuring your middleware
-export default authMiddleware({
-  publicRoutes: [
-    '/',
-    '/api/uploadthing',
-    '/settings',
-    '/api/load-multiples',
-    '/recruitment',
-    '/comming',
-  ],
+const { auth } = NextAuth(authConfig);
+
+export default auth((req): any => {
+  const { nextUrl, auth } = req;
+  const isLoggedIn = !!auth;
+
+  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const isOpenApi = openApi.includes(nextUrl.pathname);
+
+  if (isApiAuthRoute || isOpenApi) {
+    return null;
+  }
+  
+  if (isAuthRoute || isPublicRoute) {
+    if (isLoggedIn) {
+      console.log("middleware", isLoggedIn)
+      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+    }
+    return null;
+  }
+
+  if (!isLoggedIn && !isPublicRoute) {
+    //   let callbackUrl = nextUrl.pathname;
+    //   if (nextUrl.search) {
+    //     callbackUrl += nextUrl.search;
+    //   }
+    //   const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+    //   console.log({ encodedCallbackUrl, callbackUrl });
+    return Response.redirect(new URL(`/auth/login`, nextUrl));
+  }
+  return null;
 });
 
 export const config = {
-  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*),'],
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*),'],
 };

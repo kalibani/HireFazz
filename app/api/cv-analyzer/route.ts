@@ -2,13 +2,13 @@ import prismadb from '@/lib/prismadb';
 import { openai } from '@/lib/openai';
 import { pinecone } from '@/lib/pinecone';
 import { SendMessageValidator } from '@/lib/validators/sendMessageValidator';
-import { auth } from '@clerk/nextjs';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { checkValidJSON } from '@/lib/utils';
+import { currentUser } from '@/lib/auth';
 
 export const preferredRegion = 'sin1';
 export const maxDuration = 50;
@@ -19,12 +19,11 @@ export const POST = async (req: NextRequest) => {
     // endpoint for get the result of cv analyzer
 
     const body = await req.json();
+    const user = await currentUser();
 
     const { jobTitle, fileId, requirements, percentage } = body;
 
-    const { userId } = auth();
-
-    if (!userId) return new NextResponse('Unauthorized', { status: 401 });
+    if (!user?.id) return new NextResponse('Unauthorized', { status: 401 });
 
     if (!jobTitle) {
       return new NextResponse('Job Title are required', { status: 400 });
@@ -39,7 +38,7 @@ export const POST = async (req: NextRequest) => {
     const file = await prismadb.file.findFirst({
       where: {
         id: fileId,
-        userId,
+        userId: user?.id,
       },
     });
 
