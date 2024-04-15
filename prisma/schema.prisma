@@ -12,6 +12,10 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum JOB_STATUS {
+  CREATED
+}
+
 enum SubscriptionType {
   FREE
   FLEXIBLE
@@ -47,6 +51,7 @@ enum ANALYSYS_STATUS {
   ANALYSYS
   REJECTED
   INTERVIEW
+  PENDING
 }
 
 model User {
@@ -169,7 +174,7 @@ model CvAnalysis {
   batch             BatchJob  @relation(fields: [batchJobId], references: [id])
   reportOfAnalysis  Json?
   cv                Cv  @relation(fields: [cvId], references: [id])
-  status            ANALYSYS_STATUS
+  status            ANALYSYS_STATUS @default(PENDING)
   isQualified       Boolean @default(false)
 }
 
@@ -189,7 +194,7 @@ model Cv {
 model BatchJob {
   id              String @id @default(cuid())
   jobName         String
-  status          String
+  status          JOB_STATUS @default(CREATED)
   orgId           String
   jobDescription  String
   location        String
@@ -198,7 +203,7 @@ model BatchJob {
   salaryRangeFrom Int?
   salaryRangeEnd  Int?
   experience      Int?
-  companyName     String
+  companyName     String?
   workModel       WORK_MODEL
   cvAnalysis      CvAnalysis[]
 }
