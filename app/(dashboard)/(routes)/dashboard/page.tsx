@@ -36,7 +36,7 @@ const DashboardPage = () => {
         ))}
       </div>
       <CardFeature />
-      <div className="space-y-4 rounded-lg bg-white px-3 py-2">
+      <div className="space-y-4 rounded-lg bg-white px-3 py-2 min-h-svh">
         <div className="px-2">
           <h4 className="text-xl font-semibold">Latest Job</h4>
           <p className="text-sm text-slate-400">

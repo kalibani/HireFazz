@@ -11,7 +11,7 @@ const JobPage = () => {
     <SectionWrap>
       <BannerJob />
       <HeaderJob />
-      <div className="rounded-md bg-white px-5 py-2.5">
+      <div className="rounded-md bg-white px-5 py-2.5 min-h-svh">
         <FilterJob />
         <TableJob />
         <Link href="/job/create">

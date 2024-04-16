@@ -7,7 +7,7 @@ type DashboardLayoutProps = {
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
   return (
-    <div className="flex h-dvh bg-[#F2F2F7]">
+    <div className="flex h-dvh overflow-y-hidden bg-[#F2F2F7]">
       <SideBar />
       <main className="w-full">
         <Navbar />
