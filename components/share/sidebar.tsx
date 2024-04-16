@@ -58,7 +58,7 @@ const Sidebar = () => {
                   <Link href={route.href}>
                     <route.icon
                       className={cn(
-                        'cursor-pointe h-6 w-6',
+                        'cursor-pointer h-6 w-6',
                         route.href.includes(pathname)
                           ? 'text-rose-600'
                           : 'text-slate-400'
