@@ -6,6 +6,7 @@ import { WORK_MODEL } from '@prisma/client';
 import z from 'zod';
 import { uploadCv } from '../cv/uploadCv';
 import { v4 as uuidv4 } from 'uuid';
+import { analyzeCv } from '../cv/analyzeCv';
 const PayloadAddJob = z.object({
   jobName: z.string(),
   location: z.string(),
@@ -24,19 +25,24 @@ const connectCvJob = async ({
   cvId,
   orgId,
   batchJobId,
+  analyzeCvEnabled,
 }: {
   cvId: string;
   orgId: string;
   batchJobId: string;
+  analyzeCvEnabled: boolean;
 }) => {
   try {
-    await prismadb.cvAnalysis.create({
+    const cvAnalyze = await prismadb.cvAnalysis.create({
       data: {
         cvId,
         orgId,
         batchJobId,
       },
     });
+    if (analyzeCvEnabled) {
+      analyzeCv({ cvAnalysisId: cvAnalyze.id, jobId: batchJobId });
+    }
   } catch (error) {
     return errorHandler(error);
   }
@@ -47,8 +53,9 @@ export const createJob = async (
   cv: FormData,
 ) => {
   try {
-    const cvData = cv.getAll('files') as File[];
-    const generateObject = cvData.map((cv) => ({ cv, id: uuidv4() }));
+    const cvData = cv.getAll('UPLOAD') as File[];
+    const cvLinkedin = cv.getAll('LINKEDIN') as string[];
+
     const { analyzeCv, ...safePayload } = PayloadAddJob.parse(payload);
     const job = await prismadb.batchJob.create({
       data: {
@@ -61,10 +68,14 @@ export const createJob = async (
         cvId: props.id,
         orgId: safePayload.orgId,
         batchJobId: job.id,
+        analyzeCvEnabled: analyzeCv,
       });
     };
-    generateObject.forEach(({ id, cv }) => {
-      uploadCv({ id, cv, source: 'UPLOAD', orgId: payload.orgId }, onSuccess);
+    cvData.forEach((cv) => {
+      uploadCv({ cv, source: 'UPLOAD', orgId: payload.orgId }, onSuccess);
+    });
+    cvLinkedin.forEach((cv) => {
+      uploadCv({ cv, source: 'LINKEDIN', orgId: payload.orgId }, onSuccess);
     });
   } catch (error) {
     return errorHandler(error);
