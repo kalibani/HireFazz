@@ -1,32 +1,24 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import FormCreate, {type formSchemaCreateJob } from './form-create'
-import { z } from 'zod'
-import TrackingStep from './tracking-step'
-import CreateJobDetail from './create-job-detail'
+import React from 'react';
+import TrackingStep from './tracking-step';
+import CreateJobDetail from './create-job-detail';
+import useFormStepStore from '@/zustand/useCreateJob';
+import FormCreate from './form-create';
 
 const CreateStep = () => {
-  const [step, setStep] = useState(1)
-
-   const onSubmit = (values: z.infer<typeof formSchemaCreateJob>) => {
-    console.log(values, "dari form <<<")
-    setStep(prev=> prev+1)
-  }
-
+  const step = useFormStepStore((state) => state.step);
   return (
-    <div className='space-y-3'>
-      <TrackingStep step={step}/>
-      <div className='flex flex-col w-full bg-white items-center py-8 rounded-md  min-h-svh'>
-        {step === 0 && 
-          <FormCreate onSubmit={(values)=>onSubmit(values)} />
-        }
-        {
-          step === 1 && <CreateJobDetail/>
-        }
+    <div className="space-y-3">
+      <TrackingStep step={step} />
+      <div className="flex min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
+        {step === 0 && <FormCreate />}
+        {step === 1 && <CreateJobDetail />}
+        {/* on progress */}
+        {step === 2 && <div>Upload cv</div>}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CreateStep
+export default CreateStep;

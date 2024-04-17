@@ -12,6 +12,7 @@ import {
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Button } from '@/components/ui/button';
+import useFormStepStore from '@/zustand/useCreateJob';
 
 const initialState = {
   jobDescription: '',
@@ -30,13 +31,14 @@ const reducer = (state: any, action: any) => {
 };
 
 const CreateJobDetail = () => {
+  const { setStep, setFormDetailJob } = useFormStepStore((state) => state);
+
   const [value, setValue] = useState('');
   const [state, dispatch] = useReducer(reducer, initialState);
   const [listOfEditor, setListOfEditor] = useState<string[]>(['']);
 
   useEffect(() => {
     if (listOfEditor) {
-      console.log(listOfEditor.join(''));
       setValue(listOfEditor.join(''));
     }
   }, [listOfEditor]);
@@ -80,6 +82,11 @@ const CreateJobDetail = () => {
         return newListOfEditor;
       });
     }
+  };
+
+  const nextStep = () => {
+    setFormDetailJob(value);
+    setStep(2);
   };
 
   return (
@@ -248,11 +255,7 @@ const CreateJobDetail = () => {
             <Button variant="outline" className="min-w-32">
               Previous
             </Button>
-            <Button
-              className="min-w-32"
-              disabled={!value}
-              onClick={() => console.log('done')}
-            >
+            <Button className="min-w-32" disabled={!value} onClick={nextStep}>
               Next
             </Button>
           </div>
