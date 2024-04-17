@@ -101,7 +101,7 @@
     "@types/pdf-parse": "^1.1.4",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "prisma": "^5.11.0"
+    "prisma": "^5.11.0",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3"
