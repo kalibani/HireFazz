@@ -1,12 +1,7 @@
-// "use client";
 
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-// import { useRouter } from "next/navigation";
+'use client'
 
-import { tools } from '@/constant';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
 import dashboard from '@/public/icon/icon-banner-dashboard.svg';
 import { Banner } from '@/components/share';
 import { CardFeature, CardTotal, DashboardTable } from '@/components/dashboard';
@@ -14,23 +9,22 @@ import { CardTotalProp } from '@/components/dashboard/card-total';
 import {
   ListChecks,
   FileText,
-  Scan,
   Users,
   ArrowUpRight,
   SearchCheck,
 } from 'lucide-react';
-import router from 'next/router';
 
-const DashboardPage = () => {
+const DashboardPage = () => { 
+
   return (
-    <section className="space-y-4 p-4">
+    <section className="p-4 space-y-4">
       <Banner
         title="Welcome, Dikta Wicaksono"
         desc="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book."
         btnTitle="Check it out !"
         src={dashboard}
       />
-      <div className="flex gap-x-32 rounded-lg bg-white px-11 py-4">
+      <div className="flex py-4 bg-white rounded-lg gap-x-32 px-11">
         {dummyTotal.map((item) => (
           <CardTotal
             key={item.title}
@@ -43,7 +37,7 @@ const DashboardPage = () => {
         ))}
       </div>
       <CardFeature />
-      <div className="space-y-4 rounded-lg bg-white p-3">
+      <div className="p-3 space-y-4 bg-white rounded-lg">
         <div className="p-2">
           <h4 className="text-xl font-semibold">Latest Job</h4>
           <p className="text-sm text-slate-400">
@@ -94,17 +88,17 @@ const dummyTotal: CardTotalProp[] = [
 
 {
   /* <div className="mb-4 space-y-4">
-        <h2 className="text-2xl md:text-4xl font-bold text-center">
+        <h2 className="text-2xl font-bold text-center md:text-4xl">
           Explore the power of AI
         </h2>
-        <p className="text-muted-foreground text-sm md:text-lg text-center">
+        <p className="text-sm text-center text-muted-foreground md:text-lg">
           Work Smarter with the Smartest AI Assistant
         </p>
       </div>
-      <div className="px-4 md:px-20 lg:px-32 space-y-4">
+      <div className="px-4 space-y-4 md:px-20 lg:px-32">
         {tools.map((tool) => (
           <Link href={tool.href} key={tool.href}>
-            <Card className=" p-4 border-black/5 flex items-center justify-between hover:shadow-md transition cursor-pointer">
+            <Card className="flex items-center justify-between p-4 transition cursor-pointer border-black/5 hover:shadow-md">
               <div className="flex items-center gap-x-4">
                 <div className={cn('p-2 w-fit rounded-md', tool.bgColor)}>
                   <tool.icon className={cn('w-8 h-8', tool.color)} />
