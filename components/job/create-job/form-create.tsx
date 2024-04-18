@@ -46,101 +46,20 @@ const FormCreate = () => {
   };
 
   return (
-    <div className="w-1/2">
-      <h3 className="text-center text-2xl font-semibold">Create New Job</h3>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-10  w-full space-y-5"
-        >
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-normal">Title *</FormLabel>
-                <FormControl className="tex-slate-400">
-                  <Input
-                    placeholder="Job title"
-                    {...field}
-                    className="h-auto w-full text-sm "
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-normal">
-                  Location *
-                </FormLabel>
-                <FormControl className="tex-slate-400">
-                  <Input
-                    placeholder="Location Applicant"
-                    {...field}
-                    className="h-auto w-full text-sm "
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex w-full items-end justify-between">
+    <div className="flex min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
+      <div className="w-1/2">
+        <h3 className="text-center text-2xl font-semibold">Create New Job</h3>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-10  w-full space-y-5"
+          >
             <FormField
               control={form.control}
-              name="currency"
+              name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-normal">
-                    Average Salary (per month)
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-52">
-                        <SelectValue placeholder="Select a verified email to display" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="IDR">IDR</SelectItem>
-                      <SelectItem value="US">USD</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="fromNominal"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-normal">
-                    (optional)
-                  </FormLabel>
-                  <FormControl className="tex-slate-400">
-                    <Input
-                      placeholder="From"
-                      {...field}
-                      className="h-auto w-full text-sm "
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="toNominal"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-normal"></FormLabel>
+                  <FormLabel className="text-sm font-normal">Title *</FormLabel>
                   <FormControl className="tex-slate-400">
                     <Input
                       placeholder="Job title"
@@ -152,94 +71,177 @@ const FormCreate = () => {
                 </FormItem>
               )}
             />
-          </div>
-
-          <div className="flex w-full items-end justify-between gap-x-4">
             <FormField
               control={form.control}
-              name="experiences"
+              name="location"
               render={({ field }) => (
-                <FormItem className="w-1/2">
+                <FormItem>
                   <FormLabel className="text-sm font-normal">
-                    Average Salary (per month)
+                    Location *
                   </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a verified email to display" />
-                      </SelectTrigger>
+                  <FormControl className="tex-slate-400">
+                    <Input
+                      placeholder="Location Applicant"
+                      {...field}
+                      className="h-auto w-full text-sm "
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex w-full items-end justify-between">
+              <FormField
+                control={form.control}
+                name="currency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-normal">
+                      Average Salary (per month)
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-52">
+                          <SelectValue placeholder="Select a verified email to display" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="IDR">IDR</SelectItem>
+                        <SelectItem value="US">USD</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="fromNominal"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-normal">
+                      (optional)
+                    </FormLabel>
+                    <FormControl className="tex-slate-400">
+                      <Input
+                        placeholder="From"
+                        {...field}
+                        className="h-auto w-full text-sm "
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="0">0 year</SelectItem>
-                      <SelectItem value="1">1 year</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="toNominal"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-normal"></FormLabel>
+                    <FormControl className="tex-slate-400">
+                      <Input
+                        placeholder="Job title"
+                        {...field}
+                        className="h-auto w-full text-sm "
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex w-full items-end justify-between gap-x-4">
+              <FormField
+                control={form.control}
+                name="experiences"
+                render={({ field }) => (
+                  <FormItem className="w-1/2">
+                    <FormLabel className="text-sm font-normal">
+                      Average Salary (per month)
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a verified email to display" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="0">0 year</SelectItem>
+                        <SelectItem value="1">1 year</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="workModel"
+                render={({ field }) => (
+                  <FormItem className="w-1/2">
+                    <FormLabel className="text-sm font-normal">
+                      Work Model
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a verified email to display" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="on-site">On Site</SelectItem>
+                        <SelectItem value="part-time">Part Time</SelectItem>
+                        <SelectItem value="intership">Intership</SelectItem>
+                        <SelectItem value="remote">Remote</SelectItem>
+                        <SelectItem value="freelance">Freelance</SelectItem>
+                        <SelectItem value="hybrid">Hybrid</SelectItem>
+                        <SelectItem value="contract">Contract</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="companyName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-normal">
+                    Company Name
+                  </FormLabel>
+                  <FormControl className="tex-slate-400">
+                    <Input
+                      placeholder="Company Name"
+                      {...field}
+                      className="h-auto w-full text-sm "
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="workModel"
-              render={({ field }) => (
-                <FormItem className="w-1/2">
-                  <FormLabel className="text-sm font-normal">
-                    Work Model
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a verified email to display" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="on-site">On Site</SelectItem>
-                      <SelectItem value="part-time">Part Time</SelectItem>
-                      <SelectItem value="intership">Intership</SelectItem>
-                      <SelectItem value="remote">Remote</SelectItem>
-                      <SelectItem value="freelance">Freelance</SelectItem>
-                      <SelectItem value="hybrid">Hybrid</SelectItem>
-                      <SelectItem value="contract">Contract</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="companyName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-normal">
-                  Company Name
-                </FormLabel>
-                <FormControl className="tex-slate-400">
-                  <Input
-                    placeholder="Company Name"
-                    {...field}
-                    className="h-auto w-full text-sm "
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="flex justify-end">
-            <Button type="submit">Next</Button>
-          </div>
-        </form>
-      </Form>
+            <div className="flex justify-end">
+              <Button type="submit">Next</Button>
+            </div>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 };

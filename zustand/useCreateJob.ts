@@ -12,7 +12,7 @@ interface FormStepState {
 }
 
 const useFormStepStore = create<FormStepState>((set) => ({
-  step: 0,
+  step: 1,
   dataCreateJob: {
     title: '',
     companyName: '',
