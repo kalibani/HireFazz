@@ -2,6 +2,8 @@
 import { Button } from '@/components/ui/button';
 import React, { ChangeEvent, useRef, useState } from 'react';
 import { MonitorUp, FileStack, FileSearch, Search } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   Select,
   SelectContent,
@@ -14,7 +16,7 @@ import {
 import TableTempCV from './Table-tempCV';
 
 const UploadCv = () => {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<{ id: string; file: File }[]>([]);
   const [totalSize, setTotalSize] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,7 +39,11 @@ const UploadCv = () => {
       return;
     }
 
-    setFiles([...files, ...selectedFiles]);
+    setFiles((prevFiles) => [
+      ...prevFiles,
+      ...selectedFiles.map((file) => ({ id: uuidv4(), file })),
+    ]);
+
     setTotalSize(totalFileSize); // Update totalSize to totalFileSize
   };
 
@@ -50,8 +56,6 @@ const UploadCv = () => {
   const handleSubmit = () => {
     // Code to submit files
   };
-
-  console.log({ files, totalSize });
 
   return (
     <>
@@ -100,7 +104,7 @@ const UploadCv = () => {
         </div>
       </div>
       <div className="flex w-full flex-col items-center rounded-md bg-white">
-        <TableTempCV />
+        <TableTempCV data={files} />
       </div>
       <div className="flex w-full justify-between rounded-md bg-white px-4 py-5">
         <Button variant="outline" className="min-w-32">

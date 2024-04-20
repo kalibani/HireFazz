@@ -13,20 +13,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, Trash2, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+
 import {
   Table,
   TableBody,
@@ -36,47 +27,27 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-const data: Payment[] = [
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: '3u1reuv4',
-    amount: 242,
-    status: 'success',
-    email: 'Abe45@gmail.com',
-  },
-  {
-    id: 'derv1ws0',
-    amount: 837,
-    status: 'processing',
-    email: 'Monserrat44@gmail.com',
-  },
-  {
-    id: '5kma53ae',
-    amount: 874,
-    status: 'success',
-    email: 'Silas22@gmail.com',
-  },
-  {
-    id: 'bhqecj4p',
-    amount: 721,
-    status: 'failed',
-    email: 'carmella@hotmail.com',
-  },
-];
-
-export type Payment = {
+export type uploadtemp = {
   id: string;
-  amount: number;
-  status: 'pending' | 'processing' | 'success' | 'failed';
-  email: string;
+  file: File;
+  // lastModifiedDate: string;
+  // name: string;
+  // size: number;
+  // type: string;
+  // webkitRelativePath: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+const formatFileSize = (sizeInBytes: number): string => {
+  if (sizeInBytes < 1024) {
+    return `${sizeInBytes} bytes`;
+  } else if (sizeInBytes < 1024 * 1024) {
+    return `${(sizeInBytes / 1024).toFixed(2)} KB`;
+  } else {
+    return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
+  }
+};
+
+export const columns: ColumnDef<uploadtemp>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -101,75 +72,59 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => (
-      <div className="capitalize text-black">{row.getValue('status')}</div>
-    ),
-  },
-  {
-    accessorKey: 'email',
+    accessorKey: 'name',
     header: ({ column }) => {
       return (
         <Button
+          className="w-fit px-4 pl-0 hover:bg-transparent"
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="text-black"
         >
-          Email
+          File Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
+    cell: ({ row }) => (
+      <p className="capitalize text-slate-400">{row.original.file.name}</p>
+    ),
   },
   {
-    accessorKey: 'amount',
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: 'size',
+    header: ({ column }) => {
+      return (
+        <Button
+          className="w-fit px-4 pl-0 hover:bg-transparent"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Size
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'));
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
+      const size: number = row.original.file.size;
+      return (
+        <p className="capitalize text-slate-400">{formatFileSize(size)}</p>
+      );
     },
   },
+
   {
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
-
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button variant="ghost" className="hover:bg-transparent">
+          <Trash2 className="h-4 w-4 text-primary" />
+        </Button>
       );
     },
   },
 ];
 
-const TableTempCV = () => {
+const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -177,7 +132,6 @@ const TableTempCV = () => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-
   const table = useReactTable({
     data,
     columns,
