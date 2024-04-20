@@ -130,7 +130,7 @@ export const columns: ColumnDef<Payment>[] = [
         <p
           className={cn(
             'text-sm font-normal capitalize',
-            status === 'Active' ? 'text-[#069A1E]' : 'text-primary'
+            status === 'Active' ? 'text-[#069A1E]' : 'text-primary',
           )}
         >
           {status}
@@ -154,7 +154,7 @@ export const columns: ColumnDef<Payment>[] = [
 const DashboardTable = () => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -196,7 +196,7 @@ const DashboardTable = () => {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -215,7 +215,7 @@ const DashboardTable = () => {
                     <TableCell key={cell.id} className="py-0">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
