@@ -44,8 +44,10 @@ const JobDetailTemplate: FC<PropsWithChildren> = (props): ReactElement => {
   return (
     <main className="w-full px-3">
       <HeaderDetailJob title="Senior Software Engineer" />
-      <SidebarDetailJob items={sidebarItems} />
-      {props.children}
+      <section className="flex w-full gap-x-6">
+        <SidebarDetailJob items={sidebarItems} />
+        <div className="mt-3 w-full">{props.children}</div>
+      </section>
     </main>
   );
 };

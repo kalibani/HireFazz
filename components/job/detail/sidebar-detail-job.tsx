@@ -13,7 +13,7 @@ export const SidebarDetailJob: FC<TSidebarDetailJob> = (
   props,
 ): ReactElement => {
   return (
-    <aside className="mt-3 flex h-full min-h-screen w-auto max-w-[300px] flex-col gap-5 rounded-lg bg-white p-6">
+    <aside className="mt-3 flex h-full min-h-screen w-1/4 flex-col gap-5 rounded-lg bg-white p-6">
       <ul className="flex flex-col gap-y-6">
         {props.items.map((item, key) => (
           <li
