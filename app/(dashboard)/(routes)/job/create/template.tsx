@@ -1,7 +1,13 @@
-import { FC, ReactElement } from 'react';
+import { FC, PropsWithChildren, ReactElement } from 'react';
 
-const CreateJobTemplate: FC = (): ReactElement => {
-  return <div className="h-[calc(100vh-64px)] bg-slate-100 p-3.5">waduh</div>;
+const CreateJobTemplate: FC<PropsWithChildren> = ({
+  children,
+}): ReactElement => {
+  return (
+    <div className="flex h-auto w-full items-center justify-center px-8">
+      {children}
+    </div>
+  );
 };
 
 export default CreateJobTemplate;

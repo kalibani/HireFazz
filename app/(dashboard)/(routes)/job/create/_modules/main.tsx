@@ -17,9 +17,11 @@ export const CreateJobModule: FC = (): ReactElement => {
     .otherwise(() => <JobDetailModule />);
 
   return (
-    <div className="h-[calc(100vh-64px)] bg-slate-100 p-3.5">
+    <div className="flex w-full flex-col gap-y-8">
       <Stepper step={step} />
-      {JobModule}
+      <section className="flex w-full items-center justify-center">
+        {JobModule}
+      </section>
     </div>
   );
 };
