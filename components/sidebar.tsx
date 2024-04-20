@@ -63,7 +63,7 @@ const Sidebar = () => {
   console.log(pathname);
   return (
     <aside className="flex max-w-[76px] flex-col bg-white shadow-md">
-      <div className="flex items-center justify-center border-b p-4">
+      <div className="item-center flex justify-center border-b-[2px] p-4">
         <Image src={logo} alt="logo" />
       </div>
 
@@ -79,7 +79,7 @@ const Sidebar = () => {
                         'cursor-pointe h-6 w-6',
                         pathname === route.href
                           ? 'text-rose-600'
-                          : 'text-slate-400'
+                          : 'text-slate-400',
                       )}
                     />
                   </Link>

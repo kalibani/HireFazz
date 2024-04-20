@@ -25,7 +25,7 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
 
       </div> */}
       <Sidebar />
-      <main className="w-full overflow-clip">
+      <main className="flex h-full w-full flex-col gap-y-3 overflow-clip">
         <Navbar />
         {children}
       </main>

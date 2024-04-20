@@ -4,7 +4,7 @@ const CreateJobTemplate: FC<PropsWithChildren> = ({
   children,
 }): ReactElement => {
   return (
-    <div className="flex h-auto w-full items-center justify-center px-8">
+    <div className="flex h-auto w-full items-center justify-center px-3">
       {children}
     </div>
   );
