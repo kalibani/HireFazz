@@ -5,7 +5,7 @@ type TDetailHeaderJob = {
   title: string;
 };
 
-export const DetailHeaderJob: FC<TDetailHeaderJob> = (props): ReactElement => {
+export const HeaderDetailJob: FC<TDetailHeaderJob> = (props): ReactElement => {
   return (
     <header className="flex w-full flex-col rounded-lg bg-white p-6">
       <section className="flex w-full justify-between">
