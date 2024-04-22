@@ -7,6 +7,7 @@ import { useFormStepStore } from '@/zustand/useCreateJob';
 import FormCreate from './form-create';
 import UploadCv from './upload-cv';
 import { useStore } from 'zustand';
+import CVAnalyzer from './cv-analyzer';
 
 const CreateStep = () => {
   const step = useStore(useFormStepStore, (state) => state.step);
@@ -17,7 +18,7 @@ const CreateStep = () => {
       {step === 1 && <CreateJobDetail />}
       {/* on progress */}
       {step === 2 && <UploadCv />}
-      {step === 3 && <div>screen cv Analyzer</div>}
+      {step === 3 && <CVAnalyzer />}
     </div>
   );
 };
