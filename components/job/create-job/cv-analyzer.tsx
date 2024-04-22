@@ -34,6 +34,15 @@ import { useForm } from 'react-hook-form';
 import TrackingStep from './tracking-step';
 import { useStore } from 'zustand';
 import { useFormStepStore } from '@/zustand/useCreateJob';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Progress } from '@/components/ui/progress';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -146,18 +155,38 @@ const CVAnalyzer: FC = (): ReactElement => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="keyFocus"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Key Focus</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <div className="flex w-full flex-col gap-y-4">
+              <FormField
+                control={form.control}
+                name="keyFocus"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Key Focus</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex w-full gap-x-4">
+                <Button className="w-fit bg-slate-300 text-black">
+                  + Key Focus
+                </Button>
+
+                <Button className="w-fit bg-slate-300 text-black">
+                  + Key Focus
+                </Button>
+
+                <Button className="w-fit bg-slate-300 text-black">
+                  + Key Focus
+                </Button>
+
+                <Button className="w-fit bg-slate-300 text-black">
+                  + Key Focus
+                </Button>
+              </div>
+            </div>
 
             <div className="flex w-full gap-x-4">
               <FormField
@@ -241,22 +270,165 @@ const CVAnalyzer: FC = (): ReactElement => {
             <Button>Create</Button>
           </DialogTrigger>
         </div>
-        <DialogContent className="flex min-h-[96%] min-w-[96%] flex-col items-center p-0">
-          <div className="flex w-full flex-col">
-            <TrackingStep step={step} />
-            <hr className="h-1 w-full border-slate-400" />
-          </div>
-          <div className="flex w-1/2 flex-col items-center gap-y-4">
-            <h1 className="text-2xl font-semibold">CV Analyzer</h1>
-            <p className="text-sm">Try to upload and see our magic</p>
-          </div>
+        <DialogContent className="flex min-h-[96%] min-w-[96%] flex-col items-center justify-between p-0">
+          <div className="flex w-full flex-col items-center">
+            <div className="flex w-full flex-col">
+              <TrackingStep step={step} />
+              <hr className="h-1 w-full border-slate-400" />
+            </div>
 
-          <DialogFooter className="sm:justify-start">
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Close
-              </Button>
-            </DialogClose>
+            <div className="mt-8 flex w-1/2 flex-col items-center gap-y-4">
+              <h1 className="text-2xl font-bold">
+                Upload Process and AI Matching Score
+              </h1>
+              <p className="text-sm font-medium text-black">
+                You can wait cvs being processed, or you can close this dialog.
+              </p>
+            </div>
+
+            <div className="mt-8 w-full px-8">
+              <Table className="border border-solid border-slate-200">
+                <TableHeader className="bg-slate-200">
+                  <TableRow>
+                    <TableHead>Job Name ↓ </TableHead>
+                    <TableHead className="text-center">Name of file</TableHead>
+                    <TableHead className="text-center">Job</TableHead>
+                    <TableHead className="text-center">Added On</TableHead>
+                    <TableHead className="w-fit text-center">Upload</TableHead>
+                    <TableHead className="w-fit text-center">
+                      Annalyze AI
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">
+                      Senior Software Engineer
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      143
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      20 Mar, 2024
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      10
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      <div className="flex w-full items-center gap-x-4">
+                        <Progress value={20} className="h-3 w-full" />
+                        <span className="w-full text-xs font-semibold text-slate-400">
+                          20% Uploading
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center text-green-500">
+                      <div className="flex w-full items-center gap-x-4">
+                        <Progress value={20} className="h-3 w-full" />
+                        <span className="w-full text-xs font-semibold text-slate-400">
+                          20% Uploading
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">
+                      Senior Software Engineer
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      143
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      20 Mar, 2024
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      10
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      <div className="flex w-full items-center gap-x-4">
+                        <Progress value={20} className="h-3 w-full" />
+                        <span className="w-full text-xs font-semibold text-slate-400">
+                          20% Uploading
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center text-green-500">
+                      <div className="flex w-full items-center gap-x-4">
+                        <Progress value={20} className="h-3 w-full" />
+                        <span className="w-full text-xs font-semibold text-slate-400">
+                          20% Uploading
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">
+                      Senior Software Engineer
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      143
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      20 Mar, 2024
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      10
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      <div className="flex w-full items-center gap-x-4">
+                        <Progress value={20} className="h-3 w-full" />
+                        <span className="w-full text-xs font-semibold text-slate-400">
+                          20% Uploading
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center text-green-500">
+                      <div className="flex w-full items-center gap-x-4">
+                        <Progress value={20} className="h-3 w-full" />
+                        <span className="w-full text-xs font-semibold text-slate-400">
+                          20% Uploading
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">
+                      Senior Software Engineer
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      143
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      20 Mar, 2024
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      10
+                    </TableCell>
+                    <TableCell className="text-center text-slate-400">
+                      <div className="flex w-full items-center gap-x-4">
+                        <Progress value={20} className="h-3 w-full" />
+                        <span className="w-full text-xs font-semibold text-slate-400">
+                          20% Uploading
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center text-green-500">
+                      <div className="flex w-full items-center gap-x-4">
+                        <Progress value={20} className="h-3 w-full" />
+                        <span className="w-full text-xs font-semibold text-slate-400">
+                          20% Uploading
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+          <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">
+            <DialogTrigger asChild>
+              <Button>Finish / Close</Button>
+            </DialogTrigger>
           </DialogFooter>
         </DialogContent>
       </Dialog>
