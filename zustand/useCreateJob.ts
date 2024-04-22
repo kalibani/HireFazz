@@ -1,18 +1,29 @@
 import { formSchemaCreateJob } from '@/lib/validators/createJob';
 import { z } from 'zod';
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { v4 as uuidv4 } from 'uuid';
 
 interface FormStepState {
   step: number;
   dataCreateJob: z.infer<typeof formSchemaCreateJob>;
   dataDetailJob: string;
+  totalSize: number;
+  files: {
+    id: string;
+    file: File;
+  }[];
   setStep: (step: number) => void;
   setFormCreateJob: (data: z.infer<typeof formSchemaCreateJob>) => void;
   setFormDetailJob: (data: string) => void;
+  setTotalSize: (total: number) => void;
+  setFiles: (data: any[]) => void;
+  handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleUploadButtonClick: () => void;
 }
 
-const useFormStepStore = create<FormStepState>((set) => ({
-  step: 2,
+export const useFormStepStore = create<FormStepState>((set) => ({
+  step: 1,
   dataCreateJob: {
     title: '',
     companyName: '',
@@ -24,9 +35,44 @@ const useFormStepStore = create<FormStepState>((set) => ({
     location: '',
   },
   dataDetailJob: '',
+  totalSize: 0,
+  files: [],
   setStep: (step) => set({ step }),
   setFormCreateJob: (data) => set({ dataCreateJob: data }),
   setFormDetailJob: (data) => set({ dataDetailJob: data }),
-}));
+  setFiles: (data) => set({ files: data }),
+  setTotalSize: (totalSize) => set({ totalSize }),
+  handleFileChange: (event) => {
+    let totalFileSize = 0;
+    const selectedFiles = event.target.files
+      ? Array.from(event.target.files)
+      : [];
 
-export default useFormStepStore;
+    selectedFiles.forEach((file) => {
+      totalFileSize += file.size;
+    });
+
+    if (totalFileSize > 100 * 1024 * 1024) {
+      alert('Total file size exceeds 100MB limit');
+      return;
+    }
+
+    set((state) => ({
+      files: [
+        ...state.files,
+        ...selectedFiles.map((file) => ({
+          id: uuidv4(),
+          from: 'Upload',
+          file,
+        })),
+      ],
+      totalSize: totalFileSize,
+    }));
+  },
+  handleUploadButtonClick: () => {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  },
+}));

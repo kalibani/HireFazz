@@ -21,7 +21,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
-import useFormStepStore from '@/zustand/useCreateJob';
+import { useFormStepStore } from '@/zustand/useCreateJob';
 import { formSchemaCreateJob } from '@/lib/validators/createJob';
 
 const FormCreate = () => {

@@ -12,7 +12,7 @@ import {
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Button } from '@/components/ui/button';
-import useFormStepStore from '@/zustand/useCreateJob';
+import { useFormStepStore } from '@/zustand/useCreateJob';
 
 const initialState = {
   jobDescription: '',
@@ -31,7 +31,9 @@ const reducer = (state: any, action: any) => {
 };
 
 const CreateJobDetail = () => {
-  const { setStep, setFormDetailJob } = useFormStepStore((state) => state);
+  const { setStep, setFormDetailJob, dataCreateJob } = useFormStepStore(
+    (state) => state,
+  );
 
   const [value, setValue] = useState('');
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -42,6 +44,8 @@ const CreateJobDetail = () => {
       setValue(listOfEditor.join(''));
     }
   }, [listOfEditor]);
+
+  
 
   const handleChange = (field: string, value: string) => {
     dispatch({ type: 'CHANGE_VALUE', field, value });
@@ -77,7 +81,7 @@ const CreateJobDetail = () => {
     setFormDetailJob(value);
     setStep(2);
   };
-
+  console.log(dataCreateJob);
   return (
     <div className="flex min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
       <div className="w-ful flex flex-col items-center justify-center overflow-y-auto px-12 py-8">
@@ -98,7 +102,12 @@ const CreateJobDetail = () => {
                   </p>
                 </div>
               </div>
-              <Accordion type="single" collapsible className="w-full">
+              <Accordion
+                type="single"
+                collapsible
+                className="w-full"
+                defaultValue="item-1"
+              >
                 <AccordionItem value="item-1" className="bg-slate-200 p-2">
                   <AccordionTrigger className="h-auto p-0 text-sm font-normal">
                     Job Description
@@ -136,7 +145,7 @@ const CreateJobDetail = () => {
             {dataAccordion.map(({ name, type }) => (
               <div className="overflow-hidden rounded-md  border" key={name}>
                 <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="item-1" className="bg-slate-200 p-2">
+                  <AccordionItem value={type} className="bg-slate-200 p-2">
                     <AccordionTrigger className="h-auto p-0 text-sm font-normal">
                       {name}
                     </AccordionTrigger>

@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import React, { ChangeEvent, useRef, useState } from 'react';
-import { MonitorUp, FileStack, FileSearch, Search } from 'lucide-react';
+import { MonitorUp, FileStack } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -14,49 +14,32 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import TableTempCV from './Table-tempCV';
+import { useStore } from 'zustand';
+import { useFormStepStore } from '@/zustand/useCreateJob';
+import file from 'react-player/file';
 
 const UploadCv = () => {
-  const [files, setFiles] = useState<{ id: string; file: File }[]>([]);
-  const [totalSize, setTotalSize] = useState<number>(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    files,
+    handleFileChange,
+    handleUploadButtonClick,
+    dataCreateJob,
+    dataDetailJob,
+  } = useFormStepStore((state) => state);
 
   const uploadDropzone = () => {
     console.log('drop');
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    let totalFileSize = 0;
-    const selectedFiles = event.target.files
-      ? Array.from(event.target.files)
-      : [];
-
-    selectedFiles.forEach((file) => {
-      totalFileSize += file.size;
-    });
-
-    if (totalFileSize > 100 * 1024 * 1024) {
-      alert('Total file size exceeds 100MB limit');
-      return;
-    }
-
-    setFiles((prevFiles) => [
-      ...prevFiles,
-      ...selectedFiles.map((file) => ({ id: uuidv4(), file })),
-    ]);
-
-    setTotalSize(totalFileSize); // Update totalSize to totalFileSize
-  };
-
-  const handleUploadButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleSubmit = () => {
+  const handleNext = () => {
     // Code to submit files
+    console.log({
+      dataCreateJob,
+      dataDetailJob,
+      files,
+    });
   };
-
+  console.log(files);
   return (
     <>
       <div className="flex w-full flex-col items-center rounded-md bg-white  py-8">
@@ -72,8 +55,8 @@ const UploadCv = () => {
             accept=".pdf,.doc,.docx"
             multiple
             onChange={handleFileChange}
-            ref={fileInputRef}
             style={{ display: 'none' }}
+            id="fileInput"
           />
 
           <Button
@@ -103,14 +86,16 @@ const UploadCv = () => {
           <Button className="text-sm font-normal">Import</Button>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center rounded-md bg-white">
+      <div className="flex w-full flex-col items-center rounded-md bg-white px-1 py-6">
         <TableTempCV data={files} />
       </div>
       <div className="flex w-full justify-between rounded-md bg-white px-4 py-5">
         <Button variant="outline" className="min-w-32">
           Previous
         </Button>
-        <Button className="min-w-32">Next</Button>
+        <Button className="min-w-32" onClick={handleNext}>
+          Next
+        </Button>
       </div>
     </>
   );

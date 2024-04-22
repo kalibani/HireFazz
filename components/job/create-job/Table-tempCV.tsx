@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { formatDateDMY } from '@/helpers';
 
 export type uploadtemp = {
   id: string;
@@ -90,6 +91,26 @@ export const columns: ColumnDef<uploadtemp>[] = [
     ),
   },
   {
+    accessorKey: 'Added on',
+    header: ({ column }) => {
+      return (
+        <Button
+          className="w-fit px-4 pl-0 hover:bg-transparent"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Added On
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <p className="capitalize text-slate-400">
+        {formatDateDMY(row.original.file.lastModified)}
+      </p>
+    ),
+  },
+  {
     accessorKey: 'size',
     header: ({ column }) => {
       return (
@@ -107,6 +128,26 @@ export const columns: ColumnDef<uploadtemp>[] = [
       const size: number = row.original.file.size;
       return (
         <p className="capitalize text-slate-400">{formatFileSize(size)}</p>
+      );
+    },
+  },
+  {
+    accessorKey: 'from',
+    header: ({ column }) => {
+      return (
+        <Button
+          className="w-fit px-4 pl-0 hover:bg-transparent"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          From
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <p className="capitalize text-slate-400">{row.getValue('from')}</p>
       );
     },
   },

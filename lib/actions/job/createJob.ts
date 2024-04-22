@@ -7,6 +7,8 @@ import z from 'zod';
 import { uploadCv } from '../cv/uploadCv';
 import { v4 as uuidv4 } from 'uuid';
 import { analyzeCv } from '../cv/analyzeCv';
+import { openai } from '@/lib/openai';
+
 const PayloadAddJob = z.object({
   jobName: z.string(),
   location: z.string(),
@@ -80,4 +82,33 @@ export const createJob = async (
   } catch (error) {
     return errorHandler(error);
   }
+};
+
+export const genereteJobDescription = async (data: any) => {
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4-0125-preview',
+    temperature: 0,
+    // stream: true,
+    response_format: { type: 'json_object' },
+    messages: [
+      {
+        role: 'system',
+        content: `following the steps to create job description baseon data form provide. restart each step before proceeding. 
+        ${data}
+        Step 1: read the data form
+        step 2: Create simple and cleary informatif job description related base on information from data form
+        step 3: output with string html like:
+        "<p><strong>Job Description :</strong></p><p>"the output of job description generate"</p><br/>`,
+      },
+      // {
+      //   role: 'user',
+      //   content: `CV Document:
+      //   ${results.map((r) => r.pageContent).join('\n\n')}
+
+      //   User Input: ${job.jobDescription}
+      //   `,
+      // },
+    ],
+  });
+  console.log(response, '<<<< AI');
 };

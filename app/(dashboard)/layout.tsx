@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import {Navbar, SideBar} from '@/components/share';
+import { Navbar, SideBar } from '@/components/share';
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -12,7 +12,7 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
       <main className="w-full">
         <Navbar />
         {children}
-      </div>
+      </main>
     </div>
   );
 };
