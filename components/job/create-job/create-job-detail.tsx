@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState, useTransition } from 'react';
 import { ArrowRight, Info } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -13,6 +13,12 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Button } from '@/components/ui/button';
 import { useFormStepStore } from '@/zustand/useCreateJob';
+import {
+  generateRequirement,
+  generateResponsibilities,
+  generateSkill,
+  genereteJobDescription,
+} from '@/lib/actions/job/createJob';
 
 const initialState = {
   jobDescription: '',
@@ -40,15 +46,60 @@ const CreateJobDetail = () => {
   const [listOfEditor, setListOfEditor] = useState<string[]>(['']);
 
   useEffect(() => {
+    const genrate = async () => {
+      startTransition(async () => {
+        const { result } = await genereteJobDescription(dataCreateJob);
+        handleChange('jobDescription', result);
+      });
+    };
+
+    genrate();
+  }, []);
+
+  useEffect(() => {
     if (listOfEditor) {
       setValue(listOfEditor.join(''));
     }
   }, [listOfEditor]);
 
-  
-
   const handleChange = (field: string, value: string) => {
     dispatch({ type: 'CHANGE_VALUE', field, value });
+  };
+
+  const [isPending, startTransition] = useTransition();
+  const autoGenerate = async (
+    type: 'jobDescription' | 'skill' | 'responsibilities' | 'requirement',
+  ) => {
+    startTransition(async () => {
+      switch (type) {
+        case 'skill':
+          const { result: skillResult } = await generateSkill(
+            dataCreateJob.title,
+          );
+          const skillSet = skillResult.skills?.length
+            ? skillResult.skills?.join(', ')
+            : skillResult;
+          handleChange('skill', skillSet);
+          break;
+        case 'responsibilities':
+          const { result: responsibilitiesResult } =
+            await generateResponsibilities(dataCreateJob);
+          handleChange('responsibilities', responsibilitiesResult);
+          break;
+        case 'requirement':
+          const { result: requirementResult } =
+            await generateRequirement(dataCreateJob);
+          handleChange('requirement', requirementResult);
+          break;
+        case 'jobDescription':
+          const { result: jobDescriptionResult } =
+            await genereteJobDescription(dataCreateJob);
+          handleChange('jobDescription', jobDescriptionResult);
+          break;
+        default:
+          break;
+      }
+    });
   };
 
   const addToEditor = (
@@ -81,7 +132,7 @@ const CreateJobDetail = () => {
     setFormDetailJob(value);
     setStep(2);
   };
-  console.log(dataCreateJob);
+
   return (
     <div className="flex min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
       <div className="w-ful flex flex-col items-center justify-center overflow-y-auto px-12 py-8">
@@ -117,6 +168,7 @@ const CreateJobDetail = () => {
                       minRows={10}
                       className="focus-visible:ring-0 focus-visible:ring-transparent"
                       value={state.jobDescription}
+                      placeholder={isPending ? 'loading' : ''}
                       onChange={(e) =>
                         handleChange('jobDescription', e.target.value)
                       }
@@ -151,6 +203,10 @@ const CreateJobDetail = () => {
                     </AccordionTrigger>
                     <AccordionContent>
                       <Textarea
+                        value={state[type]}
+                        placeholder={
+                          isPending ? 'loading' : 'Click Generate button'
+                        }
                         minRows={10}
                         className="focus-visible:ring-0 focus-visible:ring-transparent"
                         onChange={(e) => handleChange(type, e.target.value)}
@@ -159,6 +215,7 @@ const CreateJobDetail = () => {
                         <Button
                           variant="ghost"
                           className="w-auto p-0 text-sm font-normal hover:bg-transparent"
+                          onClick={() => autoGenerate(type)}
                         >
                           Regenerate
                         </Button>

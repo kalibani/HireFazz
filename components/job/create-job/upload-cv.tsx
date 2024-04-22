@@ -1,8 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import React, { ChangeEvent, useRef, useState } from 'react';
+import React from 'react';
 import { MonitorUp, FileStack } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
   Select,
@@ -14,11 +13,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import TableTempCV from './Table-tempCV';
-import { useStore } from 'zustand';
+
 import { useFormStepStore } from '@/zustand/useCreateJob';
-import file from 'react-player/file';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 const UploadCv = () => {
+  const user = useCurrentUser();
+  console.log(user);
+
   const {
     files,
     handleFileChange,

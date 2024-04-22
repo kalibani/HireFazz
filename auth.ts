@@ -3,7 +3,6 @@ import { getUserById } from '@/lib/actions/auth';
 import authConfig from './auth.config';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prismadb from './lib/prismadb';
-import jwt from 'jsonwebtoken';
 
 export const {
   handlers: { GET, POST },
@@ -76,9 +75,6 @@ export const {
 
   ...authConfig,
   adapter: PrismaAdapter(prismadb),
-  // adapter: {
-  //   ...PrismaAdapter(prismadb),
-  // },
   debug: process.env.NODE_ENV === 'development',
   session: { strategy: 'jwt' },
 });
