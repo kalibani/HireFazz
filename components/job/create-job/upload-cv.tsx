@@ -25,6 +25,7 @@ const UploadCv = () => {
     handleUploadButtonClick,
     dataCreateJob,
     dataDetailJob,
+    setStep,
   } = useFormStepStore((state) => state);
 
   const uploadDropzone = () => {
@@ -33,6 +34,7 @@ const UploadCv = () => {
 
   const handleNext = () => {
     // Code to submit files
+    setStep(3);
     console.log({
       dataCreateJob,
       dataDetailJob,

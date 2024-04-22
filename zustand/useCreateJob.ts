@@ -23,7 +23,7 @@ interface FormStepState {
 }
 
 export const useFormStepStore = create<FormStepState>((set) => ({
-  step: 1,
+  step: 3,
   dataCreateJob: {
     title: '',
     companyName: '',
