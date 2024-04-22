@@ -3,6 +3,7 @@ import { FilterJob } from '@/components/job/filterJob';
 import { HeaderJob } from '@/components/job/headerJob';
 import { TableJob } from '@/components/job/tableJob';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const JobPage = () => {
   return (
@@ -12,7 +13,9 @@ const JobPage = () => {
       <div className="mt-4 min-h-[-webkit-fill-available] rounded-md bg-white px-5 py-2.5">
         <FilterJob />
         <TableJob />
-        <Button className="mt-5">+ Create New Job</Button>
+        <Link href="/job/create">
+          <Button className="mt-5">+ Create New Job</Button>
+        </Link>
       </div>
     </div>
   );
