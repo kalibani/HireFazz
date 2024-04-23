@@ -38,3 +38,13 @@ export const errorHandler = (error: unknown) => {
 export const writeErrorResponseJson = (message: string) => ({
   errorMessage: message,
 });
+
+export const formatDateDMY = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  };
+  return new Intl.DateTimeFormat('en-US', options).format(date);
+};

@@ -1,19 +1,22 @@
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export const BannerJob = () => {
   return (
-    <div className="flex items-center justify-between rounded-lg bg-gradient-to-r from-[#E11D48] to-[#4E3ABA] text-white">
-      <div className="flex-1 px-[44px] py-[30px]">
+    <div className="flex items-center justify-between rounded-lg bg-gradient-to-r from-[#E11D48] to-[#4E3ABA] text-white px-11 py-4">
+      <div className="flex-1 ">
         <h1 className="mb-5 text-3xl">Create New Job!</h1>
-        <p className="text-sm">
+        <p className="text-sm max-w-[883px]">
           Lorem Ipsum is simply dummy text of the printing and typesetting
           industry. Lorem Ipsum has been the industry's standard dummy text ever
           since the 1500s, when an unknown printer took a galley of type and
           scrambled it to make a type specimen book.
         </p>
+        <Link href='/job/create' >
         <Button variant="secondary" className="mt-3">
           Create Job
         </Button>
+        </Link>
       </div>
 
       <svg

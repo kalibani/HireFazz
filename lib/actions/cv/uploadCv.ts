@@ -17,6 +17,7 @@ export const uploadCv = async (
 ) => {
   try {
     const url = typeof cv === 'string' ? cv : '';
+
     const cvDbData = await prismadb.cv.create({
       data: {
         url: url,

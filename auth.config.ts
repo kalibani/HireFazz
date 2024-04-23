@@ -12,6 +12,7 @@ export default {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      
       account: (account) => {
         return {
           accessToken: account.access_token,

@@ -13,9 +13,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, Trash2, MoreHorizontal } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+
 import {
   Table,
   TableBody,
@@ -24,54 +26,66 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { cn, formatDateStringToDate } from '@/lib/utils';
+import { formatDateDMY } from '@/helpers';
 
-const data: Payment[] = [
-  {
-    id: 'm5gr84i9',
-    listJob: 'Senior Software Engineer',
-    candidates: 143,
-    createdAt: '1712200652349',
-    status: 'Active',
-  },
-  {
-    id: '3u1reuv4',
-    listJob: 'Senior Software Engineer',
-    candidates: 20,
-    createdAt: '1712200652349',
-    status: 'Not Active',
-  },
-];
-
-export type Payment = {
-  id: string;
-  listJob: string;
-  status: 'Active' | 'Not Active';
-  createdAt: string;
-  candidates: number;
+export type uploadtemp = {
+  file: File;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+const formatFileSize = (sizeInBytes: number): string => {
+  if (sizeInBytes < 1024) {
+    return `${sizeInBytes} bytes`;
+  } else if (sizeInBytes < 1024 * 1024) {
+    return `${(sizeInBytes / 1024).toFixed(2)} KB`;
+  } else {
+    return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
+  }
+};
+
+export const columns: ColumnDef<uploadtemp>[] = [
   {
-    accessorKey: 'listJob',
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className="border-slate-400 bg-white text-black"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: 'name',
     header: ({ column }) => {
       return (
         <Button
+          className="w-fit px-4 pl-0 hover:bg-transparent"
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="w-fit px-4 pl-0 hover:bg-transparent"
         >
-          List Job
+          File Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('listJob')}</div>
+      <p className="capitalize text-slate-400">{row.original.file.name}</p>
     ),
   },
   {
-    accessorKey: 'candidates',
+    accessorKey: 'Added on',
     header: ({ column }) => {
       return (
         <Button
@@ -79,79 +93,73 @@ export const columns: ColumnDef<Payment>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Candidates
+          Added On
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => (
       <p className="capitalize text-slate-400">
-        {row.getValue('candidates')} candidates
+        {formatDateDMY(row.original.file.lastModified)}
       </p>
     ),
   },
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'size',
     header: ({ column }) => {
       return (
         <Button
+          className="w-fit px-4 pl-0 hover:bg-transparent"
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="w-fit px-4 pl-0 hover:bg-transparent"
         >
-          Created at
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="font-normal capitalize text-slate-400">
-        {formatDateStringToDate(row.getValue('createdAt'))}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-        >
-          Status
+          Size
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const status: string = row.getValue('status');
+      const size: number = row.original.file.size;
       return (
-        <p
-          className={cn(
-            'text-sm font-normal capitalize',
-            status === 'Active' ? 'text-[#069A1E]' : 'text-primary',
-          )}
-        >
-          {status}
-        </p>
+        <p className="capitalize text-slate-400">{formatFileSize(size)}</p>
       );
     },
   },
+  {
+    accessorKey: 'from',
+    header: ({ column }) => {
+      return (
+        <Button
+          className="w-fit px-4 pl-0 hover:bg-transparent"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          From
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <p className="capitalize text-slate-400">{row.getValue('from')}</p>
+      );
+    },
+  },
+
   {
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
       return (
-        <Button variant="link" className="text-sm font-normal">
-          View Job
+        <Button variant="ghost" className="hover:bg-transparent">
+          <Trash2 className="h-4 w-4 text-primary" />
         </Button>
       );
     },
   },
 ];
 
-const DashboardTable = () => {
+const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -159,7 +167,6 @@ const DashboardTable = () => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-
   const table = useReactTable({
     data,
     columns,
@@ -181,7 +188,7 @@ const DashboardTable = () => {
 
   return (
     <div className="w-full">
-      <div className="border">
+      <div className="border-b">
         <Table>
           <TableHeader className="bg-slate-200">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -209,10 +216,10 @@ const DashboardTable = () => {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  // data-state={row.getIsSelected() && 'selected'}
+                  data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-0">
+                    <TableCell key={cell.id} className="py-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -234,8 +241,32 @@ const DashboardTable = () => {
           </TableBody>
         </Table>
       </div>
+      <div className="flex items-center justify-end space-x-2 px-4 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{' '}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="space-x-2 ">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default DashboardTable;
+export default TableTempCV;

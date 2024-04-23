@@ -1,24 +1,19 @@
-import { useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-// import { priceSchemeHelper } from "@/lib/utils";
-import { usePricing } from "./use-pricing";
-// import { productName } from "@/constant";
-// import { useTextToSpeechStore } from "./use-text-to-speech";
-import { useMidtransStore } from "./use-midtrans-store";
-import { useUser } from "./use-user";
-
-// import * as dateFns from "date-fns";
+import { useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
+import { usePricing } from './use-pricing';
+import { useMidtransStore } from './use-midtrans-store';
+import { useUser } from './use-user';
 
 export default function UseMidtrans() {
   useEffect(() => {
     const snapUrl = process.env.NEXT_PUBLIC_MIDTRANS_URL;
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
 
-    const script = document.createElement("script");
+    const script = document.createElement('script');
 
     script.src = snapUrl as string;
-    script.setAttribute("data-client-key", clientKey as string);
+    script.setAttribute('data-client-key', clientKey as string);
     script.async = true;
 
     document.body.appendChild(script);
@@ -81,7 +76,7 @@ export default function UseMidtrans() {
     try {
       setLoading(true);
 
-      const response = await axios.post("/api/payment-gateway", data);
+      const response = await axios.post('/api/payment-gateway', data);
       const token = response?.data?.token;
 
       //@ts-ignore
