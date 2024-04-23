@@ -11,7 +11,7 @@ import { openai } from '@/lib/openai';
 import { checkValidJSON } from '@/lib/utils';
 import { formSchemaCreateJob } from '@/lib/validators/createJob';
 
-const PayloadAddJob = z.object({
+export const PayloadAddJob = z.object({
   jobName: z.string(),
   location: z.string(),
   salaryCurrency: z.string(),
@@ -259,4 +259,3 @@ export const generateRequirement = async (
     return { error: 'something went wrong' };
   }
 };
-

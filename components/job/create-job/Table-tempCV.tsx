@@ -29,13 +29,7 @@ import {
 import { formatDateDMY } from '@/helpers';
 
 export type uploadtemp = {
-  id: string;
   file: File;
-  // lastModifiedDate: string;
-  // name: string;
-  // size: number;
-  // type: string;
-  // webkitRelativePath: string;
 };
 
 const formatFileSize = (sizeInBytes: number): string => {

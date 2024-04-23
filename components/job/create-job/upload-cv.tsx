@@ -8,42 +8,24 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
 import TableTempCV from './Table-tempCV';
 
 import { useFormStepStore } from '@/zustand/useCreateJob';
-import { useCurrentUser } from '@/hooks/use-current-user';
 
 const UploadCv = () => {
-  const user = useCurrentUser();
-  console.log(user);
-
-  const {
-    files,
-    handleFileChange,
-    handleUploadButtonClick,
-    dataCreateJob,
-    dataDetailJob,
-    setStep,
-  } = useFormStepStore((state) => state);
+  const { files, handleFileChange, handleUploadButtonClick, setStep } =
+    useFormStepStore((state) => state);
 
   const uploadDropzone = () => {
     console.log('drop');
   };
 
   const handleNext = () => {
-    // Code to submit files
     setStep(3);
-    console.log({
-      dataCreateJob,
-      dataDetailJob,
-      files,
-    });
   };
-  console.log(files);
   return (
     <>
       <div className="flex w-full flex-col items-center rounded-md bg-white  py-8">
@@ -97,7 +79,11 @@ const UploadCv = () => {
         <Button variant="outline" className="min-w-32">
           Previous
         </Button>
-        <Button className="min-w-32" onClick={handleNext}>
+        <Button
+          className="min-w-32"
+          onClick={handleNext}
+          disabled={files.length <= 0}
+        >
           Next
         </Button>
       </div>

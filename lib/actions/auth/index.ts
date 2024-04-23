@@ -1,7 +1,12 @@
 'use server';
 
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
-import { LoginSchema, NewPasswordSchema, RegisterSchema, ResetSchema } from '@/lib/validators/auth';
+import {
+  LoginSchema,
+  NewPasswordSchema,
+  RegisterSchema,
+  ResetSchema,
+} from '@/lib/validators/auth';
 import { signIn } from '@/auth';
 import { z } from 'zod';
 import prismadb from '@/lib/prismadb';
@@ -10,8 +15,7 @@ import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { sendPasswordResetEmail } from '@/lib/mail';
 import { v4 as uuidv4 } from 'uuid';
-
-
+import { useId } from 'react';
 
 // Helper functions for user-related operations
 export const getUserByEmail = async (email: string) => {
@@ -31,8 +35,6 @@ export const getUserById = async (id: string) => {
     return null;
   }
 };
-
-
 
 // Error handling for authentication errors
 const handleAuthError = (error: any) => {
@@ -63,12 +65,12 @@ export const userLoginAction = async (payload: z.infer<typeof LoginSchema>) => {
       redirectTo: DEFAULT_LOGIN_REDIRECT,
     });
   } catch (error) {
-    handleAuthError(error)
+    handleAuthError(error);
   }
 };
 
 export const userRegisterAction = async (
-  payload: z.infer<typeof RegisterSchema>
+  payload: z.infer<typeof RegisterSchema>,
 ) => {
   try {
     const validatedField = RegisterSchema.parse(payload);
@@ -83,13 +85,17 @@ export const userRegisterAction = async (
     await createNewUserAndOrganization(name, email, hashedPassword);
     await userLoginAction({ email, password });
     // return { success: 'Confirmation email sent!' };
-  } catch (error:unknown) {
-     handleAuthError(error)
+  } catch (error: unknown) {
+    handleAuthError(error);
   }
 };
 
 // Helper function to create a new user and associated organization
-const createNewUserAndOrganization = async (name: string, email: string, hashedPassword: string) => {
+const createNewUserAndOrganization = async (
+  name: string,
+  email: string,
+  hashedPassword: string,
+) => {
   await prismadb.$transaction(async (tx) => {
     const newUser = await tx.user.create({
       data: { name, email, password: hashedPassword },
@@ -108,6 +114,39 @@ const createNewUserAndOrganization = async (name: string, email: string, hashedP
   });
 };
 
+export const createOrganizationGoogle = async (
+  userId: string | undefined,
+  name: string | undefined,
+) => {
+  try {
+    if (name && userId) {
+      const result = await prismadb.organization.create({
+        data: {
+          name,
+          packageType: PACKAGE_TYPE.BASIC,
+          limit: 100,
+          used: 0,
+          agreeTermAndCondition: true,
+          userOrganization: { create: { userId, roleId: 'OWNER' } },
+        },
+      });
+      return result;
+    }
+  } catch (error: unknown) {
+    handleAuthError(error);
+  }
+};
+
+export const getOrgId = async (userId: string | undefined) => {
+  try {
+    const res = await prismadb.userOrganization.findFirst({
+      where: { userId },
+    });
+    return res;
+  } catch (error: unknown) {
+    handleAuthError(error);
+  }
+};
 // Other utility functions for password reset and verification tokens...
 
 export const getVerificationTokenByToken = async (token: string) => {
@@ -140,23 +179,23 @@ export const newVerification = async (token: string) => {
   if (!existingToken) {
     return {
       error: 'Token does not exist!',
-    }
+    };
   }
 
   const hasExpired = new Date(existingToken.expires) < new Date();
 
   if (hasExpired) {
-    return{
+    return {
       error: 'Token has expired!',
-    }
+    };
   }
 
   const existingUser = await getUserByEmail(existingToken.email);
 
   if (!existingUser) {
-    return{
+    return {
       error: 'Email does not exist!',
-    }
+    };
   }
 
   await prismadb.user.update({
@@ -220,13 +259,15 @@ export const generatePasswordResetToken = async (email: string) => {
   return passwordResetToken;
 };
 
-export const resetPasswordAction = async (input: z.infer<typeof ResetSchema>) => {
+export const resetPasswordAction = async (
+  input: z.infer<typeof ResetSchema>,
+) => {
   const validatedFields = ResetSchema.safeParse(input);
 
   if (!validatedFields.success) {
-    return{
+    return {
       error: 'Invalid emaiL!',
-    }
+    };
   }
 
   const { email } = validatedFields.data;
@@ -234,37 +275,37 @@ export const resetPasswordAction = async (input: z.infer<typeof ResetSchema>) =>
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser) {
-    return{
+    return {
       error: 'Email does not exist!',
-    }
+    };
   }
 
   const passwordResetToken = await generatePasswordResetToken(email);
   const responseEmail = await sendPasswordResetEmail(
     passwordResetToken.email,
-    passwordResetToken.token
+    passwordResetToken.token,
   );
-  if(responseEmail.error){
-    return {error:responseEmail.error.message}
+  if (responseEmail.error) {
+    return { error: responseEmail.error.message };
   }
   return { success: 'Reset email sent!' };
 };
 
 export const newPasswordAction = async (
-  values: z.infer<typeof NewPasswordSchema>
+  values: z.infer<typeof NewPasswordSchema>,
 ) => {
   if (!values.token) {
-    return{
+    return {
       error: 'Missing token!',
-    }
+    };
   }
 
   const validatedFields = NewPasswordSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return{
+    return {
       error: 'Invalid fields!',
-    }
+    };
   }
 
   const { password } = validatedFields.data;
@@ -272,25 +313,25 @@ export const newPasswordAction = async (
   const existingToken = await getPasswordResetTokenByToken(values.token);
 
   if (!existingToken) {
-    return{
+    return {
       error: 'Invalid token!',
-    }
+    };
   }
 
   const hasExpired = new Date(existingToken.expires) < new Date();
 
   if (hasExpired) {
-    return{
+    return {
       error: 'Token has expired!',
-    }
+    };
   }
 
   const existingUser = await getUserByEmail(existingToken.email);
 
   if (!existingUser) {
-    return{
+    return {
       error: 'Email does not exist!',
-    }
+    };
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);

@@ -1,3 +1,5 @@
+'use client';
+
 import { SectionWrap } from '@/components/share';
 import { Button } from '@/components/ui/button';
 import {
@@ -43,6 +45,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { getOrgId } from '@/lib/actions/auth';
+import { PayloadAddJob, createJob } from '@/lib/actions/job/createJob';
+import { z } from 'zod';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -97,8 +104,37 @@ const IconFolderUp: FC = (): ReactElement => (
 );
 
 const CVAnalyzer: FC = (): ReactElement => {
+  const user = useCurrentUser();
+
   const form = useForm();
-  const step = useStore(useFormStepStore, (state) => state.step);
+  const { step, dataCreateJob, dataDetailJob, files, formData } = useStore(
+    useFormStepStore,
+    (state) => state,
+  );
+  const { data, isSuccess } = useQuery({
+    queryFn: () => getOrgId(user?.id),
+    queryKey: ['getOrgId'],
+  });
+
+  const createJobHandle = () => {
+    if (isSuccess && data) {
+      const createPayload: z.infer<typeof PayloadAddJob> = {
+        analyzeCv: false,
+        jobName: dataCreateJob.title,
+        location: dataCreateJob.location,
+        salaryCurrency: dataCreateJob.currency,
+        experience: Number(dataCreateJob.experiences),
+        workModel: dataCreateJob.workModel,
+        jobDescription: dataDetailJob,
+        companyName: dataCreateJob.companyName,
+        salaryRangeEnd: Number(dataCreateJob.toNominal),
+        salaryRangeFrom: Number(dataCreateJob.fromNominal),
+        orgId: data?.organizationId,
+      };
+      // submit to createJob at path folder: action/job.
+    }
+  };
+
   return (
     <section className="flex flex-col gap-y-3">
       <div className="flex h-full w-full flex-col items-center justify-start gap-y-8 rounded-lg bg-white p-8">
@@ -267,7 +303,7 @@ const CVAnalyzer: FC = (): ReactElement => {
         <div className="flex w-full justify-between rounded-lg bg-white px-8 py-4">
           <Button variant="outline">Previous</Button>
           <DialogTrigger asChild>
-            <Button>Create</Button>
+            <Button onClick={createJobHandle}>Create</Button>
           </DialogTrigger>
         </div>
         <DialogContent className="flex min-h-[96%] min-w-[96%] flex-col items-center justify-between p-0">

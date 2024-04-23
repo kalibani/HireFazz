@@ -31,7 +31,7 @@ const FormCreate = () => {
     defaultValues: {
       title: '',
       companyName: '',
-      workModel: 'remote',
+      workModel: 'REMOTE',
       currency: 'IDR',
       experiences: '0',
       fromNominal: '',
@@ -201,13 +201,9 @@ const FormCreate = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="on-site">On Site</SelectItem>
-                        <SelectItem value="part-time">Part Time</SelectItem>
-                        <SelectItem value="intership">Intership</SelectItem>
-                        <SelectItem value="remote">Remote</SelectItem>
-                        <SelectItem value="freelance">Freelance</SelectItem>
-                        <SelectItem value="hybrid">Hybrid</SelectItem>
-                        <SelectItem value="contract">Contract</SelectItem>
+                        <SelectItem value="ONSITE">On Site</SelectItem>
+                        <SelectItem value="REMOTE">Remote</SelectItem>
+                        <SelectItem value="HYBRID">Hybrid</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth';
-import { getUserById } from '@/lib/actions/auth';
+import { createOrganizationGoogle, getUserById } from '@/lib/actions/auth';
 import authConfig from './auth.config';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prismadb from './lib/prismadb';
@@ -45,7 +45,10 @@ export const {
   callbacks: {
     async signIn({ user, account, credentials, profile }) {
       // Allow OAuth without email verification
-      if (account?.provider !== 'credentials') return true;
+      if (account?.provider !== 'credentials' && user.name) {
+        await createOrganizationGoogle(user.id, user.name);
+        return true;
+      }
       // Prevent sign in without email verification
       // const existingUser = await getUserById(user.id!);
       // if (!existingUser?.emailVerified) return false;
