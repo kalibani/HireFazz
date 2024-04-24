@@ -60,7 +60,6 @@ const comingRoutes = [
 
 const Sidebar = () => {
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <aside className="flex max-w-[76px] flex-col bg-white shadow-md">
       <div className="item-center flex justify-center border-b-[2px] p-4">

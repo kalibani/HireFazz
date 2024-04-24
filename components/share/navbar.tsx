@@ -1,9 +1,9 @@
 import { UserButton } from '@/components/auth';
 
-const Navbar =  () => {
+const Navbar = () => {
   return (
-    <div className="flex items-center py-2 px-3 bg-white border-b border-l justify-between">
-        <p className='w-full font-normal text-sm'>{currentDate}</p>
+    <div className="flex items-center justify-between border-b border-l bg-white px-3 py-2">
+      <p className="w-full text-sm font-normal">{currentDate}</p>
       <div className="flex w-full justify-end">
         <UserButton />
       </div>
@@ -13,4 +13,9 @@ const Navbar =  () => {
 
 export default Navbar;
 
-const currentDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+const currentDate = new Date().toLocaleDateString('en-US', {
+  weekday: 'long',
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
