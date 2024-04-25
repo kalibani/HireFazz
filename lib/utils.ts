@@ -30,7 +30,7 @@ export function downloadBlobFile(audioUrl: any, filename: string) {
 export function priceSchemeHelper(
   characterCount: number,
   subscriptionType: string,
-  selectedProductName: productName
+  selectedProductName: productName,
 ) {
   let price = 19000;
   if (subscriptionType === 'PREMIUM') return (price = 499000);
@@ -80,7 +80,7 @@ export const removeProperty = <
   K extends keyof T,
 >(
   obj: T,
-  propToDelete: K
+  propToDelete: K,
 ): Omit<T, K> => {
   const { [propToDelete]: deletedProp, ...rest } = obj;
   return rest;
@@ -94,6 +94,22 @@ export const formatDateStringToDate = (inputDateString: string) => {
   const formattedDate = format(date, 'dd MMM, yyyy'); // Format example: '20 Mar, 2024'
 
   return formattedDate;
+};
+
+export const videoConstraints = {
+  width: 1280,
+  height: 720,
+  facingMode: 'user',
+};
+
+export const audioConstraints = {
+  suppressLocalAudioPlayback: true,
+  noiseSuppression: true,
+  echoCancellation: true,
+};
+export const blobToFile = (blob: Blob, fileName: string): File => {
+  const file = new File([blob], fileName, { type: blob.type });
+  return file;
 };
 
 export const separateThousand = (value: string, separator: string = '.') => {
