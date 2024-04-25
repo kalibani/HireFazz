@@ -11,7 +11,7 @@ const Navbar: FC = (): ReactElement => {
       <span className="w-full text-sm font-medium">{currentDate}</span>
       <div className="flex h-fit w-1/6 min-w-fit items-center justify-end rounded-xl bg-slate-100 px-3">
         {user && (
-          <span className="w-full text-sm font-medium">{user.name}</span>
+          <span className="w-full text-sm font-normal">{user.name}</span>
         )}
         <UserButton />
         <ChevronDown />

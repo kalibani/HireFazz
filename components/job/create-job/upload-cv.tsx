@@ -26,6 +26,9 @@ const UploadCv = () => {
   const handleNext = () => {
     setStep(3);
   };
+
+  console.log(files);
+
   return (
     <>
       <div className="flex w-full flex-col items-center rounded-md bg-white  py-8">
@@ -40,7 +43,7 @@ const UploadCv = () => {
             type="file"
             accept=".pdf,.doc,.docx"
             multiple
-            onChange={handleFileChange}
+            onChange={(e) => handleFileChange(e, 'From Device')}
             style={{ display: 'none' }}
             id="fileInput"
           />
