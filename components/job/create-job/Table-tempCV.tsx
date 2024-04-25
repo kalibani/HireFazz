@@ -13,7 +13,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Trash2, MoreHorizontal, FileSearchIcon } from 'lucide-react';
+import {
+  ArrowUpDown,
+  Trash2,
+  MoreHorizontal,
+  FileSearchIcon,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -44,8 +49,6 @@ const formatFileSize = (sizeInBytes: number): string => {
     return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
   }
 };
-
-// TODO: remove this file, component MOVED to ./table to support different columns and data type
 
 const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -199,20 +202,23 @@ const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
   });
 
   // todo: change into dynamic title
-  const jobTitle = 'Senior Software Engineer'
+  const jobTitle = 'Senior Software Engineer';
 
   return (
-    <div className="w-full flex flex-col gap-5">
-      <div className="flex gap-2 items-center mx-5">
+    <div className="flex w-full flex-col gap-5">
+      <div className="mx-5 flex items-center gap-2">
         <FileSearchIcon className="text-red-500" />
         {!!data.length && jobTitle ? (
-          <p>There is <b>{data.length} CVs</b> has been added with job tittle <b>“{jobTitle}”</b> from Candidates</p>
-        ): (
+          <p>
+            There is <b>{data.length} CVs</b> has been added with job tittle{' '}
+            <b>“{jobTitle}”</b> from Candidates
+          </p>
+        ) : (
           <p>There is no CV has been added.</p>
         )}
       </div>
 
-      <div className="flex gap-28 mx-2">
+      <div className="mx-2 flex gap-28">
         <InputFilter label="Search" placeholder="Location" />
         <InputFilter label="Search" placeholder="Search Name" />
       </div>

@@ -1,7 +1,7 @@
 import CreateStep from '@/components/job/create-job/create-step';
 import { SectionWrap } from '@/components/share';
-import type { NextPage } from 'next';
-import type { ReactElement } from 'react';
+import { NextPage } from 'next';
+import { ReactElement } from 'react';
 
 const CreateNewJob: NextPage = (): ReactElement => {
   return (
