@@ -22,8 +22,8 @@ const UserButton = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar>
-          <AvatarImage src={user?.image || ''} />
+        <Avatar className="rounded-full p-1">
+          <AvatarImage className="rounded-full" src={user?.image || ''} />
           <AvatarFallback className="bg-sky-500">
             <UsersRound className="text-white" />
           </AvatarFallback>
@@ -32,7 +32,7 @@ const UserButton = () => {
       <DropdownMenuContent className="w-40" align="end">
         <span onClick={onClick} className="cursor-pointer">
           <DropdownMenuItem>
-            <ExitIcon className="w-4 h-4 mr-2" />
+            <ExitIcon className="mr-2 h-4 w-4" />
             Logout
           </DropdownMenuItem>
         </span>
