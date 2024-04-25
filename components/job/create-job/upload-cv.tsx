@@ -1,7 +1,9 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import React from 'react';
-import { MonitorUp, FileStack } from 'lucide-react';
+import { MonitorUp, FileStack, } from 'lucide-react';
+import ModalBankCv from './modal-upload-cv';
+import { usePopupModal } from '@/hooks/use-popup-modal';
 
 import {
   Select,
@@ -16,8 +18,15 @@ import TableTempCV from './Table-tempCV';
 import { useFormStepStore } from '@/zustand/useCreateJob';
 
 const UploadCv = () => {
-  const { files, handleFileChange, handleUploadButtonClick, setStep } =
-    useFormStepStore((state) => state);
+  const {
+    files,
+    handleFileChange,
+    handleUploadButtonClick,
+    dataCreateJob,
+    dataDetailJob,
+    setStep,
+  } = useFormStepStore((state) => state);
+  const { setIsModalOpen } = usePopupModal()
 
   const uploadDropzone = () => {
     console.log('drop');
@@ -52,7 +61,7 @@ const UploadCv = () => {
             <MonitorUp className="mr-2 h-4 w-4" />
             From Device
           </Button>
-          <Button className="text-sm font-normal">
+          <Button className="text-sm font-normal" onClick={() => setIsModalOpen('BANK_CV', true)}>
             <FileStack className="mr-2 h-4 w-4" /> From Bank CV (Candidates)
           </Button>
           <Select>
@@ -87,6 +96,8 @@ const UploadCv = () => {
           Next
         </Button>
       </div>
+
+      <ModalBankCv />
     </>
   );
 };
