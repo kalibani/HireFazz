@@ -79,7 +79,11 @@ const UploadCv = () => {
         <TableTempCV data={files} />
       </div>
       <div className="flex w-full justify-between rounded-md bg-white px-4 py-5">
-        <Button variant="outline" className="min-w-32">
+        <Button
+          onClick={() => setStep(1)}
+          variant="outline"
+          className="min-w-32"
+        >
           Previous
         </Button>
         <Button

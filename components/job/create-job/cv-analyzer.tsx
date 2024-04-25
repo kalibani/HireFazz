@@ -107,10 +107,8 @@ const CVAnalyzer: FC = (): ReactElement => {
   const user = useCurrentUser();
 
   const form = useForm();
-  const { step, dataCreateJob, dataDetailJob, files, formData } = useStore(
-    useFormStepStore,
-    (state) => state,
-  );
+  const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
+    useStore(useFormStepStore, (state) => state);
   const { data, isSuccess } = useQuery({
     queryFn: () => getOrgId(user?.id),
     queryKey: ['getOrgId'],
@@ -301,7 +299,9 @@ const CVAnalyzer: FC = (): ReactElement => {
 
       <Dialog>
         <div className="flex w-full justify-between rounded-lg bg-white px-8 py-4">
-          <Button variant="outline">Previous</Button>
+          <Button onClick={() => setStep(2)} variant="outline">
+            Previous
+          </Button>
           <DialogTrigger asChild>
             <Button onClick={createJobHandle}>Create</Button>
           </DialogTrigger>
