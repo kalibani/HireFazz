@@ -13,10 +13,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Trash2, MoreHorizontal, FileSearchIcon } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 
 import {
   Table,
@@ -27,48 +26,17 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { formatDateDMY } from '@/helpers';
-import InputFilter from '@/components/table/input-filter';
 
-export type uploadtemp = {
-  file: File;
-};
+interface Data {
+  jobName: string
+  candidates: number
+  createdAt: number
+}
 
-const formatFileSize = (sizeInBytes: number): string => {
-  if (sizeInBytes < 1024) {
-    return `${sizeInBytes} bytes`;
-  } else if (sizeInBytes < 1024 * 1024) {
-    return `${(sizeInBytes / 1024).toFixed(2)} KB`;
-  } else {
-    return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
-  }
-};
-
-export const columns: ColumnDef<uploadtemp>[] = [
+// todo: merge with ./table
+export const columns: ColumnDef<Data>[] = [
   {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="border-slate-400 bg-white text-black"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'name',
+    accessorKey: 'jobName',
     header: ({ column }) => {
       return (
         <Button
@@ -76,17 +44,17 @@ export const columns: ColumnDef<uploadtemp>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          File Name
+          Job Name
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
     },
     cell: ({ row }) => (
-      <p className="capitalize text-slate-400">{row.original.file.name}</p>
+      <p className="capitalize text-slate-400">{row.getValue('jobName')}</p>
     ),
   },
   {
-    accessorKey: 'Added on',
+    accessorKey: 'candidates',
     header: ({ column }) => {
       return (
         <Button
@@ -94,19 +62,18 @@ export const columns: ColumnDef<uploadtemp>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Added On
+          Candidates
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
     },
     cell: ({ row }) => (
-      <p className="capitalize text-slate-400">
-        {formatDateDMY(row.original.file.lastModified)}
-      </p>
+      <p className="capitalize text-slate-400">{row.getValue('candidates')}</p>
+
     ),
   },
   {
-    accessorKey: 'size',
+    accessorKey: 'createdAt',
     header: ({ column }) => {
       return (
         <Button
@@ -114,55 +81,14 @@ export const columns: ColumnDef<uploadtemp>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Size
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const size: number = row.original.file.size;
-      return (
-        <p className="capitalize text-slate-400">{formatFileSize(size)}</p>
-      );
-    },
-  },
-  {
-    accessorKey: 'from',
-    header: ({ column }) => {
-      return (
-        <Button
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          From
+          Created at
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
       return (
-        <p className="capitalize text-slate-400">{row.getValue('from')}</p>
-      );
-    },
-  },
-  {
-    accessorKey: 'location',
-    header: ({ column }) => {
-      return (
-        <Button
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Location
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-        <p className="capitalize text-slate-400">{row.getValue('location')}</p>
+        <p className="capitalize text-slate-400">{formatDateDMY(row.getValue('createdAt'))}</p>
       );
     },
   },
@@ -172,16 +98,15 @@ export const columns: ColumnDef<uploadtemp>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       return (
-        <Button variant="ghost" className="hover:bg-transparent">
-          <Trash2 className="size-4 text-primary" />
+        <Button className="hover:bg-transparent">
+          Import CV
         </Button>
       );
     },
   },
 ];
 
-// TODO: remove this file, component MOVED to ./table to support different columns and data type
-const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
+const ImportCVTable = ({ data }: { data: Data[] }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -208,24 +133,9 @@ const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
     },
   });
 
-  // todo: change into dynamic title
-  const jobTitle = 'Senior Software Engineer'
-
   return (
     <div className="w-full flex flex-col gap-5">
-      <div className="flex gap-2 items-center mx-5">
-        <FileSearchIcon className="text-red-500" />
-        {!!data.length && jobTitle ? (
-          <p>There is <b>{data.length} CVs</b> has been added with job tittle <b>“{jobTitle}”</b> from Candidates</p>
-        ): (
-          <p>There is no CV has been added.</p>
-        )}
-      </div>
-
-      <div className="flex gap-28 mx-2">
-        <InputFilter label="Search" placeholder="Location" />
-        <InputFilter label="Search" placeholder="Search Name" />
-      </div>
+      <h2 className="text-2xl font-semibold">List from "Linkedin"</h2>
 
       <div className="border-b">
         <Table>
@@ -241,9 +151,9 @@ const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}
@@ -281,10 +191,6 @@ const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 px-4 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
         <div className="space-x-2 ">
           <Button
             variant="outline"
@@ -308,4 +214,4 @@ const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
   );
 };
 
-export default TableTempCV;
+export default ImportCVTable;
