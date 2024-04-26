@@ -45,6 +45,8 @@ const formatFileSize = (sizeInBytes: number): string => {
   }
 };
 
+// TODO: remove this file, component MOVED to ./table to support different columns and data type
+
 const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

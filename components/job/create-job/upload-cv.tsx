@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import React from 'react';
 import { MonitorUp, FileStack, } from 'lucide-react';
 import ModalBankCv from './modal-upload-cv';
-import { usePopupModal } from '@/hooks/use-popup-modal';
+import { usePopupModal, MODAL_ENUM } from '@/hooks/use-popup-modal';
 
 import {
   Select,
@@ -13,9 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import TableTempCV from './Table-tempCV';
+import TableCV from './table';
 
 import { useFormStepStore } from '@/zustand/useCreateJob';
+import { UploadCVData } from './table/upload-cv';
+import { columns as UploadCVColumns } from './table/upload-cv';
 
 const UploadCv = () => {
   const {
@@ -61,11 +63,11 @@ const UploadCv = () => {
             className="text-sm font-normal"
             onClick={handleUploadButtonClick}
           >
-            <MonitorUp className="mr-2 h-4 w-4" />
+            <MonitorUp className="mr-2 size-4" />
             From Device
           </Button>
-          <Button className="text-sm font-normal" onClick={() => setIsModalOpen('BANK_CV', true)}>
-            <FileStack className="mr-2 h-4 w-4" /> From Bank CV (Candidates)
+          <Button className="text-sm font-normal" onClick={() => setIsModalOpen(MODAL_ENUM.BANK_CV, true)}>
+            <FileStack className="mr-2 size-4" /> From Bank CV (Candidates)
           </Button>
           <Select>
             <SelectTrigger className="w-[180px] text-sm font-normal">
@@ -81,11 +83,11 @@ const UploadCv = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button className="text-sm font-normal">Import</Button>
+          <Button className="text-sm font-normal" onClick={() => setIsModalOpen(MODAL_ENUM.THIRD_PARTY_CV, true)}>Import</Button>
         </div>
       </div>
       <div className="flex w-full flex-col items-center rounded-md bg-white px-1 py-6">
-        <TableTempCV data={files} />
+        <TableCV<UploadCVData> data={files} columns={UploadCVColumns} />
       </div>
       <div className="flex w-full justify-between rounded-md bg-white px-4 py-5">
         <Button
