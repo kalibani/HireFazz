@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 import dashboard from '@/public/icon/icon-banner-dashboard.svg';
 import { Banner, SectionWrap } from '@/components/share';
