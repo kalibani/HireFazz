@@ -95,7 +95,7 @@ const CandidateView = () => {
     }
   }, [handleDataAvailable]);
 
-  console.log(listResult, '<<<');
+  console.log(recordedFile, '<<<');
   return (
     <div className="mb-8 flex flex-col  items-center justify-center rounded-md bg-white  p-4">
       <p>jumlah pertanya: {texts.length} </p>
@@ -139,6 +139,13 @@ const CandidateView = () => {
             )}
           </div>
         </div>
+      </div>
+      <div>
+        {recordedFile && (
+          <video controls>
+            <source src={URL.createObjectURL(recordedFile)} />
+          </video>
+        )}
       </div>
     </div>
   );

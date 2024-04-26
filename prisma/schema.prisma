@@ -138,23 +138,18 @@ model InterviewTemplate {
   farewellVideoUrl     String
   farewellTitle        String
   farewellDescription  String
-  questions            Question[]
+  questions            Json 
 
   organization   Organization  @relation(fields: [organizationId], references: [id])
   organizationId String
-  InvitedUser    InvitedUser[]
+  // InvitedUser    InvitedUser[]
 }
 
-model Question {
-  id          String @id @default(cuid())
-  videoUrl    String
-  title       String
-  description String
-
-  interviewTemplate   InterviewTemplate @relation(fields: [interviewTemplateId], references: [id])
-  interviewTemplateId String
+enum invitedUserStatus {
+    INVITED
+    NO_RESPONSE
+    COMPLETED
 }
-
 model InvitedUser {
   id            String  @id @default(cuid())
   candidateName String
@@ -162,11 +157,14 @@ model InvitedUser {
   phoneNumber   String?
   batchJobId    String?
   batchJob      BatchJob? @relation(fields: [batchJobId], references: [id])
-
+  result        Json 
+  status  invitedUserStatus
+  createdAt DateTime @default(now())
+  expiredDate DateTime
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
 
-  interviewTemplate InterviewTemplate @relation(fields: [templateId], references: [id])
+  // interviewTemplate InterviewTemplate @relation(fields: [templateId], references: [id])
   templateId        String
 }
 
