@@ -160,7 +160,8 @@ model InvitedUser {
   candidateName String
   email         String
   phoneNumber   String?
-  jobId         String?
+  batchJobId    String?
+  batchJob      BatchJob? @relation(fields: [batchJobId], references: [id])
 
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
@@ -239,6 +240,7 @@ model BatchJob {
   companyName     String?
   workModel       WORK_MODEL
   cvAnalysis      CvAnalysis[]
+  invitedUser     InvitedUser[]
 }
 
 model File {
