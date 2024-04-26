@@ -1,3 +1,4 @@
+'use client';
 import MaxWidthWrapper from '@/components/max-width-wrapper';
 import UpgradeButton from '@/components/upgrade-button';
 import { buttonVariants } from '@/components/ui/button';
@@ -129,7 +130,7 @@ const Page = async () => {
 
   return (
     <>
-      <MaxWidthWrapper className="mb-8 text-center max-w-5xl">
+      <MaxWidthWrapper className="mb-8 max-w-5xl text-center">
         <div className="mx-auto sm:max-w-lg">
           <h1 className="text-4xl font-bold">Pricing</h1>
           <p className="mt-5 text-gray-600 sm:text-lg">
@@ -138,7 +139,7 @@ const Page = async () => {
           </p>
         </div>
 
-        <div className="pt-12 grid grid-cols-1 gap-10 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-10 pt-12 lg:grid-cols-3">
           <TooltipProvider>
             {pricingItems.map(({ plan, tagline, quota, price, features }) => {
               return (
@@ -155,8 +156,8 @@ const Page = async () => {
                     </div>
                   )}
 
-                  <div className="p-4 space-y-2 mt-1">
-                    <h3 className="text-center font-display text-2xl">
+                  <div className="mt-1 space-y-2 p-4">
+                    <h3 className="font-display text-center text-2xl">
                       {plan}
                     </h3>
                     <p className="text-sm text-gray-500">{tagline}</p>
@@ -179,7 +180,7 @@ const Page = async () => {
                         <p className="flex">
                           {quota} Files included
                           <Tooltip delayDuration={300}>
-                            <TooltipTrigger className="cursor-default ml-1.5 mt-0.5 flex">
+                            <TooltipTrigger className="ml-1.5 mt-0.5 flex cursor-default">
                               <HelpCircle className="h-4 w-4 text-zinc-500" />
                             </TooltipTrigger>
                             <TooltipContent className="w-80 p-2">
@@ -192,9 +193,9 @@ const Page = async () => {
                             characters/month
                             <Tooltip delayDuration={300}>
                               <TooltipTrigger className="cursor-default ml-1.5 flex">
-                                <HelpCircle className="h-4 w-4 text-zinc-500" />
+                                <HelpCircle className="w-4 h-4 text-zinc-500" />
                               </TooltipTrigger>
-                              <TooltipContent className="w-80 p-2">
+                              <TooltipContent className="p-2 w-80">
                                 The maximum amount of total characters per
                                 month.
                               </TooltipContent>
@@ -224,7 +225,7 @@ const Page = async () => {
                               {text}
                             </p>
                             <Tooltip delayDuration={300}>
-                              <TooltipTrigger className="cursor-default ml-1.5">
+                              <TooltipTrigger className="ml-1.5 cursor-default">
                                 <HelpCircle className="h-4 w-4 text-zinc-500" />
                               </TooltipTrigger>
                               <TooltipContent className="w-80 p-2">
@@ -234,7 +235,7 @@ const Page = async () => {
                           </div>
                         ) : (
                           <p
-                            className={cn('text-gray-600 text-left', {
+                            className={cn('text-left text-gray-600', {
                               'text-gray-400': negative,
                             })}
                           >
@@ -256,7 +257,7 @@ const Page = async () => {
                         })}
                       >
                         {user?.id ? 'Start Generating' : 'Sign up'}
-                        <ArrowRight className="h-5 w-5 ml-1.5" />
+                        <ArrowRight className="ml-1.5 h-5 w-5" />
                       </Link>
                     ) : user?.id ? (
                       <UpgradeButton plan={plan} price={price} quota={quota} />
@@ -268,7 +269,7 @@ const Page = async () => {
                         })}
                       >
                         {user?.id ? 'Upgrade now' : 'Sign up'}
-                        <ArrowRight className="h-5 w-5 ml-1.5" />
+                        <ArrowRight className="ml-1.5 h-5 w-5" />
                       </Link>
                     )}
                   </div>
