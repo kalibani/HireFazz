@@ -4,15 +4,14 @@ import bcrypt from 'bcryptjs';
 import Credentials from 'next-auth/providers/credentials';
 import { LoginSchema } from '@/lib/validators/auth';
 
-import type { NextAuthConfig } from 'next-auth';
 import { getUserByEmail } from '@/lib/data';
 
-export default {
+export const authConfig = {
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      
+
       account: (account) => {
         return {
           accessToken: account.access_token,
@@ -42,4 +41,4 @@ export default {
       },
     }),
   ],
-} satisfies NextAuthConfig;
+};

@@ -1,11 +1,9 @@
+'use client';
 import {
-  SquareStack,
   FileText,
   Banknote,
   HandCoins,
   DollarSignIcon,
-  CalendarPlus,
-  HeartHandshake,
   Scale,
   ScrollText,
 } from 'lucide-react';

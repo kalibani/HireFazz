@@ -33,7 +33,6 @@ import {
 } from '@/components/ui/tooltip';
 
 import { useUploadThing } from '@/lib/upload-thing';
-import { trpc } from '@/app/_trpc/client';
 
 import { useAnalyzer } from '@/hooks/use-analyzer';
 import { useRouter } from 'next/navigation';
