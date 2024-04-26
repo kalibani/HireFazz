@@ -20,16 +20,16 @@ import {
   getFileById,
   infiniteFiles,
 } from './document-interaction';
-import {
-  updateLimit,
-  saveTransactions,
-  updateUserSubscription,
-  userRegister,
-  userLogin,
-  userNewVerification,
-  userResetPassword,
-  userNewPassword,
-} from './user';
+// import {
+//   updateLimit,
+//   saveTransactions,
+//   updateUserSubscription,
+//   userRegister,
+//   userLogin,
+//   userNewVerification,
+//   userResetPassword,
+//   userNewPassword,
+// } from './user';
 
 export const appRouter = router({
   // Document Interaction
@@ -93,16 +93,16 @@ export const appRouter = router({
   deleteGeneratedVoices: deleteGeneratedVoices,
 
   // User
-  updateLimit: updateLimit,
-  saveTransactions: saveTransactions,
-  updateUserSubscription: updateUserSubscription,
-  updateGeneratedVoiceStatus: updateGeneratedVoiceStatus,
-  getGeneratedVoice: getGeneratedVoice,
-  userRegister: userRegister,
-  userLogin: userLogin,
-  userNewVerification: userNewVerification,
-  userResetPassword: userResetPassword,
-  userNewPassword: userNewPassword,
+  // updateLimit: updateLimit,
+  // saveTransactions: saveTransactions,
+  // updateUserSubscription: updateUserSubscription,
+  // updateGeneratedVoiceStatus: updateGeneratedVoiceStatus,
+  // getGeneratedVoice: getGeneratedVoice,
+  // userRegister: userRegister,
+  // userLogin: userLogin,
+  // userNewVerification: userNewVerification,
+  // userResetPassword: userResetPassword,
+  // userNewPassword: userNewPassword,
 });
 // Export type router type signature,
 // NOT the router itself.

@@ -23,12 +23,6 @@ import insight from '@/public/image/insight.png';
 export const MAX_FREE_COUNTS = 100;
 
 export const tools = [
-  // {
-  //   label: "Document Interaction",
-  //   icon: FileArchiveIcon,
-  //   href: "/summarizer",
-  //   color: "text-pink-300",
-  // },
   {
     label: 'CV Screener',
     icon: FileText,
@@ -36,13 +30,7 @@ export const tools = [
     color: 'text-blue-500',
     bgColor: 'bg-blue-500/10',
   },
-  // {
-  //   label: "Speech Synthesis",
-  //   icon: AudioLines,
-  //   href: "/speech-synthesis",
-  //   color: "text-violet-500",
-  //   bgColor: "bg-violet-500/10",
-  // },
+
   {
     label: 'Bank Statement Analyzer',
     icon: Banknote,
@@ -78,27 +66,6 @@ export const tools = [
     color: 'text-teal-500',
     bgColor: 'bg-teal-500/10',
   },
-  // {
-  //   label: "History",
-  //   icon: SquareStack,
-  //   href: "/history",
-  //   color: "text-orange-700",
-  //   bgColor: "bg-orange-500/10",
-  // },
-  // {
-  //   label: "Manage Subscription",
-  //   icon: CalendarPlus,
-  //   href: "/pricing",
-  //   color: "text-emerald-700",
-  //   bgColor: "bg-emerald-500/10",
-  // },
-  // {
-  //   label: "Help Center",
-  //   icon: HeartHandshake,
-  //   href: "/help-center",
-  //   color: "text-red-500",
-  //   bgColor: "bg-red-500/10",
-  // },
 ];
 
 export const PLANS = [
