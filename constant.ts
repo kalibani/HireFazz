@@ -1,12 +1,3 @@
-'use client';
-import {
-  FileText,
-  Banknote,
-  HandCoins,
-  DollarSignIcon,
-  Scale,
-  ScrollText,
-} from 'lucide-react';
 import screening from '@/public/image/screening.png';
 import custome from '@/public/image/custom.png';
 import collaborative from '@/public/image/collaborative.png';
@@ -19,52 +10,6 @@ import team from '@/public/image/team.png';
 import insight from '@/public/image/insight.png';
 
 export const MAX_FREE_COUNTS = 100;
-
-export const tools = [
-  {
-    label: 'CV Screener',
-    icon: FileText,
-    href: '/cv-scanner',
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-500/10',
-  },
-
-  {
-    label: 'Bank Statement Analyzer',
-    icon: Banknote,
-    href: '/bank-statement-analyzer',
-    color: 'text-pink-500',
-    bgColor: 'bg-pink-500/10',
-  },
-  {
-    label: 'Invoice Reviewer',
-    icon: HandCoins,
-    href: '/invoice-reviewer',
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-500/10',
-  },
-  {
-    label: 'Loan Application Processor',
-    icon: DollarSignIcon,
-    href: '/loan-application-processor',
-    color: 'text-green-500',
-    bgColor: 'bg-green-500/10',
-  },
-  {
-    label: 'Regulatory Auditor',
-    icon: Scale,
-    href: '/regulatory-auditor',
-    color: 'text-yellow-500',
-    bgColor: 'bg-yellow-500/10',
-  },
-  {
-    label: 'Contract Checker',
-    icon: ScrollText,
-    href: '/contract-checker',
-    color: 'text-teal-500',
-    bgColor: 'bg-teal-500/10',
-  },
-];
 
 export const PLANS = [
   {

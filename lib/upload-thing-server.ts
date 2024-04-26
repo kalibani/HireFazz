@@ -1,2 +1,4 @@
-import { UTApi } from "uploadthing/server";
+'use server';
+
+import { UTApi } from 'uploadthing/server';
 export const utapi = new UTApi();

@@ -5,7 +5,7 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <main className="h-full overflow-auto bg-white">
       <LandingNavbar />
-      <div>{children}</div>
+      <>{children}</>
       <Footer />
     </main>
   );

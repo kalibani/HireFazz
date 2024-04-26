@@ -1,9 +1,6 @@
 import { formSchemaCreateJob } from '@/lib/validators/createJob';
 import { z } from 'zod';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { v4 as uuidv4 } from 'uuid';
-import { stat } from 'fs';
 
 interface FormStepState {
   step: number;
@@ -24,7 +21,7 @@ interface FormStepState {
 }
 
 export const useFormStepStore = create<FormStepState>((set) => ({
-  step: 0,
+  step: 1,
   dataCreateJob: {
     title: '',
     companyName: '',

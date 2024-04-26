@@ -1,15 +1,18 @@
-'use server';
-
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 import { WORK_MODEL } from '@prisma/client';
 import z from 'zod';
 import { uploadCv } from '../cv/uploadCv';
-import { v4 as uuidv4 } from 'uuid';
 import { analyzeCv } from '../cv/analyzeCv';
-import { openai } from '@/lib/openai';
+
 import { checkValidJSON } from '@/lib/utils';
 import { formSchemaCreateJob } from '@/lib/validators/createJob';
+import {
+  actionDescription,
+  actionRequirement,
+  actionResponsibility,
+  actionSkill,
+} from '../generate/jobDescription';
 
 export const PayloadAddJob = z.object({
   jobName: z.string(),
@@ -90,39 +93,11 @@ export const genereteJobDescription = async (
   data: z.infer<typeof formSchemaCreateJob>,
 ) => {
   try {
-    const prompt = `
-    following the steps to create job description based on provided data. Restart each step before proceeding.
-    Data:
-    ${JSON.stringify(data)}
+    const result: any = await actionDescription(JSON.stringify(data));
 
-    Step 1: Read the data.
-    Step 2: Create a simple and clear job description based on the provided information.
-
-     Output a JSON object structured like: 
-    {
-      "result":"the result output of job description generate"
-    }
-  `;
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4-0125-preview',
-      response_format: { type: 'json_object' },
-      temperature: 0,
-      messages: [
-        {
-          role: 'system',
-          content: prompt,
-        },
-        {
-          role: 'user',
-          content: 'create job description.',
-        },
-      ],
-    });
-
-    const isValidJSON = checkValidJSON(response.choices[0].message.content!);
+    const isValidJSON = checkValidJSON(result);
     if (isValidJSON) {
-      const res = JSON.parse(response.choices[0].message.content!);
+      const res = JSON.parse(result);
       return res;
     }
   } catch (error) {
@@ -132,39 +107,10 @@ export const genereteJobDescription = async (
 
 export const generateSkill = async (title: string) => {
   try {
-    const prompt = `
-    following the steps to create Skill based on provided data. Restart each step before proceeding.
-    Data:
-    ${JSON.stringify({ title })}
-
-    Step 1: Read the data.
-    Step 2: Create a simple and clear Skill set based on the provided information.
-
-     Output a JSON object structured like: 
-    {
-      "result":"the result output of skill set generate"
-    }
-  `;
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4-0125-preview',
-      response_format: { type: 'json_object' },
-      temperature: 0,
-      messages: [
-        {
-          role: 'system',
-          content: prompt,
-        },
-        {
-          role: 'user',
-          content: 'create skill set.',
-        },
-      ],
-    });
-
-    const isValidJSON = checkValidJSON(response.choices[0].message.content!);
+    const result: any = await actionSkill(title);
+    const isValidJSON = checkValidJSON(result);
     if (isValidJSON) {
-      const res = JSON.parse(response.choices[0].message.content!);
+      const res = JSON.parse(result);
       return res;
     }
   } catch (error) {
@@ -177,39 +123,13 @@ export const generateResponsibilities = async (
 ) => {
   const { title, experiences, workModel } = data;
   try {
-    const prompt = `
-    following the steps to create Responsibilities based on provided data. Restart each step before proceeding.
-    Data:
-    ${JSON.stringify({ title, experiences, workModel })}
+    const result: any = await actionResponsibility(
+      JSON.stringify({ title, experiences, workModel }),
+    );
 
-    Step 1: Read the data.
-    Step 2: Create a simple and clear Responsibilities based on the provided information.
-
-     Output a JSON object structured like: 
-    {
-      "result":"the result output of Responsibilities generate"
-    }
-  `;
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4-0125-preview',
-      response_format: { type: 'json_object' },
-      temperature: 0,
-      messages: [
-        {
-          role: 'system',
-          content: prompt,
-        },
-        {
-          role: 'user',
-          content: 'create Responsibilities.',
-        },
-      ],
-    });
-
-    const isValidJSON = checkValidJSON(response.choices[0].message.content!);
+    const isValidJSON = checkValidJSON(result);
     if (isValidJSON) {
-      const res = JSON.parse(response.choices[0].message.content!);
+      const res = JSON.parse(result);
       return res;
     }
   } catch (error) {
@@ -220,39 +140,10 @@ export const generateRequirement = async (
   data: z.infer<typeof formSchemaCreateJob>,
 ) => {
   try {
-    const prompt = `
-    following the steps to create Requirement based on provided data. Restart each step before proceeding.
-    Data:
-    ${JSON.stringify(data)}
-
-    Step 1: Read the data.
-    Step 2: Create a simple and clear Requirement based on the provided information.
-
-     Output a JSON object structured like: 
-    {
-      "result":"the result output of Requirement generate"
-    }
-  `;
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4-0125-preview',
-      response_format: { type: 'json_object' },
-      temperature: 0,
-      messages: [
-        {
-          role: 'system',
-          content: prompt,
-        },
-        {
-          role: 'user',
-          content: 'create Requirement.',
-        },
-      ],
-    });
-
-    const isValidJSON = checkValidJSON(response.choices[0].message.content!);
+    const result: any = await actionRequirement(JSON.stringify(data));
+    const isValidJSON = checkValidJSON(result);
     if (isValidJSON) {
-      const res = JSON.parse(response.choices[0].message.content!);
+      const res = JSON.parse(result);
       return res;
     }
   } catch (error) {
