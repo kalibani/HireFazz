@@ -2,41 +2,78 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { usePopupModal } from "@/hooks/use-popup-modal";
+import { usePopupModal, MODAL_ENUM } from "@/hooks/use-popup-modal";
 import { SearchCheckIcon } from "lucide-react";
-import TableTempCV from "./Table-tempCV";
+import TableCV from "./table";
 import { useFormStepStore } from "@/zustand/useCreateJob";
+import ImportCVTable from "./import-cv-table";
+import { ThirdPartyCVData, columns as ThirdPartyColumns } from './table/third-party-cv'
+import { columns as UploadCVColumns, UploadCVData } from './table/upload-cv'
+
+
+const textContent = {
+  [MODAL_ENUM.BANK_CV]: {
+    title: 'Upload CV ( From Bank CV Candidates )',
+    subTitle: 'if you has CV Candidates on your Bank CV  before.',
+  },
+  [MODAL_ENUM.THIRD_PARTY_CV]: {
+    title: 'Upload CV ( From Integration 3rd Party )',
+    subTitle: 'Please import cv from Integration 3rd party job portal'
+  }
+}
+
+// change mock when integrate
+const mockImportPlatformData = [
+  {
+    candidates: 120,
+    createdAt: Date.now(),
+    jobName: 'Product Manager'
+  },
+  {
+    candidates: 135,
+    createdAt: Date.now(),
+    jobName: 'Product Designer'
+  },
+]
+
+// make the list empty to view import table
+const mockThirdPartyCVData: ThirdPartyCVData[] = [
+  {
+    name: 'Haylie Korsgaard',
+    jobName: 'Senior Software Enginer',
+    appliedAt: Date.now(),
+    location: 'Jakarta'
+  }
+]
+
+const mockThirdPartyCVFrom = 'LinkedIn'
 
 // only slicing, modify data later
 const ModalUploadCv = () => {
   const { files } = useFormStepStore()
 
-  const { isModalOpen, setIsModalOpen } = usePopupModal()
+  const { setIsModalOpen, getOpenModalEnum } = usePopupModal()
+  const openedModal = getOpenModalEnum()
 
-  const resultTable = (() => {
-    if (!files.length) return <p className="text-center text-slate-400 text-sm my-auto">No CV here</p>
+  if (!openedModal) {
+    return null
+  }
 
-    return (
-      <TableTempCV data={files} />
-    )
-  })()
+  const { title, subTitle } = textContent[openedModal]
 
-  return (
-    <Dialog modal open={isModalOpen('BANK_CV')} onOpenChange={(open) => setIsModalOpen('BANK_CV', open)}>
-      <DialogContent className="max-w-[95vw] h-[90vh]">
-        <div className="py-5 flex flex-col gap-5">
-        <DialogHeader>
-          <DialogTitle className="text-center text-2xl">
-          Upload CV ( From Bank CV Candidates )
-        </DialogTitle>
-          <DialogDescription className="text-center">
-          if you has CV Candidates on your Bank CV  before.
-          </DialogDescription>
-        </DialogHeader>
-        <Button
+  // temporary var to switch cta visibility
+  const showCTA = {
+    [MODAL_ENUM.BANK_CV]: !!files.length,
+    [MODAL_ENUM.THIRD_PARTY_CV]: !!mockThirdPartyCVData.length,
+  }
+
+  const dialogContent = (() => {
+    if (openedModal === MODAL_ENUM.BANK_CV) {
+      return (
+        <>
+          <Button
             type="button"
             variant="default"
-            disabled={false}
             onClick={() => {}}
             className="w-fit mx-auto flex gap-2 my-10"
           >
@@ -44,13 +81,49 @@ const ModalUploadCv = () => {
             Perform Inner Search
           </Button>
 
-          <p className="text-center text-slate-400 text-sm">
-            Please search from your Candidates CV.
-          </p>
+            <p className="text-center text-slate-400 text-sm">
+              Please search from your Candidates CV.
+            </p>
 
-          {resultTable}
+            {!files.length ? (
+              <p className="text-center text-slate-400 text-sm my-auto">No CV here</p>
+            ): (
+              <TableCV<UploadCVData> data={files} columns={UploadCVColumns} />
+            )}
+        </>
+      )
+    }
 
-        {!!files.length && (
+    if (openedModal === MODAL_ENUM.THIRD_PARTY_CV) {
+      return (
+        <div className="mt-16">          
+          {!!mockThirdPartyCVData.length ? (
+            <TableCV<ThirdPartyCVData> data={mockThirdPartyCVData} columns={ThirdPartyColumns} dataFrom={mockThirdPartyCVFrom} />
+          ): (
+            <ImportCVTable data={mockImportPlatformData} />
+          )}
+        </div>
+      )
+    }
+  })()
+  
+
+  return (
+    <Dialog modal open={!!openedModal} onOpenChange={(open) => setIsModalOpen(openedModal, open)}>
+      <DialogContent className="max-w-[95vw] h-[90vh]">
+        <div className="py-5 flex flex-col gap-5">
+        <DialogHeader>
+          <DialogTitle className="text-center text-2xl">
+            {title}
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            {subTitle}
+          </DialogDescription>
+        </DialogHeader>
+
+        {dialogContent}
+
+        {showCTA[openedModal] && (
           <DialogFooter className="mt-auto">
             <Button>Add CV from Candidates</Button>
           </DialogFooter>
