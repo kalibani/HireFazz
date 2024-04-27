@@ -9,19 +9,19 @@ import { Loader2 } from 'lucide-react';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import { CardWrapper } from '.';
-import { trpc } from '@/app/_trpc/client';
+// import { trpc } from '@/app/_trpc/client';
 
 export const NewVerificationForm = () => {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
-  const { mutate } = trpc.userNewVerification.useMutation({
-    onSuccess: (data) => {
-      setSuccess('verified');
-    },
-    onError: (data) => {
-      setError(data.message);
-    },
-  });
+  // const { mutate } = trpc.userNewVerification.useMutation({
+  //   onSuccess: (data) => {
+  //     setSuccess('verified');
+  //   },
+  //   onError: (data) => {
+  //     setError(data.message);
+  //   },
+  // });
 
   const searchParams = useSearchParams();
 
@@ -34,7 +34,7 @@ export const NewVerificationForm = () => {
       setError('Missing token!');
       return;
     }
-    mutate({ token });
+    // mutate({ token });
   }, [token, success, error]);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export const NewVerificationForm = () => {
       backButtonLabel="Back to login"
       backButtonHref="/auth/login"
     >
-      <div className="flex items-center w-full justify-center">
+      <div className="flex w-full items-center justify-center">
         {!success && !error && <Loader2 />}
         <FormSuccess message={success} />
         {!success && <FormError message={error} />}

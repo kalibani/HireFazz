@@ -91,29 +91,14 @@ export const useCvScanner = (searchParams?: {
     return allFiles;
   }, [filesInfinite?.pages, queryParams.q]);
 
-  // const utils = trpc.useUtils();
-  // const { mutateAsync: deleteFile } = trpc.deleteFile.useMutation({
-  //   retry: 3,
-  //   networkMode: 'always',
-  //   onSuccess: () => {
-  //     utils.infiniteFiles.refetch();
-  //   },
-  //   async onMutate({ id }) {
-  //     setDeletingIds([...deletingIds, id]);
-  //   },
-  //   onSettled(data) {
-  //     setDeletingIds(deletingIds.filter((el) => el !== data?.id));
-  //   },
-  // });
-
   const { mutate: deleteFile } = useMutation({
     onSuccess: () => {
       refetch();
     },
-    onMutate: async (id) => {
+    onMutate: async (id: string) => {
       setDeletingIds([...deletingIds, id]);
     },
-    onSettled: (data) => {
+    onSettled: (data: { id: string }) => {
       setDeletingIds(deletingIds.filter((el) => el !== data?.id));
     },
   });
@@ -143,7 +128,7 @@ export const useCvScanner = (searchParams?: {
       toast.error(error.response.data);
     } finally {
       idsOnAnalyze.current = [...idsOnAnalyze.current].filter(
-        (el) => el !== id
+        (el) => el !== id,
       );
     }
   };
@@ -157,7 +142,7 @@ export const useCvScanner = (searchParams?: {
 
     // @ts-ignore
     const filesToAnalyze = allFiles.filter(
-      (item: any) => !item.reportOfAnalysis
+      (item: any) => !item.reportOfAnalysis,
     );
 
     filesToAnalyze
@@ -177,7 +162,7 @@ export const useCvScanner = (searchParams?: {
   const handleReanalyze = async (
     jobTitle: string,
     requirement: string,
-    percentage: number
+    percentage: number,
   ) => {
     // @ts-ignore
     const fileId = selectedFile.id;

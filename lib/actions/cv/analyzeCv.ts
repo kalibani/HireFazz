@@ -1,3 +1,5 @@
+'use server';
+
 import { openai } from '@/lib/openai';
 import { pinecone } from '@/lib/pinecone';
 import prismadb from '@/lib/prismadb';

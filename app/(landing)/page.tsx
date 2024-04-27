@@ -4,11 +4,11 @@ import { LandingExpert } from '@/components/landing-page';
 
 const LandingPage = () => {
   return (
-    <>
-      <LandingHero />
+    <div>
+      {/* <LandingHero /> */}
       <LandingContent />
-      <LandingExpert />
-    </>
+      {/* <LandingExpert /> */}
+    </div>
   );
 };
 

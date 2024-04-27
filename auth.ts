@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import { createOrganizationGoogle, getUserById } from '@/lib/actions/auth';
-import authConfig from './auth.config';
+import { authConfig } from './auth.config';
+
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prismadb from './lib/prismadb';
 

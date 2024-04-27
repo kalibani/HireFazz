@@ -67,7 +67,7 @@ export const LandingContent = () => {
         <h3 className="mb-6 font-bold [font-size:_clamp(14px,5vw,30px)]">
           See how different departments use Berrylabs!
         </h3>
-        <InfoDepartement />
+        {/* <InfoDepartement /> */}
       </WrapperSection>
 
       <div className="bg-[#F7FAFC]">

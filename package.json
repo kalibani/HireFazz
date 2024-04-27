@@ -61,7 +61,7 @@
     "lucide-react": "^0.334.0",
     "mammoth": "^1.6.0",
     "midtrans-client": "^1.3.1",
-    "next": "^14.1.3",
+    "next": "^14.2.3",
     "next-auth": "^5.0.0-beta.15",
     "openai": "^4.11.1",
     "papaparse": "^5.4.1",
@@ -80,6 +80,7 @@
     "react-textarea-autosize": "^8.5.3",
     "replicate": "^0.18.0",
     "resend": "^3.2.0",
+    "sharp": "^0.33.3",
     "simplebar-react": "^3.2.4",
     "stripe": "^14.8.0",
     "tailwind-merge": "^1.14.0",
@@ -99,11 +100,11 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/papaparse": "^5.3.14",
     "@types/pdf-parse": "^1.1.4",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "prisma": "^5.11.0",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3"
   }
 }

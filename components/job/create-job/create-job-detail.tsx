@@ -27,6 +27,17 @@ const initialState = {
   requirement: '',
 };
 
+const dataAccordion: dataAccordionType[] = [
+  { name: 'Skill', type: 'skill' },
+  { name: 'Responsibilities', type: 'responsibilities' },
+  { name: 'Requirement', type: 'requirement' },
+];
+
+type dataAccordionType = {
+  name: string;
+  type: 'skill' | 'responsibilities' | 'requirement';
+};
+
 const reducer = (state: any, action: any) => {
   switch (action.type) {
     case 'CHANGE_VALUE':
@@ -76,7 +87,7 @@ const CreateJobDetail = () => {
           const { result: skillResult } = await generateSkill(
             dataCreateJob.title,
           );
-          const skillSet = skillResult.skills?.length
+          const skillSet = skillResult?.skills?.length
             ? skillResult.skills?.join(', ')
             : skillResult;
           handleChange('skill', skillSet);
@@ -193,7 +204,6 @@ const CreateJobDetail = () => {
                 </AccordionItem>
               </Accordion>
             </div>
-
             {dataAccordion.map(({ name, type }) => (
               <div className="overflow-hidden rounded-md  border" key={name}>
                 <Accordion type="single" collapsible className="w-full">
@@ -259,14 +269,3 @@ const CreateJobDetail = () => {
 };
 
 export default CreateJobDetail;
-
-const dataAccordion: dataAccordionType[] = [
-  { name: 'Skill', type: 'skill' },
-  { name: 'Responsibilities', type: 'responsibilities' },
-  { name: 'Requirement', type: 'requirement' },
-];
-
-type dataAccordionType = {
-  name: string;
-  type: 'skill' | 'responsibilities' | 'requirement';
-};
