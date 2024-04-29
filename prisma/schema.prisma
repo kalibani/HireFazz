@@ -1,10 +1,6 @@
-
-
-
 generator client {
   provider = "prisma-client-js"
 }
-
 
 datasource db {
   provider     = "mysql"
@@ -35,7 +31,6 @@ enum PACKAGE_TYPE {
   PREMIUM
 }
 
-
 enum WORK_MODEL {
   ONSITE
   REMOTE
@@ -56,29 +51,29 @@ enum ANALYSYS_STATUS {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  password      String?
-  image         String?
-  accounts      Account[]
-  emailVerified DateTime?
+  id               String             @id @default(cuid())
+  name             String?
+  email            String?            @unique
+  password         String?
+  image            String?
+  accounts         Account[]
+  emailVerified    DateTime?
   secretIv         String?
   UserOrganization UserOrganization[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refreshToken      String?  @db.Text
-  accessToken       String?  @db.Text
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refreshToken      String? @db.Text
+  accessToken       String? @db.Text
   expiresAt         Int?
   tokenType         String?
-  scope              String?
-  idToken           String?  @db.Text
+  scope             String?
+  idToken           String? @db.Text
   sessionState      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -86,27 +81,23 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-
 model VerificationToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
 }
-
 
 model PasswordResetToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
 }
-
-
 
 model Role {
   id               String             @id @default(cuid())
@@ -116,13 +107,15 @@ model Role {
 }
 
 model Organization {
-  id                    String             @id @default(cuid())
+  id                    String              @id @default(cuid())
   name                  String
   packageType           PACKAGE_TYPE
   limit                 Int
   used                  Int
-  agreeTermAndCondition Boolean            @default(false)          
+  agreeTermAndCondition Boolean             @default(false)
   userOrganization      UserOrganization[]
+  interviewTemplates    InterviewTemplate[]
+  invitedUsers          InvitedUser[]
 }
 
 model UserOrganization {
@@ -133,6 +126,46 @@ model UserOrganization {
   user           User         @relation(fields: [userId], references: [id])
   organization   Organization @relation(fields: [organizationId], references: [id])
   role           Role         @relation(fields: [roleId], references: [id])
+}
+
+model InterviewTemplate {
+  id                   String     @id @default(cuid())
+  title                String
+  durationTimeRead     Int
+  durationTimeAnswered Int
+  questionRetake       Int?
+  introVideoUrl        String?
+  farewellVideoUrl     String?
+  farewellTitle        String?
+  farewellDescription  String?
+  questions            Json 
+
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  organizationId String
+  // InvitedUser    InvitedUser[]
+}
+
+enum invitedUserStatus {
+    INVITED
+    NO_RESPONSE
+    COMPLETED
+}
+model InvitedUser {
+  id            String  @id @default(cuid())
+  candidateName String
+  email         String
+  phoneNumber   String?
+  batchJobId    String?
+  batchJob      BatchJob? @relation(fields: [batchJobId], references: [id])
+  result        Json 
+  status  invitedUserStatus
+  createdAt DateTime @default(now())
+  expiredDate DateTime
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+
+  // interviewTemplate InterviewTemplate @relation(fields: [templateId], references: [id])
+  templateId        String
 }
 
 model userAPILimit {
@@ -153,9 +186,9 @@ model userAPILimit {
   subscriptionType             SubscriptionType  @default(FREE)
   currentSubscriptionPeriodEnd DateTime?
   Transactions                 Transactions[]
-  maxFreeCount Int? @default(100)
-  characterCount Int?
-  isUserAgreedTermsOfService Boolean @default(false)
+  maxFreeCount                 Int?              @default(100)
+  characterCount               Int?
+  isUserAgreedTermsOfService   Boolean           @default(false)
 }
 
 enum UploadStatus {
@@ -165,27 +198,25 @@ enum UploadStatus {
   SUCCESS
 }
 
-
-
 model CvAnalysis {
-  id                String  @id @default(cuid())
-  cvId              String
-  orgId             String
-  batchJobId        String
-  batch             BatchJob  @relation(fields: [batchJobId], references: [id])
-  reportOfAnalysis  Json?
-  cv                Cv  @relation(fields: [cvId], references: [id])
-  status            ANALYSYS_STATUS @default(PENDING)
-  isQualified       Boolean @default(false)
+  id               String          @id @default(cuid())
+  cvId             String
+  orgId            String
+  batchJobId       String
+  batch            BatchJob        @relation(fields: [batchJobId], references: [id])
+  reportOfAnalysis Json?
+  cv               Cv              @relation(fields: [cvId], references: [id])
+  status           ANALYSYS_STATUS @default(PENDING)
+  isQualified      Boolean         @default(false)
 }
 
 model Cv {
-  id           String        @id @default(cuid())
+  id           String       @id @default(cuid())
   name         String
-  uploadStatus UploadStatus  @default(PENDING)
+  uploadStatus UploadStatus @default(PENDING)
   url          String
   key          String
-  createdAt    DateTime      @default(now())
+  createdAt    DateTime     @default(now())
   orgId        String
   title        String?
   analyses     CvAnalysis[]
@@ -193,13 +224,13 @@ model Cv {
 }
 
 model BatchJob {
-  id              String @id @default(cuid())
+  id              String       @id @default(cuid())
   jobName         String
-  status          JOB_STATUS @default(CREATED)
+  status          JOB_STATUS   @default(CREATED)
   orgId           String
   jobDescription  String
   location        String
-  createdAt       DateTime @default(now())
+  createdAt       DateTime     @default(now())
   salaryCurrency  String?
   salaryRangeFrom Int?
   salaryRangeEnd  Int?
@@ -207,18 +238,18 @@ model BatchJob {
   companyName     String?
   workModel       WORK_MODEL
   cvAnalysis      CvAnalysis[]
+  invitedUser     InvitedUser[]
 }
-
 
 model File {
   id   String @id @default(cuid())
   name String
 
-  uploadStatus UploadStatus @default(PENDING)
-  url          String
-  key          String
-  messages     Message[]
-  reportOfAnalysis  Json?
+  uploadStatus     UploadStatus @default(PENDING)
+  url              String
+  key              String
+  messages         Message[]
+  reportOfAnalysis Json?
 
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
@@ -260,7 +291,7 @@ model GeneratedVoices {
   contentType              String
   dateUnix                 Int
   feedback                 Json?
-  historyItemId            String @unique
+  historyItemId            String        @unique
   modelId                  String
   requestId                String
   settings                 Json?
@@ -272,17 +303,16 @@ model GeneratedVoices {
   voiceName                String
   User                     userAPILimit? @relation(fields: [userId], references: [userId])
   userId                   String?
-  isPaid Boolean @default(false)
+  isPaid                   Boolean       @default(false)
 }
 
 model Transactions {
-  id         String        @id @default(cuid())
-  User       userAPILimit? @relation(fields: [userId], references: [userId])
-  userId     String?
-  orderId String
-  amountPaid Decimal
+  id          String        @id @default(cuid())
+  User        userAPILimit? @relation(fields: [userId], references: [userId])
+  userId      String?
+  orderId     String
+  amountPaid  Decimal
   productName String
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
-

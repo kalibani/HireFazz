@@ -11,6 +11,8 @@ import {
   ListChecks,
   FileText,
   Users,
+  User,
+  Video,
   Handshake,
 } from 'lucide-react';
 
@@ -29,6 +31,8 @@ const routes = [
   { label: 'Candidates', icon: FileText, href: '/candidates' },
   { label: 'Integration', icon: Handshake, href: '/integrations' },
   { label: 'Users', icon: Users, href: '/users' },
+  { label: 'Video', icon: Video, href: '/video' },
+  { label: 'User', icon: User, href: '/interview' },
 ];
 
 const comingRoutes = [
@@ -41,12 +45,11 @@ const comingRoutes = [
 
 const Sidebar = () => {
   const pathname = usePathname().split('/')[1];
-  
 
   return (
-    <aside className="flex max-w-[76px] flex-col bg-white h-dvh">
+    <aside className="flex h-dvh max-w-[76px] flex-col bg-white">
       <div className="flex items-center justify-center border-b py-1">
-        <Image src={logo} alt="logo"  />
+        <Image src={logo} alt="logo" />
       </div>
 
       <div className="flex flex-col border-b py-6">
@@ -58,10 +61,10 @@ const Sidebar = () => {
                   <Link href={route.href}>
                     <route.icon
                       className={cn(
-                        'cursor-pointer h-6 w-6',
+                        'h-6 w-6 cursor-pointer',
                         route.href.includes(pathname)
                           ? 'text-rose-600'
-                          : 'text-slate-400'
+                          : 'text-slate-400',
                       )}
                     />
                   </Link>
