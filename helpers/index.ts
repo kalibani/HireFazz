@@ -58,3 +58,17 @@ export const formatFileSize = (sizeInBytes: number): string => {
     return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
   }
 }
+
+export const separateThousand = (value: string, separator: string = '.') => {
+  // remove non digit char
+  const removeNonDigit = value.replace(/\D/g, '')
+  // remove existing separator, so can correctly return next separator
+  const removedSeparator = removeNonDigit.split(separator).join('')
+
+  // add separator
+  return removedSeparator.replace(/\B(?=(\d{3})+(?!\d))/g, separator)
+}
+
+export const removeNonDigit = (value: string) => {
+  return value.replace(/\D/g, '')
+}
