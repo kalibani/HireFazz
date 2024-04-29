@@ -95,3 +95,17 @@ export const formatDateStringToDate = (inputDateString: string) => {
 
   return formattedDate;
 };
+
+export const separateThousand = (value: string, separator: string = '.') => {
+  // remove non digit char
+  const removeNonDigit = value.replace(/\D/g, '')
+  // remove existing separator, so can correctly return next separator
+  const removedSeparator = removeNonDigit.split(separator).join('')
+
+  // add separator
+  return removedSeparator.replace(/\B(?=(\d{3})+(?!\d))/g, separator)
+}
+
+export const removeNonDigit = (value: string) => {
+  return value.replace(/\D/g, '')
+}
