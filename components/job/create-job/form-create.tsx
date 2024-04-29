@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { ControllerRenderProps, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +23,8 @@ import {
 } from '@/components/ui/select';
 import { useFormStepStore } from '@/zustand/useCreateJob';
 import { formSchemaCreateJob } from '@/lib/validators/createJob';
+import { removeNonDigit, separateThousand } from '@/lib/utils';
+
 
 const FormCreate = () => {
   const { setStep, setFormCreateJob } = useFormStepStore((state) => state);
@@ -41,9 +43,22 @@ const FormCreate = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchemaCreateJob>) => {
+    // remove separator for submit form
+    if (values.fromNominal) {
+      values.fromNominal =  removeNonDigit(values.fromNominal)
+    }
+    if (values.toNominal) {
+      values.toNominal =  removeNonDigit(values.toNominal)
+    }
+  
     setStep(1);
     setFormCreateJob(values);
   };
+
+  const onSalaryInputChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: ControllerRenderProps['onChange']) => {
+    const formatted = separateThousand(e.target.value)
+    onChange(formatted)
+  }
 
   return (
     <div className="flex min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
@@ -104,7 +119,7 @@ const FormCreate = () => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="w-52">
+                        <SelectTrigger className="w-20">
                           <SelectValue placeholder="Select a verified email to display" />
                         </SelectTrigger>
                       </FormControl>
@@ -121,7 +136,7 @@ const FormCreate = () => {
                 control={form.control}
                 name="fromNominal"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-60">
                     <FormLabel className="text-sm font-normal">
                       (optional)
                     </FormLabel>
@@ -129,6 +144,7 @@ const FormCreate = () => {
                       <Input
                         placeholder="From"
                         {...field}
+                        onChange={(e) => onSalaryInputChange(e, field.onChange)}
                         className="h-auto w-full text-sm "
                       />
                     </FormControl>
@@ -140,12 +156,13 @@ const FormCreate = () => {
                 control={form.control}
                 name="toNominal"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-60">
                     <FormLabel className="text-sm font-normal"></FormLabel>
                     <FormControl className="tex-slate-400">
                       <Input
-                        placeholder="Job title"
+                        placeholder="To"
                         {...field}
+                        onChange={(e) => onSalaryInputChange(e, field.onChange)}
                         className="h-auto w-full text-sm "
                       />
                     </FormControl>
