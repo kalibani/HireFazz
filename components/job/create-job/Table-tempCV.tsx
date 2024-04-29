@@ -171,7 +171,10 @@ const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
       cell: ({ row }) => {
         return (
           <Button
-            onClick={() => handleDeleteFile(row.index)}
+            onClick={() => {
+              handleDeleteFile(row.index);
+              console.log(row.index);
+            }}
             variant="ghost"
             className="hover:bg-transparent"
           >

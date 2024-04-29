@@ -1,7 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import React from 'react';
-import { MonitorUp, FileStack } from 'lucide-react';
+import { MonitorUp, FileStack, Trash2, ArrowUpDown } from 'lucide-react';
 import ModalBankCv from './modal-upload-cv';
 import { usePopupModal, MODAL_ENUM } from '@/hooks/use-popup-modal';
 
@@ -16,27 +15,148 @@ import {
 import TableCV from './table';
 
 import { useFormStepStore } from '@/zustand/useCreateJob';
-import { UploadCVData } from './table/upload-cv';
-import { columns as UploadCVColumns } from './table/upload-cv';
+import { ColumnDef } from '@tanstack/react-table';
+import { Checkbox } from '@/components/ui/checkbox';
+import { formatDateDMY, formatFileSize } from '@/helpers';
+import { FC, ReactElement } from 'react';
 
-const UploadCv = () => {
+const UploadCv: FC = (): ReactElement => {
   const {
     files,
     handleFileChange,
+    handleDeleteFile,
     handleUploadButtonClick,
-    dataCreateJob,
-    dataDetailJob,
     setStep,
   } = useFormStepStore((state) => state);
   const { setIsModalOpen } = usePopupModal();
 
-  const uploadDropzone = () => {
-    console.log('drop');
-  };
-
   const handleNext = () => {
     setStep(3);
   };
+
+  interface UploadCVData {
+    file: File;
+  }
+
+  const columns: ColumnDef<UploadCVData>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="border-slate-400 bg-white text-black"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: 'name',
+      header: ({ column }) => {
+        return (
+          <Button
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            File Name
+            <ArrowUpDown className="ml-2 size-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <p className="capitalize">{row.original.file.name}</p>,
+    },
+    {
+      accessorKey: 'Added on',
+      header: ({ column }) => {
+        return (
+          <Button
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Added On
+            <ArrowUpDown className="ml-2 size-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <p className="capitalize text-slate-400">
+          {formatDateDMY(row.original.file.lastModified)}
+        </p>
+      ),
+    },
+    {
+      accessorKey: 'size',
+      header: ({ column }) => {
+        return (
+          <Button
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Size
+            <ArrowUpDown className="ml-2 size-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const size: number = row.original.file.size;
+        return (
+          <p className="capitalize text-slate-400">{formatFileSize(size)}</p>
+        );
+      },
+    },
+    {
+      accessorKey: 'from',
+      header: ({ column }) => {
+        return (
+          <Button
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            From
+            <ArrowUpDown className="ml-2 size-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <p className="capitalize text-slate-400">{row.getValue('from')}</p>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        return (
+          <Button
+            onClick={() => {
+              handleDeleteFile(row.index);
+            }}
+            variant="ghost"
+            className="hover:bg-transparent"
+          >
+            <Trash2 className="size-4 text-primary" />
+          </Button>
+        );
+      },
+    },
+  ];
 
   return (
     <>
@@ -93,7 +213,7 @@ const UploadCv = () => {
         </div>
       </div>
       <div className="flex w-full flex-col items-center rounded-md bg-white px-1 py-6">
-        <TableCV<UploadCVData> data={files} columns={UploadCVColumns} />
+        <TableCV<UploadCVData> data={files} columns={columns} />
       </div>
       <div className="flex w-full justify-between rounded-md bg-white px-4 py-5">
         <Button
