@@ -84,6 +84,7 @@ export const createJob = async (
     cvLinkedin.forEach((cv) => {
       uploadCv({ cv, source: 'LINKEDIN', orgId: payload.orgId }, onSuccess);
     });
+    return job;
   } catch (error) {
     return errorHandler(error);
   }
