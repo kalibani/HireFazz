@@ -1,24 +1,18 @@
 'use client';
 
-import { SectionWrap } from '@/components/share';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
@@ -28,9 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { DialogClose } from '@radix-ui/react-dialog';
-import { FolderUp } from 'lucide-react';
-import Link from 'next/link';
 import type { FC, ReactElement } from 'react';
 import { useForm } from 'react-hook-form';
 import TrackingStep from './tracking-step';
@@ -45,11 +36,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
-import { useCurrentUser } from '@/hooks/use-current-user';
-import { getOrgId } from '@/lib/actions/auth';
-import { PayloadAddJob, createJob } from '@/lib/actions/job/createJob';
+import { PayloadAddJob } from '@/lib/actions/job/createJob';
 import { z } from 'zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { LucideMessageCircleQuestion } from 'lucide-react';
+import { useGetOrgId } from '@/hooks/common/use-get-org';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -104,15 +94,12 @@ const IconFolderUp: FC = (): ReactElement => (
 );
 
 const CVAnalyzer: FC = (): ReactElement => {
-  const user = useCurrentUser();
-
   const form = useForm();
+
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
-  const { data, isSuccess } = useQuery({
-    queryFn: () => getOrgId(user?.id),
-    queryKey: ['getOrgId'],
-  });
+
+  const { data, isSuccess } = useGetOrgId();
 
   const createJobHandle = () => {
     if (isSuccess && data) {
@@ -148,7 +135,7 @@ const CVAnalyzer: FC = (): ReactElement => {
                 <div className="flex w-full flex-col gap-y-1 text-white">
                   <h1 className="text-lg font-medium">Automatic CV Analyzer</h1>
                   <p className="text-sm">
-                    20 CV Will be analyze with our AI suggestion
+                    {files.length} CV Will be analyze with our AI suggestion
                   </p>
                 </div>
               </div>
@@ -204,19 +191,19 @@ const CVAnalyzer: FC = (): ReactElement => {
               />
 
               <div className="flex w-full gap-x-4">
-                <Button className="w-fit bg-slate-300 text-black">
+                <Button type="button" className="w-fit bg-slate-300 text-black">
                   + Key Focus
                 </Button>
 
-                <Button className="w-fit bg-slate-300 text-black">
+                <Button type="button" className="w-fit bg-slate-300 text-black">
                   + Key Focus
                 </Button>
 
-                <Button className="w-fit bg-slate-300 text-black">
+                <Button type="button" className="w-fit bg-slate-300 text-black">
                   + Key Focus
                 </Button>
 
-                <Button className="w-fit bg-slate-300 text-black">
+                <Button type="button" className="w-fit bg-slate-300 text-black">
                   + Key Focus
                 </Button>
               </div>
@@ -228,7 +215,9 @@ const CVAnalyzer: FC = (): ReactElement => {
                 name="language"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>Language AI</FormLabel>
+                    <FormLabel>
+                      Language AI <LucideMessageCircleQuestion />
+                    </FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}

@@ -231,7 +231,6 @@ const UploadCv: FC = (): ReactElement => {
           Next
         </Button>
       </div>
-
       <ModalBankCv />
     </>
   );
