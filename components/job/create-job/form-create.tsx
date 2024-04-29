@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/select';
 import { useFormStepStore } from '@/zustand/useCreateJob';
 import { formSchemaCreateJob } from '@/lib/validators/createJob';
-import { removeNonDigit, separateThousand } from '@/helpers';
+import { removeNonDigit, separateThousand } from '@/lib/utils';
 
 
 const FormCreate = () => {
