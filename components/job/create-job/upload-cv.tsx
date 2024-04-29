@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import React from 'react';
-import { MonitorUp, FileStack, } from 'lucide-react';
+import { MonitorUp, FileStack } from 'lucide-react';
 import ModalBankCv from './modal-upload-cv';
 import { usePopupModal, MODAL_ENUM } from '@/hooks/use-popup-modal';
 
@@ -28,7 +28,7 @@ const UploadCv = () => {
     dataDetailJob,
     setStep,
   } = useFormStepStore((state) => state);
-  const { setIsModalOpen } = usePopupModal()
+  const { setIsModalOpen } = usePopupModal();
 
   const uploadDropzone = () => {
     console.log('drop');
@@ -37,8 +37,6 @@ const UploadCv = () => {
   const handleNext = () => {
     setStep(3);
   };
-
-  console.log(files);
 
   return (
     <>
@@ -66,7 +64,10 @@ const UploadCv = () => {
             <MonitorUp className="mr-2 size-4" />
             From Device
           </Button>
-          <Button className="text-sm font-normal" onClick={() => setIsModalOpen(MODAL_ENUM.BANK_CV, true)}>
+          <Button
+            className="text-sm font-normal"
+            onClick={() => setIsModalOpen(MODAL_ENUM.BANK_CV, true)}
+          >
             <FileStack className="mr-2 size-4" /> From Bank CV (Candidates)
           </Button>
           <Select>
@@ -83,7 +84,12 @@ const UploadCv = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button className="text-sm font-normal" onClick={() => setIsModalOpen(MODAL_ENUM.THIRD_PARTY_CV, true)}>Import</Button>
+          <Button
+            className="text-sm font-normal"
+            onClick={() => setIsModalOpen(MODAL_ENUM.THIRD_PARTY_CV, true)}
+          >
+            Import
+          </Button>
         </div>
       </div>
       <div className="flex w-full flex-col items-center rounded-md bg-white px-1 py-6">
