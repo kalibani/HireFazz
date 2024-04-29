@@ -38,7 +38,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { PayloadAddJob } from '@/lib/actions/job/createJob';
 import { z } from 'zod';
-import { LucideMessageCircleQuestion } from 'lucide-react';
+import { MessageCircleQuestion } from 'lucide-react';
 import { useGetOrgId } from '@/hooks/common/use-get-org';
 
 const IconRobot: FC = (): ReactElement => (
@@ -215,8 +215,8 @@ const CVAnalyzer: FC = (): ReactElement => {
                 name="language"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>
-                      Language AI <LucideMessageCircleQuestion />
+                    <FormLabel className="flex items-center gap-x-2">
+                      Language AI <MessageCircleQuestion size={16} />
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
