@@ -1,12 +1,12 @@
-import FormQuestion from '@/components/interview/form-question';
-import HrVideo from '@/components/interview/hr-video';
+import InterviewList from '@/components/interview/interview-list';
 import { SectionWrap } from '@/components/share';
 
 const Page = () => {
   return (
     <SectionWrap>
-      <HrVideo />
-      <FormQuestion />
+      <InterviewList />
+      {/* <HrVideo /> */}
+      {/* <FormQuestion /> */}
     </SectionWrap>
   );
 };

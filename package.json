@@ -69,7 +69,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
-    "react-hook-form": "^7.51.0",
+    "react-hook-form": "^7.51.3",
     "react-hot-toast": "^2.4.1",
     "react-loading-skeleton": "^3.3.1",
     "react-markdown": "^8.0.7",
@@ -93,7 +93,7 @@
     "uploadthing": "^6.7.0",
     "uuid": "^9.0.1",
     "winston": "^3.11.0",
-    "zod": "^3.22.4",
+    "zod": "^3.23.4",
     "zustand": "^4.3.9"
   },
   "devDependencies": {

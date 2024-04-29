@@ -6,12 +6,12 @@ import { useRecorderStore } from '@/zustand/recordedStore';
 import Webcam from 'react-webcam';
 import { videoConstraints, audioConstraints, blobToFile } from '@/lib/utils';
 
-const HrVideo = () => {
+const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
   const webcamRef = useRef<any>(null);
   const mediaRecorderRef = useRef<any>(null);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
-  const { setRecordedFile } = useRecorderStore();
+  const { setVideoUrl, title } = useRecorderStore();
 
   const handleDataAvailable = useCallback(
     ({ data }: any) => {
@@ -55,15 +55,16 @@ const HrVideo = () => {
         type: 'video/webm',
       });
       const url = URL.createObjectURL(blob);
-      const file = blobToFile(blob, 'video.webm');
-      setRecordedFile(file);
+      const file = blobToFile(blob, `${title}-video.webm`);
+      // setRecordedFile(file);
+      setVideoUrl(file, isEnd ? 'farewell' : 'intro');
       setRecordedChunks([]);
     }
   }, [recordedChunks]);
 
   return (
     <div className="mb-8 flex flex-col  items-center justify-center rounded-md bg-white  p-4">
-      <div className="relative w-1/2 overflow-hidden rounded-lg border-2">
+      <div className="relative w-full overflow-hidden rounded-lg border-2">
         {capturing && (
           <p className="absolute right-2 top-2 z-10 text-xs text-white">
             Recording...

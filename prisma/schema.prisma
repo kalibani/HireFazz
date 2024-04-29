@@ -133,11 +133,11 @@ model InterviewTemplate {
   title                String
   durationTimeRead     Int
   durationTimeAnswered Int
-  questionRetake       Int
-  introVideoUrl        String
-  farewellVideoUrl     String
-  farewellTitle        String
-  farewellDescription  String
+  questionRetake       Int?
+  introVideoUrl        String?
+  farewellVideoUrl     String?
+  farewellTitle        String?
+  farewellDescription  String?
   questions            Json 
 
   organization   Organization  @relation(fields: [organizationId], references: [id])

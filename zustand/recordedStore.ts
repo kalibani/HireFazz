@@ -1,39 +1,74 @@
 import { create } from 'zustand';
 
+interface questionState {
+  videoUrl: File | null;
+  question: string;
+  timeRead?: number;
+  timeAnswered?: number;
+}
 interface RecorderState {
-  recordedFile: File | null;
-  listResult: {
-    file: File | null;
-    question: string;
-  }[];
-  setRecordedFile: (file: File) => void;
-  texts: string[];
-  addText: (text: string) => void;
-  updateText: (index: number, value: string) => void;
-  removeText: (index: number) => void;
-  setListResult: (data: { file: File; question: string }) => void;
+  title: string;
+  durationTimeRead: number;
+  durationTimeAnswered: number;
+  questionRetake?: number;
+  introVideoUrl?: File | null;
+  farewellVideoUrl?: File | null;
+  farewellTitle?: string;
+  farewellDescription?: string;
+  questions: questionState[];
+  setTitle: (title: string, type: 'title' | 'farewell' | 'desc') => void;
+  setFormFirst: (data: {
+    title: string;
+    durationTimeRead: number;
+    durationTimeAnswered: number;
+    questionRetake?: number;
+  }) => void;
+  setVideoUrl: (url: File, type: 'intro' | 'farewell') => void;
+  setQuestion: (data: questionState) => void;
+  removeQuestion: (index: number) => void;
+  addQuestion: () => void;
 }
 
 export const useRecorderStore = create<RecorderState>((set) => ({
-  recordedFile: null,
-  setRecordedFile: (file: File) => set({ recordedFile: file }),
-  texts: [
-    'siapakah kamu ?',
-    'Berani sekali kamu apply disni, ini unicorn harus jago kamu kayak ayam',
-    'ciyee cari kerja ya..?',
-  ],
-  listResult: [],
-  addText: (text) => set((state) => ({ texts: [text, ...state.texts] })),
-  updateText: (index, value) =>
-    set((state) => {
-      const texts = [...state.texts];
-      texts[index] = value;
-      return { texts };
-    }),
-  removeText: (index) =>
+  title: '',
+  durationTimeRead: 0,
+  durationTimeAnswered: 0,
+  questionRetake: 0,
+  introVideoUrl: null,
+  farewellVideoUrl: null,
+  farewellDescription: '',
+  farewellTitle: '',
+  questions: [],
+
+  setTitle: (title, type) => {
+    if (type === 'title') {
+      set({ title });
+    } else if (type === 'farewell') {
+      set({ farewellTitle: title });
+    } else if (type === 'desc') {
+      set({ farewellDescription: title });
+    }
+  },
+  setFormFirst: (data) => {
+    const { durationTimeAnswered, durationTimeRead, questionRetake, title } =
+      data;
+    set({ title, durationTimeAnswered, durationTimeRead, questionRetake });
+  },
+  setVideoUrl: (url, type) => {
+    if (type === 'intro') {
+      set({ introVideoUrl: url });
+    } else if (type === 'farewell') {
+      set({ farewellVideoUrl: url });
+    }
+  },
+  setQuestion: (data) =>
+    set((state) => ({ questions: [data, ...state.questions] })),
+  removeQuestion: (index) =>
     set((state) => ({
-      texts: state.texts.filter((_, i) => i !== index),
+      questions: state.questions.filter((_, i) => i !== index),
     })),
-  setListResult: (data) =>
-    set((state) => ({ listResult: [...state.listResult, data] })),
+  addQuestion: () =>
+    set((state) => ({
+      questions: [...state.questions, { videoUrl: null, question: '' }],
+    })),
 }));
