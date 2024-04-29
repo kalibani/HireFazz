@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { FC, ReactElement, SVGProps } from 'react';
+import { useState, type FC, type ReactElement, type SVGProps } from 'react';
 import { useForm } from 'react-hook-form';
 import TrackingStep from './tracking-step';
 import { useStore } from 'zustand';
@@ -46,6 +46,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
+import { TagInput } from '@/components/share/multi-tag-input';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -165,14 +166,9 @@ const CVAnalyzer: FC = (): ReactElement => {
 
   const customCriteria = form.watch('customCriteria');
 
-  const onLanguageHover = () => (
-    <HoverCard>
-      <HoverCardTrigger>Hover</HoverCardTrigger>
-      <HoverCardContent>
-        The React Framework – created and maintained by @vercel.
-      </HoverCardContent>
-    </HoverCard>
-  );
+  console.log(form.watch('keyFocus'));
+
+  const [tags, setTags] = useState<string[]>([]);
 
   return (
     <section className="flex flex-col gap-y-3">
@@ -243,7 +239,18 @@ const CVAnalyzer: FC = (): ReactElement => {
                           Key Focus
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <TagInput
+                            {...field}
+                            tags={tags}
+                            className="sm:min-w-[450px]"
+                            setTags={(newTags) => {
+                              setTags(newTags);
+                              form.setValue(
+                                'keyFocus',
+                                newTags as [string, ...string[]],
+                              );
+                            }}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -252,6 +259,7 @@ const CVAnalyzer: FC = (): ReactElement => {
                   <div className="flex w-full gap-x-4">
                     <Button
                       type="button"
+                      onClick={() => setTags([...tags, 'Experience'])}
                       className="w-fit bg-slate-300 text-black"
                     >
                       + Experience
@@ -259,6 +267,8 @@ const CVAnalyzer: FC = (): ReactElement => {
 
                     <Button
                       type="button"
+                      onClick={() => {setTags([...tags, 'Sallary Expectation'])}
+                      } 
                       className="w-fit bg-slate-300 text-black"
                     >
                       + Sallary Expectation
@@ -267,12 +277,14 @@ const CVAnalyzer: FC = (): ReactElement => {
                     <Button
                       type="button"
                       className="w-fit bg-slate-300 text-black"
+                      onClick={() => setTags([...tags, 'Education'])}
                     >
                       + Education
                     </Button>
 
                     <Button
                       type="button"
+                      onClick={() => setTags([...tags, 'Age'])}
                       className="w-fit bg-slate-300 text-black"
                     >
                       + Age
