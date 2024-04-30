@@ -25,13 +25,16 @@ import {
 } from '@/components/ui/select';
 
 const FormSchema = z.object({
-  timeRead: z.string(),
-  title: z.string(),
-  timeAnswered: z.string(),
-  videoUrl: z.any(),
-  question: z.string(),
+  questions: z.array(
+    z.object({
+      title: z.string(),
+      question: z.string(),
+      timeRead: z.string(),
+      timeAnswered: z.string(),
+      videoUrl: z.any(),
+    }),
+  ),
 });
-
 const CreateQuestionInterview = () => {
   const { questions, removeQuestion, addQuestion } = useRecorderStore();
 
@@ -47,7 +50,7 @@ const CreateQuestionInterview = () => {
   console.log(questions, '?');
   return (
     <div className="flex flex-col items-center justify-center gap-y-4 rounded-md bg-white  p-4">
-      {questions?.map((question, index) => (
+      {questions?.map((item, index) => (
         <div
           className="flex w-full gap-x-4 rounded-md border p-8 shadow"
           key={index}
@@ -61,23 +64,28 @@ const CreateQuestionInterview = () => {
               >
                 <FormField
                   control={form.control}
-                  name="title"
+                  name={`title_${index}`}
                   render={({ field }) => (
                     <FormItem>
-                      <Input placeholder="Question Titile" {...field} />
+                      <Input
+                        placeholder="Question Titile"
+                        {...form.register(`questions.${index}.title`)}
+                        {...field}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <FormField
                   control={form.control}
-                  name="question"
+                  name={`question_${index}`}
                   render={({ field }) => (
                     <FormItem>
                       <Textarea
                         placeholder="Question Description"
                         className="placeholder:text-slate-400"
                         minRows={4}
+                        {...form.register(`questions.${index}.question`)}
                         {...field}
                       />
                       <FormMessage />

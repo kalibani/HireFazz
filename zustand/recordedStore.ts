@@ -5,6 +5,7 @@ interface questionState {
   question: string;
   timeRead?: number;
   timeAnswered?: number;
+  title: string;
 }
 interface RecorderState {
   title: string;
@@ -38,7 +39,15 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   farewellVideoUrl: null,
   farewellDescription: '',
   farewellTitle: '',
-  questions: [],
+  questions: [
+    {
+      videoUrl: null,
+      title: '',
+      question: '',
+      timeRead: 0,
+      timeAnswered: 0,
+    },
+  ],
 
   setTitle: (title, type) => {
     if (type === 'title') {
@@ -69,6 +78,15 @@ export const useRecorderStore = create<RecorderState>((set) => ({
     })),
   addQuestion: () =>
     set((state) => ({
-      questions: [...state.questions, { videoUrl: null, question: '' }],
+      questions: [
+        ...state.questions,
+        {
+          videoUrl: null,
+          question: '',
+          title: '',
+          timeAnswered: 0,
+          timeRead: 0,
+        },
+      ],
     })),
 }));
