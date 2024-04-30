@@ -13,7 +13,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Trash2, MoreHorizontal, FileSearchIcon } from 'lucide-react';
+import {
+  ArrowUpDown,
+  Trash2,
+  MoreHorizontal,
+  FileSearchIcon,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -27,10 +32,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { formatDateDMY } from '@/helpers';
+import { useFormStepStore } from '@/zustand/useCreateJob';
 import InputFilter from '@/components/table/input-filter';
 
 export type uploadtemp = {
   file: File;
+  from: string;
 };
 
 const formatFileSize = (sizeInBytes: number): string => {
@@ -43,144 +50,6 @@ const formatFileSize = (sizeInBytes: number): string => {
   }
 };
 
-export const columns: ColumnDef<uploadtemp>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="border-slate-400 bg-white text-black"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'name',
-    header: ({ column }) => {
-      return (
-        <Button
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          File Name
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <p className="capitalize text-slate-400">{row.original.file.name}</p>
-    ),
-  },
-  {
-    accessorKey: 'Added on',
-    header: ({ column }) => {
-      return (
-        <Button
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Added On
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <p className="capitalize text-slate-400">
-        {formatDateDMY(row.original.file.lastModified)}
-      </p>
-    ),
-  },
-  {
-    accessorKey: 'size',
-    header: ({ column }) => {
-      return (
-        <Button
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Size
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const size: number = row.original.file.size;
-      return (
-        <p className="capitalize text-slate-400">{formatFileSize(size)}</p>
-      );
-    },
-  },
-  {
-    accessorKey: 'from',
-    header: ({ column }) => {
-      return (
-        <Button
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          From
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-        <p className="capitalize text-slate-400">{row.getValue('from')}</p>
-      );
-    },
-  },
-  {
-    accessorKey: 'location',
-    header: ({ column }) => {
-      return (
-        <Button
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Location
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-        <p className="capitalize text-slate-400">{row.getValue('location')}</p>
-      );
-    },
-  },
-
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      return (
-        <Button variant="ghost" className="hover:bg-transparent">
-          <Trash2 className="size-4 text-primary" />
-        </Button>
-      );
-    },
-  },
-];
-
-// TODO: remove this file, component MOVED to ./table to support different columns and data type
 const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -189,6 +58,133 @@ const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const { handleDeleteFile } = useFormStepStore((state) => state);
+
+  const columns: ColumnDef<uploadtemp>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="border-slate-400 bg-white text-black"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: 'name',
+      header: ({ column }) => {
+        return (
+          <Button
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            File Name
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <p className="capitalize text-slate-400">{row.original.file.name}</p>
+      ),
+    },
+    {
+      accessorKey: 'Added on',
+      header: ({ column }) => {
+        return (
+          <Button
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Added On
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <p className="capitalize text-slate-400">
+          {formatDateDMY(row.original.file.lastModified)}
+        </p>
+      ),
+    },
+    {
+      accessorKey: 'size',
+      header: ({ column }) => {
+        return (
+          <Button
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Size
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const size: number = row.original.file.size;
+        return (
+          <p className="capitalize text-slate-400">{formatFileSize(size)}</p>
+        );
+      },
+    },
+    {
+      accessorKey: 'from',
+      header: ({ column }) => {
+        return (
+          <Button
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            From
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <p className="capitalize text-slate-400">{row.getValue('from')}</p>
+        );
+      },
+    },
+
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        return (
+          <Button
+            onClick={() => {
+              handleDeleteFile(row.index);
+              console.log(row.index);
+            }}
+            variant="ghost"
+            className="hover:bg-transparent"
+          >
+            <Trash2 className="h-4 w-4 text-primary" />
+          </Button>
+        );
+      },
+    },
+  ];
+
   const table = useReactTable({
     data,
     columns,
@@ -209,20 +205,23 @@ const TableTempCV = ({ data }: { data: uploadtemp[] }) => {
   });
 
   // todo: change into dynamic title
-  const jobTitle = 'Senior Software Engineer'
+  const jobTitle = 'Senior Software Engineer';
 
   return (
-    <div className="w-full flex flex-col gap-5">
-      <div className="flex gap-2 items-center mx-5">
+    <div className="flex w-full flex-col gap-5">
+      <div className="mx-5 flex items-center gap-2">
         <FileSearchIcon className="text-red-500" />
         {!!data.length && jobTitle ? (
-          <p>There is <b>{data.length} CVs</b> has been added with job tittle <b>“{jobTitle}”</b> from Candidates</p>
-        ): (
+          <p>
+            There is <b>{data.length} CVs</b> has been added with job tittle{' '}
+            <b>“{jobTitle}”</b> from Candidates
+          </p>
+        ) : (
           <p>There is no CV has been added.</p>
         )}
       </div>
 
-      <div className="flex gap-28 mx-2">
+      <div className="mx-2 flex gap-28">
         <InputFilter label="Search" placeholder="Location" />
         <InputFilter label="Search" placeholder="Search Name" />
       </div>

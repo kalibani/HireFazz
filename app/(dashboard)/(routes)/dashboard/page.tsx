@@ -10,12 +10,13 @@ import {
   ArrowUpRight,
   SearchCheck,
 } from 'lucide-react';
+import { NextPage } from 'next';
+import { ReactElement } from 'react';
 
-const DashboardPage = () => {
+const DashboardPage: NextPage = (): ReactElement => {
   return (
     <SectionWrap isScroll>
       <Banner
-        title="Welcome, Dikta Wicaksono"
         desc="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book."
         btnTitle="Check it out !"
         src={dashboard}
@@ -33,7 +34,7 @@ const DashboardPage = () => {
         ))}
       </div>
       <CardFeature />
-      <div className="min-h-svh space-y-4 rounded-lg bg-white px-3 py-2">
+      <div className="h-full space-y-4 rounded-lg bg-white px-3 py-2">
         <div className="px-2">
           <h4 className="text-xl font-semibold">Latest Job</h4>
           <p className="text-sm text-slate-400">

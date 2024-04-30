@@ -1,15 +1,17 @@
-import React, { ReactNode } from 'react';
+import { FC, PropsWithChildren, ReactElement, ReactNode } from 'react';
 import { Navbar, SideBar } from '@/components/share';
 
 type DashboardLayoutProps = {
   children: ReactNode;
 };
 
-const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
+const DashboardLayout: FC<PropsWithChildren> = async ({
+  children,
+}): Promise<ReactElement> => {
   return (
-    <div className="flex h-dvh overflow-y-hidden bg-[#F2F2F7]">
+    <div className="flex h-full min-h-screen overflow-y-auto bg-[#F2F2F7]">
       <SideBar />
-      <main className="w-full">
+      <main className="h-auto w-full">
         <Navbar />
         {children}
       </main>

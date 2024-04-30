@@ -9,6 +9,7 @@ interface FormStepState {
   totalSize: number;
   files: {
     file: File;
+    from: string;
   }[];
   formData: FormData;
   setStep: (step: number) => void;
@@ -16,7 +17,11 @@ interface FormStepState {
   setFormDetailJob: (data: string) => void;
   setTotalSize: (total: number) => void;
   setFiles: (data: any[]) => void;
-  handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFileChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    from: string,
+  ) => void;
+  handleDeleteFile: (index: number) => void;
   handleUploadButtonClick: () => void;
 }
 
@@ -41,7 +46,12 @@ export const useFormStepStore = create<FormStepState>((set) => ({
   setFormDetailJob: (data) => set({ dataDetailJob: data }),
   setFiles: (data) => set({ files: data }),
   setTotalSize: (totalSize) => set({ totalSize }),
-  handleFileChange: (event) => {
+  handleDeleteFile: (index: number) => {
+    set((state) => ({
+      files: state.files.filter((_, i) => i !== index),
+    }));
+  },
+  handleFileChange: (event, from: string) => {
     let totalFileSize = 0;
     const selectedFiles = event.target.files
       ? Array.from(event.target.files)
@@ -59,9 +69,10 @@ export const useFormStepStore = create<FormStepState>((set) => ({
     const formData = new FormData();
     selectedFiles.forEach((file) => {
       formData.append('UPLOAD', file);
+      formData.append('from', from);
     });
     set((state) => ({
-      files: [...state.files, ...selectedFiles.map((file) => ({ file }))],
+      files: [...state.files, ...selectedFiles.map((file) => ({ file, from }))],
       totalSize: totalFileSize,
       formData: formData,
     }));
