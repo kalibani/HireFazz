@@ -1,6 +1,6 @@
 'use client';
 
-import React, { startTransition, useState, useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import CardWrapper from './card-wrapper';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,10 +23,12 @@ import { FormSuccess } from '../form-success';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { userLoginAction } from '@/lib/actions/auth';
+import { orgList } from '@/lib/actions/user/orgList';
 
 const LoginForm = () => {
   const searchParams = useSearchParams();
-  const { replace, push } = useRouter();
+
+  const { push } = useRouter();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
       ? 'Email already in use with different provider!'
@@ -37,15 +39,17 @@ const LoginForm = () => {
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
 
-  const { mutate } = useMutation({
-    mutationKey: ["signIn"],
-    mutationFn:  (payload: z.infer<typeof LoginSchema>)=>  userLoginAction(payload),
-    onSuccess: (data: any) => {
-      if (data.error) {
-
-        setError(data.error);
-      }else{
-        push('/dashboard');
+  const { mutate, data } = useMutation({
+    mutationKey: ['signIn'],
+    mutationFn: (payload: z.infer<typeof LoginSchema>) =>
+      userLoginAction(payload),
+    onSuccess: async (data: any) => {
+      if (data?.error) {
+        setError(data?.error);
+      } else {
+        const orgs = (await orgList()) || [];
+        const orgId = orgs[0].organization.id;
+        push(`/${orgId}/dashboard`);
       }
     },
     onError: ({ error }) => {
@@ -64,8 +68,7 @@ const LoginForm = () => {
     setError('');
     setSuccess('');
     startTransition(() => {
-      mutate(values)
-    
+      mutate(values);
     });
   };
 
@@ -79,50 +82,50 @@ const LoginForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isPending}
-                          placeholder="john.doe@example.com"
-                          type="email"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isPending}
-                          placeholder="******"
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <Button
-                        size="sm"
-                        variant="link"
-                        asChild
-                        className="px-0 font-normal"
-                      >
-                        <Link href="/auth/reset">Forgot password?</Link>
-                      </Button>
-                    </FormItem>
-                  )}
-                />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="john.doe@example.com"
+                      type="email"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="******"
+                      type="password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  <Button
+                    size="sm"
+                    variant="link"
+                    asChild
+                    className="px-0 font-normal"
+                  >
+                    <Link href="/auth/reset">Forgot password?</Link>
+                  </Button>
+                </FormItem>
+              )}
+            />
           </div>
           <FormError message={error || urlError} />
           <FormSuccess message={success} />

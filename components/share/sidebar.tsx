@@ -1,7 +1,8 @@
 'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import {
   Banknote,
   HandCoins,
@@ -24,6 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
+import { useEffect } from 'react';
 
 const routes = [
   { label: 'Dashboard', icon: Home, href: '/dashboard' },
@@ -44,7 +46,12 @@ const comingRoutes = [
 ];
 
 const Sidebar = () => {
-  const pathname = usePathname().split('/')[1];
+  const pathname = usePathname();
+  const { orgId } = useParams();
+
+  useEffect(() => {
+    console.log('masuk');
+  }, []);
 
   return (
     <aside className="flex h-dvh max-w-[76px] flex-col bg-white">
@@ -58,11 +65,11 @@ const Sidebar = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link href={route.href}>
+                  <Link href={`/${orgId}/${route.href}`}>
                     <route.icon
                       className={cn(
                         'h-6 w-6 cursor-pointer',
-                        route.href.includes(pathname)
+                        pathname.includes(route.href)
                           ? 'text-rose-600'
                           : 'text-slate-400',
                       )}

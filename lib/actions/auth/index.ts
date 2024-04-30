@@ -16,6 +16,7 @@ import { AuthError } from 'next-auth';
 import { sendPasswordResetEmail } from '@/lib/mail';
 import { v4 as uuidv4 } from 'uuid';
 import { useId } from 'react';
+import { orgList } from '../user/orgList';
 
 // Helper functions for user-related operations
 export const getUserByEmail = async (email: string) => {
@@ -62,7 +63,6 @@ export const userLoginAction = async (payload: z.infer<typeof LoginSchema>) => {
     await signIn('credentials', {
       email,
       password,
-      redirectTo: DEFAULT_LOGIN_REDIRECT,
     });
   } catch (error) {
     handleAuthError(error);
@@ -96,21 +96,19 @@ const createNewUserAndOrganization = async (
   email: string,
   hashedPassword: string,
 ) => {
-  await prismadb.$transaction(async (tx) => {
-    const newUser = await tx.user.create({
-      data: { name, email, password: hashedPassword },
-    });
+  const newUser = await prismadb.user.create({
+    data: { name, email, password: hashedPassword },
+  });
 
-    await tx.organization.create({
-      data: {
-        name,
-        packageType: PACKAGE_TYPE.BASIC,
-        limit: 100,
-        used: 0,
-        agreeTermAndCondition: true,
-        userOrganization: { create: { userId: newUser.id, roleId: 'OWNER' } },
-      },
-    });
+  await prismadb.organization.create({
+    data: {
+      name,
+      packageType: PACKAGE_TYPE.BASIC,
+      limit: 100,
+      used: 0,
+      agreeTermAndCondition: true,
+      userOrganization: { create: { userId: newUser.id, roleId: 'OWNER' } },
+    },
   });
 };
 
