@@ -10,11 +10,9 @@ import { useQuery } from '@tanstack/react-query';
 import { orgList } from '@/lib/actions/user/orgList';
 
 const Social = () => {
-  const { data } = useQuery({ queryKey: ['orgId'], queryFn: orgList });
-
   const googleSignin = async () => {
-    const orgs = (await orgList()) || [];
-    const orgId = orgs[0].organization.id;
+    const orgs = await orgList();
+    const orgId = orgs && orgs[0].organization.id;
     signIn('google', { callbackUrl: `/${orgId}` + DEFAULT_LOGIN_REDIRECT });
   };
 
