@@ -1,25 +1,28 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
+import { useQuery } from '@tanstack/react-query';
+import { orgList } from '@/lib/actions/user/orgList';
 
 const Social = () => {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
+  const { data } = useQuery({ queryKey: ['orgId'], queryFn: orgList });
 
-  const googleSignin = () => {
-    signIn('google', { callbackUrl: DEFAULT_LOGIN_REDIRECT });
+  const googleSignin = async () => {
+    const orgs = (await orgList()) || [];
+    const orgId = orgs[0].organization.id;
+    signIn('google', { callbackUrl: `/${orgId}` + DEFAULT_LOGIN_REDIRECT });
   };
 
   return (
-    <div className="flex items-center w-full gap-x-2">
+    <div className="flex w-full items-center gap-x-2">
       <Button
         size="lg"
-        className="w-full flex items-center justify-center gap-x-4"
+        className="flex w-full items-center justify-center gap-x-4"
         variant="outline"
         onClick={googleSignin}
       >
