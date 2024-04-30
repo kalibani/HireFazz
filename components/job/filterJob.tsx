@@ -6,38 +6,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import Link from 'next/link';
 
 export const FilterJob = () => {
   return (
-    <div className="flex justify-between">
-      <div className="max-w-[200px] flex-1">
-        <label className="mb-1 ml-4 text-sm">Sort By</label>
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Applicant" />
-          </SelectTrigger>
-
-          <SelectContent>
-            <SelectItem value="m@example.com">m@example.com</SelectItem>
-            <SelectItem value="m@google.com">m@google.com</SelectItem>
-            <SelectItem value="m@support.com">m@support.com</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="max-w-[200px] flex-1">
-        <label className="mb-1 ml-4 text-sm">Level</label>
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Senior" />
-          </SelectTrigger>
-
-          <SelectContent>
-            <SelectItem value="m@example.com">m@example.com</SelectItem>
-            <SelectItem value="m@google.com">m@google.com</SelectItem>
-            <SelectItem value="m@support.com">m@support.com</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <div className="flex justify-between items-end">
       <div className="max-w-[200px] flex-1">
         <label className="mb-1 ml-4 text-sm">Search</label>
         <Input placeholder="Location" />
@@ -46,6 +20,23 @@ export const FilterJob = () => {
         <label className="mb-1 ml-4 text-sm">Search</label>
         <Input placeholder="Search Job" />
       </div>
+      <div className="max-w-[200px] flex-1">
+        <label className="mb-1 ml-4 text-sm">Status</label>
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder="Active" />
+          </SelectTrigger>
+
+          <SelectContent>
+            <SelectItem value="Active">Active</SelectItem>
+            <SelectItem value="Not Analyzed">Not Analyzed</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Link href='/job/create' >
+        <Button variant="secondary">+ Create New Job</Button>
+      </Link>
     </div>
   );
 };

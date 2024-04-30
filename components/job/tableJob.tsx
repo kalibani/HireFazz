@@ -6,6 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { MoreVertical } from 'lucide-react'
+import Link from 'next/link';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import Pagination from '../ui/pagination';
+
 export const TableJob = () => {
   return (
     <div className="mt-4">
@@ -18,7 +23,7 @@ export const TableJob = () => {
             <TableHead className="text-center">Shortlisted ↓</TableHead>
             <TableHead className="text-center">Company Name ↓</TableHead>
             <TableHead className="text-center">Status ↓</TableHead>
-            <TableHead className="text-center"></TableHead>
+            <TableHead className="text-center w-32"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -35,10 +40,42 @@ export const TableJob = () => {
               Berrylabs
             </TableCell>
             <TableCell className="text-center text-green-500">Active</TableCell>
-            <TableCell>View Job</TableCell>
+            <TableCell className="flex gap-2 items-center">
+              {/* CHANGE HREF TO DETAIL JOB LATER */}
+              <Link href="/job" className="text-red-500 underline font-medium">
+                View Job
+              </Link>
+
+              <MoreVertical className="cursor-pointer" />
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>
+
+      <div className="flex items-center justify-between mt-5">
+        <div className="max-w-44 flex gap-2 items-center">
+          <span>View</span>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="50" defaultValue="50" />
+            </SelectTrigger>
+
+            {/* MODIFY OPTIONS LATER WHEN READY FROM DESIGN */}
+            <SelectContent>
+              <SelectItem value="25">25</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="100">100</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <span>List</span>
+        </div>
+        <div className="space-x-2">
+          <Pagination itemsPerPage={20} totalItems={200} />
+        </div>
+
+        <div></div>
+      </div>
     </div>
   );
 };

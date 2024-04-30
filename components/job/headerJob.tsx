@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { UploadCloud } from "lucide-react";
 
 export const HeaderJob = () => {
   return (
@@ -9,7 +10,10 @@ export const HeaderJob = () => {
           Latest Job that you added on Job List
         </p>
       </div>
-      <Button>+ Upload CV</Button>
+      <Button className="flex items-center gap-2">
+        <UploadCloud />
+         Upload CV
+      </Button>
     </div>
   );
 };
