@@ -70,6 +70,8 @@ export const createJob = async (
       },
     });
 
+    console.log('Job Create Prisma', job);
+
     const onSuccess = (props: { id: string; url: string; key: string }) => {
       connectCvJob({
         cvId: props.id,

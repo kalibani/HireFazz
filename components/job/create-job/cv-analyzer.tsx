@@ -38,8 +38,6 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { PayloadAddJob, createJob } from '@/lib/actions/job/createJob';
 import { z } from 'zod';
-import { MessageCircleQuestion } from 'lucide-react';
-import { useGetOrgId } from '@/hooks/common/use-get-org';
 import {
   HoverCard,
   HoverCardContent,
@@ -47,6 +45,8 @@ import {
 } from '@/components/ui/hover-card';
 import { TagInput } from '@/components/share/multi-tag-input';
 import { useParams } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import { useCreateJob } from '@/hooks/job/use-create-job';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -113,20 +113,20 @@ const IconQuestionMark: FC<SVGProps<SVGSVGElement>> = (props): ReactElement => (
       <path
         d="M7.00033 12.8332C10.222 12.8332 12.8337 10.2215 12.8337 6.99984C12.8337 3.77818 10.222 1.1665 7.00033 1.1665C3.77866 1.1665 1.16699 3.77818 1.16699 6.99984C1.16699 10.2215 3.77866 12.8332 7.00033 12.8332Z"
         stroke="#94A3B8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M5.30273 5.24984C5.43988 4.85998 5.71057 4.53124 6.06687 4.32184C6.42318 4.11244 6.84209 4.03589 7.24942 4.10576C7.65675 4.17563 8.02621 4.3874 8.29236 4.70357C8.55851 5.01974 8.70418 5.4199 8.70357 5.83318C8.70357 6.99984 6.95357 7.58318 6.95357 7.58318"
         stroke="#94A3B8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M7 9.9165H7.00667"
         stroke="#94A3B8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <defs>
@@ -145,7 +145,11 @@ const CVAnalyzer: FC = (): ReactElement => {
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
 
-  const createJobHandle = () => {
+  console.log(orgId);
+
+  const { mutate } = useCreateJob();
+
+  const createJobHandle = async () => {
     if (orgId) {
       const createPayload: z.infer<typeof PayloadAddJob> = {
         analyzeCv: false,
@@ -160,11 +164,16 @@ const CVAnalyzer: FC = (): ReactElement => {
         salaryRangeFrom: Number(dataCreateJob.fromNominal),
         orgId: orgId as string,
       };
-      createJob(createPayload, formData);
+      mutate({
+        payload: createPayload,
+        cv: formData,
+      });
     }
   };
 
   const customCriteria = form.watch('customCriteria');
+
+  const keyFocus = form.watch('keyFocus');
 
   const [tags, setTags] = useState<string[]>([]);
 
@@ -257,7 +266,10 @@ const CVAnalyzer: FC = (): ReactElement => {
                   <div className="flex w-full gap-x-4">
                     <Button
                       type="button"
-                      onClick={() => setTags([...tags, 'Experience'])}
+                      onClick={() => {
+                        setTags((prevTags) => [...prevTags, 'Experience']);
+                        form.setValue('keyFocus', [...tags, 'Experience']);
+                      }}
                       className="w-fit bg-slate-300 text-black"
                     >
                       + Experience
@@ -266,7 +278,14 @@ const CVAnalyzer: FC = (): ReactElement => {
                     <Button
                       type="button"
                       onClick={() => {
-                        setTags([...tags, 'Sallary Expectation']);
+                        setTags((prevTags) => [
+                          ...prevTags,
+                          'Sallary Expectation',
+                        ]);
+                        form.setValue('keyFocus', [
+                          ...tags,
+                          'Sallary Expectation',
+                        ]);
                       }}
                       className="w-fit bg-slate-300 text-black"
                     >
@@ -276,15 +295,21 @@ const CVAnalyzer: FC = (): ReactElement => {
                     <Button
                       type="button"
                       className="w-fit bg-slate-300 text-black"
-                      onClick={() => setTags([...tags, 'Education'])}
+                      onClick={() => {
+                        setTags((prevTags) => [...prevTags, 'Education']);
+                        form.setValue('keyFocus', [...tags, 'Education']);
+                      }}
                     >
                       + Education
                     </Button>
 
                     <Button
                       type="button"
-                      onClick={() => setTags([...tags, 'Age'])}
                       className="w-fit bg-slate-300 text-black"
+                      onClick={() => {
+                        setTags((prevTags) => [...prevTags, 'Age']);
+                        form.setValue('keyFocus', [...tags, 'Age']);
+                      }}
                     >
                       + Age
                     </Button>
@@ -316,19 +341,15 @@ const CVAnalyzer: FC = (): ReactElement => {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Indonesia" />
+                              <SelectValue
+                                defaultValue={'indonesia'}
+                                placeholder="Indonesia"
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="m@example.com">
-                              m@example.com
-                            </SelectItem>
-                            <SelectItem value="m@google.com">
-                              m@google.com
-                            </SelectItem>
-                            <SelectItem value="m@support.com">
-                              m@support.com
-                            </SelectItem>
+                            <SelectItem value="indonesia">Indonesia</SelectItem>
+                            <SelectItem value="english">English</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormItem>
@@ -359,19 +380,21 @@ const CVAnalyzer: FC = (): ReactElement => {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="60%" />
+                              <SelectValue
+                                defaultValue={60}
+                                placeholder="60%"
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="m@example.com">
-                              m@example.com
-                            </SelectItem>
-                            <SelectItem value="m@google.com">
-                              m@google.com
-                            </SelectItem>
-                            <SelectItem value="m@support.com">
-                              m@support.com
-                            </SelectItem>
+                            <SelectItem value="10">10%</SelectItem>
+                            <SelectItem value="20">20%</SelectItem>
+                            <SelectItem value="30">30%</SelectItem>
+                            <SelectItem value="40">40%</SelectItem>
+                            <SelectItem value="50">50%</SelectItem>
+                            <SelectItem value="60">60%</SelectItem>
+                            <SelectItem value="70">70%</SelectItem>
+                            <SelectItem value="80">80%</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormItem>
