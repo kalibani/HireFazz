@@ -24,6 +24,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import VideoRecord from './video-record';
+import { useParams } from 'next/navigation';
 
 const FormSchema = z.object({
   durationTimeRead: z.string(),
@@ -33,6 +34,7 @@ const FormSchema = z.object({
 
 const CreateIntroInterview = () => {
   const { setFormFirst, introVideoUrl } = useRecorderStore();
+  const { orgId } = useParams();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),

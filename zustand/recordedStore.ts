@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 interface questionState {
-  videoUrl: File | null;
+  videoUrl?: File | null;
   question: string;
   timeRead?: number;
   timeAnswered?: number;
@@ -20,12 +20,12 @@ interface RecorderState {
   setTitle: (title: string, type: 'title' | 'farewell' | 'desc') => void;
   setFormFirst: (data: {
     title: string;
-    durationTimeRead: number;
-    durationTimeAnswered: number;
+    durationTimeRead?: number;
+    durationTimeAnswered?: number;
     questionRetake?: number;
   }) => void;
   setVideoUrl: (url: File, type: 'intro' | 'farewell') => void;
-  setQuestion: (data: questionState) => void;
+  setQuestion: (data: questionState[]) => void;
   removeQuestion: (index: number) => void;
   addQuestion: () => void;
 }
@@ -70,8 +70,7 @@ export const useRecorderStore = create<RecorderState>((set) => ({
       set({ farewellVideoUrl: url });
     }
   },
-  setQuestion: (data) =>
-    set((state) => ({ questions: [data, ...state.questions] })),
+  setQuestion: (data) => set((state) => ({ questions: data })),
   removeQuestion: (index) =>
     set((state) => ({
       questions: state.questions.filter((_, i) => i !== index),

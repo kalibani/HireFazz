@@ -17,7 +17,7 @@ const CreateEndInterview = () => {
       </div>
       <div className="mt-8 flex w-full items-center justify-between">
         <Button>Go Back</Button>
-        <Button>Go Back</Button>
+        <Button>Submit</Button>
       </div>
     </div>
   );

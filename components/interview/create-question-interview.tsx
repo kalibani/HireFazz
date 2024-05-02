@@ -29,28 +29,36 @@ const FormSchema = z.object({
     z.object({
       title: z.string(),
       question: z.string(),
-      timeRead: z.string(),
-      timeAnswered: z.string(),
-      videoUrl: z.any(),
+      timeRead: z.string().optional().nullable(),
+      timeAnswered: z.string().optional().nullable(),
+      videoUrl: z.any().optional().nullable(),
     }),
   ),
 });
 const CreateQuestionInterview = () => {
-  const { questions, removeQuestion, addQuestion } = useRecorderStore();
+  const { questions, removeQuestion, addQuestion, setQuestion } =
+    useRecorderStore();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
+    const { questions } = data;
+
+    const payload = questions.map((item) => ({
+      ...item,
+      timeRead: Number(item.timeRead) || 0,
+      timeAnswered: Number(item.timeAnswered) || 0,
+    }));
+    // console.log(payload, 'masuk');
+    setQuestion(payload);
   }
 
-  const addQuestionHandler = () => {};
   console.log(questions, '?');
   return (
     <div className="flex flex-col items-center justify-center gap-y-4 rounded-md bg-white  p-4">
-      {questions?.map((item, index) => (
+      {questions?.map((_, index) => (
         <div
           className="flex w-full gap-x-4 rounded-md border p-8 shadow"
           key={index}
@@ -64,7 +72,7 @@ const CreateQuestionInterview = () => {
               >
                 <FormField
                   control={form.control}
-                  name={`title_${index}`}
+                  name={`questions.${index}.title`}
                   render={({ field }) => (
                     <FormItem>
                       <Input
@@ -78,7 +86,7 @@ const CreateQuestionInterview = () => {
                 />
                 <FormField
                   control={form.control}
-                  name={`question_${index}`}
+                  name={`questions.${index}.question`}
                   render={({ field }) => (
                     <FormItem>
                       <Textarea
@@ -96,13 +104,16 @@ const CreateQuestionInterview = () => {
                 <div className="flex items-end gap-x-4">
                   <FormField
                     control={form.control}
-                    name="timeRead"
-                    render={({ field }: { field: any }) => (
+                    name={`questions.${index}.timeRead`}
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs">
                           CANDIDATE THINKING TIME
                         </FormLabel>
-                        <Select {...field}>
+                        <Select
+                          {...form.register(`questions.${index}.timeRead`)}
+                          {...field}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select duration" />
@@ -122,13 +133,16 @@ const CreateQuestionInterview = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="timeRead"
-                    render={({ field }: { field: any }) => (
+                    name={`questions.${index}.timeAnswered`}
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs">
                           CANDIDATE MAX ANSWER LENGTH PER QUESTION
                         </FormLabel>
-                        <Select {...field}>
+                        <Select
+                          {...field}
+                          {...form.register(`questions.${index}.timeAnswered`)}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select duration" />
