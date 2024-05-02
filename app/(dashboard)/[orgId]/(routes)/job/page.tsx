@@ -3,13 +3,14 @@ import { FilterJob } from '@/components/job/filterJob';
 import { HeaderJob } from '@/components/job/headerJob';
 import { TableJob } from '@/components/job/tableJob';
 import { SectionWrap } from '@/components/share';
+import { ParamsProps } from '@/types/types';
 
-const JobPage = () => {
+const JobPage = ({ params }: ParamsProps) => {
   return (
     <SectionWrap>
-      <BannerJob />
+      <BannerJob orgId={params?.orgId} />
       <HeaderJob />
-      <div className="rounded-md bg-white px-5 py-2.5 min-h-svh">
+      <div className="min-h-svh rounded-md bg-white px-5 py-2.5">
         <FilterJob />
         <TableJob />
       </div>

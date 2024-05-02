@@ -1,6 +1,5 @@
 'use server';
 
-import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import {
   LoginSchema,
   NewPasswordSchema,
@@ -15,8 +14,6 @@ import bcrypt from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { sendPasswordResetEmail } from '@/lib/mail';
 import { v4 as uuidv4 } from 'uuid';
-import { useId } from 'react';
-import { orgList } from '../user/orgList';
 
 // Helper functions for user-related operations
 export const getUserByEmail = async (email: string) => {
@@ -111,7 +108,6 @@ const createNewUserAndOrganization = async (
     },
   });
 };
-
 export const createOrganizationGoogle = async (
   userId: string | undefined,
   name: string | undefined,

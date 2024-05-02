@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Select,
   SelectContent,
@@ -8,10 +10,13 @@ import {
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 export const FilterJob = () => {
+  const { orgId } = useParams();
+
   return (
-    <div className="flex justify-between items-end">
+    <div className="flex items-end justify-between">
       <div className="max-w-[200px] flex-1">
         <label className="mb-1 ml-4 text-sm">Search</label>
         <Input placeholder="Location" />
@@ -34,7 +39,7 @@ export const FilterJob = () => {
         </Select>
       </div>
 
-      <Link href='/job/create' >
+      <Link href={`/${orgId}/job/create`}>
         <Button variant="secondary">+ Create New Job</Button>
       </Link>
     </div>

@@ -75,6 +75,7 @@ export const {
 
       return token;
     },
+    
   },
 
   ...authConfig,

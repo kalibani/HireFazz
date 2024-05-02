@@ -25,7 +25,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { useEffect } from 'react';
 
 const routes = [
   { label: 'Dashboard', icon: Home, href: '/dashboard' },
@@ -48,10 +47,6 @@ const comingRoutes = [
 const Sidebar = () => {
   const pathname = usePathname();
   const { orgId } = useParams();
-
-  useEffect(() => {
-    console.log('masuk');
-  }, []);
 
   return (
     <aside className="flex h-dvh max-w-[76px] flex-col bg-white">

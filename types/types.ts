@@ -27,3 +27,7 @@ export type fileTypes = {
 export interface SearchParamsProps {
   searchParams: { [key: string]: string | undefined };
 }
+
+export interface ParamsProps {
+  params: { [key: string]: string };
+}
