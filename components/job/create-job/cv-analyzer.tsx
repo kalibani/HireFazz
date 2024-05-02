@@ -145,8 +145,6 @@ const CVAnalyzer: FC = (): ReactElement => {
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
 
-  console.log(orgId);
-
   const { mutate } = useCreateJob();
 
   const createJobHandle = async () => {
