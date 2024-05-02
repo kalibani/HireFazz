@@ -36,17 +36,17 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
-import { PayloadAddJob } from '@/lib/actions/job/createJob';
+import { PayloadAddJob, createJob } from '@/lib/actions/job/createJob';
 import { z } from 'zod';
 import { MessageCircleQuestion } from 'lucide-react';
 import { useGetOrgId } from '@/hooks/common/use-get-org';
-import MultiSelect from '@/components/share/multi-select';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { TagInput } from '@/components/share/multi-tag-input';
+import { useParams } from 'next/navigation';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -140,13 +140,13 @@ const IconQuestionMark: FC<SVGProps<SVGSVGElement>> = (props): ReactElement => (
 const CVAnalyzer: FC = (): ReactElement => {
   const form = useForm();
 
+  const { orgId } = useParams();
+
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
 
-  const { data, isSuccess } = useGetOrgId();
-
   const createJobHandle = () => {
-    if (isSuccess && data) {
+    if (orgId) {
       const createPayload: z.infer<typeof PayloadAddJob> = {
         analyzeCv: false,
         jobName: dataCreateJob.title,
@@ -158,15 +158,13 @@ const CVAnalyzer: FC = (): ReactElement => {
         companyName: dataCreateJob.companyName,
         salaryRangeEnd: Number(dataCreateJob.toNominal),
         salaryRangeFrom: Number(dataCreateJob.fromNominal),
-        orgId: data?.organizationId,
+        orgId: orgId as string,
       };
-      // submit to createJob at path folder: action/job.
+      createJob(createPayload, formData);
     }
   };
 
   const customCriteria = form.watch('customCriteria');
-
-  console.log(form.watch('keyFocus'));
 
   const [tags, setTags] = useState<string[]>([]);
 
@@ -267,8 +265,9 @@ const CVAnalyzer: FC = (): ReactElement => {
 
                     <Button
                       type="button"
-                      onClick={() => {setTags([...tags, 'Sallary Expectation'])}
-                      } 
+                      onClick={() => {
+                        setTags([...tags, 'Sallary Expectation']);
+                      }}
                       className="w-fit bg-slate-300 text-black"
                     >
                       + Sallary Expectation
