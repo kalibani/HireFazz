@@ -18,7 +18,7 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
   const mediaRecorderRef = useRef<any>(null);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
-  const { setVideoUrl, title } = useRecorderStore();
+  const { setVideoUrl, title, setFormData } = useRecorderStore();
 
   const handleDataAvailable = useCallback(
     ({ data }: any) => {
@@ -31,7 +31,7 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
 
   const handleStartCaptureClick = useCallback(() => {
     setCapturing(true);
-    mediaRecorderRef.current = new MediaRecorder(webcamRef.current?.stream, {
+    mediaRecorderRef.current = new MediaRecorder(webcamRef?.current?.stream, {
       mimeType: 'video/webm',
     });
     mediaRecorderRef.current.addEventListener(
@@ -50,34 +50,27 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
     const blob = new Blob(recordedChunks, {
       type: 'video/webm',
     });
-    const file = blobToFile(blob, `${title}-video.webm`);
+    // const file = blobToFile(blob, `${title}-video.webm`);
 
     const formTheData = await blobToFormData(blob, 'intro');
-    const files = formTheData.getAll('file');
-    // const fileuploaded = await utapi.uploadFiles(files);
-    console.log({ formTheData, blob,files });
+    // const files = formTheData.getAll('file');
+    setVideoUrl(formTheData, isEnd ? 'farewell' : 'intro');
+
     // setRecordedChunks([]);
   }, [recordedChunks]);
-
-  // const upload = async (fileUpload: FormData) => {
-  //   'use server'
-  //   const fileuploaded = await utapi.uploadFiles(fileUpload);
-  //   console.log(fileuploaded, '<<file upload');
-  //   return fileuploaded;
-  // };
 
   useEffect(() => {
     if (recordedChunks.length) {
       handleDownload();
       // const blob = new Blob(recordedChunks, {
-      // type: 'video/webm',
+      //   type: 'video/webm',
       // });
       // const url = URL.createObjectURL(blob);
       // const file = blobToFile(blob, `${title}-video.webm`);
-      // const formTheData = await blobToFormData(blob,'intro');
+      // const formTheData = blobToFormData(blob, 'intro');
       // setRecordedFile(file);
-      // upload(file);
-      // setVideoUrl(file, isEnd ? 'farewell' : 'intro');
+      // setVideoUrl(formTheData, isEnd ? 'farewell' : 'intro');
+      // setFormData(blob);
       // setRecordedChunks([]);
       // upload(formTheData);
       // console.log({ file, blob, formTheData }, '<<< file');

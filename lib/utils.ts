@@ -111,6 +111,7 @@ export const blobToFile = (blob: Blob, fileName: string): File => {
   const file = new File([blob], fileName, { type: blob.type });
   return file;
 };
+
 export const blobToFormData = (
   blob: Blob,
   filename: string,
@@ -125,6 +126,7 @@ export const blobToFormData = (
     }
   });
 };
+
 export const separateThousand = (value: string, separator: string = '.') => {
   // remove non digit char
   const removeNonDigit = value.replace(/\D/g, '');

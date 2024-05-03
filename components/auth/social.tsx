@@ -1,19 +1,22 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
-import { useQuery } from '@tanstack/react-query';
 import { orgList } from '@/lib/actions/user/orgList';
 
 const Social = () => {
+  const { replace } = useRouter();
   const googleSignin = async () => {
-    const orgs = await orgList();
-    const orgId = orgs && orgs[0].organization.id;
-    signIn('google', { callbackUrl: `/${orgId}` + DEFAULT_LOGIN_REDIRECT });
+    signIn('google').then(async () => {
+      const orgs = await orgList();
+      console.log({ orgs });
+      const orgId = orgs && orgs[0].organization.id;
+      replace(`/${orgId}` + DEFAULT_LOGIN_REDIRECT);
+    });
   };
 
   return (

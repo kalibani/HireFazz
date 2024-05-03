@@ -47,7 +47,7 @@ export const {
     async signIn({ user, account, credentials, profile }) {
       // Allow OAuth without email verification
       if (account?.provider !== 'credentials' && user.name) {
-        await createOrganizationGoogle(user.id, user.name);
+        await createOrganizationGoogle(user);
         return true;
       }
       // Prevent sign in without email verification
@@ -75,7 +75,6 @@ export const {
 
       return token;
     },
-    
   },
 
   ...authConfig,

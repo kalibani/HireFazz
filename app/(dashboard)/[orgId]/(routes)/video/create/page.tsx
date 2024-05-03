@@ -1,3 +1,5 @@
+'use server';
+
 import CreateEndInterview from '@/components/interview/create-end-interview';
 import CreateIntroInterview from '@/components/interview/create-intro-interview';
 import CreateQuestionInterview from '@/components/interview/create-question-interview';

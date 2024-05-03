@@ -39,7 +39,7 @@ const LoginForm = () => {
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
 
-  const { mutate, data } = useMutation({
+  const { mutate } = useMutation({
     mutationKey: ['signIn'],
     mutationFn: (payload: z.infer<typeof LoginSchema>) =>
       userLoginAction(payload),
@@ -48,7 +48,7 @@ const LoginForm = () => {
         setError(data?.error);
       } else {
         const orgs = (await orgList()) || [];
-        const orgId = orgs[0].organization.id;
+        const orgId = orgs[0]?.organization.id;
         push(`/${orgId}/dashboard`);
       }
     },

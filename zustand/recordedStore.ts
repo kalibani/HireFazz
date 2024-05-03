@@ -1,3 +1,5 @@
+import { blobToFormData } from '@/lib/utils';
+import { url } from 'inspector';
 import { create } from 'zustand';
 
 interface questionState {
@@ -12,8 +14,8 @@ interface RecorderState {
   durationTimeRead: number;
   durationTimeAnswered: number;
   questionRetake?: number;
-  introVideoUrl?: File | null;
-  farewellVideoUrl?: File | null;
+  introVideoUrl?: FormData | null;
+  farewellVideoUrl?: FormData | null;
   farewellTitle?: string;
   farewellDescription?: string;
   questions: questionState[];
@@ -24,10 +26,12 @@ interface RecorderState {
     durationTimeAnswered?: number;
     questionRetake?: number;
   }) => void;
-  setVideoUrl: (url: File, type: 'intro' | 'farewell') => void;
+  setVideoUrl: (url: FormData | null, type: 'intro' | 'farewell') => void;
   setQuestion: (data: questionState[]) => void;
   removeQuestion: (index: number) => void;
   addQuestion: () => void;
+  urlAny: any;
+  setFormData: (data: any) => void;
 }
 
 export const useRecorderStore = create<RecorderState>((set) => ({
@@ -48,6 +52,7 @@ export const useRecorderStore = create<RecorderState>((set) => ({
       timeAnswered: 0,
     },
   ],
+  urlAny: new FormData(),
 
   setTitle: (title, type) => {
     if (type === 'title') {
@@ -88,4 +93,8 @@ export const useRecorderStore = create<RecorderState>((set) => ({
         },
       ],
     })),
+  setFormData: async (data) => {
+    const convrt = await blobToFormData(data, 'intro');
+    set({ urlAny: convrt });
+  },
 }));

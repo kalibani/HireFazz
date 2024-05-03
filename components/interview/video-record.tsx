@@ -4,7 +4,11 @@ import { Video } from 'lucide-react';
 import React from 'react';
 import PopupRecord from './popup-record';
 
-const VideoRecord = ({ videoUrl }: { videoUrl: File | null | undefined }) => {
+const VideoRecord = ({
+  videoUrl,
+}: {
+  videoUrl: FormData | null | undefined;
+}) => {
   return (
     <div className="flex w-1/2 flex-col items-center justify-center overflow-hidden rounded-md border">
       {!videoUrl && (
@@ -17,7 +21,11 @@ const VideoRecord = ({ videoUrl }: { videoUrl: File | null | undefined }) => {
       {videoUrl && (
         <div className="aspect-video size-full">
           <video controls>
-            <source src={URL.createObjectURL(videoUrl)} />
+            <source
+              src={
+                'https://utfs.io/f/f8c44970-33a1-4866-ad51-a0a23000185a-1nr3os'
+              }
+            />
           </video>
         </div>
       )}
