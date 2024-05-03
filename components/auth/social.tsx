@@ -1,21 +1,12 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
-import { orgList } from '@/lib/actions/user/orgList';
 
 const Social = () => {
-  const { push } = useRouter();
   const googleSignin = async () => {
-    signIn('google').then(async () => {
-      const orgs = await orgList();
-      const orgId = orgs && orgs[0].organization.id;
-      push(`/${orgId}` + DEFAULT_LOGIN_REDIRECT);
-    });
+    signIn('google', { callbackUrl: '/redirect' });
   };
 
   return (

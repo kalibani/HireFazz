@@ -19,11 +19,11 @@ export default auth((req): any => {
   }
 
   if (isAuthRoute || isPublicRoute) {
+    if (isLoggedIn) Response.redirect(new URL(`/redirect`, nextUrl));
     return null;
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    console.log('MASSSSSSUKKK');
     return Response.redirect(new URL(`/auth/login`, nextUrl));
   }
   return null;

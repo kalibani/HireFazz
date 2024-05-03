@@ -22,7 +22,6 @@ import { FormSuccess } from '../form-success';
 import { useMutation } from '@tanstack/react-query';
 import { userRegisterAction } from '@/lib/actions/auth';
 import { useRouter } from 'next/navigation';
-import { orgList } from '@/lib/actions/user/orgList';
 
 export const RegisterForm = () => {
   const { replace } = useRouter();
@@ -36,12 +35,7 @@ export const RegisterForm = () => {
       if (data?.error) {
         setError(data?.error);
       } else {
-        const orgs = await orgList();
-        if (orgs) {
-          const safeOrg = orgs[0];
-          const orgId = safeOrg?.organization?.id;
-          if (orgId) replace(`/${orgId}/dashboard`);
-        }
+        replace(`/redirect`);
       }
     },
     onError: ({ error }) => {

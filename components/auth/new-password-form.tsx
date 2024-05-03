@@ -22,8 +22,6 @@ import { FormSuccess } from '@/components/form-success';
 import { CardWrapper } from '.';
 import { useMutation } from '@tanstack/react-query';
 import { newPasswordAction } from '@/lib/actions/auth';
-import { error } from 'winston';
-
 
 const NewPasswordForm = () => {
   const { replace } = useRouter();
@@ -35,12 +33,12 @@ const NewPasswordForm = () => {
   const [isPending, startTransition] = useTransition();
 
   const { mutate } = useMutation({
-    mutationFn:newPasswordAction,
+    mutationFn: newPasswordAction,
     onSuccess: () => {
       setSuccess('Password updated!');
       replace('/auth/login');
     },
-    onError: ({error}) => {
+    onError: ({ error }) => {
       setError(error);
     },
   });
