@@ -18,7 +18,7 @@ import {
   generateResponsibilities,
   generateSkill,
   genereteJobDescription,
-} from '@/lib/actions/job/createJob';
+} from '@/lib/actions/generate/actionGenerate';
 
 const initialState = {
   jobDescription: '',
