@@ -45,17 +45,14 @@ const CreateQuestionInterview = () => {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const { questions } = data;
-
     const payload = questions.map((item) => ({
       ...item,
       timeRead: Number(item.timeRead) || 0,
       timeAnswered: Number(item.timeAnswered) || 0,
     }));
-    // console.log(payload, 'masuk');
     setQuestion(payload);
   }
 
-  console.log(questions, '?');
   return (
     <div className="flex flex-col items-center justify-center gap-y-4 rounded-md bg-white  p-4">
       {questions?.map((_, index) => (
@@ -112,7 +109,9 @@ const CreateQuestionInterview = () => {
                         </FormLabel>
                         <Select
                           {...form.register(`questions.${index}.timeRead`)}
-                          {...field}
+                          // {...field}
+                          onValueChange={field.onChange}
+                          defaultValue={field.value!}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -140,7 +139,9 @@ const CreateQuestionInterview = () => {
                           CANDIDATE MAX ANSWER LENGTH PER QUESTION
                         </FormLabel>
                         <Select
-                          {...field}
+                          // {...field}
+                          onValueChange={field.onChange}
+                          defaultValue={field.value!}
                           {...form.register(`questions.${index}.timeAnswered`)}
                         >
                           <FormControl>

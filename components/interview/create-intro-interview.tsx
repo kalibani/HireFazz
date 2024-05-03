@@ -48,7 +48,7 @@ const CreateIntroInterview = () => {
       durationTimeRead: Number(durationTimeRead),
     });
   }
-
+  console.log({ introVideoUrl });
   return (
     <div className="flex  gap-x-4 rounded-md  bg-white p-4">
       <VideoRecord videoUrl={introVideoUrl} />

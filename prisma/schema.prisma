@@ -143,7 +143,6 @@ model InterviewTemplate {
 
   organization   Organization  @relation(fields: [organizationId], references: [id])
   organizationId String
-  // InvitedUser    InvitedUser[]
 }
 
 enum invitedUserStatus {

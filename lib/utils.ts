@@ -111,17 +111,30 @@ export const blobToFile = (blob: Blob, fileName: string): File => {
   const file = new File([blob], fileName, { type: blob.type });
   return file;
 };
-
+export const blobToFormData = (
+  blob: Blob,
+  filename: string,
+): Promise<FormData> => {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append('file', blob, filename);
+    if (formData.getAll('file').length === 0) {
+      reject('Blob could not be appended to FormData');
+    } else {
+      resolve(formData);
+    }
+  });
+};
 export const separateThousand = (value: string, separator: string = '.') => {
   // remove non digit char
-  const removeNonDigit = value.replace(/\D/g, '')
+  const removeNonDigit = value.replace(/\D/g, '');
   // remove existing separator, so can correctly return next separator
-  const removedSeparator = removeNonDigit.split(separator).join('')
+  const removedSeparator = removeNonDigit.split(separator).join('');
 
   // add separator
-  return removedSeparator.replace(/\B(?=(\d{3})+(?!\d))/g, separator)
-}
+  return removedSeparator.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+};
 
 export const removeNonDigit = (value: string) => {
-  return value.replace(/\D/g, '')
-}
+  return value.replace(/\D/g, '');
+};
