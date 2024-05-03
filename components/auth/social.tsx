@@ -9,13 +9,12 @@ import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { orgList } from '@/lib/actions/user/orgList';
 
 const Social = () => {
-  const { replace } = useRouter();
+  const { push } = useRouter();
   const googleSignin = async () => {
     signIn('google').then(async () => {
       const orgs = await orgList();
-      console.log({ orgs });
       const orgId = orgs && orgs[0].organization.id;
-      replace(`/${orgId}` + DEFAULT_LOGIN_REDIRECT);
+      push(`/${orgId}` + DEFAULT_LOGIN_REDIRECT);
     });
   };
 

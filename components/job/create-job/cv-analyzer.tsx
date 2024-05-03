@@ -38,9 +38,8 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { PayloadAddJob } from '@/lib/actions/job/createJob';
 import { z } from 'zod';
-import { MessageCircleQuestion } from 'lucide-react';
 import { useGetOrgId } from '@/hooks/common/use-get-org';
-import MultiSelect from '@/components/share/multi-select';
+
 import {
   HoverCard,
   HoverCardContent,
@@ -267,8 +266,9 @@ const CVAnalyzer: FC = (): ReactElement => {
 
                     <Button
                       type="button"
-                      onClick={() => {setTags([...tags, 'Sallary Expectation'])}
-                      } 
+                      onClick={() => {
+                        setTags([...tags, 'Sallary Expectation']);
+                      }}
                       className="w-fit bg-slate-300 text-black"
                     >
                       + Sallary Expectation
