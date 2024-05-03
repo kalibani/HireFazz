@@ -10,6 +10,7 @@ import { MoreVertical } from 'lucide-react'
 import Link from 'next/link';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import Pagination from '../ui/pagination';
+import { PER_PAGE_ITEMS } from '@/constant';
 
 export const TableJob = () => {
   const orgId = '123'
@@ -64,9 +65,7 @@ export const TableJob = () => {
 
             {/* MODIFY OPTIONS LATER WHEN READY FROM DESIGN */}
             <SelectContent>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
+              {PER_PAGE_ITEMS.map((pageItem) => <SelectItem key={pageItem} value={pageItem}>{pageItem}</SelectItem>)}
             </SelectContent>
           </Select>
 

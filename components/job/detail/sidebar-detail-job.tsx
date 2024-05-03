@@ -16,7 +16,7 @@ export const SidebarDetailJob: FC<TSidebarDetailJob> = (
 ): ReactElement => {
   return (
     <aside className="mt-3 flex h-full min-h-screen w-[220px] flex-col gap-5 rounded-lg bg-white py-6">
-      <h2 className="font-semibold text-lg px-2">List Candidate</h2>
+      <h2 className="font-semibold text-lg px-3">List Candidate</h2>
       <ul className="flex flex-col gap-y-3">
         {props.items.map((item, key) => (
           <li
@@ -28,13 +28,19 @@ export const SidebarDetailJob: FC<TSidebarDetailJob> = (
             )}
             key={key}
           >
-            <div className="flex gap-x-2">
-              <span className={item.isActive ? "text-white" : "text-rose-600"}>{item.icon}</span>
+            <div className="flex gap-x-3">
+              <span className={clsx(
+                'size-4',
+                {
+                  'text-white': item.isActive,
+                  'text-rose-600': !item.isActive
+                }
+              )}>{item.icon}</span>
               <span className={clsx(
                 "text-sm font-normal group-hover:font-semibold",
                 {
                   'text-white': item.isActive,
-                  'font-semibold': item.isActive
+                  'font-medium': item.isActive
                 }
               )}>
                 {item.text}
