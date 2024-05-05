@@ -3,7 +3,7 @@ import { url } from 'inspector';
 import { create } from 'zustand';
 
 interface questionState {
-  videoUrl?: File | null;
+  videoUrl?: Blob | null;
   question: string;
   timeRead?: number;
   timeAnswered?: number;
@@ -14,11 +14,12 @@ interface RecorderState {
   durationTimeRead: number;
   durationTimeAnswered: number;
   questionRetake?: number;
-  introVideoUrl?: FormData | null;
-  farewellVideoUrl?: FormData | null;
+  introVideoUrl?: Blob | null;
+  farewellVideoUrl?: Blob | null;
   farewellTitle?: string;
   farewellDescription?: string;
   questions: questionState[];
+  isLoading: boolean;
   setTitle: (title: string, type: 'title' | 'farewell' | 'desc') => void;
   setFormFirst: (data: {
     title: string;
@@ -26,11 +27,10 @@ interface RecorderState {
     durationTimeAnswered?: number;
     questionRetake?: number;
   }) => void;
-  setVideoUrl: (url: FormData | null, type: 'intro' | 'farewell') => void;
+  setVideoUrl: (url: Blob | null, type: 'intro' | 'farewell') => void;
   setQuestion: (data: questionState[]) => void;
   removeQuestion: (index: number) => void;
   addQuestion: () => void;
-  urlAny: any;
   setFormData: (data: any) => void;
 }
 
@@ -43,6 +43,7 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   farewellVideoUrl: null,
   farewellDescription: '',
   farewellTitle: '',
+  isLoading: false,
   questions: [
     {
       videoUrl: null,
@@ -66,7 +67,13 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   setFormFirst: (data) => {
     const { durationTimeAnswered, durationTimeRead, questionRetake, title } =
       data;
-    set({ title, durationTimeAnswered, durationTimeRead, questionRetake });
+    set({
+      title,
+      durationTimeAnswered,
+      durationTimeRead,
+      questionRetake,
+      isLoading: true,
+    });
   },
   setVideoUrl: (url, type) => {
     if (type === 'intro') {
@@ -95,6 +102,5 @@ export const useRecorderStore = create<RecorderState>((set) => ({
     })),
   setFormData: async (data) => {
     const convrt = await blobToFormData(data, 'intro');
-    set({ urlAny: convrt });
   },
 }));

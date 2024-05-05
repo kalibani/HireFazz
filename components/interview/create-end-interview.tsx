@@ -7,6 +7,7 @@ import { useRecorderStore } from '@/zustand/recordedStore';
 import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { createTemplateInterview } from '@/lib/actions/interview/createTemplateInterview';
+import VideoRecord from './video-record';
 
 const CreateEndInterview = () => {
   const { orgId } = useParams();
@@ -16,6 +17,7 @@ const CreateEndInterview = () => {
     durationTimeRead,
     introVideoUrl,
     questions,
+    farewellVideoUrl,
   } = useRecorderStore();
   const { mutate } = useMutation({ mutationFn: createTemplateInterview });
 
@@ -48,6 +50,8 @@ const CreateEndInterview = () => {
         </div>
         <PopupRecord title="Interview Intro" triggerName="Add record video" />
       </div>
+      <VideoRecord videoUrl={farewellVideoUrl} />
+
       <div className="mt-8 flex w-full items-center justify-between">
         <Button>Go Back</Button>
         <Button onClick={submitInterview}>Submit</Button>

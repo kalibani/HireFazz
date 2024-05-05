@@ -10,8 +10,6 @@ import {
   blobToFile,
   blobToFormData,
 } from '@/lib/utils';
-import { utapi } from '@/lib/upload-thing-server';
-import file from 'react-player/file';
 
 const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
   const webcamRef = useRef<any>(null);
@@ -54,7 +52,7 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
 
     const formTheData = await blobToFormData(blob, 'intro');
     // const files = formTheData.getAll('file');
-    setVideoUrl(formTheData, isEnd ? 'farewell' : 'intro');
+    setVideoUrl(blob, isEnd ? 'farewell' : 'intro');
 
     // setRecordedChunks([]);
   }, [recordedChunks]);

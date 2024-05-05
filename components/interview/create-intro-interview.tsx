@@ -24,7 +24,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import VideoRecord from './video-record';
-import {uploadVideo} from '@/lib/actions/interview/uploadVideo';
+import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 import { useMutation } from '@tanstack/react-query';
 
 const FormSchema = z.object({
@@ -34,7 +34,7 @@ const FormSchema = z.object({
 });
 
 const CreateIntroInterview = () => {
-  const { setFormFirst, introVideoUrl, urlAny } = useRecorderStore();
+  const { setFormFirst, introVideoUrl } = useRecorderStore();
   const { mutate } = useMutation({
     mutationKey: ['video-intro'],
     mutationFn: uploadVideo,
@@ -52,17 +52,16 @@ const CreateIntroInterview = () => {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const { title, durationTimeAnswered, durationTimeRead } = data;
-    // setFormFirst({
-    //   title,
-    //   durationTimeAnswered: Number(durationTimeAnswered),
-    //   durationTimeRead: Number(durationTimeRead),
-    // });
-    startTransition(() => {
-      console.log(urlAny, introVideoUrl, '<<<<< URL ANY');
-      {
-        introVideoUrl && mutate(introVideoUrl);
-      }
+    setFormFirst({
+      title,
+      durationTimeAnswered: Number(durationTimeAnswered),
+      durationTimeRead: Number(durationTimeRead),
     });
+    // startTransition(() => {
+    //   {
+    //     introVideoUrl && mutate(introVideoUrl);
+    //   }
+    // });
   }
   // console.log({ introVideoUrl });
   return (
