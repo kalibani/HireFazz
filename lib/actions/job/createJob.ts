@@ -5,15 +5,6 @@ import z from 'zod';
 import { uploadCv } from '../cv/uploadCv';
 import { analyzeCv } from '../cv/analyzeCv';
 
-import { checkValidJSON } from '@/lib/utils';
-import { formSchemaCreateJob } from '@/lib/validators/createJob';
-import {
-  actionDescription,
-  actionRequirement,
-  actionResponsibility,
-  actionSkill,
-} from '../generate/jobDescription';
-
 export const PayloadAddJob = z.object({
   jobName: z.string(),
   location: z.string(),
@@ -89,67 +80,5 @@ export const createJob = async (
     return job;
   } catch (error) {
     return errorHandler(error);
-  }
-};
-
-export const genereteJobDescription = async (
-  data: z.infer<typeof formSchemaCreateJob>,
-) => {
-  try {
-    const result: any = await actionDescription(JSON.stringify(data));
-
-    const isValidJSON = checkValidJSON(result);
-    if (isValidJSON) {
-      const res = JSON.parse(result);
-      return res;
-    }
-  } catch (error) {
-    return { error: 'something went wrong' };
-  }
-};
-
-export const generateSkill = async (title: string) => {
-  try {
-    const result: any = await actionSkill(title);
-    const isValidJSON = checkValidJSON(result);
-    if (isValidJSON) {
-      const res = JSON.parse(result);
-      return res;
-    }
-  } catch (error) {
-    return { error: 'something went wrong' };
-  }
-};
-
-export const generateResponsibilities = async (
-  data: z.infer<typeof formSchemaCreateJob>,
-) => {
-  const { title, experiences, workModel } = data;
-  try {
-    const result: any = await actionResponsibility(
-      JSON.stringify({ title, experiences, workModel }),
-    );
-
-    const isValidJSON = checkValidJSON(result);
-    if (isValidJSON) {
-      const res = JSON.parse(result);
-      return res;
-    }
-  } catch (error) {
-    return { error: 'something went wrong' };
-  }
-};
-export const generateRequirement = async (
-  data: z.infer<typeof formSchemaCreateJob>,
-) => {
-  try {
-    const result: any = await actionRequirement(JSON.stringify(data));
-    const isValidJSON = checkValidJSON(result);
-    if (isValidJSON) {
-      const res = JSON.parse(result);
-      return res;
-    }
-  } catch (error) {
-    return { error: 'something went wrong' };
   }
 };

@@ -4,14 +4,19 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '../ui/button';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import Webcam from 'react-webcam';
-import { videoConstraints, audioConstraints, blobToFile } from '@/lib/utils';
+import {
+  videoConstraints,
+  audioConstraints,
+  blobToFile,
+  blobToFormData,
+} from '@/lib/utils';
 
 const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
   const webcamRef = useRef<any>(null);
   const mediaRecorderRef = useRef<any>(null);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
-  const { setVideoUrl, title } = useRecorderStore();
+  const { setVideoUrl, title, setFormData } = useRecorderStore();
 
   const handleDataAvailable = useCallback(
     ({ data }: any) => {
@@ -24,7 +29,7 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
 
   const handleStartCaptureClick = useCallback(() => {
     setCapturing(true);
-    mediaRecorderRef.current = new MediaRecorder(webcamRef.current?.stream, {
+    mediaRecorderRef.current = new MediaRecorder(webcamRef?.current?.stream, {
       mimeType: 'video/webm',
     });
     mediaRecorderRef.current.addEventListener(
@@ -39,26 +44,34 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
     setCapturing(false);
   }, [mediaRecorderRef, setCapturing]);
 
-  const handleDownload = useCallback(() => {
-    if (recordedChunks.length) {
-      const blob = new Blob(recordedChunks, {
-        type: 'video/webm',
-      });
+  const handleDownload = useCallback(async () => {
+    const blob = new Blob(recordedChunks, {
+      type: 'video/webm',
+    });
+    // const file = blobToFile(blob, `${title}-video.webm`);
 
-      setRecordedChunks([]);
-    }
+    const formTheData = await blobToFormData(blob, 'intro');
+    // const files = formTheData.getAll('file');
+    setVideoUrl(blob, isEnd ? 'farewell' : 'intro');
+
+    // setRecordedChunks([]);
   }, [recordedChunks]);
 
   useEffect(() => {
     if (recordedChunks.length) {
-      const blob = new Blob(recordedChunks, {
-        type: 'video/webm',
-      });
-      const url = URL.createObjectURL(blob);
-      const file = blobToFile(blob, `${title}-video.webm`);
+      handleDownload();
+      // const blob = new Blob(recordedChunks, {
+      //   type: 'video/webm',
+      // });
+      // const url = URL.createObjectURL(blob);
+      // const file = blobToFile(blob, `${title}-video.webm`);
+      // const formTheData = blobToFormData(blob, 'intro');
       // setRecordedFile(file);
-      setVideoUrl(file, isEnd ? 'farewell' : 'intro');
-      setRecordedChunks([]);
+      // setVideoUrl(formTheData, isEnd ? 'farewell' : 'intro');
+      // setFormData(blob);
+      // setRecordedChunks([]);
+      // upload(formTheData);
+      // console.log({ file, blob, formTheData }, '<<< file');
     }
   }, [recordedChunks]);
 

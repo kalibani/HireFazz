@@ -45,15 +45,10 @@ export const {
   },
   callbacks: {
     async signIn({ user, account, credentials, profile }) {
-      // Allow OAuth without email verification
       if (account?.provider !== 'credentials' && user.name) {
-        await createOrganizationGoogle(user.id, user.name);
+        await createOrganizationGoogle(user);
         return true;
       }
-      // Prevent sign in without email verification
-      // const existingUser = await getUserById(user.id!);
-      // if (!existingUser?.emailVerified) return false;
-
       return true;
     },
 
@@ -75,7 +70,6 @@ export const {
 
       return token;
     },
-    
   },
 
   ...authConfig,

@@ -108,23 +108,44 @@ const createNewUserAndOrganization = async (
     },
   });
 };
-export const createOrganizationGoogle = async (
-  userId: string | undefined,
-  name: string | undefined,
-) => {
+export const createOrganizationGoogle = async (user: {
+  email: string;
+  id: string;
+  name: string;
+}) => {
   try {
-    if (name && userId) {
-      const result = await prismadb.organization.create({
-        data: {
-          name,
-          packageType: PACKAGE_TYPE.BASIC,
-          limit: 100,
-          used: 0,
-          agreeTermAndCondition: true,
-          userOrganization: { create: { userId, roleId: 'OWNER' } },
+    if (user.name && user.id) {
+      const userdb = await prismadb.user.findUnique({
+        where: {
+          email: user.email,
+        },
+        select: {
+          userOrganization: true,
+          id: true,
+          name: true,
         },
       });
-      return result;
+      if (!userdb) {
+        return userdb;
+      }
+      const organization = userdb.userOrganization.find(
+        (el) => el.roleId === 'OWNER',
+      );
+      if (!organization) {
+        const result = await prismadb.organization.create({
+          data: {
+            name: userdb.name!,
+            packageType: PACKAGE_TYPE.BASIC,
+            limit: 100,
+            used: 0,
+            agreeTermAndCondition: true,
+            userOrganization: {
+              create: { userId: userdb.id, roleId: 'OWNER' },
+            },
+          },
+        });
+        return result;
+      }
     }
   } catch (error: unknown) {
     handleAuthError(error);

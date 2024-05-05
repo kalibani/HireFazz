@@ -10,8 +10,11 @@ import { MoreVertical } from 'lucide-react'
 import Link from 'next/link';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import Pagination from '../ui/pagination';
+import { PER_PAGE_ITEMS } from '@/constant';
 
 export const TableJob = () => {
+  const orgId = '123'
+  const jobId = '1'
   return (
     <div className="mt-4">
       <Table className="border border-solid border-slate-200">
@@ -42,7 +45,7 @@ export const TableJob = () => {
             <TableCell className="text-center text-green-500">Active</TableCell>
             <TableCell className="flex gap-2 items-center">
               {/* CHANGE HREF TO DETAIL JOB LATER */}
-              <Link href="/job" className="text-red-500 underline font-medium">
+              <Link href={`/${orgId}/job/${jobId}/all-applicant`} className="text-red-500 underline font-medium">
                 View Job
               </Link>
 
@@ -62,9 +65,7 @@ export const TableJob = () => {
 
             {/* MODIFY OPTIONS LATER WHEN READY FROM DESIGN */}
             <SelectContent>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
+              {PER_PAGE_ITEMS.map((pageItem) => <SelectItem key={pageItem} value={pageItem}>{pageItem}</SelectItem>)}
             </SelectContent>
           </Select>
 

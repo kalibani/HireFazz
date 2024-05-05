@@ -19,11 +19,9 @@ import { CardWrapper } from '@/components/auth';
 import { Button } from '@/components/ui/button';
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
-import { Loader2 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { userRegisterAction } from '@/lib/actions/auth';
 import { useRouter } from 'next/navigation';
-import { error } from 'winston';
 
 export const RegisterForm = () => {
   const { replace } = useRouter();
@@ -33,16 +31,15 @@ export const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
 
   const { mutate } = useMutation(userRegisterAction, {
-    onSuccess: (data: any) => {
-      if (data.error) {
+    onSuccess: async (data: any) => {
+      if (data?.error) {
         setError(data?.error);
-      }else{
-        replace('/dashboard');
+      } else {
+        replace(`/redirect`);
       }
     },
-    onError:({error})=>{
-        setError(error)
-
+    onError: ({ error }) => {
+      setError(error);
     },
   });
 

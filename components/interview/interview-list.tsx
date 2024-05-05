@@ -4,8 +4,10 @@ import React from 'react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { useRecorderStore } from '@/zustand/recordedStore';
+import { useParams } from 'next/navigation';
 
 const InterviewList = () => {
+  const { orgId } = useParams();
   const {
     setVideoUrl,
     title,
@@ -17,7 +19,7 @@ const InterviewList = () => {
 
   return (
     <div className="mb-8 flex flex-col  items-center justify-center rounded-md bg-white  p-4">
-      <Link href="/video/create">
+      <Link href={`/${orgId}/video/create`}>
         <Button>Create Interview</Button>
       </Link>
       <div className="my-4 w-full rounded-lg border p-4 shadow">

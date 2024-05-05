@@ -11,6 +11,8 @@ import insight from '@/public/image/insight.png';
 
 export const MAX_FREE_COUNTS = 100;
 
+export const PER_PAGE_ITEMS = ['10', '20', '50', '100']
+
 export const PLANS = [
   {
     name: 'Basic',
