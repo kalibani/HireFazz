@@ -1,32 +1,37 @@
+import { blobToFormData } from '@/lib/utils';
+import { url } from 'inspector';
 import { create } from 'zustand';
 
 interface questionState {
-  videoUrl: File | null;
+  videoUrl?: Blob | null;
   question: string;
   timeRead?: number;
   timeAnswered?: number;
+  title: string;
 }
 interface RecorderState {
   title: string;
   durationTimeRead: number;
   durationTimeAnswered: number;
   questionRetake?: number;
-  introVideoUrl?: File | null;
-  farewellVideoUrl?: File | null;
+  introVideoUrl?: Blob | null;
+  farewellVideoUrl?: Blob | null;
   farewellTitle?: string;
   farewellDescription?: string;
   questions: questionState[];
+  isLoading: boolean;
   setTitle: (title: string, type: 'title' | 'farewell' | 'desc') => void;
   setFormFirst: (data: {
     title: string;
-    durationTimeRead: number;
-    durationTimeAnswered: number;
+    durationTimeRead?: number;
+    durationTimeAnswered?: number;
     questionRetake?: number;
   }) => void;
-  setVideoUrl: (url: File, type: 'intro' | 'farewell') => void;
-  setQuestion: (data: questionState) => void;
+  setVideoUrl: (url: Blob | null, type: 'intro' | 'farewell') => void;
+  setQuestion: (data: questionState[]) => void;
   removeQuestion: (index: number) => void;
   addQuestion: () => void;
+  setFormData: (data: any) => void;
 }
 
 export const useRecorderStore = create<RecorderState>((set) => ({
@@ -38,7 +43,17 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   farewellVideoUrl: null,
   farewellDescription: '',
   farewellTitle: '',
-  questions: [],
+  isLoading: false,
+  questions: [
+    {
+      videoUrl: null,
+      title: '',
+      question: '',
+      timeRead: 0,
+      timeAnswered: 0,
+    },
+  ],
+  urlAny: new FormData(),
 
   setTitle: (title, type) => {
     if (type === 'title') {
@@ -52,7 +67,13 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   setFormFirst: (data) => {
     const { durationTimeAnswered, durationTimeRead, questionRetake, title } =
       data;
-    set({ title, durationTimeAnswered, durationTimeRead, questionRetake });
+    set({
+      title,
+      durationTimeAnswered,
+      durationTimeRead,
+      questionRetake,
+      isLoading: true,
+    });
   },
   setVideoUrl: (url, type) => {
     if (type === 'intro') {
@@ -61,14 +82,25 @@ export const useRecorderStore = create<RecorderState>((set) => ({
       set({ farewellVideoUrl: url });
     }
   },
-  setQuestion: (data) =>
-    set((state) => ({ questions: [data, ...state.questions] })),
+  setQuestion: (data) => set((state) => ({ questions: data })),
   removeQuestion: (index) =>
     set((state) => ({
       questions: state.questions.filter((_, i) => i !== index),
     })),
   addQuestion: () =>
     set((state) => ({
-      questions: [...state.questions, { videoUrl: null, question: '' }],
+      questions: [
+        ...state.questions,
+        {
+          videoUrl: null,
+          question: '',
+          title: '',
+          timeAnswered: 0,
+          timeRead: 0,
+        },
+      ],
     })),
+  setFormData: async (data) => {
+    const convrt = await blobToFormData(data, 'intro');
+  },
 }));

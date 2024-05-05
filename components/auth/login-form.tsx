@@ -20,15 +20,13 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
-import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { userLoginAction } from '@/lib/actions/auth';
-import { orgList } from '@/lib/actions/user/orgList';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
+  const { replace } = useRouter();
   const searchParams = useSearchParams();
-
-  const { push } = useRouter();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
       ? 'Email already in use with different provider!'
@@ -39,7 +37,7 @@ const LoginForm = () => {
   const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
 
-  const { mutate, data } = useMutation({
+  const { mutate } = useMutation({
     mutationKey: ['signIn'],
     mutationFn: (payload: z.infer<typeof LoginSchema>) =>
       userLoginAction(payload),
@@ -47,9 +45,7 @@ const LoginForm = () => {
       if (data?.error) {
         setError(data?.error);
       } else {
-        const orgs = (await orgList()) || [];
-        const orgId = orgs[0].organization.id;
-        push(`/${orgId}/dashboard`);
+        replace(`/redirect`);
       }
     },
     onError: ({ error }) => {

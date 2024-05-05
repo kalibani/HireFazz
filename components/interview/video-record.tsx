@@ -1,10 +1,10 @@
 'use client';
 
-import { Video } from 'lucide-react';
 import React from 'react';
 import PopupRecord from './popup-record';
+import { Video } from 'lucide-react';
 
-const VideoRecord = ({ videoUrl }: { videoUrl: File | null | undefined }) => {
+const VideoRecord = ({ videoUrl }: { videoUrl: Blob | null | undefined }) => {
   return (
     <div className="flex w-1/2 flex-col items-center justify-center overflow-hidden rounded-md border">
       {!videoUrl && (

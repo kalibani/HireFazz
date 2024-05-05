@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { startTransition } from 'react';
 import { Input } from '@/components/ui/input';
 
 import {
@@ -24,6 +24,8 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import VideoRecord from './video-record';
+import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
+import { useMutation } from '@tanstack/react-query';
 
 const FormSchema = z.object({
   durationTimeRead: z.string(),
@@ -33,6 +35,16 @@ const FormSchema = z.object({
 
 const CreateIntroInterview = () => {
   const { setFormFirst, introVideoUrl } = useRecorderStore();
+  const { mutate } = useMutation({
+    mutationKey: ['video-intro'],
+    mutationFn: uploadVideo,
+    onSuccess: (data: any) => {
+      console.log(data, '?');
+    },
+    onError: ({ error }) => {
+      console.log(error, '?');
+    },
+  });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -45,8 +57,13 @@ const CreateIntroInterview = () => {
       durationTimeAnswered: Number(durationTimeAnswered),
       durationTimeRead: Number(durationTimeRead),
     });
+    // startTransition(() => {
+    //   {
+    //     introVideoUrl && mutate(introVideoUrl);
+    //   }
+    // });
   }
-
+  // console.log({ introVideoUrl });
   return (
     <div className="flex  gap-x-4 rounded-md  bg-white p-4">
       <VideoRecord videoUrl={introVideoUrl} />
