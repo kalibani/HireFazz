@@ -1,3 +1,5 @@
+'use server';
+
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 import z from 'zod';
@@ -11,7 +13,7 @@ const Question = z.object({
   videoUrl: z.string(),
 });
 
-const CreateTemplateInterview = z.object({
+export const CreateTemplateInterview = z.object({
   organizationId: z.string(),
   title: z.string(),
   durationTimeRead: z.number(),
@@ -28,6 +30,10 @@ export const createTemplateInterview = async (
 ) => {
   try {
     const safePayload = CreateTemplateInterview.parse(payload);
+    if (!safePayload) {
+      return { error: 'please recheck the payload' + { payload } };
+    }
+    console.log(safePayload, '<<<<< action safpayload');
     const data = await prismadb.interviewTemplate.create({
       data: {
         ...safePayload,

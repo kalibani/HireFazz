@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import UploadButton from '@/components/upload-button';
 
 import EmptyPage from '@/components/empty';
-import LoaderGeneral from '@/components/loader';
+import LoaderGeneral from '@/components/share/loader';
 import { useProModal } from '@/hooks/use-pro-modal';
 import { useUser } from '@/hooks/use-user';
 
@@ -49,7 +49,7 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
 
   const isMoreThanMatchLimit = (
     userPercentage: string,
-    matchedPercentage: string
+    matchedPercentage: string,
   ) => {
     return Number(matchedPercentage) >= Number(userPercentage);
   };
@@ -81,7 +81,7 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
       />
       <div className="p-4 lg:p-8">
         <div>
-          <div className="flex items-center justify-between w-full h-16 gap-2 p-4 px-3 border rounded-lg md:px-4 focus-within:shadow-sm">
+          <div className="flex h-16 w-full items-center justify-between gap-2 rounded-lg border p-4 px-3 focus-within:shadow-sm md:px-4">
             <h1 className="mb-3text-gray-900">Start Screening</h1>
             {isQuotaLimited || isFreeTrialLimited ? (
               <Button onClick={handleUpgrade}>Upload CV</Button>
@@ -95,7 +95,7 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
         </div>
 
         {filesMemo && (filesMemo?.length > 0 || !!searchParams?.q) && (
-          <div className="flex lg:flex-row flex-col lg:justify-between items-center my-4 gap-y-4 mb-8">
+          <div className="my-4 mb-8 flex flex-col items-center gap-y-4 lg:flex-row lg:justify-between">
             <SearchInput searchParams={searchParams} />
             <p>
               Automatically Sorted by <b>Highest Matched</b>
@@ -118,14 +118,14 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
               onDelete={(id) => deleteFile(id)}
             />
           ) : isLoading ? (
-            <div className="flex items-start justify-center w-full p-8 rounded-lg bg-muted mt-8">
+            <div className="mt-8 flex w-full items-start justify-center rounded-lg bg-muted p-8">
               <LoaderGeneral />
             </div>
           ) : (
             <EmptyPage label="Pretty empty around here. Let's upload your first document." />
           )}
           {hasNextPage && !isLoading && (
-            <div className="flex justify-center mt-4">
+            <div className="mt-4 flex justify-center">
               <Button
                 variant="outline"
                 className="text-blue-400"
@@ -139,8 +139,8 @@ const CVAnalyzerPage = ({ searchParams }: SearchParamsProps) => {
           )}
           {/* @ts-ignore */}
           {isLoading && !!filesMemo.length && (
-            <div className="flex justify-center mt-4">
-              <Loader2 className="mr-4 text-blue-500 animate-spin" />
+            <div className="mt-4 flex justify-center">
+              <Loader2 className="mr-4 animate-spin text-blue-500" />
             </div>
           )}
         </div>
