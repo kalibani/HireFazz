@@ -162,8 +162,6 @@ const CVAnalyzer: FC = (): ReactElement => {
 
   const { orgId } = useParams();
 
-  console.log(form.watch('analyzeCv'));
-
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
 
