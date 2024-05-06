@@ -21,7 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useState, type FC, type ReactElement, type SVGProps } from 'react';
+import {
+  useEffect,
+  useState,
+  type FC,
+  type ReactElement,
+  type SVGProps,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import TrackingStep from './tracking-step';
 import { useStore } from 'zustand';
@@ -46,6 +52,10 @@ import { TagInput } from '@/components/share/multi-tag-input';
 import { useParams } from 'next/navigation';
 import { createJob } from '@/lib/actions/job/create-job-server';
 import { formatDate } from 'date-fns';
+
+import { analyzeCv } from '@/lib/actions/cv/analyzeCv';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -136,10 +146,23 @@ const IconQuestionMark: FC<SVGProps<SVGSVGElement>> = (props): ReactElement => (
   </svg>
 );
 
+const schema = z.object({
+  customCriteria: z.string(),
+  analyzeCv: z.boolean().default(true),
+  justUpload: z.boolean().default(false),
+  keyFocus: z.array(z.string()).default([]),
+  language: z.string(),
+  matchPercentage: z.string(),
+});
+
 const CVAnalyzer: FC = (): ReactElement => {
-  const form = useForm();
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+  });
 
   const { orgId } = useParams();
+
+  console.log(form.watch('analyzeCv'));
 
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
@@ -147,7 +170,7 @@ const CVAnalyzer: FC = (): ReactElement => {
   const createJobHandle = async () => {
     if (orgId) {
       const createPayload: z.infer<typeof PayloadAddJob> = {
-        analyzeCv: false,
+        analyzeCv: form.watch('analyzeCv'),
         jobName: dataCreateJob.title,
         location: dataCreateJob.location,
         salaryCurrency: dataCreateJob.currency,
@@ -176,7 +199,24 @@ const CVAnalyzer: FC = (): ReactElement => {
         </div>
         <Form {...form}>
           <form className="flex w-1/2 flex-col items-center gap-y-4">
-            <div className="flex items-center gap-x-4">
+            <div className="flex w-full items-center gap-x-4">
+              <FormField
+                control={form.control}
+                name="analyzeCv"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={() => {
+                          field.onChange(!field.value);
+                          form.setValue('justUpload', field.value);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               <div className="flex w-full items-center justify-between rounded-xl bg-primary px-4 py-6">
                 <div className="flex gap-x-4">
                   <IconRobot />
@@ -393,13 +433,31 @@ const CVAnalyzer: FC = (): ReactElement => {
                 </div>
               </>
             )}
-
-            <div className="flex w-full items-center justify-between rounded-xl border border-slate-400 bg-white px-4 py-6">
-              <div className="flex items-center gap-x-4">
-                <IconFolderUp />
-                <p className="text-sm text-black">
-                  or <strong>Just Upload</strong>
-                </p>
+            <div className="flex w-full items-center gap-x-4">
+              <FormField
+                control={form.control}
+                name="justUpload"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={() => {
+                          field.onChange(!field.value);
+                          form.setValue('analyzeCv', field.value);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <div className="flex w-full items-center justify-between rounded-xl border border-slate-400 bg-white px-4 py-6">
+                <div className="flex items-center gap-x-4">
+                  <IconFolderUp />
+                  <p className="text-sm text-black">
+                    or <strong>Just Upload</strong>
+                  </p>
+                </div>
               </div>
             </div>
           </form>
