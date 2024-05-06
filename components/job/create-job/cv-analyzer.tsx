@@ -14,7 +14,6 @@ import {
   FormItem,
   FormLabel,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -36,7 +35,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
-import { PayloadAddJob, createJob } from '@/lib/actions/job/createJob';
+import { PayloadAddJob } from '@/lib/actions/job/createJob';
 import { z } from 'zod';
 import {
   HoverCard,
@@ -45,8 +44,8 @@ import {
 } from '@/components/ui/hover-card';
 import { TagInput } from '@/components/share/multi-tag-input';
 import { useParams } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
-import { useCreateJob } from '@/hooks/job/use-create-job';
+import { createJob } from '@/lib/actions/job/create-job-server';
+import { formatDate } from 'date-fns';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -145,8 +144,6 @@ const CVAnalyzer: FC = (): ReactElement => {
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
 
-  const { mutate } = useCreateJob();
-
   const createJobHandle = async () => {
     if (orgId) {
       const createPayload: z.infer<typeof PayloadAddJob> = {
@@ -162,16 +159,11 @@ const CVAnalyzer: FC = (): ReactElement => {
         salaryRangeFrom: Number(dataCreateJob.fromNominal),
         orgId: orgId as string,
       };
-      mutate({
-        payload: createPayload,
-        cv: formData,
-      });
+      createJob(createPayload, formData);
     }
   };
 
   const customCriteria = form.watch('customCriteria');
-
-  const keyFocus = form.watch('keyFocus');
 
   const [tags, setTags] = useState<string[]>([]);
 
@@ -420,7 +412,13 @@ const CVAnalyzer: FC = (): ReactElement => {
             Previous
           </Button>
           <DialogTrigger asChild>
-            <Button onClick={createJobHandle}>Create</Button>
+            <Button
+              onClick={() => {
+                createJobHandle();
+              }}
+            >
+              Create
+            </Button>
           </DialogTrigger>
         </div>
         <DialogContent className="flex min-h-[96%] min-w-[96%] flex-col items-center justify-between p-0">
@@ -454,36 +452,38 @@ const CVAnalyzer: FC = (): ReactElement => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium">
-                      {dataCreateJob?.title}
-                    </TableCell>
-                    <TableCell className="text-center text-slate-400">
-                      143
-                    </TableCell>
-                    <TableCell className="text-center text-slate-400">
-                      20 Mar, 2024
-                    </TableCell>
-                    <TableCell className="text-center text-slate-400">
-                      10
-                    </TableCell>
-                    <TableCell className="text-center text-slate-400">
-                      <div className="flex w-full items-center gap-x-4">
-                        <Progress value={20} className="h-3 w-full" />
-                        <span className="w-full text-xs font-semibold text-slate-400">
-                          20% Uploading
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center text-green-500">
-                      <div className="flex w-full items-center gap-x-4">
-                        <Progress value={20} className="h-3 w-full" />
-                        <span className="w-full text-xs font-semibold text-slate-400">
-                          20% Uploading
-                        </span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  {files.map((file, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">
+                        {dataCreateJob?.title}
+                      </TableCell>
+                      <TableCell className="text-left text-slate-400">
+                        {file.file.name}
+                      </TableCell>
+                      <TableCell className="text-left text-slate-400">
+                        {dataCreateJob?.title}
+                      </TableCell>
+                      <TableCell className="text-left text-slate-400">
+                        {formatDate(file?.file?.lastModified, 'dd MMM, yyyy')}
+                      </TableCell>
+                      <TableCell className="text-left text-slate-400">
+                        <div className="flex w-full items-center gap-x-4">
+                          <Progress value={20} className="h-3 w-full" />
+                          <span className="w-full text-xs font-semibold text-slate-400">
+                            20% Uploading
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-left text-green-500">
+                        <div className="flex w-full items-center gap-x-4">
+                          <Progress value={20} className="h-3 w-full" />
+                          <span className="w-full text-xs font-semibold text-slate-400">
+                            20% Uploading
+                          </span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>

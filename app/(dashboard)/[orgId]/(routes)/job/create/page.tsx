@@ -1,3 +1,4 @@
+'use server';
 import CreateStep from '@/components/job/create-job/create-step';
 import { SectionWrap } from '@/components/share';
 import { NextPage } from 'next';
