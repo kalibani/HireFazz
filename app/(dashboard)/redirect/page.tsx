@@ -1,5 +1,5 @@
 'use client';
-import LoaderGeneral from '@/components/loader';
+import LoaderGeneral from '@/components/share/loader';
 import { orgList } from '@/lib/actions/user/orgList';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
