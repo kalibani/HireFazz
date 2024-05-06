@@ -14,7 +14,6 @@ const Page = async ({ params }: ParamsProps) => {
   const interviews = (await getTemplateInterview({
     organizationId: params.orgId,
   })) as Interview[];
-  console.log(interviews, '<<<<<');
   return (
     <SectionWrap>
       <div className="mb-8 flex flex-col items-center justify-center rounded-md bg-white p-4">
