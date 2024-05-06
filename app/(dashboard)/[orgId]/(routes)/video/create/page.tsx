@@ -3,15 +3,15 @@
 import CreateEndInterview from '@/components/interview/create-end-interview';
 import CreateIntroInterview from '@/components/interview/create-intro-interview';
 import CreateQuestionInterview from '@/components/interview/create-question-interview';
-import { SectionWrap } from '@/components/share';
+import SectionWrapLoad from '@/components/interview/section-wrapper';
 
 const page = () => {
   return (
-    <SectionWrap isScroll>
+    <SectionWrapLoad isScroll>
       <CreateIntroInterview />
       <CreateQuestionInterview />
       <CreateEndInterview />
-    </SectionWrap>
+    </SectionWrapLoad>
   );
 };
 

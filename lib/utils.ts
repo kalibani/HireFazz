@@ -112,19 +112,33 @@ export const blobToFile = (blob: Blob, fileName: string): File => {
   return file;
 };
 
-export const blobToFormData = (
+// export const blobToFormData = (
+//   blob: Blob,
+//   filename: string,
+// ): Promise<FormData> => {
+//   return new Promise((resolve, reject) => {
+//     const formData = new FormData();
+//     formData.append('file', blob, filename);
+//     if (formData.getAll('file').length === 0) {
+//       reject('Blob could not be appended to FormData');
+//     } else {
+//       resolve(formData);
+//     }
+//   });
+// };
+
+export const blobToFormData = async (
   blob: Blob,
   filename: string,
 ): Promise<FormData> => {
-  return new Promise((resolve, reject) => {
-    const formData = new FormData();
-    formData.append('file', blob, filename);
-    if (formData.getAll('file').length === 0) {
-      reject('Blob could not be appended to FormData');
-    } else {
-      resolve(formData);
-    }
-  });
+  const formData = new FormData();
+  formData.append('file', blob, filename);
+
+  if (!formData.has('file')) {
+    throw new Error('Blob could not be appended to FormData');
+  }
+
+  return formData;
 };
 
 export const separateThousand = (value: string, separator: string = '.') => {

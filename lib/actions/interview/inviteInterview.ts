@@ -2,7 +2,7 @@ import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 import z from 'zod';
 
-const CreateTemplateInterview = z.object({
+const sendInvitedInterview = z.object({
   organizationId: z.string(),
   batchJobId: z.string().optional().nullable(),
   templateId: z.string(),
@@ -12,10 +12,10 @@ const CreateTemplateInterview = z.object({
   phoneNumber: z.string().optional().nullable(),
 });
 export const inviteInterview = async (
-  payload: z.infer<typeof CreateTemplateInterview>,
+  payload: z.infer<typeof sendInvitedInterview>,
 ) => {
   try {
-    const safePayload = CreateTemplateInterview.parse(payload);
+    const safePayload = sendInvitedInterview.parse(payload);
     const template = await prismadb.interviewTemplate.findUniqueOrThrow({
       where: { id: safePayload.templateId },
     });

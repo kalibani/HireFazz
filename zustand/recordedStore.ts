@@ -1,5 +1,4 @@
 import { blobToFormData } from '@/lib/utils';
-import { url } from 'inspector';
 import { create } from 'zustand';
 
 interface questionState {
@@ -31,7 +30,7 @@ interface RecorderState {
   setQuestion: (data: questionState[]) => void;
   removeQuestion: (index: number) => void;
   addQuestion: () => void;
-  setFormData: (data: any) => void;
+  setIsLoading: (data: boolean) => void;
 }
 
 export const useRecorderStore = create<RecorderState>((set) => ({
@@ -72,7 +71,6 @@ export const useRecorderStore = create<RecorderState>((set) => ({
       durationTimeAnswered,
       durationTimeRead,
       questionRetake,
-      isLoading: true,
     });
   },
   setVideoUrl: (url, type) => {
@@ -100,7 +98,5 @@ export const useRecorderStore = create<RecorderState>((set) => ({
         },
       ],
     })),
-  setFormData: async (data) => {
-    const convrt = await blobToFormData(data, 'intro');
-  },
+  setIsLoading: (data) => set({ isLoading: data }),
 }));
