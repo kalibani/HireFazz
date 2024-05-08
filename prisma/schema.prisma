@@ -234,6 +234,9 @@ model BatchJob {
   salaryRangeEnd  Int?
   experience      Int?
   companyName     String?
+  languageAi      String?
+  matchPercentage Int?
+  keyFocus        Json?
   workModel       WORK_MODEL
   cvAnalysis      CvAnalysis[]
   invitedUser     InvitedUser[]
