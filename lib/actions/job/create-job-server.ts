@@ -54,6 +54,6 @@ export async function createJob(
 
     return job;
   } catch (error) {
-    return errorHandler(error);
+    throw errorHandler(error);
   }
 }
