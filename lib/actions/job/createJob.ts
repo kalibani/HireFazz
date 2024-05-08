@@ -17,6 +17,9 @@ export const PayloadAddJob = z.object({
   companyName: z.string().optional(),
   orgId: z.string(),
   analyzeCv: z.boolean(),
+  languageAi: z.string().optional(),
+  keyFocus: z.array(z.string()).optional(),
+  matchPercentage: z.string().optional(),
 });
 
 export const connectCvJob = async ({

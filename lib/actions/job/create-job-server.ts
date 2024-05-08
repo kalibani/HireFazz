@@ -4,11 +4,28 @@ import { PayloadAddJob, connectCvJob } from './createJob';
 import { uploadCv } from '../cv/uploadCv';
 import { z } from 'zod';
 import { errorHandler } from '@/helpers';
+import { $Enums } from '@prisma/client';
+
+type TReturnType = {
+  id: string;
+  jobName: string;
+  status: 'CREATED';
+  orgId: string;
+  jobDescription: string;
+  location: string;
+  createdAt: Date;
+  salaryCurrency: string | null;
+  salaryRangeFrom: number | null;
+  salaryRangeEnd: number | null;
+  experience: number | null;
+  companyName: string | null;
+  workModel: $Enums.WORK_MODEL;
+};
 
 export async function createJob(
   payload: z.infer<typeof PayloadAddJob>,
   cv: FormData,
-) {
+): Promise<TReturnType> {
   try {
     const cvData = cv.getAll('UPLOAD') as File[];
     const cvLinkedin = cv.getAll('LINKEDIN') as string[];

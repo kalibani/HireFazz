@@ -180,8 +180,11 @@ const CVAnalyzer: FC = (): ReactElement => {
         salaryRangeEnd: Number(dataCreateJob.toNominal),
         salaryRangeFrom: Number(dataCreateJob.fromNominal),
         orgId: orgId as string,
+        languageAi: form.watch('language'),
+        matchPercentage: form.watch('matchPercentage'),
+        keyFocus: form.watch('keyFocus'),
       };
-      const job = (await createJob(createPayload, formData)) as { id: string };
+      const job = await createJob(createPayload, formData);
       const jobId = job?.id;
       console.log('Job Id', jobId);
       const test = await getStatusCv(jobId as string);
