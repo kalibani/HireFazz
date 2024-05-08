@@ -1,8 +1,8 @@
+import { Loader } from '@/components/share';
 import React from 'react';
 
 const loading = () => {
-  // todo please create loading
-  return <div>loading</div>;
+  return <Loader />;
 };
 
 export default loading;

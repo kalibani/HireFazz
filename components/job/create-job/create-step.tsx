@@ -16,7 +16,6 @@ const CreateStep = () => {
       <TrackingStep step={step} />
       {step === 0 && <FormCreate />}
       {step === 1 && <CreateJobDetail />}
-      {/* on progress */}
       {step === 2 && <UploadCv />}
       {step === 3 && <CVAnalyzer />}
     </div>
