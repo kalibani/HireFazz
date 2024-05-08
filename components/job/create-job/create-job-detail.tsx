@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
-import ReactQuill from 'react-quill';
+// import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Button } from '@/components/ui/button';
 import { useFormStepStore } from '@/zustand/useCreateJob';
@@ -19,6 +19,14 @@ import {
   generateSkill,
   genereteJobDescription,
 } from '@/lib/actions/generate/actionGenerate';
+import dynamic from 'next/dynamic';
+import { Loader } from '@/components/share';
+
+const ReactQuill = dynamic(
+  () => import('react-quill'),
+
+  { ssr: false },
+);
 
 const initialState = {
   jobDescription: '',
@@ -55,17 +63,23 @@ const CreateJobDetail = () => {
   const [value, setValue] = useState('');
   const [state, dispatch] = useReducer(reducer, initialState);
   const [listOfEditor, setListOfEditor] = useState<string[]>(['']);
+  const [mount, setMount] = useState<boolean>(false);
 
   useEffect(() => {
-    const genrate = async () => {
+    setMount(true);
+  }, []);
+
+  useEffect(() => {
+    const genrate = () => {
       startTransition(async () => {
         const { result } = await genereteJobDescription(dataCreateJob);
         handleChange('jobDescription', result);
       });
     };
-
-    genrate();
-  }, []);
+    if (mount) {
+      genrate();
+    }
+  }, [mount]);
 
   useEffect(() => {
     if (listOfEditor) {
@@ -143,6 +157,10 @@ const CreateJobDetail = () => {
     setFormDetailJob(value);
     setStep(2);
   };
+
+  if (!mount) {
+    return <Loader />;
+  }
 
   return (
     <div className="flex min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
@@ -247,6 +265,7 @@ const CreateJobDetail = () => {
           <div className="flex flex-col gap-y-4">
             <div className="h-[530px] w-[742px] rounded-md bg-white">
               <ReactQuill
+                //@ts-ignore
                 theme="snow"
                 value={value}
                 onChange={setValue}
