@@ -56,6 +56,7 @@ import { formatDate } from 'date-fns';
 import { analyzeCv } from '@/lib/actions/cv/analyzeCv';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@/components/ui/checkbox';
+import { getStatusCv } from '@/lib/actions/job/getStatusCv';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -180,7 +181,11 @@ const CVAnalyzer: FC = (): ReactElement => {
         salaryRangeFrom: Number(dataCreateJob.fromNominal),
         orgId: orgId as string,
       };
-      createJob(createPayload, formData);
+      const job = (await createJob(createPayload, formData)) as { id: string };
+      const jobId = job?.id;
+      console.log('Job Id', jobId);
+      const test = await getStatusCv(jobId as string);
+      console.log(test);
     }
   };
 
@@ -208,7 +213,7 @@ const CVAnalyzer: FC = (): ReactElement => {
                         checked={field.value}
                         onCheckedChange={() => {
                           field.onChange(!field.value);
-                          form.setValue('justUpload', field.value);
+                          form.setValue('justUpload', false);
                         }}
                       />
                     </FormControl>
@@ -442,7 +447,7 @@ const CVAnalyzer: FC = (): ReactElement => {
                         checked={field.value}
                         onCheckedChange={() => {
                           field.onChange(!field.value);
-                          form.setValue('analyzeCv', field.value);
+                          form.setValue('analyzeCv', false);
                         }}
                       />
                     </FormControl>
