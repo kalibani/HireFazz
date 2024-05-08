@@ -1,7 +1,8 @@
+'use server';
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 
-export const getStatusCv = async (jobId: string) => {
+export async function getStatusCv(jobId: string) {
   try {
     const job = await prismadb.batchJob.findUniqueOrThrow({
       where: {
@@ -37,4 +38,4 @@ export const getStatusCv = async (jobId: string) => {
   } catch (error) {
     return errorHandler(error);
   }
-};
+}
