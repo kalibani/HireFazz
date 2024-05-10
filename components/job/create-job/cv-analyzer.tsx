@@ -14,7 +14,6 @@ import {
   FormItem,
   FormLabel,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -22,7 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useState, type FC, type ReactElement, type SVGProps } from 'react';
+import {
+  useEffect,
+  useState,
+  type FC,
+  type ReactElement,
+  type SVGProps,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import TrackingStep from './tracking-step';
 import { useStore } from 'zustand';
@@ -38,14 +43,18 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { PayloadAddJob } from '@/lib/actions/job/createJob';
 import { z } from 'zod';
-import { useGetOrgId } from '@/hooks/common/use-get-org';
-
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { TagInput } from '@/components/share/multi-tag-input';
+import { useParams, useRouter } from 'next/navigation';
+import { createJob } from '@/lib/actions/job/create-job-server';
+import { formatDate } from 'date-fns';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -112,20 +121,20 @@ const IconQuestionMark: FC<SVGProps<SVGSVGElement>> = (props): ReactElement => (
       <path
         d="M7.00033 12.8332C10.222 12.8332 12.8337 10.2215 12.8337 6.99984C12.8337 3.77818 10.222 1.1665 7.00033 1.1665C3.77866 1.1665 1.16699 3.77818 1.16699 6.99984C1.16699 10.2215 3.77866 12.8332 7.00033 12.8332Z"
         stroke="#94A3B8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M5.30273 5.24984C5.43988 4.85998 5.71057 4.53124 6.06687 4.32184C6.42318 4.11244 6.84209 4.03589 7.24942 4.10576C7.65675 4.17563 8.02621 4.3874 8.29236 4.70357C8.55851 5.01974 8.70418 5.4199 8.70357 5.83318C8.70357 6.99984 6.95357 7.58318 6.95357 7.58318"
         stroke="#94A3B8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M7 9.9165H7.00667"
         stroke="#94A3B8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <defs>
@@ -136,18 +145,33 @@ const IconQuestionMark: FC<SVGProps<SVGSVGElement>> = (props): ReactElement => (
   </svg>
 );
 
+const schema = z.object({
+  customCriteria: z.string(),
+  analyzeCv: z.boolean().default(true),
+  justUpload: z.boolean().default(false),
+  keyFocus: z.array(z.string()).default([]),
+  language: z.string(),
+  matchPercentage: z.string(),
+});
+
 const CVAnalyzer: FC = (): ReactElement => {
-  const form = useForm();
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+  });
+  const [jobId, setJobId] = useState<string>('');
+
+  const { orgId } = useParams();
+
+  const [analyzeAIPercentage, setAnalyzeAIPercentage] = useState<number>(0);
+  const [uploadPercentage, setUploadPercentage] = useState<number>(0);
 
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
 
-  const { data, isSuccess } = useGetOrgId();
-
-  const createJobHandle = () => {
-    if (isSuccess && data) {
+  const createJobHandle = async () => {
+    if (orgId) {
       const createPayload: z.infer<typeof PayloadAddJob> = {
-        analyzeCv: false,
+        analyzeCv: form.watch('analyzeCv'),
         jobName: dataCreateJob.title,
         location: dataCreateJob.location,
         salaryCurrency: dataCreateJob.currency,
@@ -157,15 +181,44 @@ const CVAnalyzer: FC = (): ReactElement => {
         companyName: dataCreateJob.companyName,
         salaryRangeEnd: Number(dataCreateJob.toNominal),
         salaryRangeFrom: Number(dataCreateJob.fromNominal),
-        orgId: data?.organizationId,
+        orgId: orgId as string,
+        languageAi: form.watch('language'),
+        matchPercentage: form.watch('matchPercentage'),
+        keyFocus: form.watch('keyFocus'),
       };
-      // submit to createJob at path folder: action/job.
+      const job = await createJob(createPayload, formData);
+      const resJobid = job?.id;
+      setJobId(resJobid);
     }
   };
 
   const customCriteria = form.watch('customCriteria');
 
-  console.log(form.watch('keyFocus'));
+  const router = useRouter();
+
+  useEffect(() => {
+    if (jobId) {
+      const interval = setInterval(() => {
+        if (uploadPercentage < 100) {
+          setUploadPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+        } else {
+          clearInterval(interval);
+        }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [jobId]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (analyzeAIPercentage < 100 && uploadPercentage === 100) {
+        setAnalyzeAIPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+      } else {
+        clearInterval(interval);
+      }
+    }, 200);
+    return () => clearInterval(interval);
+  }, [uploadPercentage, analyzeAIPercentage, jobId]);
 
   const [tags, setTags] = useState<string[]>([]);
 
@@ -178,7 +231,24 @@ const CVAnalyzer: FC = (): ReactElement => {
         </div>
         <Form {...form}>
           <form className="flex w-1/2 flex-col items-center gap-y-4">
-            <div className="flex items-center gap-x-4">
+            <div className="flex w-full items-center gap-x-4">
+              <FormField
+                control={form.control}
+                name="analyzeCv"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={() => {
+                          field.onChange(!field.value);
+                          form.setValue('justUpload', false);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               <div className="flex w-full items-center justify-between rounded-xl bg-primary px-4 py-6">
                 <div className="flex gap-x-4">
                   <IconRobot />
@@ -258,7 +328,10 @@ const CVAnalyzer: FC = (): ReactElement => {
                   <div className="flex w-full gap-x-4">
                     <Button
                       type="button"
-                      onClick={() => setTags([...tags, 'Experience'])}
+                      onClick={() => {
+                        setTags((prevTags) => [...prevTags, 'Experience']);
+                        form.setValue('keyFocus', [...tags, 'Experience']);
+                      }}
                       className="w-fit bg-slate-300 text-black"
                     >
                       + Experience
@@ -267,7 +340,14 @@ const CVAnalyzer: FC = (): ReactElement => {
                     <Button
                       type="button"
                       onClick={() => {
-                        setTags([...tags, 'Sallary Expectation']);
+                        setTags((prevTags) => [
+                          ...prevTags,
+                          'Sallary Expectation',
+                        ]);
+                        form.setValue('keyFocus', [
+                          ...tags,
+                          'Sallary Expectation',
+                        ]);
                       }}
                       className="w-fit bg-slate-300 text-black"
                     >
@@ -277,15 +357,21 @@ const CVAnalyzer: FC = (): ReactElement => {
                     <Button
                       type="button"
                       className="w-fit bg-slate-300 text-black"
-                      onClick={() => setTags([...tags, 'Education'])}
+                      onClick={() => {
+                        setTags((prevTags) => [...prevTags, 'Education']);
+                        form.setValue('keyFocus', [...tags, 'Education']);
+                      }}
                     >
                       + Education
                     </Button>
 
                     <Button
                       type="button"
-                      onClick={() => setTags([...tags, 'Age'])}
                       className="w-fit bg-slate-300 text-black"
+                      onClick={() => {
+                        setTags((prevTags) => [...prevTags, 'Age']);
+                        form.setValue('keyFocus', [...tags, 'Age']);
+                      }}
                     >
                       + Age
                     </Button>
@@ -317,19 +403,15 @@ const CVAnalyzer: FC = (): ReactElement => {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Indonesia" />
+                              <SelectValue
+                                defaultValue={'indonesia'}
+                                placeholder="Indonesia"
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="m@example.com">
-                              m@example.com
-                            </SelectItem>
-                            <SelectItem value="m@google.com">
-                              m@google.com
-                            </SelectItem>
-                            <SelectItem value="m@support.com">
-                              m@support.com
-                            </SelectItem>
+                            <SelectItem value="indonesia">Indonesia</SelectItem>
+                            <SelectItem value="english">English</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormItem>
@@ -360,19 +442,21 @@ const CVAnalyzer: FC = (): ReactElement => {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="60%" />
+                              <SelectValue
+                                defaultValue={60}
+                                placeholder="60%"
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="m@example.com">
-                              m@example.com
-                            </SelectItem>
-                            <SelectItem value="m@google.com">
-                              m@google.com
-                            </SelectItem>
-                            <SelectItem value="m@support.com">
-                              m@support.com
-                            </SelectItem>
+                            <SelectItem value="10">10%</SelectItem>
+                            <SelectItem value="20">20%</SelectItem>
+                            <SelectItem value="30">30%</SelectItem>
+                            <SelectItem value="40">40%</SelectItem>
+                            <SelectItem value="50">50%</SelectItem>
+                            <SelectItem value="60">60%</SelectItem>
+                            <SelectItem value="70">70%</SelectItem>
+                            <SelectItem value="80">80%</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormItem>
@@ -381,13 +465,31 @@ const CVAnalyzer: FC = (): ReactElement => {
                 </div>
               </>
             )}
-
-            <div className="flex w-full items-center justify-between rounded-xl border border-slate-400 bg-white px-4 py-6">
-              <div className="flex items-center gap-x-4">
-                <IconFolderUp />
-                <p className="text-sm text-black">
-                  or <strong>Just Upload</strong>
-                </p>
+            <div className="flex w-full items-center gap-x-4">
+              <FormField
+                control={form.control}
+                name="justUpload"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={() => {
+                          field.onChange(!field.value);
+                          form.setValue('analyzeCv', false);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <div className="flex w-full items-center justify-between rounded-xl border border-slate-400 bg-white px-4 py-6">
+                <div className="flex items-center gap-x-4">
+                  <IconFolderUp />
+                  <p className="text-sm text-black">
+                    or <strong>Just Upload</strong>
+                  </p>
+                </div>
               </div>
             </div>
           </form>
@@ -400,7 +502,13 @@ const CVAnalyzer: FC = (): ReactElement => {
             Previous
           </Button>
           <DialogTrigger asChild>
-            <Button onClick={createJobHandle}>Create</Button>
+            <Button
+              onClick={() => {
+                createJobHandle();
+              }}
+            >
+              Create
+            </Button>
           </DialogTrigger>
         </div>
         <DialogContent className="flex min-h-[96%] min-w-[96%] flex-col items-center justify-between p-0">
@@ -412,7 +520,8 @@ const CVAnalyzer: FC = (): ReactElement => {
 
             <div className="mt-8 flex w-1/2 flex-col items-center gap-y-4">
               <h1 className="text-2xl font-bold">
-                Upload Process and AI Matching Score
+                Upload Process{' '}
+                {form.watch('analyzeCv') && 'and AI Matching Score'}
               </h1>
               <p className="text-sm font-medium text-black">
                 You can wait cvs being processed, or you can close this dialog.
@@ -428,49 +537,68 @@ const CVAnalyzer: FC = (): ReactElement => {
                     <TableHead className="text-center">Job</TableHead>
                     <TableHead className="text-center">Added On</TableHead>
                     <TableHead className="w-fit text-center">Upload</TableHead>
-                    <TableHead className="w-fit text-center">
-                      Annalyze AI
-                    </TableHead>
+
+                    {form.watch('analyzeCv') && (
+                      <TableHead className="w-fit text-center">
+                        Annalyze AI
+                      </TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium">
-                      {dataCreateJob?.title}
-                    </TableCell>
-                    <TableCell className="text-center text-slate-400">
-                      143
-                    </TableCell>
-                    <TableCell className="text-center text-slate-400">
-                      20 Mar, 2024
-                    </TableCell>
-                    <TableCell className="text-center text-slate-400">
-                      10
-                    </TableCell>
-                    <TableCell className="text-center text-slate-400">
-                      <div className="flex w-full items-center gap-x-4">
-                        <Progress value={20} className="h-3 w-full" />
-                        <span className="w-full text-xs font-semibold text-slate-400">
-                          20% Uploading
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center text-green-500">
-                      <div className="flex w-full items-center gap-x-4">
-                        <Progress value={20} className="h-3 w-full" />
-                        <span className="w-full text-xs font-semibold text-slate-400">
-                          20% Uploading
-                        </span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  {files.map((file, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">
+                        {dataCreateJob?.title}
+                      </TableCell>
+                      <TableCell className="text-left text-slate-400">
+                        {file.file.name}
+                      </TableCell>
+                      <TableCell className="text-left text-slate-400">
+                        {dataCreateJob?.title}
+                      </TableCell>
+                      <TableCell className="text-left text-slate-400">
+                        {formatDate(file?.file?.lastModified, 'dd MMM, yyyy')}
+                      </TableCell>
+                      <TableCell className="text-left text-slate-400">
+                        <div className="flex w-full items-center gap-x-4">
+                          <Progress
+                            value={uploadPercentage}
+                            className="h-3 w-full"
+                          />
+                          <span className="w-full text-xs font-semibold text-slate-400">
+                            {uploadPercentage}% Uploading
+                          </span>
+                        </div>
+                      </TableCell>
+                      {form.watch('analyzeCv') && (
+                        <TableCell className="text-left text-green-500">
+                          <div className="flex w-full items-center gap-x-4">
+                            <Progress
+                              value={analyzeAIPercentage}
+                              className="h-3 w-full"
+                            />
+                            <span className="w-full text-xs font-semibold text-slate-400">
+                              {analyzeAIPercentage}% Analyzing
+                            </span>
+                          </div>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>
           </div>
           <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">
             <DialogTrigger asChild>
-              <Button>Finish / Close</Button>
+              <Button
+                onClick={() =>
+                  router.push(`${orgId}/job/${jobId}/all-applicant`)
+                }
+              >
+                Finish / Close
+              </Button>
             </DialogTrigger>
           </DialogFooter>
         </DialogContent>

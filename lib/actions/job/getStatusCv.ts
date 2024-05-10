@@ -1,7 +1,17 @@
+'use server';
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
+import { $Enums } from '@prisma/client';
 
-export const getStatusCv = async (jobId: string) => {
+type TReturnType = {
+  isUploading: boolean;
+  isAnalyze: boolean;
+  statusCv: $Enums.ANALYSYS_STATUS;
+  source: $Enums.CV_SOURCE;
+  docName: string;
+}[];
+
+export async function getStatusCv(jobId: string): Promise<TReturnType> {
   try {
     const job = await prismadb.batchJob.findUniqueOrThrow({
       where: {
@@ -35,6 +45,6 @@ export const getStatusCv = async (jobId: string) => {
     });
     return formatedResponse;
   } catch (error) {
-    return errorHandler(error);
+    throw errorHandler(error);
   }
-};
+}

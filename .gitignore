@@ -8,6 +8,8 @@ dump.rdb
 
 .nx
 
+shell.nix
+
 # testing
 /coverage
 

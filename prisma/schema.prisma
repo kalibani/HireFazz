@@ -112,6 +112,7 @@ model Organization {
   name                  String
   packageType           PACKAGE_TYPE
   limit                 Int
+  logo                  String?
   used                  Int
   agreeTermAndCondition Boolean             @default(false)
   userOrganization      UserOrganization[]
@@ -234,6 +235,9 @@ model BatchJob {
   salaryRangeEnd  Int?
   experience      Int?
   companyName     String?
+  languageAi      String?
+  matchPercentage Int?
+  keyFocus        Json?
   workModel       WORK_MODEL
   cvAnalysis      CvAnalysis[]
   invitedUser     InvitedUser[]

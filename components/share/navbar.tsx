@@ -1,21 +1,72 @@
 'use client';
 import { UserButton } from '@/components/auth';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { ChevronDown, MoonIcon } from 'lucide-react';
+import { ChevronDown, MoonIcon, UsersRound } from 'lucide-react';
 import { FC, ReactElement } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { ExitIcon } from '@radix-ui/react-icons';
+import { useParams, useRouter } from 'next/navigation';
 
-const Navbar = () => {
-  const user = useCurrentUser();
+type TNavbar = {
+  orgs:
+    | {
+        organization: {
+          id: string;
+          name: string;
+          logo: string | null;
+        };
+      }[]
+    | undefined;
+};
+
+const Navbar: FC<TNavbar> = (props): ReactElement => {
+  const params = useParams();
+  const { replace } = useRouter();
+  const selectedOrganization = props.orgs
+    ?.filter((x) => x.organization.id === params.orgId)
+    .at(0);
   return (
-    <div className="flex items-center justify-between gap-x-4 border-b border-l bg-white px-3 py-2">
+    <nav className="flex items-center justify-between gap-x-4 border-b border-l bg-white px-3 py-2">
       <span className="w-full text-sm font-medium">{currentDate}</span>
-      <div className="flex h-fit w-1/6 min-w-fit items-center justify-end rounded-xl bg-slate-100 px-3">
-        {user && (
-          <span className="w-full text-sm font-normal">{user.name}</span>
-        )}
-        <UserButton />
-        <ChevronDown />
-      </div>
+      <DropdownMenu>
+        <DropdownMenuContent className="w-40" align="end">
+          <span
+            onClick={() => console.log('logout')}
+            className="cursor-pointer"
+          >
+            {props?.orgs?.map((x) => (
+              <DropdownMenuItem
+                onClick={() => replace(`/${x.organization.id}/dashboard`)}
+              >
+                {x.organization.name}
+              </DropdownMenuItem>
+            ))}
+          </span>
+        </DropdownMenuContent>
+        <DropdownMenuTrigger className="h-fit w-1/6 min-w-fit">
+          <div className="flex h-fit w-1/4 min-w-fit items-center justify-end rounded-xl bg-slate-100 px-3">
+            <span className="w-full text-sm font-normal">
+              {selectedOrganization?.organization?.name}
+            </span>
+            <Avatar className="rounded-full p-1">
+              <AvatarImage
+                className="rounded-full"
+                src={selectedOrganization?.organization?.logo || ''}
+              />
+              <AvatarFallback className="bg-sky-500">
+                <UsersRound className="text-white" />
+              </AvatarFallback>
+            </Avatar>
+            <ChevronDown />
+          </div>
+        </DropdownMenuTrigger>
+      </DropdownMenu>
 
       <div className="flex items-center gap-x-1 text-xs text-slate-400">
         <ChevronDown size="16" />
@@ -23,7 +74,7 @@ const Navbar = () => {
       </div>
 
       <MoonIcon className="text-xs text-slate-400" />
-    </div>
+    </nav>
   );
 };
 

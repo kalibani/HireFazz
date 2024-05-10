@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactElement, ReactNode } from 'react';
+import { FC, PropsWithChildren, ReactElement } from 'react';
 import { Navbar, SideBar } from '@/components/share';
 import { orgList } from '@/lib/actions/user/orgList';
 
@@ -10,7 +10,7 @@ const DashboardLayout: FC<PropsWithChildren> = async ({
     <div className="flex h-full min-h-screen overflow-y-auto bg-[#F2F2F7]">
       <SideBar />
       <main className="h-auto w-full">
-        <Navbar />
+        <Navbar orgs={org} />
         {children}
       </main>
     </div>
