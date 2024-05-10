@@ -112,6 +112,7 @@ model Organization {
   name                  String
   packageType           PACKAGE_TYPE
   limit                 Int
+  logo                  String?
   used                  Int
   agreeTermAndCondition Boolean             @default(false)
   userOrganization      UserOrganization[]

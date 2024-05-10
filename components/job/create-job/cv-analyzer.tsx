@@ -520,7 +520,8 @@ const CVAnalyzer: FC = (): ReactElement => {
 
             <div className="mt-8 flex w-1/2 flex-col items-center gap-y-4">
               <h1 className="text-2xl font-bold">
-                Upload Process and AI Matching Score
+                Upload Process{' '}
+                {form.watch('analyzeCv') && 'and AI Matching Score'}
               </h1>
               <p className="text-sm font-medium text-black">
                 You can wait cvs being processed, or you can close this dialog.
@@ -592,7 +593,9 @@ const CVAnalyzer: FC = (): ReactElement => {
           <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">
             <DialogTrigger asChild>
               <Button
-                onClick={() => router.push(`/job/${jobId}/all-applicant`)}
+                onClick={() =>
+                  router.push(`${orgId}/job/${jobId}/all-applicant`)
+                }
               >
                 Finish / Close
               </Button>

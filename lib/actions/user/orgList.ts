@@ -17,6 +17,7 @@ export const orgList = async () => {
           select: {
             id: true,
             name: true,
+            logo: true,
           },
         },
       },
