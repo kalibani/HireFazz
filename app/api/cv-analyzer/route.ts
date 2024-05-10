@@ -1,12 +1,10 @@
 import prismadb from '@/lib/prismadb';
 import { openai } from '@/lib/openai';
 import { pinecone } from '@/lib/pinecone';
-import { SendMessageValidator } from '@/lib/validators/sendMessageValidator';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { checkValidJSON } from '@/lib/utils';
 import { currentUser } from '@/lib/auth';
 

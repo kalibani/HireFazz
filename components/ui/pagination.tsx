@@ -23,7 +23,9 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
   }, [activePage])
 
   const paginationElements = useMemo(() => {
-    if (totalPage <= 5) return [1, 2, 3, 4, 5]
+    if (totalPage <= 5) {
+      return Array.from(Array(totalPage).keys()).map((value) => value + 1)
+    }
 
     const result:  number[] = [1]
     const isFirstThreeItem = page <= 3

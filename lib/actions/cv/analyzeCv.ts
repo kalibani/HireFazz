@@ -134,3 +134,14 @@ export const analyzeCv = async ({
     });
   }
 };
+
+
+export const bulkAnalyzeCv = async ({
+  cvAnalysisIds,
+  jobId
+}: {
+  cvAnalysisIds: string[];
+  jobId: string
+}) => {
+    return await Promise.all(cvAnalysisIds.map((id) => analyzeCv({ cvAnalysisId: id, jobId })))
+}

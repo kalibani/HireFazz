@@ -1,72 +1,93 @@
+'use client'
 import { Button } from '@/components/ui/button';
-import { UploadCloud, Edit, MapPin, History, Banknote, Gauge, UserSearch, Puzzle } from 'lucide-react';
+import { useFormStepStore } from '@/zustand/useCreateJob';
+import { UploadCloud, Edit, MapPin, History, Banknote, Puzzle } from 'lucide-react';
 
-import type { FC, ReactElement } from 'react';
+import { type FC } from 'react';
 
 type TDetailHeaderJob = {
   title: string;
+  description: string;
+  experience?: number;
+  salaryText?: string
+  workModel?: string
+  location: string
+
 };
 
-export const HeaderDetailJob: FC<TDetailHeaderJob> = (props): ReactElement => {
-  const skills = [
-    'Leadership',
-    'Coding Agile',
-    'Team Collaboration',
-    'React JS',
-    'Javascript',
-    'Tailwind CSS'
-  ]
+export const HeaderDetailJob: FC<TDetailHeaderJob> = ({
+  title,
+  description,
+  experience,
+  salaryText,
+  workModel,
+  location,
+}) => {
+
+  const {
+    handleUploadButtonClick,
+  } = useFormStepStore((state) => state);
+
 
   return (
     <header className="flex w-full flex-col rounded-lg bg-white p-6 mt-2 bg-gradient-to-r from-[#E11D48] to-[#4E3ABA]">
       <section className="flex w-full justify-between">
         <div className="text-white">
           <div className="flex gap-2 items-center">
-            <h1 className="text-2xl font-medium">{props.title}</h1>
+            <h1 className="text-2xl font-medium">{title}</h1>
             <Button variant="ghost" className="p-0 hover:bg-transparent hover:text-white">
               <Edit />
             </Button>
           </div>
           <p className="mt-2 text-xs max-w-[868px] leading-6">
-            The  Berry Production, a leading company in the agricultural industry, is  seeking an experienced and dynamic Operation Manager to join our team in  Bangalore. With a strong focus on quality and innovation, we are  dedicated to delivering the finest berry products to our customers  worldwide.
+            {description}
           </p>
 
           {/* Job Requirement */}
           <div className="flex gap-3 mt-3 items-center text-sm">
             <div className="flex gap-1 items-center">
               <MapPin className="size-4" />
-              Jakarta, Indonesia
+              {location}
             </div>
-            <div className="flex gap-1 items-center">
-              <History className="size-4" />
-              5 years
-            </div>
-            <div className="flex gap-1 items-center">
-              <Banknote className="size-4" />
-              USD400 - 500
-            </div>
-            <div className="flex gap-1 items-center">
+            {experience && (
+              <div className="flex gap-1 items-center">
+                <History className="size-4" />
+                {experience} years
+              </div>
+            )}
+            {salaryText ? (
+              <div className="flex gap-1 items-center">
+                <Banknote className="size-4" />
+                {salaryText}
+              </div>
+            ) : null}
+
+            {/* don't have data */}
+            {/* <div className="flex gap-1 items-center">
               <Gauge className="size-4" />
               Senior Level
             </div>
             <div className="flex gap-1 items-center">
               <UserSearch className="size-4" />
               Full Time
-            </div>
-            <div className="flex gap-1 items-center">
-              <Puzzle className="size-4" />
-              Onsite
-            </div>
+            </div> */}
+            {workModel && (
+              <div className="flex gap-1 items-center capitalize">
+                <Puzzle className="size-4" />
+                {workModel.toLowerCase()}
+              </div>
+            )}
           </div>
 
           {/* Job Skills Tag */}
-          <div className="flex items-center gap-3 mt-3">
+          {/* don't have data in DB */}
+          {/* <div className="flex items-center gap-3 mt-3">
             {skills.map((skill, idx) => (
               <span key={skill + idx} className="rounded-sm border border-white px-1 text-xs">
                 {skill}
               </span>
             ))}
-          </div>
+          </div> */}
         </div>
 
         <div className="w-1/4 flex items-end flex-col gap-4">
@@ -78,7 +99,7 @@ export const HeaderDetailJob: FC<TDetailHeaderJob> = (props): ReactElement => {
             <path d="M79.45 88.5869C81.4915 88.3294 83.5665 88.5106 85.6223 88.4677C87.157 88.3485 88.7156 89.3975 88.9642 90.9471C89.1076 92.5445 89.0502 94.1514 89.0216 95.7535C89.0742 97.3413 87.6972 98.8147 86.0908 98.8004C84.1736 98.8385 82.2517 98.8242 80.3345 98.8099C78.8141 98.9291 77.3034 97.6655 77.203 96.1445C77.1265 94.571 77.1456 92.9927 77.1886 91.424C77.1504 90.1032 78.1783 88.8825 79.45 88.5869ZM80.7265 92.0724C80.7265 93.1167 80.7265 94.1561 80.7218 95.2004C82.2947 95.2862 83.8677 95.2862 85.4406 95.2004C85.431 94.1561 85.4358 93.1167 85.4406 92.0772C83.8677 92.0629 82.2947 92.0629 80.7265 92.0724Z" fill="white" />
           </svg>
 
-          <Button variant="secondary" className="flex gap-2">
+          <Button variant="secondary" className="flex gap-2" onClick={handleUploadButtonClick}>
             <UploadCloud className="size-4 text-sm" />
             Upload CV
           </Button>
