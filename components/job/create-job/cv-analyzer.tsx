@@ -49,14 +49,12 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { TagInput } from '@/components/share/multi-tag-input';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { createJob } from '@/lib/actions/job/create-job-server';
 import { formatDate } from 'date-fns';
 
-import { analyzeCv } from '@/lib/actions/cv/analyzeCv';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@/components/ui/checkbox';
-import { getStatusCv } from '@/lib/actions/job/getStatusCv';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -160,8 +158,12 @@ const CVAnalyzer: FC = (): ReactElement => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
+  const [jobId, setJobId] = useState<string>('');
 
   const { orgId } = useParams();
+
+  const [analyzeAIPercentage, setAnalyzeAIPercentage] = useState<number>(0);
+  const [uploadPercentage, setUploadPercentage] = useState<number>(0);
 
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
@@ -185,14 +187,38 @@ const CVAnalyzer: FC = (): ReactElement => {
         keyFocus: form.watch('keyFocus'),
       };
       const job = await createJob(createPayload, formData);
-      const jobId = job?.id;
-      console.log('Job Id', jobId);
-      const test = await getStatusCv(jobId as string);
-      console.log(test);
+      const resJobid = job?.id;
+      setJobId(resJobid);
     }
   };
 
   const customCriteria = form.watch('customCriteria');
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (jobId) {
+      const interval = setInterval(() => {
+        if (uploadPercentage < 100) {
+          setUploadPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+        } else {
+          clearInterval(interval);
+        }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [jobId]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (analyzeAIPercentage < 100 && uploadPercentage === 100) {
+        setAnalyzeAIPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+      } else {
+        clearInterval(interval);
+      }
+    }, 200);
+    return () => clearInterval(interval);
+  }, [uploadPercentage, analyzeAIPercentage, jobId]);
 
   const [tags, setTags] = useState<string[]>([]);
 
@@ -510,9 +536,12 @@ const CVAnalyzer: FC = (): ReactElement => {
                     <TableHead className="text-center">Job</TableHead>
                     <TableHead className="text-center">Added On</TableHead>
                     <TableHead className="w-fit text-center">Upload</TableHead>
-                    <TableHead className="w-fit text-center">
-                      Annalyze AI
-                    </TableHead>
+
+                    {form.watch('analyzeCv') && (
+                      <TableHead className="w-fit text-center">
+                        Annalyze AI
+                      </TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -532,20 +561,28 @@ const CVAnalyzer: FC = (): ReactElement => {
                       </TableCell>
                       <TableCell className="text-left text-slate-400">
                         <div className="flex w-full items-center gap-x-4">
-                          <Progress value={20} className="h-3 w-full" />
+                          <Progress
+                            value={uploadPercentage}
+                            className="h-3 w-full"
+                          />
                           <span className="w-full text-xs font-semibold text-slate-400">
-                            20% Uploading
+                            {uploadPercentage}% Uploading
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-left text-green-500">
-                        <div className="flex w-full items-center gap-x-4">
-                          <Progress value={20} className="h-3 w-full" />
-                          <span className="w-full text-xs font-semibold text-slate-400">
-                            20% Uploading
-                          </span>
-                        </div>
-                      </TableCell>
+                      {form.watch('analyzeCv') && (
+                        <TableCell className="text-left text-green-500">
+                          <div className="flex w-full items-center gap-x-4">
+                            <Progress
+                              value={analyzeAIPercentage}
+                              className="h-3 w-full"
+                            />
+                            <span className="w-full text-xs font-semibold text-slate-400">
+                              {analyzeAIPercentage}% Analyzing
+                            </span>
+                          </div>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -554,7 +591,11 @@ const CVAnalyzer: FC = (): ReactElement => {
           </div>
           <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">
             <DialogTrigger asChild>
-              <Button>Finish / Close</Button>
+              <Button
+                onClick={() => router.push(`/job/${jobId}/all-applicant`)}
+              >
+                Finish / Close
+              </Button>
             </DialogTrigger>
           </DialogFooter>
         </DialogContent>

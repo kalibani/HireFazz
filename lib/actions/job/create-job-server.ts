@@ -34,6 +34,9 @@ export async function createJob(
     const job = await prismadb.batchJob.create({
       data: {
         ...safePayload,
+        matchPercentage: safePayload.matchPercentage
+          ? Number(safePayload.matchPercentage)
+          : undefined,
       },
     });
 
