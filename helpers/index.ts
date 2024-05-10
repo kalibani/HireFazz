@@ -39,8 +39,8 @@ export const writeErrorResponseJson = (message: string) => ({
   errorMessage: message,
 });
 
-export const formatDateDMY = (timestamp: number): string => {
-  const date = new Date(timestamp);
+export const formatDateDMY = (time: number | string): string => {
+  const date = new Date(time);
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',

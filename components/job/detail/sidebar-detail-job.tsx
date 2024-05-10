@@ -21,7 +21,7 @@ export const SidebarDetailJob: FC<TSidebarDetailJob> = (
         {props.items.map((item, key) => (
           <li
             className={clsx(
-              "group flex w-full cursor-pointer items-center justify-between gap-x-2 px-2 ",
+              "group flex w-full cursor-pointer items-center justify-between gap-x-2 px-2 py-1",
               {
                 'bg-rose-600': item.isActive,
               }
@@ -46,7 +46,7 @@ export const SidebarDetailJob: FC<TSidebarDetailJob> = (
                 {item.text}
               </span>
             </div>
-            {item.notificationCount && (
+            {!!item.notificationCount && (
               <span className={clsx(
                 "flex size-8 items-center justify-center rounded-lg p-2 text-xs font-medium",
                 {
