@@ -184,7 +184,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
         return (
           <div className="flex items-center gap-2">
             <Link
-              href={`/${orgId}/job/${row.original.id}/all-applicant?tab=default`}
+              href={`/${orgId}/job/${row.original.id}/all-applicant`}
               className="font-medium text-red-500 underline"
             >
               View Job
