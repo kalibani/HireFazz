@@ -39,9 +39,14 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { formatDateDMY } from '@/helpers';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { useState } from 'react';
-import { GetJobDetailResponse, Job } from '@/lib/actions/job/getJob';
+import { GetJobDetailResponse } from '@/lib/actions/job/getJob';
 import axios from 'axios';
 import { ANALYSYS_STATUS, Cv, CvAnalysis } from '@prisma/client';
 import { Loader } from '@/components/share';
@@ -56,6 +61,8 @@ export const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
   const searchParams = useSearchParams();
   const perPage = Number(searchParams.get('per_page') || '10');
   const pathname = usePathname();
+  const params = useParams();
+  const router = useRouter();
   const { replace, refresh } = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedAction, setSelectedAction] = useState('SHORTLISTED');
@@ -238,6 +245,8 @@ export const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
           },
         })
         .finally(handleFinally);
+    } else if (selectedAction === 'Send Email') {
+      router.push(`/${params?.orgId}/job/${params?.id}/send-email`);
     } else {
       axios
         .patch(`/api/cv-analysis`, {

@@ -1,3 +1,3 @@
 export const DetailJobScreened = () => {
-  return <div>Screened</div>;
+  return <section className="py-6">Screened</section>;
 };

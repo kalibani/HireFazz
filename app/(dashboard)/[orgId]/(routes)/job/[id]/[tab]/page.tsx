@@ -1,4 +1,3 @@
-import { ShieldAlert } from 'lucide-react';
 import { ParamsProps } from '@/types/types';
 import { GetJobDetailResponse, getByIdJob } from '@/lib/actions/job/getJob';
 import { match } from 'ts-pattern';
@@ -7,6 +6,7 @@ import { DetailJobAllApplicant } from '@/components/job/detail/all-aplicant';
 import { DetailJobShortlisted } from '@/components/job/detail/short-listed';
 import { DetailJobInterviewed } from '@/components/job/detail/interviewed';
 import { DetailJobRejected } from '@/components/job/detail/rejected';
+import { DetailJobSendEmail } from '@/components/job/detail/send-email';
 
 const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
   const jobId = params.id || '';
@@ -26,6 +26,7 @@ const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
     .with('shortlisted', () => <DetailJobShortlisted />)
     .with('interviewed', () => <DetailJobInterviewed />)
     .with('rejected', () => <DetailJobRejected />)
+    .with('send-email', () => <DetailJobSendEmail />)
     .otherwise(() => null);
 };
 
