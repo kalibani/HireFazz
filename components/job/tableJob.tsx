@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import {
   Table,
   TableBody,
@@ -7,12 +7,28 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ArrowUpDown, MoreVertical } from 'lucide-react'
+import { ArrowUpDown, MoreVertical } from 'lucide-react';
 import Link from 'next/link';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 import Pagination from '../ui/pagination';
 import { PER_PAGE_ITEMS } from '@/constant';
-import { ColumnDef, ColumnFiltersState, SortingState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import { Button } from '../ui/button';
 import { formatDateDMY } from '@/helpers';
 import { useState } from 'react';
@@ -20,22 +36,20 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { GetJobListData } from '@/lib/actions/job/getJob';
 
 interface TableJobProps {
-  orgId: string
-  jobData?: GetJobListData
+  orgId: string;
+  jobData?: GetJobListData;
 }
 
 export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
-  const searchParams = useSearchParams()
-  const perPage = searchParams.get('per_page')
-  const currPage = searchParams.get('page')
+  const searchParams = useSearchParams();
+  const perPage = searchParams.get('per_page');
+  const currPage = searchParams.get('page');
   const pathname = usePathname();
   const { replace } = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    [],
-  );
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const pageSize = Number(perPage || 10)
+  const pageSize = Number(perPage || 10);
 
   const columns: ColumnDef<any>[] = [
     {
@@ -71,7 +85,9 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
         );
       },
       cell: ({ row }) => (
-        <p className="capitalize text-slate-400">{row.getValue('candidates')}</p>
+        <p className="capitalize text-slate-400">
+          {row.getValue('candidates')}
+        </p>
       ),
     },
     {
@@ -110,7 +126,9 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
       },
       cell: ({ row }) => {
         return (
-          <p className="capitalize text-slate-400">{row.getValue('shortlisted')}</p>
+          <p className="capitalize text-slate-400">
+            {row.getValue('shortlisted')}
+          </p>
         );
       },
     },
@@ -130,7 +148,9 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
       },
       cell: ({ row }) => {
         return (
-          <p className="capitalize text-slate-400">{row.getValue('companyName')}</p>
+          <p className="capitalize text-slate-400">
+            {row.getValue('companyName')}
+          </p>
         );
       },
     },
@@ -151,10 +171,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
       },
       cell: ({ row }) => {
         return (
-          <Button
-            variant="ghost"
-            className="hover:bg-transparent"
-          >
+          <Button variant="ghost" className="hover:bg-transparent">
             <p className="capitalize text-slate-400">{row.original.status}</p>
           </Button>
         );
@@ -165,10 +182,13 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
       enableHiding: false,
       cell: ({ row }) => {
         return (
-            <div className="flex items-center gap-2">
-          <Link href={`/${orgId}/job/${row.original.id}/all-applicant`} className="text-red-500 underline font-medium">
-            View Job
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/${orgId}/job/${row.original.id}/all-applicant?tab=default`}
+              className="font-medium text-red-500 underline"
+            >
+              View Job
+            </Link>
             <MoreVertical />
           </div>
         );
@@ -191,8 +211,8 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
       columnFilters,
       pagination: {
         pageSize,
-        pageIndex: 0
-      }
+        pageIndex: 0,
+      },
     },
   });
 
@@ -221,9 +241,9 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 );
               })}
@@ -239,20 +259,14 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id} className="py-2">
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext(),
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center"
-              >
+              <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
               </TableCell>
             </TableRow>
@@ -260,23 +274,34 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-between mt-5">
-        <div className="max-w-44 flex gap-2 items-center">
+      <div className="mt-5 flex items-center justify-between">
+        <div className="flex max-w-44 items-center gap-2">
           <span>View</span>
-          <Select onValueChange={(value) => handlePagination('per_page', value)}>
+          <Select
+            onValueChange={(value) => handlePagination('per_page', value)}
+          >
             <SelectTrigger>
               <SelectValue placeholder={pageSize} defaultValue={pageSize} />
             </SelectTrigger>
 
             <SelectContent>
-              {PER_PAGE_ITEMS.map((pageItem) => <SelectItem key={pageItem} value={pageItem}>{pageItem}</SelectItem>)}
+              {PER_PAGE_ITEMS.map((pageItem) => (
+                <SelectItem key={pageItem} value={pageItem}>
+                  {pageItem}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
           <span>List</span>
         </div>
         <div className="space-x-2">
-          <Pagination activePage={Number(currPage)} itemsPerPage={pageSize} totalItems={jobData?.totalItems || 0} onPageChange={(page) => handlePagination('page', page.toString())} />
+          <Pagination
+            activePage={Number(currPage)}
+            itemsPerPage={pageSize}
+            totalItems={jobData?.totalItems || 0}
+            onPageChange={(page) => handlePagination('page', page.toString())}
+          />
         </div>
 
         <div></div>
