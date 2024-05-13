@@ -114,7 +114,7 @@ export const createOrganizationGoogle = async (user: {
   name: string;
 }) => {
   try {
-    if (user.name && user.id) {
+    if (user.email) {
       const userdb = await prismadb.user.findUnique({
         where: {
           email: user.email,
@@ -134,7 +134,7 @@ export const createOrganizationGoogle = async (user: {
       if (!organization) {
         const result = await prismadb.organization.create({
           data: {
-            name: userdb.name!,
+            name: userdb.name || user.email,
             packageType: PACKAGE_TYPE.BASIC,
             limit: 100,
             used: 0,

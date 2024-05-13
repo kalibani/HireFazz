@@ -44,8 +44,8 @@ export const {
     },
   },
   callbacks: {
-    async signIn({ user, account, credentials, profile }) {
-      if (account?.provider !== 'credentials' && user.name) {
+    async signIn({ user, account }) {
+      if (account?.provider !== 'credentials') {
         await createOrganizationGoogle(user);
         return true;
       }

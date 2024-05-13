@@ -32,11 +32,8 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
     <nav className="flex items-center justify-between gap-x-4 border-b border-l bg-white px-3 py-2">
       <span className="w-full text-sm font-medium">{currentDate}</span>
       <DropdownMenu>
-        <DropdownMenuContent className="w-40" align="end">
-          <span
-            onClick={() => console.log('logout')}
-            className="cursor-pointer"
-          >
+        <DropdownMenuContent className="w-40" align="start">
+          <span className="cursor-pointer">
             {props?.orgs?.map((x) => (
               <DropdownMenuItem
                 key={x.organization.id}
@@ -48,8 +45,8 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
           </span>
         </DropdownMenuContent>
         <DropdownMenuTrigger className="h-fit w-1/6 min-w-fit">
-          <div className="flex h-fit w-1/4 min-w-fit items-center justify-end rounded-xl bg-slate-100 px-3">
-            <span className="w-full text-sm font-normal">
+          <div className="flex h-fit min-w-fit items-center justify-end rounded-xl bg-slate-100 px-3">
+            <span className="w-full text-left text-sm font-normal">
               {selectedOrganization?.organization?.name}
             </span>
             <Avatar className="rounded-full p-1">
