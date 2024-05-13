@@ -22,7 +22,7 @@ const UserButton = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar className="rounded-full p-1">
+        <Avatar className="rounded-full p-1 focus-visible:ring-0">
           <AvatarImage className="rounded-full" src={user?.image || ''} />
           <AvatarFallback className="bg-sky-500">
             <UsersRound className="text-white" />

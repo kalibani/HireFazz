@@ -25,6 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
+import { UserButton } from '../auth';
 
 const routes = [
   { label: 'Dashboard', icon: Home, href: '/dashboard' },
@@ -36,25 +37,16 @@ const routes = [
   { label: 'User', icon: User, href: '/interview' },
 ];
 
-const comingRoutes = [
-  { icon: Banknote },
-  { icon: HandCoins },
-  { icon: DollarSignIcon },
-  { icon: Scale },
-  { icon: FileText },
-];
-
 const Sidebar = () => {
   const pathname = usePathname();
   const { orgId } = useParams();
-
   return (
     <aside className="flex h-dvh max-w-[76px] flex-col bg-white">
       <div className="flex items-center justify-center border-b py-1">
         <Image src={logo} alt="logo" />
       </div>
 
-      <div className="flex flex-col border-b py-6">
+      <div className="flex flex-col  py-6">
         {routes.map((route) => (
           <div key={route.label} className="p-6">
             <TooltipProvider>
@@ -79,17 +71,9 @@ const Sidebar = () => {
           </div>
         ))}
       </div>
-      <div className="mt-16 px-5">
-        <div className="h-207 flex flex-col items-center justify-center rounded-lg bg-slate-100">
-          {comingRoutes.map((coming, idx) => (
-            <Link
-              href="/coming-soon"
-              key={idx}
-              className="flex h-11 w-9 items-center justify-center"
-            >
-              <coming.icon className="h-4 w-4 text-slate-400" />
-            </Link>
-          ))}
+      <div className="flex h-full flex-col justify-end  px-5 py-10 ">
+        <div className="border-t-2 pt-5">
+          <UserButton />
         </div>
       </div>
     </aside>
