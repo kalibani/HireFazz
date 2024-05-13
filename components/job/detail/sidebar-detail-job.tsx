@@ -23,7 +23,7 @@ export const SidebarDetailJob: FC<TSidebarDetailJob> = (
           <Link
             href={item.link}
             className={clsx(
-              'group flex w-full cursor-pointer items-center justify-between gap-x-2 px-2 py-1',
+              'group flex w-full cursor-pointer items-center justify-between gap-x-2 px-2 py-1 min-h-8',
               {
                 'bg-rose-600': item.isActive,
               },

@@ -1,12 +1,14 @@
 'use client'
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from './button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
+import { PER_PAGE_ITEMS } from '@/constant'
 
 interface PaginationProps {
-    activePage?: number
-    totalItems: number
-    itemsPerPage: number
-    onPageChange?: (page: number) => void
+  activePage?: number
+  totalItems: number
+  itemsPerPage: number
+  onPageChange?: (page: number) => void
 }
 
 const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage, onPageChange }) => {
@@ -27,7 +29,7 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
       return Array.from(Array(totalPage).keys()).map((value) => value + 1)
     }
 
-    const result:  number[] = [1]
+    const result: number[] = [1]
     const isFirstThreeItem = page <= 3
     const isLastThreeItem = page > totalPage - 3
 
@@ -62,7 +64,7 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
       >
         Prev
       </Button>
-  
+
       {paginationElements.map((pageElement, index) => {
         if (Number.isNaN(pageElement)) {
           return <span key={index + Math.random() * 1000} className="px-2">...</span>
@@ -87,3 +89,40 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
 }
 
 export default Pagination
+
+interface PaginationGroupProps {
+  perPage: number
+  totalItems: number
+  activePage?: number
+  handlePagination?: (pageType: 'page' | 'per_page', value: string) => void
+}
+export const PaginationGroup: FC<PaginationGroupProps> = ({
+  perPage,
+  totalItems,
+  activePage,
+  handlePagination
+}) => {
+  return (
+    <div className="flex items-center justify-between mt-5">
+      <div className="max-w-44 flex gap-2 items-center">
+        <span>View</span>
+        <Select onValueChange={(value) => handlePagination?.('per_page', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder={perPage} defaultValue={perPage} />
+          </SelectTrigger>
+
+          <SelectContent>
+            {PER_PAGE_ITEMS.map((pageItem) => <SelectItem key={pageItem} value={pageItem}>{pageItem}</SelectItem>)}
+          </SelectContent>
+        </Select>
+
+        <span>List</span>
+      </div>
+      <div className="space-x-2">
+        <Pagination activePage={activePage} itemsPerPage={perPage} totalItems={totalItems} onPageChange={(page) => handlePagination?.('page', page.toString())} />
+      </div>
+
+      <div></div>
+    </div>
+  )
+}
