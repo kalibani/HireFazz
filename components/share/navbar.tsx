@@ -1,6 +1,4 @@
 'use client';
-import { UserButton } from '@/components/auth';
-import { useCurrentUser } from '@/hooks/use-current-user';
 import { ChevronDown, MoonIcon, UsersRound } from 'lucide-react';
 import { FC, ReactElement } from 'react';
 import {
@@ -10,7 +8,6 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { ExitIcon } from '@radix-ui/react-icons';
 import { useParams, useRouter } from 'next/navigation';
 
 type TNavbar = {
@@ -42,6 +39,7 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
           >
             {props?.orgs?.map((x) => (
               <DropdownMenuItem
+                key={x.organization.id}
                 onClick={() => replace(`/${x.organization.id}/dashboard`)}
               >
                 {x.organization.name}
