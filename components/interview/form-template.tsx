@@ -1,14 +1,15 @@
 'use client';
 import React from 'react';
-import { Input } from '../ui/input';
+import VideoRecord from './video-record';
+import { useRecorderStore } from '@/zustand/recordedStore';
 
 const FormTemplate = () => {
+  const { setFormFirst, introVideoUrl } = useRecorderStore();
+
   return (
     <div className="mt-5">
-      <div>
-        <label className="text-sm font-normal">Name Template</label>
-        <Input />
-      </div>
+      <h3 className="mb-2 text-xl font-semibold">Intro Video</h3>
+      <VideoRecord videoUrl={introVideoUrl} />
     </div>
   );
 };
