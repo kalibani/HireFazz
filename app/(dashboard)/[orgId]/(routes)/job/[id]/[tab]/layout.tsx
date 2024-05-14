@@ -78,7 +78,7 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
     return `${jobData?.salaryCurrency}${jobData?.salaryRangeFrom}-${jobData?.salaryRangeEnd}`;
   })();
   return (
-    <section className="w-full px-3">
+    <section className="h-full min-h-screen w-full overflow-y-scroll px-3">
       <HeaderDetailJob
         title={jobData?.jobName}
         description={jobData?.jobDescription}
@@ -87,9 +87,9 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
         salaryText={salaryText}
         workModel={jobData?.workModel}
       />
-      <div className="flex w-full gap-x-3">
+      <div className="flex h-full w-full gap-x-3">
         <SidebarDetailJob items={sidebarItems} />
-        <div className="mt-3 h-full min-h-screen flex-1 rounded-lg bg-white p-3">
+        <div className="mt-3 h-fit flex-1 rounded-lg bg-white p-3">
           <div className="flex w-full items-center justify-center gap-2 rounded-md bg-rose-200 py-3 text-xs">
             <span>
               Dont forget to Analyze your CV for better results on candidates

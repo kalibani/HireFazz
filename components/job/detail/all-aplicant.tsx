@@ -55,7 +55,7 @@ interface DetailJobTableProps {
   jobDetail?: GetJobDetailResponse;
 }
 
-export const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
+const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
   jobDetail,
 }) => {
   const searchParams = useSearchParams();
@@ -454,3 +454,5 @@ export const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
     </div>
   );
 };
+
+export default DetailJobAllApplicant;
