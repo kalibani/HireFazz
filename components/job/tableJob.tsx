@@ -9,15 +9,7 @@ import {
 } from '@/components/ui/table';
 import { ArrowUpDown, MoreVertical } from 'lucide-react';
 import Link from 'next/link';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
-import Pagination from '../ui/pagination';
-import { PER_PAGE_ITEMS } from '@/constant';
+import { PaginationGroup } from '../ui/pagination';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -274,38 +266,12 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
         </TableBody>
       </Table>
 
-      <div className="mt-5 flex items-center justify-between">
-        <div className="flex max-w-44 items-center gap-2">
-          <span>View</span>
-          <Select
-            onValueChange={(value) => handlePagination('per_page', value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={pageSize} defaultValue={pageSize} />
-            </SelectTrigger>
-
-            <SelectContent>
-              {PER_PAGE_ITEMS.map((pageItem) => (
-                <SelectItem key={pageItem} value={pageItem}>
-                  {pageItem}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <span>List</span>
-        </div>
-        <div className="space-x-2">
-          <Pagination
-            activePage={Number(currPage)}
-            itemsPerPage={pageSize}
-            totalItems={jobData?.totalItems || 0}
-            onPageChange={(page) => handlePagination('page', page.toString())}
-          />
-        </div>
-
-        <div></div>
-      </div>
+      <PaginationGroup
+        perPage={pageSize}
+        totalItems={jobData?.totalItems || 0}
+        activePage={Number(currPage)}
+        handlePagination={handlePagination}
+      />
     </div>
   );
 };

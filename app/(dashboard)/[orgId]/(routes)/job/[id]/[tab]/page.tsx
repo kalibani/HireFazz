@@ -1,7 +1,7 @@
 import { ParamsProps } from '@/types/types';
 import { GetJobDetailResponse, getByIdJob } from '@/lib/actions/job/getJob';
 import { match } from 'ts-pattern';
-import { DetailJobScreened } from '@/components/job/detail/screened';
+import DetailJobScreened from '@/components/job/detail/screened';
 import { DetailJobAllApplicant } from '@/components/job/detail/all-aplicant';
 import { DetailJobShortlisted } from '@/components/job/detail/short-listed';
 import { DetailJobInterviewed } from '@/components/job/detail/interviewed';
