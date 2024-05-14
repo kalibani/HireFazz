@@ -7,6 +7,7 @@ import { DetailJobShortlisted } from '@/components/job/detail/short-listed';
 import { DetailJobInterviewed } from '@/components/job/detail/interviewed';
 import { DetailJobRejected } from '@/components/job/detail/rejected';
 import { DetailJobSendEmail } from '@/components/job/detail/send-email';
+import { notFound } from 'next/navigation';
 
 const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
   const jobId = params.id || '';
@@ -27,7 +28,7 @@ const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
     .with('interviewed', () => <DetailJobInterviewed />)
     .with('rejected', () => <DetailJobRejected />)
     .with('send-email', () => <DetailJobSendEmail />)
-    .otherwise(() => null);
+    .otherwise(() => notFound());
 };
 
 export default JobDetailPage;
