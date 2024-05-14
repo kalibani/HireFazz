@@ -42,6 +42,18 @@ const FormTemplate = () => {
             >
               Preview
             </Button>
+            <Button
+              variant="ghost"
+              className="h-auto p-0 text-xs font-normal hover:bg-transparent"
+            >
+              Edit
+            </Button>
+            <Button
+              variant="ghost"
+              className="h-auto p-0 text-xs font-normal hover:bg-transparent"
+            >
+              Delete
+            </Button>
           </div>
         </div>
       </div>
