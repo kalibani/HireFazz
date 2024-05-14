@@ -1,10 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import ProModal from "./pro-modal";
-import ModelModal from "./model-modal";
-import TosModal from "./tos-modal";
-import ModalUploadCv from "./job/create-job/modal-upload-cv";
+import { useState, useEffect } from 'react';
+import ProModal from './pro-modal';
+import TosModal from './tos-modal';
+import ModalUploadCv from './job/create-job/modal-upload-cv';
 
 type Props = {};
 
@@ -21,7 +20,6 @@ const ModalProvider = (props: Props) => {
   return (
     <>
       <ProModal />
-      <ModelModal />
       <TosModal />
       <ModalUploadCv />
     </>
