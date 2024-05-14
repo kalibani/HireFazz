@@ -13,13 +13,13 @@ const SectionWrapLoad = ({
 }) => {
   const isLoading = useRecorderStore((state) => state.isLoading);
   return (
-    <section
-      className={cn(
-        'space-y-3 p-3',
-        isScroll ? 'h-[calc(100%-5%)] overflow-y-auto' : '',
+    <section className="rounded-md bg-white p-4">
+      {isLoading && (
+        <div className="fixed left-0 top-0 h-full w-full bg-black/50">
+          <Loader />
+        </div>
       )}
-    >
-      {isLoading ? <Loader /> : children}
+      {children}
     </section>
   );
 };

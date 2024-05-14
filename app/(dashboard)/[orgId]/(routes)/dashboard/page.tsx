@@ -11,12 +11,14 @@ import {
   SearchCheck,
 } from 'lucide-react';
 import { NextPage } from 'next';
-import { ReactElement } from 'react';
+import { currentUser } from '@/lib/auth';
 
-const DashboardPage: NextPage = (): ReactElement => {
+const DashboardPage: NextPage = async () => {
+  const user = await currentUser();
   return (
     <SectionWrap isScroll>
       <Banner
+        title={user?.name!}
         desc="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book."
         btnTitle="Check it out !"
         src={dashboard}
