@@ -163,11 +163,8 @@ const CreateJobDetail = () => {
   }
 
   return (
-    <div className="flex min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
+    <div className="flex overflow-y-scroll flex-1 min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
       <div className="w-ful flex flex-col items-center justify-center overflow-y-auto px-12 py-8">
-        <h3 className="mb-12 text-center text-2xl font-semibold">
-          Create Job Details
-        </h3>
         <div className="flex w-full gap-x-3">
           <div className="h-[530px] w-[445px] space-y-2 overflow-y-auto">
             <div className="overflow-hidden rounded-md  border">

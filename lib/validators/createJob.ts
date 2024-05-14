@@ -11,7 +11,7 @@ export const formSchemaCreateJob = z.object({
   fromNominal: z.string().optional(),
   toNominal: z.string().optional(),
   experiences: z.string(),
-  workModel: z.enum([WORK_MODEL.HYBRID, WORK_MODEL.ONSITE, WORK_MODEL.REMOTE]),
+  workModel: z.enum([WORK_MODEL.HYBRID, WORK_MODEL.ONSITE, WORK_MODEL.REMOTE, WORK_MODEL.FREELANCE, WORK_MODEL.INTERNSHIP, WORK_MODEL.PART_TIME, WORK_MODEL.CONTRACT]),
   companyName: z.string(),
   currency: z.string(),
 });

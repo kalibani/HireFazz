@@ -24,6 +24,8 @@ import {
 import { useFormStepStore } from '@/zustand/useCreateJob';
 import { formSchemaCreateJob } from '@/lib/validators/createJob';
 import { removeNonDigit, separateThousand } from '@/lib/utils';
+import { WORK_MODEL } from '@prisma/client';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 
 const FormCreate = () => {
@@ -61,9 +63,8 @@ const FormCreate = () => {
   }
 
   return (
-    <div className="flex min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
+    <div className="flex flex-1 overflow-y-scroll w-full flex-col items-center rounded-md bg-white  py-8">
       <div className="w-1/2">
-        <h3 className="text-center text-2xl font-semibold">Create New Job</h3>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -96,7 +97,7 @@ const FormCreate = () => {
                   </FormLabel>
                   <FormControl className="tex-slate-400">
                     <Input
-                      placeholder="Location Applicant"
+                      placeholder="Location"
                       {...field}
                       className="h-auto w-full text-sm "
                     />
@@ -172,14 +173,14 @@ const FormCreate = () => {
               />
             </div>
 
-            <div className="flex w-full items-end justify-between gap-x-4">
+            <div className="flex w-full items-start justify-between gap-x-4">
               <FormField
                 control={form.control}
                 name="experiences"
                 render={({ field }) => (
                   <FormItem className="w-1/2">
                     <FormLabel className="text-sm font-normal">
-                      Average Salary (per month)
+                      Minimum Experience (years)
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -191,8 +192,7 @@ const FormCreate = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="0">0 year</SelectItem>
-                        <SelectItem value="1">1 year</SelectItem>
+                        {Array.from(Array(21).keys()).map((item) => <SelectItem value={item.toString()} key={item}>{item} {item < 2 ? 'year' : 'years'}</SelectItem>)}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -208,21 +208,77 @@ const FormCreate = () => {
                     <FormLabel className="text-sm font-normal">
                       Work Model
                     </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a verified email to display" />
-                        </SelectTrigger>
+                    <FormControl>
+                        <RadioGroup
+                          orientation="horizontal"
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="grid grid-cols-3"
+                        >
+                          <FormItem className="flex items-center gap-x-2 flex-1">
+                            <FormControl>
+                              <RadioGroupItem value={WORK_MODEL.ONSITE} />
+                            </FormControl>
+                            <span className="!mt-0 text-xs font-normal">
+                              On-site
+                            </span>
+                          </FormItem>
+
+                          <FormItem className="flex items-center gap-x-2 flex-1">
+                            <FormControl>
+                              <RadioGroupItem value={WORK_MODEL.REMOTE} />
+                            </FormControl>
+                            <span className="!mt-0 text-xs font-normal">
+                              Remote
+                            </span>
+                          </FormItem>
+            
+                          <FormItem className="flex items-center justify-start gap-x-2 flex-1">
+                            <FormControl>
+                              <RadioGroupItem value={WORK_MODEL.HYBRID} />
+                            </FormControl>
+                            <span className="!mt-0 text-xs font-normal">
+                              Hybrid
+                            </span>
+                          </FormItem>
+                         
+                          <FormItem className="flex items-center gap-x-2 flex-1">
+                            <FormControl>
+                              <RadioGroupItem value={WORK_MODEL.PART_TIME} />
+                            </FormControl>
+                            <span className="!mt-0 text-xs font-normal">
+                              Part-time
+                            </span>
+                          </FormItem>
+
+                          <FormItem className="flex items-center gap-x-2 flex-1">
+                            <FormControl>
+                              <RadioGroupItem value={WORK_MODEL.FREELANCE} />
+                            </FormControl>
+                            <span className="!mt-0 text-xs font-normal">
+                              Freelance
+                            </span>
+                          </FormItem>
+
+                          <FormItem className="flex items-center gap-x-2 flex-1">
+                            <FormControl>
+                              <RadioGroupItem value={WORK_MODEL.CONTRACT} />
+                            </FormControl>
+                            <span className="!mt-0 text-xs font-normal">
+                              Contract
+                            </span>
+                          </FormItem>
+
+                          <FormItem className="flex items-center gap-x-2 flex-1">
+                            <FormControl>
+                              <RadioGroupItem value={WORK_MODEL.INTERNSHIP} />
+                            </FormControl>
+                            <span className="!mt-0 text-xs font-normal">
+                              Internship
+                            </span>
+                          </FormItem>
+                        </RadioGroup>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="ONSITE">On Site</SelectItem>
-                        <SelectItem value="REMOTE">Remote</SelectItem>
-                        <SelectItem value="HYBRID">Hybrid</SelectItem>
-                      </SelectContent>
-                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

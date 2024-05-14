@@ -223,7 +223,7 @@ const CVAnalyzer: FC = (): ReactElement => {
   const [tags, setTags] = useState<string[]>([]);
 
   return (
-    <section className="flex flex-col gap-y-3">
+    <section className="flex flex-1 overflow-y-scroll flex-col gap-y-3">
       <div className="flex h-full w-full flex-col items-center justify-start gap-y-8 rounded-lg bg-white p-8">
         <div className="flex w-1/2 flex-col items-center gap-y-4">
           <h1 className="text-2xl font-semibold">CV Analyzer</h1>
