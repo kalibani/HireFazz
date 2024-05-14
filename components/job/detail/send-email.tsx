@@ -22,7 +22,7 @@ const ReactQuill = dynamic(
   { ssr: false },
 );
 
-export const DetailJobSendEmail = () => {
+const DetailJobSendEmail = () => {
   const dummyReceiver = ['Maul', 'Agus', 'Tatang'];
   const [value, setValue] = useState('');
   const form = useForm();
@@ -213,3 +213,5 @@ export const DetailJobSendEmail = () => {
     </section>
   );
 };
+
+export default DetailJobSendEmail;

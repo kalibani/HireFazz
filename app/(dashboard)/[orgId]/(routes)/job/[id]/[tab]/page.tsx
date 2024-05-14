@@ -1,13 +1,13 @@
 import { ParamsProps } from '@/types/types';
 import { GetJobDetailResponse, getByIdJob } from '@/lib/actions/job/getJob';
 import { match } from 'ts-pattern';
-import DetailJobScreened from '@/components/job/detail/screened';
-import { DetailJobAllApplicant } from '@/components/job/detail/all-aplicant';
-import { DetailJobShortlisted } from '@/components/job/detail/short-listed';
-import { DetailJobInterviewed } from '@/components/job/detail/interviewed';
-import { DetailJobRejected } from '@/components/job/detail/rejected';
-import { DetailJobSendEmail } from '@/components/job/detail/send-email';
 import { notFound } from 'next/navigation';
+import DetailJobScreened from '@/components/job/detail/screened';
+import DetailJobAllApplicant from '@/components/job/detail/all-aplicant';
+import DetailJobSendEmail from '@/components/job/detail/send-email';
+import DetailJobShortlisted from '@/components/job/detail/short-listed';
+import DetailJobRejected from '@/components/job/detail/rejected';
+import { DetailJobInterviewed } from '@/components/job/detail/interviewed';
 
 const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
   const jobId = params.id || '';
@@ -24,7 +24,7 @@ const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
       <DetailJobAllApplicant jobDetail={jobDetail} />
     ))
     .with('screened', () => <DetailJobScreened />)
-    .with('shortlisted', () => <DetailJobShortlisted />)
+    .with('shortlisted', () => <DetailJobShortlisted jobDetail={jobDetail} />)
     .with('interviewed', () => <DetailJobInterviewed />)
     .with('rejected', () => <DetailJobRejected />)
     .with('send-email', () => <DetailJobSendEmail />)
