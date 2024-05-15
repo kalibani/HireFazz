@@ -43,15 +43,7 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   farewellDescription: '',
   farewellTitle: '',
   isLoading: false,
-  questions: [
-    {
-      videoUrl: null,
-      title: '',
-      question: '',
-      timeRead: 0,
-      timeAnswered: 0,
-    },
-  ],
+  questions: [],
   urlAny: new FormData(),
 
   setTitle: (title, type) => {

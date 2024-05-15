@@ -34,7 +34,7 @@ const FormSchema = z.object({
 });
 
 const FormTemplate = ({ orgId }: { orgId: string }) => {
-  const { setFormFirst, introVideoUrl } = useRecorderStore();
+  const { setFormFirst, introVideoUrl, questions } = useRecorderStore();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -48,6 +48,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
       durationTimeRead: Number(durationTimeRead),
     });
   }
+  console.log(questions);
   return (
     <>
       <div className="mt-5">
@@ -169,7 +170,8 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
             </div>
           </form>
         </Form>
-        <QuestionCard />
+        {Array.isArray(questions) &&
+          questions.map((item, index) => <QuestionCard key={index} />)}
       </div>
     </>
   );

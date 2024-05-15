@@ -11,7 +11,7 @@ const VideoRecord = ({
   isEnd?: boolean;
 }) => {
   return (
-    <div className="aspec-auto  flex min-h-[200px] w-1/4 flex-col items-center justify-center overflow-hidden rounded-md border">
+    <div className="aspec-auto  flex h-[200px] w-1/4 flex-col items-center justify-center overflow-hidden rounded-md border">
       {videoUrl && (
         <div className="aspect-video size-full">
           <video controls>
