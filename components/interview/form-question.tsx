@@ -14,15 +14,12 @@ const FormQuestion = () => {
     // Handle form submit here
   };
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        
-      </form>
-    </>
+    <div className="rounded-md bg-white p-4">
+      <form onSubmit={handleSubmit}></form>
+    </div>
   );
 };
 
 export default FormQuestion;
 
-
-// domain/ijfjdjkskjsjfks 
+// domain/ijfjdjkskjsjfks
