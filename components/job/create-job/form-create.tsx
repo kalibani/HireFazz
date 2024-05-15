@@ -208,77 +208,25 @@ const FormCreate = () => {
                     <FormLabel className="text-sm font-normal">
                       Work Model
                     </FormLabel>
-                    <FormControl>
-                        <RadioGroup
-                          orientation="horizontal"
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="grid grid-cols-3"
-                        >
-                          <FormItem className="flex items-center gap-x-2 flex-1">
-                            <FormControl>
-                              <RadioGroupItem value={WORK_MODEL.ONSITE} />
-                            </FormControl>
-                            <span className="!mt-0 text-xs font-normal">
-                              On-site
-                            </span>
-                          </FormItem>
-
-                          <FormItem className="flex items-center gap-x-2 flex-1">
-                            <FormControl>
-                              <RadioGroupItem value={WORK_MODEL.REMOTE} />
-                            </FormControl>
-                            <span className="!mt-0 text-xs font-normal">
-                              Remote
-                            </span>
-                          </FormItem>
-            
-                          <FormItem className="flex items-center justify-start gap-x-2 flex-1">
-                            <FormControl>
-                              <RadioGroupItem value={WORK_MODEL.HYBRID} />
-                            </FormControl>
-                            <span className="!mt-0 text-xs font-normal">
-                              Hybrid
-                            </span>
-                          </FormItem>
-                         
-                          <FormItem className="flex items-center gap-x-2 flex-1">
-                            <FormControl>
-                              <RadioGroupItem value={WORK_MODEL.PART_TIME} />
-                            </FormControl>
-                            <span className="!mt-0 text-xs font-normal">
-                              Part-time
-                            </span>
-                          </FormItem>
-
-                          <FormItem className="flex items-center gap-x-2 flex-1">
-                            <FormControl>
-                              <RadioGroupItem value={WORK_MODEL.FREELANCE} />
-                            </FormControl>
-                            <span className="!mt-0 text-xs font-normal">
-                              Freelance
-                            </span>
-                          </FormItem>
-
-                          <FormItem className="flex items-center gap-x-2 flex-1">
-                            <FormControl>
-                              <RadioGroupItem value={WORK_MODEL.CONTRACT} />
-                            </FormControl>
-                            <span className="!mt-0 text-xs font-normal">
-                              Contract
-                            </span>
-                          </FormItem>
-
-                          <FormItem className="flex items-center gap-x-2 flex-1">
-                            <FormControl>
-                              <RadioGroupItem value={WORK_MODEL.INTERNSHIP} />
-                            </FormControl>
-                            <span className="!mt-0 text-xs font-normal">
-                              Internship
-                            </span>
-                          </FormItem>
-                        </RadioGroup>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a work model" />
+                        </SelectTrigger>
                       </FormControl>
+                      <SelectContent>
+                        <SelectItem value={WORK_MODEL.ONSITE}>On Site</SelectItem>
+                        <SelectItem value={WORK_MODEL.REMOTE}>Remote</SelectItem>
+                        <SelectItem value={WORK_MODEL.HYBRID}>Hybrid</SelectItem>
+                        <SelectItem value={WORK_MODEL.PART_TIME}>Part-time</SelectItem>
+                        <SelectItem value={WORK_MODEL.FREELANCE}>Freelance</SelectItem>
+                        <SelectItem value={WORK_MODEL.CONTRACT}>Contract</SelectItem>
+                        <SelectItem value={WORK_MODEL.INTERNSHIP}>Internship</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
