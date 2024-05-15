@@ -160,13 +160,7 @@ const UploadCv: FC = (): ReactElement => {
 
   return (
     <>
-      <div className="flex w-full flex-col items-center rounded-md bg-white  py-8">
-        <h3 className="text-center text-2xl font-semibold">
-          Create Job Details
-        </h3>
-        <p className="text-sm font-normal">
-          Please add CV Candidates to add your job list.
-        </p>
+      <div className="flex flex-1 overflow-y-scroll w-full flex-col items-center rounded-md bg-white  py-8">
         <div className="mt-11 flex items-center justify-center gap-x-5">
           <input
             type="file"

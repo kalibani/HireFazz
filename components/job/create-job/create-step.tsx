@@ -12,7 +12,7 @@ import CVAnalyzer from './cv-analyzer';
 const CreateStep = () => {
   const step = useStore(useFormStepStore, (state) => state.step);
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 flex flex-col h-full">
       <TrackingStep step={step} />
       {step === 0 && <FormCreate />}
       {step === 1 && <CreateJobDetail />}
