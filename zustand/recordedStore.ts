@@ -15,6 +15,7 @@ interface RecorderState {
   questionRetake?: number;
   introVideoUrl?: Blob | null;
   farewellVideoUrl?: Blob | null;
+  questionVideoUrl?: Blob | null;
   farewellTitle?: string;
   farewellDescription?: string;
   questions: questionState[];
@@ -26,10 +27,9 @@ interface RecorderState {
     durationTimeAnswered?: number;
     questionRetake?: number;
   }) => void;
-  setVideoUrl: (url: Blob | null, type: 'intro' | 'farewell') => void;
-  setQuestion: (data: questionState[]) => void;
+  setVideoUrl: (url: Blob | null, type: 'intro' | 'question') => void;
+  setQuestion: (data: questionState) => void;
   removeQuestion: (index: number) => void;
-  addQuestion: () => void;
   setIsLoading: (data: boolean) => void;
 }
 
@@ -40,18 +40,11 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   questionRetake: 0,
   introVideoUrl: null,
   farewellVideoUrl: null,
+  questionVideoUrl: null,
   farewellDescription: '',
   farewellTitle: '',
   isLoading: false,
-  questions: [
-    {
-      videoUrl: null,
-      title: '',
-      question: '',
-      timeRead: 0,
-      timeAnswered: 0,
-    },
-  ],
+  questions: [],
   urlAny: new FormData(),
 
   setTitle: (title, type) => {
@@ -76,27 +69,16 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   setVideoUrl: (url, type) => {
     if (type === 'intro') {
       set({ introVideoUrl: url });
-    } else if (type === 'farewell') {
-      set({ farewellVideoUrl: url });
+    } else {
+      set({ questionVideoUrl: url });
     }
   },
-  setQuestion: (data) => set((state) => ({ questions: data })),
+  setQuestion: (data) =>
+    set((state) => ({ questions: [...state.questions, data] })),
   removeQuestion: (index) =>
     set((state) => ({
       questions: state.questions.filter((_, i) => i !== index),
     })),
-  addQuestion: () =>
-    set((state) => ({
-      questions: [
-        ...state.questions,
-        {
-          videoUrl: null,
-          question: '',
-          title: '',
-          timeAnswered: 0,
-          timeRead: 0,
-        },
-      ],
-    })),
+
   setIsLoading: (data) => set({ isLoading: data }),
 }));
