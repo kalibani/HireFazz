@@ -1,18 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import { Trash2, FilePlus2, FileSpreadsheet } from 'lucide-react';
+import { Trash2, Settings, FileSpreadsheet } from 'lucide-react';
 import { Textarea } from '../ui/textarea';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import VideoRecord from './video-record';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@radix-ui/react-select';
 import {
   FormField,
   FormItem,
@@ -25,6 +16,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { useState } from 'react';
 
 const FormSchema = z.object({
   timeRead: z.string().optional(),
@@ -34,6 +27,7 @@ const FormSchema = z.object({
 });
 
 const FormQuestion = () => {
+  const [isSettings, setIsSettings] = useState<boolean>(false);
   const { setQuestion, addQuestion, removeQuestion, questions } =
     useRecorderStore();
 
@@ -62,20 +56,38 @@ const FormQuestion = () => {
                 control={form.control}
                 name="title"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-full space-y-0">
                     <FormLabel className="text-xs">Title Question</FormLabel>
-                    <FormControl>
-                      <Input placeholder="" {...field} />
-                    </FormControl>
+                    <div className="flex items-center gap-x-4">
+                      <FormControl>
+                        <Input placeholder="" {...field} className="w-full" />
+                      </FormControl>
+                      <div className="flex flex-col gap-y-6">
+                        <Button
+                          variant="ghost"
+                          className="h-0 p-0 hover:bg-transparent"
+                        >
+                          <Trash2 className="size-3 text-primary" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="h-0 p-0 hover:bg-transparent"
+                          onClick={() => setIsSettings(!isSettings)}
+                        >
+                          <Settings className="size-3 text-primary" />
+                        </Button>
+                      </div>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              {isSettings && <p>tada</p>}
               <FormField
                 control={form.control}
                 name="question"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="mt-4 space-y-0">
                     <FormLabel className="text-xs">Question</FormLabel>
                     <FormControl>
                       <Textarea placeholder="" {...field} minRows={2.5} />
