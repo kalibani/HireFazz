@@ -47,7 +47,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
   });
 
   const { replace } = useRouter();
-  // const { introVideoUrl, questions, setIsLoading } = useRecorderStore();
+  const { introVideoUrl, questions, setIsLoading } = useRecorderStore();
   const [isPending, startTransition] = useTransition();
 
   const { mutate } = useMutation({
@@ -65,78 +65,78 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
     },
   });
 
-  // useEffect(() => {
-  //   if (isPending) {
-  //     setIsLoading(isPending);
-  //   }
-  // }, [isPending, setIsLoading]);
+  useEffect(() => {
+    if (isPending) {
+      setIsLoading(isPending);
+    }
+  }, [isPending, setIsLoading]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     const { title, durationTimeAnswered, durationTimeRead } = data;
 
-    // if (questions.length == 0) {
-    startTransition(async () => {
-      try {
-        // const payloadQuestions: any = questions.map(async (item) => {
-        //   const urlFormData: any =
-        //     item.videoUrl && (await blobToFormData(item.videoUrl, 'questions'));
-        //   const url = urlFormData && (await uploadVideo(urlFormData));
-        //   return {
-        //     ...item,
-        //     timeAnswered: !item.timeAnswered
-        //       ? Number(durationTimeAnswered)
-        //       : Number(item.timeAnswered),
-        //     timeRead: !item.timeRead
-        //       ? Number(durationTimeRead)
-        //       : Number(item.timeRead),
-        //     videoUrl: url ?? '',
-        //     description: item.question,
-        //     questionRetake: 0,
-        //   };
-        // });
-        // const resolvedQuestions = await Promise.all(payloadQuestions);
-        if (orgId) {
-          const testPayload = {
-            organizationId: 'clw0ai1vm000074a13acvt49q',
-            title: 'FE TEST',
-            durationTimeAnswered: 180,
-            farewellVideoUrl: '',
-            durationTimeRead: 60,
-            introVideoUrl:
-              'https://utfs.io/f/cf3ceb00-f77c-43ac-8241-8cec5ad7d275-1nr3os',
-            questions: [
-              {
-                title: 'AAA',
-                question: 'AAAAVVVVVV',
-                timeAnswered: 180,
-                timeRead: 60,
-                videoUrl:
-                  'https://utfs.io/f/521a97de-edba-4198-a191-951fb3b9e09e-th3h6b',
-                description: 'AAAAVVVVVV',
-                questionRetake: 0,
-              },
-            ],
-          };
-          // const introVideo =
-          //   introVideoUrl && (await blobToFormData(introVideoUrl, 'intro'));
-          // const introUrl = introVideo && (await uploadVideo(introVideo));
-          // const payload: any = {
-          //   organizationId: orgId,
-          //   title,
-          //   durationTimeAnswered: Number(durationTimeAnswered),
-          //   durationTimeRead: Number(durationTimeRead),
-          //   introVideoUrl: introUrl,
-          //   // farewellVideoUrl: '',
-          //   questions: resolvedQuestions,
-          // };
-          mutate(testPayload);
-          console.log(testPayload);
+    if (questions.length == 0) {
+      startTransition(async () => {
+        try {
+          const payloadQuestions: any = questions.map(async (item) => {
+            const urlFormData: any =
+              item.videoUrl &&
+              (await blobToFormData(item.videoUrl, 'questions'));
+            const url = urlFormData && (await uploadVideo(urlFormData));
+            return {
+              ...item,
+              timeAnswered: !item.timeAnswered
+                ? Number(durationTimeAnswered)
+                : Number(item.timeAnswered),
+              timeRead: !item.timeRead
+                ? Number(durationTimeRead)
+                : Number(item.timeRead),
+              videoUrl: url ?? '',
+              description: item.question,
+              questionRetake: 0,
+            };
+          });
+          const resolvedQuestions = await Promise.all(payloadQuestions);
+          if (orgId) {
+            const testPayload = {
+              organizationId: 'clw0ai1vm000074a13acvt49q',
+              title: 'FE TEST',
+              durationTimeAnswered: 180,
+              farewellVideoUrl: '',
+              durationTimeRead: 60,
+              introVideoUrl:
+                'https://utfs.io/f/cf3ceb00-f77c-43ac-8241-8cec5ad7d275-1nr3os',
+              questions: [
+                {
+                  title: 'AAA',
+                  question: 'AAAAVVVVVV',
+                  timeAnswered: 180,
+                  timeRead: 60,
+                  videoUrl:
+                    'https://utfs.io/f/521a97de-edba-4198-a191-951fb3b9e09e-th3h6b',
+                  description: 'AAAAVVVVVV',
+                  questionRetake: 0,
+                },
+              ],
+            };
+            const introVideo =
+              introVideoUrl && (await blobToFormData(introVideoUrl, 'intro'));
+            const introUrl = introVideo && (await uploadVideo(introVideo));
+            const payload: any = {
+              organizationId: orgId,
+              title,
+              durationTimeAnswered: Number(durationTimeAnswered),
+              durationTimeRead: Number(durationTimeRead),
+              introVideoUrl: introUrl,
+              questions: resolvedQuestions,
+            };
+            mutate(testPayload);
+            console.log(testPayload);
+          }
+        } catch (error) {
+          errorHandler(error);
         }
-      } catch (error) {
-        errorHandler(error);
-      }
-    });
-    // }
+      });
+    }
   };
   return (
     <>
