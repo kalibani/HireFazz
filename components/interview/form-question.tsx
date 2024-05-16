@@ -56,20 +56,15 @@ const FormQuestion = () => {
   }, []);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    console.log(data, questionVideoUrl, '<<<< submit');
-    if (questionVideoUrl && data) {
-      setQuestion({
-        title: data.title,
-        question: data.question,
-        timeAnswered: Number(data.timeAnswered) ?? durationTimeAnswered,
-        timeRead: Number(data.timeRead) ?? durationTimeRead,
-        videoUrl: questionVideoUrl,
-      });
-      back();
-    }
+    setQuestion({
+      title: data.title,
+      question: data.question,
+      timeAnswered: Number(data.timeAnswered) ?? durationTimeAnswered,
+      timeRead: Number(data.timeRead) ?? durationTimeRead,
+      videoUrl: questionVideoUrl,
+    });
+    back();
   };
-
-  console.log(questions, queryParams.get('id'), '<<< question');
 
   return (
     <div className="rounded-md bg-white p-4">

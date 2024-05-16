@@ -31,27 +31,8 @@ import { errorHandler } from '@/helpers';
 import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 import { blobToFormData } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-const Question = z.object({
-  timeRead: z.number().optional().nullable(),
-  timeAnswered: z.number().optional().nullable(),
-  questionRetake: z.number().optional().nullable(),
-  title: z.string(),
-  description: z.string(),
-  videoUrl: z.string(),
-});
+import { CreateTemplateInterview } from '@/lib/validators/interview';
 
-const CreateTemplateInterview = z.object({
-  organizationId: z.string(),
-  title: z.string(),
-  durationTimeRead: z.number(),
-  durationTimeAnswered: z.number(),
-  questionRetake: z.number().optional().nullable(),
-  farewellTitle: z.string().optional().nullable(),
-  farewellDescription: z.string().optional().nullable(),
-  introVideoUrl: z.string().optional().nullable(),
-  farewellVideoUrl: z.string().optional().nullable(),
-  questions: z.array(Question),
-});
 const FormSchema = z.object({
   durationTimeRead: z.string(),
   title: z.string(),
@@ -72,13 +53,11 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
     mutationFn: (payload: z.infer<typeof CreateTemplateInterview>) =>
       createTemplateInterview(payload),
     onSuccess: (data) => {
-      console.log(data, '<<< on success');
-      // setIsLoading(false);
       replace(`/${orgId}/video`);
+      setIsLoading(false);
     },
     onError: (error) => {
-      console.log(error, 'error created question');
-      // setIsLoading(false);
+      setIsLoading(false);
     },
   });
 
@@ -91,7 +70,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     const { title, durationTimeAnswered, durationTimeRead } = data;
 
-    if (questions.length == 0) {
+    if (questions.length > 0) {
       startTransition(async () => {
         try {
           const payloadQuestions: any = questions.map(async (item) => {
@@ -114,40 +93,18 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
           });
           const resolvedQuestions = await Promise.all(payloadQuestions);
           if (orgId) {
-            const testPayload = {
-              organizationId: 'clw0ai1vm000074a13acvt49q',
-              title: 'FE TEST',
-              durationTimeAnswered: 180,
-              farewellVideoUrl: '',
-              durationTimeRead: 60,
-              introVideoUrl:
-                'https://utfs.io/f/cf3ceb00-f77c-43ac-8241-8cec5ad7d275-1nr3os',
-              questions: [
-                {
-                  title: 'AAA',
-                  question: 'AAAAVVVVVV',
-                  timeAnswered: 180,
-                  timeRead: 60,
-                  videoUrl:
-                    'https://utfs.io/f/521a97de-edba-4198-a191-951fb3b9e09e-th3h6b',
-                  description: 'AAAAVVVVVV',
-                  questionRetake: 0,
-                },
-              ],
-            };
             const introVideo =
               introVideoUrl && (await blobToFormData(introVideoUrl, 'intro'));
             const introUrl = introVideo && (await uploadVideo(introVideo));
-            const payload: any = {
+            const payload: z.infer<typeof CreateTemplateInterview> = {
               organizationId: orgId,
               title,
               durationTimeAnswered: Number(durationTimeAnswered),
               durationTimeRead: Number(durationTimeRead),
-              introVideoUrl: introUrl,
+              introVideoUrl: introUrl as string,
               questions: resolvedQuestions,
             };
-            mutate(testPayload);
-            console.log(testPayload);
+            mutate(payload);
           }
         } catch (error) {
           errorHandler(error);
@@ -277,7 +234,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
             </div>
           </form>
         </Form>
-        {/* {Array.isArray(questions) &&
+        {Array.isArray(questions) &&
           questions.map((item, index) => (
             <QuestionCard
               key={index}
@@ -285,7 +242,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
               question={item.question}
               title={item.title}
             />
-          ))} */}
+          ))}
       </div>
     </>
   );
