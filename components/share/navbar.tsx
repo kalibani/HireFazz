@@ -29,7 +29,7 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
     ?.filter((x) => x.organization.id === params.orgId)
     .at(0);
   return (
-    <nav className="flex items-center justify-between gap-x-4 border-b border-l bg-white px-3 py-2">
+    <nav className="fixed z-10 flex w-full items-center justify-between gap-x-4 border-b bg-white px-3 py-[7.5px] pl-[90px]">
       <span className="w-full text-sm font-medium">{currentDate}</span>
       <DropdownMenu>
         <DropdownMenuContent className="w-40" align="start">

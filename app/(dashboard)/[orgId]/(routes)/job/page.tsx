@@ -21,7 +21,7 @@ const JobPage = async ({ params, searchParams }: ParamsProps) => {
     <SectionWrap isScroll>
       <BannerJob orgId={params.orgId} />
       <HeaderJob />
-      <div className="min-h-svh rounded-md bg-white px-5 py-2.5">
+      <div className="h-fit rounded-md bg-white px-5 py-2.5">
         <FilterJob />
         <TableJob orgId={params.orgId} jobData={jobListData} />
       </div>

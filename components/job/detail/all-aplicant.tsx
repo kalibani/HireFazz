@@ -62,8 +62,7 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
   const perPage = Number(searchParams.get('per_page') || '10');
   const pathname = usePathname();
   const params = useParams();
-  const router = useRouter();
-  const { replace, refresh } = useRouter();
+  const { replace, refresh, push } = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedAction, setSelectedAction] = useState('SHORTLISTED');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -88,7 +87,7 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
       header: ({ column }) => {
         return (
           <Button
-            className="w-fit px-4 pl-0 hover:bg-transparent"
+            className="w-auto px-4 pl-0 hover:bg-transparent"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
@@ -97,7 +96,9 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
           </Button>
         );
       },
-      cell: ({ row }) => <p className="capitalize">{row.original.cv.name}</p>,
+      cell: ({ row }) => (
+        <p className="mb-1 w-2/3 truncate capitalize">{row.original.cv.name}</p>
+      ),
     },
     {
       accessorKey: 'addedOn',
@@ -246,7 +247,7 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
         })
         .finally(handleFinally);
     } else if (selectedAction === 'Send Email') {
-      router.push(`/${params?.orgId}/job/${params?.id}/send-email`);
+      push(`/${params?.orgId}/job/${params?.id}/send-email`);
     } else {
       axios
         .patch(`/api/cv-analysis`, {
@@ -254,6 +255,9 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
           selectedIds: getSelectedRowIds(),
         })
         .finally(handleFinally);
+      push(
+        `/${params?.orgId}/job/${params?.id}/${selectedAction.toLowerCase()}`,
+      );
     }
   };
 

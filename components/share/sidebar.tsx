@@ -41,8 +41,8 @@ const Sidebar = () => {
   const pathname = usePathname();
   const { orgId } = useParams();
   return (
-    <aside className="flex h-dvh max-w-[76px] flex-col bg-white">
-      <div className="flex items-center justify-center border-b py-1">
+    <aside className="fixed z-20 flex h-dvh max-w-[76px] flex-col bg-white">
+      <div className="flex items-center justify-center border-b border-r py-1">
         <Image src={logo} alt="logo" />
       </div>
 

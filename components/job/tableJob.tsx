@@ -41,7 +41,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const pageSize = Number(perPage || 10);
+  const pageSize = Number(perPage || 5);
 
   const columns: ColumnDef<any>[] = [
     {

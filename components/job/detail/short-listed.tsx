@@ -8,14 +8,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  Airplay,
   ArrowUpDown,
   ChevronDown,
   FileSearchIcon,
   MessageSquare,
-  ShieldPlus,
   Trash2,
-  Zap,
 } from 'lucide-react';
 import {
   Select,
@@ -39,7 +36,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { formatDateDMY } from '@/helpers';
 import {
   useParams,
   usePathname,
@@ -49,7 +45,7 @@ import {
 import { useState } from 'react';
 import { GetJobDetailResponse } from '@/lib/actions/job/getJob';
 import axios from 'axios';
-import { ANALYSYS_STATUS, Cv, CvAnalysis } from '@prisma/client';
+import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
 
 interface DetailJobTableProps {
@@ -68,7 +64,9 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const [isLoading, setIsLoading] = useState(false);
-  const cvAnalysis = jobDetail?.data?.cvAnalysis;
+  const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
+    (x) => x.status === ANALYSYS_STATUS.SHORTLISTED,
+  );
 
   const columns: ColumnDef<any>[] = [
     {
@@ -87,7 +85,7 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
       header: ({ column }) => {
         return (
           <Button
-            className="w-fit px-4 pl-0 hover:bg-transparent"
+            className="w-auto px-4 pl-0 hover:bg-transparent"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
@@ -96,7 +94,9 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
           </Button>
         );
       },
-      cell: ({ row }) => <p className="capitalize">{row.original.cv.name}</p>,
+      cell: ({ row }) => (
+        <p className="w-2/3 truncate capitalize">{row.original.cv.name}</p>
+      ),
     },
     {
       accessorKey: 'location',
@@ -259,10 +259,13 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
   const interviewButton = (() => {
     const selectedIds = getSelectedRowIds();
 
-    const onClickAnalyze = () => {
+    const onClickInterview = () => {
       setIsLoading(true);
       axios
-        .post('/api/cv-analysis/analyze', { selectedIds })
+        .post('/api/cv-analysis', {
+          selectedIds,
+          actionName: ANALYSYS_STATUS.INTERVIEW,
+        })
         .finally(handleFinally);
     };
 
@@ -270,7 +273,7 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
       <Button
         className="flex gap-2 py-1 text-sm"
         disabled={!selectedIds.length}
-        onClick={onClickAnalyze}
+        onClick={onClickInterview}
       >
         <MessageSquare className="size-6" />
         Automatic Interview
@@ -341,12 +344,6 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
             Action
           </Button>
         </div>
-
-        {/* <div className="w-full bg-rose-100 flex justify-center items-center py-3 text-xs">
-                    <span className="text-slate-400">3 CV Selected, or </span>
-                    &nbsp;
-                    <span className="text-rose-600 font-medium">select all cv on this page</span>
-                </div> */}
       </div>
 
       <Table className="border border-solid border-slate-200">

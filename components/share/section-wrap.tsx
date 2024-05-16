@@ -8,13 +8,13 @@ const SectionWrap = ({
 }: {
   children: React.ReactNode;
   isScroll?: boolean;
-  className?: string
+  className?: string;
 }) => {
   return (
     <section
       className={cn(
         'space-y-3 p-3',
-        isScroll ? 'h-[calc(100%-5%)] overflow-y-auto' : '',
+        isScroll ? 'h-full min-h-screen overflow-y-auto' : '',
         className,
       )}
     >
