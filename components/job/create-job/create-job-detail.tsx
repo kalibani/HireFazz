@@ -30,7 +30,7 @@ const ReactQuill = dynamic(
 
 const initialState = {
   jobDescription: '',
-  skill: '',
+  skill: [],
   responsibilities: '',
   requirement: '',
 };
@@ -54,6 +54,15 @@ const reducer = (state: any, action: any) => {
       return state;
   }
 };
+
+type AutoGenerateType = 'jobDescription' | 'skill' | 'responsibilities' | 'requirement'
+
+const headerMap: Record<AutoGenerateType, string> = {
+  jobDescription: 'Job Summary',
+  skill: 'Skill',
+  responsibilities: 'Responsibilites',
+  requirement: 'Requirements',
+}
 
 const CreateJobDetail = () => {
   const { setStep, setFormDetailJob, dataCreateJob } = useFormStepStore(
@@ -87,13 +96,13 @@ const CreateJobDetail = () => {
     }
   }, [listOfEditor]);
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | string[]) => {
     dispatch({ type: 'CHANGE_VALUE', field, value });
   };
 
   const [isPending, startTransition] = useTransition();
   const autoGenerate = async (
-    type: 'jobDescription' | 'skill' | 'responsibilities' | 'requirement',
+    type: AutoGenerateType,
   ) => {
     startTransition(async () => {
       switch (type) {
@@ -101,9 +110,17 @@ const CreateJobDetail = () => {
           const { result: skillResult } = await generateSkill(
             dataCreateJob.title,
           );
-          const skillSet = skillResult?.skills?.length
-            ? skillResult.skills?.join(', ')
-            : skillResult;
+          let skillSet: string[] = []
+
+          // skill result can either be: string, array, object
+          // modify if there is new case
+          if (typeof skillResult === 'string') {
+            skillSet = skillResult.split(',')
+          } else if (typeof skillResult === 'object' && Array.isArray(skillResult)) {
+            skillSet = skillResult
+          } else if (typeof skillResult === 'object') {
+            skillSet = Object.values(skillResult).flat() as string[]
+          }
           handleChange('skill', skillSet);
           break;
         case 'responsibilities':
@@ -128,9 +145,9 @@ const CreateJobDetail = () => {
   };
 
   const addToEditor = (
-    type: 'jobDescription' | 'skill' | 'responsibilities' | 'requirement',
+    type: AutoGenerateType,
   ) => {
-    const htmlDescription = `<p><strong>${type.charAt(0).toUpperCase() + type.slice(1)} :</strong></p><p>${state[type]}</p><br/>`;
+    const htmlDescription = `<p><strong>${headerMap[type]} :</strong></p><p>${state[type]}</p><br/>`;
     setListOfEditor((prev) => {
       const newListOfEditor = [...prev];
       switch (type) {
@@ -138,7 +155,9 @@ const CreateJobDetail = () => {
           newListOfEditor[0] = htmlDescription;
           break;
         case 'skill':
-          newListOfEditor[1] = htmlDescription;
+          // add space after comma
+          const skillHtml = `<p><strong>${headerMap[type]} :</strong></p><p>${state[type].join(', ')}</p><br/>`;
+          newListOfEditor[1] = skillHtml;
           break;
         case 'responsibilities':
           newListOfEditor[2] = htmlDescription;
@@ -157,13 +176,47 @@ const CreateJobDetail = () => {
     setFormDetailJob(value);
     setStep(2);
   };
+  const prevStep = () => {
+    setFormDetailJob(value);
+    setStep(0);
+  };
 
   if (!mount) {
     return <Loader />;
   }
 
+  const getContent = (type: AutoGenerateType) => {
+    if (type === 'skill') {
+      return (
+        <div className="w-full bg-white min-h-[218px] rounded-sm p-2 flex flex-wrap gap-3">
+          {!state[type].length ? (
+            <span>Click Generate button</span>
+          ) : (
+            state[type]?.flat().map((skillItem: string, idx: number) => (
+              <span key={skillItem + idx} className="py-1 rounded-sm px-2 bg-slate-500 text-white h-8 flex items-center">
+                {skillItem.trim()}
+              </span>
+            ))
+          )}
+        </div>
+      )
+    }
+
+    return (
+      <Textarea
+        value={state[type]}
+        placeholder={
+          isPending ? 'loading' : 'Click Generate button'
+        }
+        minRows={10}
+        className="focus-visible:ring-0 focus-visible:ring-transparent"
+        onChange={(e) => handleChange(type, e.target.value)}
+      />
+    )
+  }
+
   return (
-    <div className="flex overflow-y-scroll flex-1 min-h-svh w-full flex-col items-center rounded-md bg-white  py-8">
+    <div className="flex overflow-y-scroll flex-1 w-full flex-col items-center rounded-md bg-white  py-8">
       <div className="w-ful flex flex-col items-center justify-center overflow-y-auto px-12 py-8">
         <div className="flex w-full gap-x-3">
           <div className="h-[530px] w-[445px] space-y-2 overflow-y-auto">
@@ -186,23 +239,28 @@ const CreateJobDetail = () => {
                 defaultValue="item-1"
               >
                 <AccordionItem value="item-1" className="bg-slate-200 p-2">
-                  <AccordionTrigger className="h-auto p-0 text-sm font-normal">
-                    Job Description
+                  <AccordionTrigger className="h-auto p-0 text-sm font-normal py-2 hover:no-underline">
+                    Job Summary
                   </AccordionTrigger>
                   <AccordionContent>
-                    <Textarea
-                      minRows={10}
-                      className="focus-visible:ring-0 focus-visible:ring-transparent"
-                      value={state.jobDescription}
-                      placeholder={isPending ? 'loading' : ''}
-                      onChange={(e) =>
-                        handleChange('jobDescription', e.target.value)
-                      }
-                    />
+                    {isPending ? (
+                      <DescriptionSkeleton />
+                    ) : (
+                      <Textarea
+                        minRows={10}
+                        className="focus-visible:ring-0 focus-visible:ring-transparent"
+                        value={state.jobDescription}
+                        onChange={(e) =>
+                          handleChange('jobDescription', e.target.value)
+                        }
+                      />
+                    )}
                     <div className="flex items-center justify-between">
                       <Button
                         variant="ghost"
                         className="w-auto p-0 text-sm font-normal hover:bg-transparent"
+                        onClick={() => autoGenerate('jobDescription')}
+                        disabled={isPending}
                       >
                         {' '}
                         Regenerate
@@ -211,6 +269,7 @@ const CreateJobDetail = () => {
                         variant="ghost"
                         className="w-auto p-0 text-sm font-normal hover:bg-transparent"
                         onClick={() => addToEditor('jobDescription')}
+                        disabled={isPending}
                       >
                         Add to Editor <ArrowRight className="ml-1 h-4 w-4" />
                       </Button>
@@ -223,24 +282,21 @@ const CreateJobDetail = () => {
               <div className="overflow-hidden rounded-md  border" key={name}>
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value={type} className="bg-slate-200 p-2">
-                    <AccordionTrigger className="h-auto p-0 text-sm font-normal">
+                    <AccordionTrigger className="h-auto py-2 text-sm font-normal hover:no-underline">
                       {name}
                     </AccordionTrigger>
                     <AccordionContent>
-                      <Textarea
-                        value={state[type]}
-                        placeholder={
-                          isPending ? 'loading' : 'Click Generate button'
-                        }
-                        minRows={10}
-                        className="focus-visible:ring-0 focus-visible:ring-transparent"
-                        onChange={(e) => handleChange(type, e.target.value)}
-                      />
+                      {isPending ? (
+                        <DescriptionSkeleton />
+                      ) : (
+                        getContent(type)
+                      )}
                       <div className="flex items-center justify-between">
                         <Button
                           variant="ghost"
                           className="w-auto p-0 text-sm font-normal hover:bg-transparent"
                           onClick={() => autoGenerate(type)}
+                          disabled={isPending}
                         >
                           Regenerate
                         </Button>
@@ -248,6 +304,7 @@ const CreateJobDetail = () => {
                           variant="ghost"
                           className="w-auto p-0 text-sm font-normal hover:bg-transparent "
                           onClick={() => addToEditor(type)}
+                          disabled={isPending}
                         >
                           Add to Editor <ArrowRight className="ml-1 h-4 w-4" />
                         </Button>
@@ -270,7 +327,7 @@ const CreateJobDetail = () => {
               />
             </div>
             <div className="flex justify-between">
-              <Button variant="outline" className="min-w-32">
+              <Button variant="outline" className="min-w-32" onClick={prevStep}>
                 Previous
               </Button>
               <Button className="min-w-32" disabled={!value} onClick={nextStep}>
@@ -285,3 +342,14 @@ const CreateJobDetail = () => {
 };
 
 export default CreateJobDetail;
+
+const DescriptionSkeleton = () => {
+  return (
+    <ul className="space-y-3 bg-white px-2 py-3 h-[218px] rounded-sm">
+      <li className="w-full h-4 bg-gray-200 rounded-full dark:bg-neutral-700 animate-pulse"></li>
+      <li className="w-full h-4 bg-gray-200 rounded-full dark:bg-neutral-700 animate-pulse "></li>
+      <li className="w-full h-4 bg-gray-200 rounded-full dark:bg-neutral-700 animate-pulse "></li>
+      <li className="w-1/2 h-4 bg-gray-200 rounded-full dark:bg-neutral-700 animate-pulse "></li>
+    </ul>
+  )
+}

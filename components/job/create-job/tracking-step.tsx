@@ -10,7 +10,7 @@ const TrackingStep = ({ step }: { step: number }) => {
       subTitle: ''
     },
     1: {
-      title: 'Create Job Descriptions',
+      title: 'Job Description',
       subTitle: ''
     },
     2: {
