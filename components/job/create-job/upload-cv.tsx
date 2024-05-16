@@ -87,8 +87,6 @@ const UploadCv: FC = (): ReactElement => {
     },
     {
       accessorKey: 'name',
-      maxSize: 250,
-      size: 250,
       header: ({ column }) => {
         return (
           <Button
