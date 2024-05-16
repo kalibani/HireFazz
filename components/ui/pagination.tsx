@@ -15,6 +15,8 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
   const [page, setPage] = useState(1)
   const isInitialPageSetted = useRef(false)
   const totalPage = Math.ceil(totalItems / itemsPerPage)
+  const prevDisable = page === 1 || totalPage === 0
+  const nextDisable = page === totalPage || totalPage === 0
 
   useEffect(() => {
     // if there is initial page, then set the page to initial page only once
@@ -59,7 +61,7 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
     <div className="flex items-center gap-2">
       <Button
         variant="ghost"
-        disabled={page === 1}
+        disabled={prevDisable}
         onClick={() => handlePageChange(page - 1)}
       >
         Prev
@@ -79,7 +81,7 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
 
       <Button
         variant="ghost"
-        disabled={page === totalPage}
+        disabled={nextDisable}
         onClick={() => handlePageChange(page + 1)}
       >
         Next
