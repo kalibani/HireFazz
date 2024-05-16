@@ -97,8 +97,8 @@ const CandidateView = () => {
 
   console.log(recordedFile, '<<<');
   return (
-    <div className="mb-8 flex flex-col  items-center justify-center rounded-md bg-white  p-4">
-      <p>jumlah pertanya: {texts.length} </p>
+    <div className="mb-8 flex flex-col items-center justify-center rounded-md bg-white p-4">
+      <p>jumlah pertanya: {texts?.length} </p>
       <div className="flex items-end gap-x-6">
         <div
           className={cn(

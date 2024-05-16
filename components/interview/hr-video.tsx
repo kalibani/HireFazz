@@ -11,12 +11,12 @@ import {
   blobToFormData,
 } from '@/lib/utils';
 
-const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
+const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
   const webcamRef = useRef<any>(null);
   const mediaRecorderRef = useRef<any>(null);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
-  const { setVideoUrl, title, setFormData } = useRecorderStore();
+  const { setVideoUrl, title } = useRecorderStore();
 
   const handleDataAvailable = useCallback(
     ({ data }: any) => {
@@ -28,6 +28,8 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
   );
 
   const handleStartCaptureClick = useCallback(() => {
+    setVideoUrl(null, typeVideo);
+
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef?.current?.stream, {
       mimeType: 'video/webm',
@@ -37,7 +39,13 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
       handleDataAvailable,
     );
     mediaRecorderRef.current.start();
-  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable]);
+  }, [
+    webcamRef,
+    setCapturing,
+    mediaRecorderRef,
+    handleDataAvailable,
+    setVideoUrl,
+  ]);
 
   const handleStopCaptureClick = useCallback(() => {
     mediaRecorderRef.current?.stop();
@@ -48,32 +56,16 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
     const blob = new Blob(recordedChunks, {
       type: 'video/webm',
     });
-    // const file = blobToFile(blob, `${title}-video.webm`);
 
     const formTheData = await blobToFormData(blob, 'intro');
-    // const files = formTheData.getAll('file');
-    setVideoUrl(blob, isEnd ? 'farewell' : 'intro');
-
-    // setRecordedChunks([]);
-  }, [recordedChunks]);
+    setVideoUrl(blob, typeVideo);
+  }, [recordedChunks, setVideoUrl]);
 
   useEffect(() => {
-    if (recordedChunks.length) {
+    if (recordedChunks.length > 0) {
       handleDownload();
-      // const blob = new Blob(recordedChunks, {
-      //   type: 'video/webm',
-      // });
-      // const url = URL.createObjectURL(blob);
-      // const file = blobToFile(blob, `${title}-video.webm`);
-      // const formTheData = blobToFormData(blob, 'intro');
-      // setRecordedFile(file);
-      // setVideoUrl(formTheData, isEnd ? 'farewell' : 'intro');
-      // setFormData(blob);
-      // setRecordedChunks([]);
-      // upload(formTheData);
-      // console.log({ file, blob, formTheData }, '<<< file');
     }
-  }, [recordedChunks]);
+  }, [recordedChunks, handleDownload]);
 
   return (
     <div className="mb-8 flex flex-col  items-center justify-center rounded-md bg-white  p-4">

@@ -11,10 +11,12 @@ import {
 
 const InterviewList = ({ title }: { title: string }) => {
   return (
-    <div className="my-4 flex w-full items-center justify-between rounded-lg border p-4 shadow">
+    <div className="my-4 flex w-full items-center justify-between rounded-lg  bg-white p-4">
       <div>
         <h4 className="text-lg font-bold">{title}</h4>
-        <p>Job Name: {title}</p>
+        <p className="text-sm font-normal text-slate-400">
+          Descriptive of this name interview for detail information
+        </p>
       </div>
       <div className="flex items-center gap-4">
         <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
