@@ -14,11 +14,12 @@ import {
 } from '@/components/ui/select';
 import TableCV from './table';
 
-import { useFormStepStore } from '@/zustand/useCreateJob';
+import { FormStepState, useFormStepStore } from '@/zustand/useCreateJob';
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatDateDMY, formatFileSize } from '@/helpers';
-import { FC, ReactElement } from 'react';
+import { FC, ReactElement, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 const UploadCv: FC = (): ReactElement => {
   const {
@@ -29,6 +30,11 @@ const UploadCv: FC = (): ReactElement => {
     setStep,
   } = useFormStepStore((state) => state);
   const { setIsModalOpen } = usePopupModal();
+  const [tableItems, setTableItems] = useState<FormStepState['files']>([])
+  const searchParams = useSearchParams();
+  const perPage = searchParams.get('per_page') || '10'
+  const currPage = searchParams.get('page') || '1'
+  const query = searchParams.get('search')
 
   const handleNext = () => {
     setStep(3);
@@ -37,6 +43,23 @@ const UploadCv: FC = (): ReactElement => {
   interface UploadCVData {
     file: File;
   }
+
+  // handle filter & pagination in client side, since cv upload is in client state
+  useEffect(() => {
+    const allItems = files
+    let itemInPage: FormStepState['files'] = allItems
+    if (query) {
+      const namePattern = new RegExp(query)
+      itemInPage = allItems.filter((item) => namePattern.test(item.file.name))
+    }
+    if (allItems.length) {
+       const firstItem =  (Number(currPage) - 1) * Number(perPage)
+       const lastItem = Number(currPage) * Number(perPage)
+       itemInPage = itemInPage.slice(firstItem, lastItem)
+    }
+
+    setTableItems(itemInPage)
+  }, [files, perPage, currPage, query])
 
   const columns: ColumnDef<UploadCVData>[] = [
     {
@@ -64,6 +87,8 @@ const UploadCv: FC = (): ReactElement => {
     },
     {
       accessorKey: 'name',
+      maxSize: 250,
+      size: 250,
       header: ({ column }) => {
         return (
           <Button
@@ -76,7 +101,16 @@ const UploadCv: FC = (): ReactElement => {
           </Button>
         );
       },
-      cell: ({ row }) => <p className="capitalize">{row.original.file.name}</p>,
+      cell: ({ row }) => {
+        const value = row.original.file.name
+        const truncated = value.slice(0, 20)
+
+        const isOverflow = value.length > truncated.length
+
+        return (
+            <p data-tooltip-target="tooltip-default">{`${truncated}${isOverflow ? '...' : ''}`}</p>
+        )
+      },
     },
     {
       accessorKey: 'Added on',
@@ -161,7 +195,7 @@ const UploadCv: FC = (): ReactElement => {
   return (
     <>
       <div className="flex flex-1 overflow-y-scroll w-full flex-col items-center rounded-md bg-white  py-8">
-        <div className="mt-11 flex items-center justify-center gap-x-5">
+        <div className="flex items-center justify-center gap-x-5">
           <input
             type="file"
             accept=".pdf,.doc,.docx"
@@ -181,10 +215,15 @@ const UploadCv: FC = (): ReactElement => {
           <Button
             className="text-sm font-normal"
             onClick={() => setIsModalOpen(MODAL_ENUM.BANK_CV, true)}
+            // temporary disabled, while focus on upload from device
+            disabled
           >
             <FileStack className="mr-2 size-4" /> From Bank CV (Candidates)
           </Button>
-          <Select>
+          <Select
+            // temporary disabled, while focus on upload from device
+            disabled
+          >
             <SelectTrigger className="w-[180px] text-sm font-normal">
               <SelectValue placeholder="Select Platform" />
             </SelectTrigger>
@@ -201,13 +240,15 @@ const UploadCv: FC = (): ReactElement => {
           <Button
             className="text-sm font-normal"
             onClick={() => setIsModalOpen(MODAL_ENUM.THIRD_PARTY_CV, true)}
+            // temporary disabled, while focus on upload from device
+            disabled
           >
             Import
           </Button>
         </div>
       </div>
       <div className="flex w-full flex-col items-center rounded-md bg-white px-1 py-6">
-        <TableCV<UploadCVData> data={files} columns={columns} />
+        <TableCV<UploadCVData> data={tableItems} columns={columns} totalItems={files.length} />
       </div>
       <div className="flex w-full justify-between rounded-md bg-white px-4 py-5">
         <Button

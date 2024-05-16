@@ -2,7 +2,7 @@ import { formSchemaCreateJob } from '@/lib/validators/createJob';
 import { z } from 'zod';
 import { create } from 'zustand';
 
-interface FormStepState {
+export interface FormStepState {
   step: number;
   dataCreateJob: z.infer<typeof formSchemaCreateJob>;
   dataDetailJob: string;

@@ -6,11 +6,11 @@ import { Input } from '../ui/input';
 
 interface InputFilterProps extends Partial<HTMLInputElement> {
     label: string
+    onChange?: (value: string) => void
+    value?: string
 }
 
-const InputFilter = ({ label, placeholder }: InputFilterProps) => {
-  const [value, setValue] = useState('');
-
+const InputFilter = ({ label, placeholder, value, onChange }: InputFilterProps) => {
   return (
     <div>
     <span className="text-sm">{label}</span>
@@ -21,7 +21,7 @@ const InputFilter = ({ label, placeholder }: InputFilterProps) => {
             className="w-full border-none ring-0 outline-none focus-visible:ring-0 text-sm p-0 h-fit bg-transparent"
             value={value}
             placeholder={placeholder}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => onChange?.(e.target.value)}
             width={182}
           />
 

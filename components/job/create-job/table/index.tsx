@@ -15,7 +15,6 @@ import {
 } from '@tanstack/react-table';
 import { FileSearchIcon } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 
 import {
   Table,
@@ -27,14 +26,23 @@ import {
 } from '@/components/ui/table';
 import InputFilter from '@/components/table/input-filter';
 import { useFormStepStore } from '@/zustand/useCreateJob';
+import { PaginationGroup } from '@/components/ui/pagination';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 interface TableCVProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   dataFrom?: string;
+  totalItems?: number
 }
 
 const TableCV = <T,>(props: TableCVProps<T>) => {
+  const searchParams = useSearchParams();
+  const perPage = searchParams.get('per_page');
+  const currPage = searchParams.get('page');
+  const query = searchParams.get('search');
+  const pathname = usePathname();
+  const { replace } = useRouter();
   const { data, columns, dataFrom = 'Candidates' } = props;
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -65,6 +73,16 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
 
   const jobTitle = dataCreateJob?.title || '-';
 
+  const handleSearch = (type: 'per_page' | 'page' | 'search', value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(type, value);
+    } else {
+      params.delete(type);
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }
+
   return (
     <div className="flex w-full flex-col gap-5">
       <div className="mx-5 flex items-center gap-2">
@@ -82,8 +100,8 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
       </div>
 
       <div className="mx-2 flex gap-28">
-        <InputFilter label="Search" placeholder="Location" />
-        <InputFilter label="Search" placeholder="Search Name" />
+        {/* <InputFilter label="Search" placeholder="Location" /> */}
+        <InputFilter label="Search" placeholder="Search by Name" value={query || ''} onChange={(value) => handleSearch('search', value)} />
       </div>
 
       <div className="border-b">
@@ -139,29 +157,14 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 px-4 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div className="space-x-2 ">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+
+      <div className="px-4 py-4">
+        <PaginationGroup
+          perPage={Number(perPage || '10')}
+          totalItems={props.totalItems || data.length}
+          activePage={currPage ? Number(currPage) : undefined}
+          handlePagination={handleSearch}
+        />
       </div>
     </div>
   );
