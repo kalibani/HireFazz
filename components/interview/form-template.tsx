@@ -25,16 +25,33 @@ import {
 } from '@/components/ui/select';
 import QuestionCard from './question-card';
 import Link from 'next/link';
-import {
-  CreateTemplateInterview,
-  createTemplateInterview,
-} from '@/lib/actions/interview/createTemplateInterview';
+import createTemplateInterview from '@/lib/actions/interview/createTemplateInterview';
 import { useMutation } from '@tanstack/react-query';
 import { errorHandler } from '@/helpers';
 import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 import { blobToFormData } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+const Question = z.object({
+  timeRead: z.number().optional().nullable(),
+  timeAnswered: z.number().optional().nullable(),
+  questionRetake: z.number().optional().nullable(),
+  title: z.string(),
+  description: z.string(),
+  videoUrl: z.string(),
+});
 
+const CreateTemplateInterview = z.object({
+  organizationId: z.string(),
+  title: z.string(),
+  durationTimeRead: z.number(),
+  durationTimeAnswered: z.number(),
+  questionRetake: z.number().optional().nullable(),
+  farewellTitle: z.string().optional().nullable(),
+  farewellDescription: z.string().optional().nullable(),
+  introVideoUrl: z.string().optional().nullable(),
+  farewellVideoUrl: z.string().optional().nullable(),
+  questions: z.array(Question),
+});
 const FormSchema = z.object({
   durationTimeRead: z.string(),
   title: z.string(),

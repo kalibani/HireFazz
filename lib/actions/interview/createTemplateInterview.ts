@@ -13,7 +13,7 @@ const Question = z.object({
   videoUrl: z.string(),
 });
 
-export const CreateTemplateInterview = z.object({
+const CreateTemplateInterview = z.object({
   organizationId: z.string(),
   title: z.string(),
   durationTimeRead: z.number(),
@@ -25,9 +25,9 @@ export const CreateTemplateInterview = z.object({
   farewellVideoUrl: z.string().optional().nullable(),
   questions: z.array(Question),
 });
-export const createTemplateInterview = async (
+export default async function createTemplateInterview(
   payload: z.infer<typeof CreateTemplateInterview>,
-) => {
+) {
   try {
     const safePayload = CreateTemplateInterview.parse(payload);
     if (!safePayload) {
@@ -43,4 +43,4 @@ export const createTemplateInterview = async (
   } catch (error) {
     return errorHandler(error);
   }
-};
+}
