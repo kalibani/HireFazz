@@ -23,10 +23,10 @@ const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
     .with('all-applicant', () => (
       <DetailJobAllApplicant jobDetail={jobDetail} />
     ))
-    .with('screened', () => <DetailJobScreened />)
+    .with('screened', () => <DetailJobScreened jobDetail={jobDetail} />)
     .with('shortlisted', () => <DetailJobShortlisted jobDetail={jobDetail} />)
     .with('interviewed', () => <DetailJobInterviewed />)
-    .with('rejected', () => <DetailJobRejected />)
+    .with('rejected', () => <DetailJobRejected jobDetail={jobDetail} />)
     .with('send-email', () => <DetailJobSendEmail />)
     .otherwise(() => notFound());
 };

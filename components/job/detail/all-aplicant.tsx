@@ -269,6 +269,7 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
       axios
         .post('/api/cv-analysis/analyze', { selectedIds })
         .finally(handleFinally);
+      push(`/${params?.orgId}/job/${params?.id}/screened`);
     };
 
     return (

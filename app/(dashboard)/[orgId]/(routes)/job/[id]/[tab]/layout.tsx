@@ -35,7 +35,7 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
       link: `/${orgId}/job/${jobId}/screened`,
       icon: <UserSearch className="size-5" />,
       notificationCount: cvAnalysis.filter(
-        (analysis) => analysis.status === ANALYSYS_STATUS.ON_ANALYSYS,
+        (analysis) => analysis.status === ANALYSYS_STATUS.ANALYSYS,
       ).length,
       isActive: params.tab === 'screened',
     },

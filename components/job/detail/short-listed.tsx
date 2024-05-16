@@ -43,7 +43,7 @@ import {
   useSearchParams,
 } from 'next/navigation';
 import { useState } from 'react';
-import { GetJobDetailResponse } from '@/lib/actions/job/getJob';
+import { GetJobDetailResponse, TCV } from '@/lib/actions/job/getJob';
 import axios from 'axios';
 import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
@@ -64,11 +64,12 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const [isLoading, setIsLoading] = useState(false);
+
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.SHORTLISTED,
   );
 
-  const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<TCV>[] = [
     {
       accessorKey: 'check',
       header: () => <p></p>,
@@ -136,7 +137,7 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
       cell: ({ row }) => {
         return (
           <p className="capitalize text-slate-400">
-            {row.original.reportOfAnalysis?.matchPercentage}
+            {row.original.reportOfAnalysis?.matchedPercentage}%
           </p>
         );
       },

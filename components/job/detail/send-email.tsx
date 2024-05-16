@@ -16,15 +16,13 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import 'react-quill/dist/quill.snow.css';
 
-const ReactQuill = dynamic(
-  () => import('react-quill'),
-
-  { ssr: false },
-);
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const DetailJobSendEmail = () => {
+  const emailContent =
+    'Dear {{CANDIDATE_FIRST_NAME}}, We hope this email finds you well. We are pleased to inform you that after careful consideration of your application and interview performance, you have been shortlisted for the {{JOB_TITLE}} position at {{JOB_COMPANY}}. Your qualifications and experience stood out and we believe that your skills align well with the requirements of the role. We feel confident that your contributions would greatly benefit our team. Congratulations on reaching this stage, and we look forward to the possibility of welcoming you to our team. Best regards, Skima Team';
   const dummyReceiver = ['Maul', 'Agus', 'Tatang'];
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(emailContent);
   const form = useForm();
   const onSubmit = form.handleSubmit((data) => {
     console.log(data);
