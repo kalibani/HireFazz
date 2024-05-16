@@ -5,8 +5,8 @@ import prismadb from '@/lib/prismadb';
 import z from 'zod';
 
 const Question = z.object({
-  durationTimeRead: z.number().optional().nullable(),
-  durationTimeAnswered: z.number().optional().nullable(),
+  timeRead: z.number().optional().nullable(),
+  timeAnswered: z.number().optional().nullable(),
   questionRetake: z.number().optional().nullable(),
   title: z.string(),
   description: z.string(),
@@ -33,7 +33,7 @@ export const createTemplateInterview = async (
     if (!safePayload) {
       return { error: 'please recheck the payload' + { payload } };
     }
-    console.log(safePayload, '<<<<< action safpayload');
+    console.log(safePayload, '<<< safe');
     const data = await prismadb.interviewTemplate.create({
       data: {
         ...safePayload,

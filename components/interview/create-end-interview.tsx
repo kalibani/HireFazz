@@ -85,7 +85,7 @@ const CreateEndInterview = () => {
   };
   return (
     <div className=" mb-12 flex flex-col items-center justify-center rounded-md bg-white  p-4">
-      <VideoRecord videoUrl={farewellVideoUrl} isEnd />
+      <VideoRecord videoUrl={farewellVideoUrl} type="question" />
 
       <div className="mt-8 flex w-full items-center justify-between">
         <Button>Go Back</Button>

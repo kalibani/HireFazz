@@ -2,25 +2,31 @@
 
 import React from 'react';
 import PopupRecord from './popup-record';
+import { cn } from '@/lib/utils';
 
 const VideoRecord = ({
   videoUrl,
-  isEnd = false,
+  type,
 }: {
   videoUrl: Blob | null | undefined;
-  isEnd?: boolean;
+  type: 'intro' | 'question';
 }) => {
   return (
-    <div className="aspec-auto  flex h-[200px] w-1/4 flex-col items-center justify-center overflow-hidden rounded-md border">
+    <div
+      className={cn(
+        'flex  w-1/4 flex-col items-center justify-center overflow-hidden rounded-md border',
+        videoUrl ? 'h-fit' : 'h-[200px]',
+      )}
+    >
       {videoUrl && (
-        <div className="aspect-video size-full">
+        <div className=" aspect-video size-full">
           <video controls>
             <source src={URL.createObjectURL(videoUrl)} />
           </video>
         </div>
       )}
       <PopupRecord
-        isEnd={isEnd}
+        type={type}
         title="Interview Intro"
         triggerName={videoUrl ? 'retake' : 'Add record video'}
       />

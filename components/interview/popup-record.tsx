@@ -14,11 +14,11 @@ import { Video } from 'lucide-react';
 const PopupRecord = ({
   title,
   triggerName,
-  isEnd = false,
+  type,
 }: {
   title: string;
   triggerName: string;
-  isEnd?: boolean;
+  type: 'intro' | 'question';
 }) => {
   return (
     <Dialog>
@@ -30,7 +30,7 @@ const PopupRecord = ({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <HrVideo isEnd={isEnd} />
+        <HrVideo typeVideo={type} />
       </DialogContent>
     </Dialog>
   );

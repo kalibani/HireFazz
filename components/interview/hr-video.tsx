@@ -11,7 +11,7 @@ import {
   blobToFormData,
 } from '@/lib/utils';
 
-const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
+const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
   const webcamRef = useRef<any>(null);
   const mediaRecorderRef = useRef<any>(null);
   const [capturing, setCapturing] = useState(false);
@@ -28,7 +28,7 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
   );
 
   const handleStartCaptureClick = useCallback(() => {
-    setVideoUrl(null, 'intro');
+    setVideoUrl(null, typeVideo);
 
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef?.current?.stream, {
@@ -58,7 +58,7 @@ const HrVideo = ({ isEnd = false }: { isEnd: boolean }) => {
     });
 
     const formTheData = await blobToFormData(blob, 'intro');
-    setVideoUrl(blob, 'intro');
+    setVideoUrl(blob, typeVideo);
   }, [recordedChunks, setVideoUrl]);
 
   useEffect(() => {

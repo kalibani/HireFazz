@@ -133,7 +133,7 @@ const CreateIntroInterview = () => {
             </form>
           </Form>
         </div>
-        <VideoRecord videoUrl={introVideoUrl} />
+        <VideoRecord videoUrl={introVideoUrl} type="intro" />
       </div>
     </>
   );
