@@ -145,7 +145,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex gap-x-4">
-              {/* <VideoRecord videoUrl={introVideoUrl} type="intro" /> */}
+              <VideoRecord videoUrl={introVideoUrl} type="intro" />
               <div className="flex-1 gap-y-4">
                 <FormField
                   control={form.control}
