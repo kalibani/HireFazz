@@ -10,15 +10,16 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import { Mails } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
-const DetailJobSendEmail = () => {
+const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
   const emailContent =
     'Dear {{CANDIDATE_FIRST_NAME}}, We hope this email finds you well. We are pleased to inform you that after careful consideration of your application and interview performance, you have been shortlisted for the {{JOB_TITLE}} position at {{JOB_COMPANY}}. Your qualifications and experience stood out and we believe that your skills align well with the requirements of the role. We feel confident that your contributions would greatly benefit our team. Congratulations on reaching this stage, and we look forward to the possibility of welcoming you to our team. Best regards, Skima Team';
   const dummyReceiver = ['Maul', 'Agus', 'Tatang'];
@@ -167,6 +168,8 @@ const DetailJobSendEmail = () => {
                     </FormItem>
                   )}
                 />
+                {/* 
+                NOTE: Commented because not ready yet feature
                 <div className="flex w-full flex-col gap-y-3">
                   <FormLabel className="text-sm">Placeholders :</FormLabel>
                   <div className="flex flex-wrap items-center gap-3">
@@ -195,6 +198,7 @@ const DetailJobSendEmail = () => {
                     </span>
                   </div>
                 </div>
+                */}
                 <div className="mt-6 flex items-center gap-x-4">
                   <Button className="flex gap-x-2">
                     <Mails /> Send Email

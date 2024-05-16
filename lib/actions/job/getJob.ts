@@ -118,6 +118,10 @@ export interface GetJobDetailResponse {
   data?: Job;
 }
 
+export type TDetailJobTableProps = {
+  jobDetail?: GetJobDetailResponse;
+};
+
 export const getByIdJob = async (id: string, take?: number, skip?: number) => {
   try {
     const jobDetail = await prismadb.batchJob.findUnique({

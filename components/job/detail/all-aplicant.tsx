@@ -46,16 +46,12 @@ import {
   useSearchParams,
 } from 'next/navigation';
 import { useState } from 'react';
-import { GetJobDetailResponse } from '@/lib/actions/job/getJob';
+import { TCV, TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import axios from 'axios';
-import { ANALYSYS_STATUS, Cv, CvAnalysis } from '@prisma/client';
+import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
 
-interface DetailJobTableProps {
-  jobDetail?: GetJobDetailResponse;
-}
-
-const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
+const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
   jobDetail,
 }) => {
   const searchParams = useSearchParams();
@@ -70,7 +66,7 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const cvAnalysis = jobDetail?.data?.cvAnalysis;
 
-  const columns: ColumnDef<CvAnalysis & { cv: Cv }>[] = [
+  const columns: ColumnDef<TCV>[] = [
     {
       accessorKey: 'check',
       header: () => <p></p>,

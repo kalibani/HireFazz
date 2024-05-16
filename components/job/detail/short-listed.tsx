@@ -43,16 +43,14 @@ import {
   useSearchParams,
 } from 'next/navigation';
 import { useState } from 'react';
-import { GetJobDetailResponse, TCV } from '@/lib/actions/job/getJob';
+import { TCV, TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import axios from 'axios';
 import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
 
-interface DetailJobTableProps {
-  jobDetail?: GetJobDetailResponse;
-}
-
-const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
+const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
+  jobDetail,
+}) => {
   const searchParams = useSearchParams();
   const perPage = Number(searchParams.get('per_page') || '10');
   const pathname = usePathname();

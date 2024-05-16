@@ -14,13 +14,9 @@ import { ANALYSYS_STATUS } from '@prisma/client';
 import { ChevronDown, Search, FileSearchIcon } from 'lucide-react';
 import React, { FC, ReactElement } from 'react';
 import { ScreenedItem } from './detail-job-item';
-import { GetJobDetailResponse } from '@/lib/actions/job/getJob';
+import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
 
-interface DetailJobTableProps {
-  jobDetail?: GetJobDetailResponse;
-}
-
-const DetailJobScreened: FC<DetailJobTableProps> = ({
+const DetailJobScreened: FC<TDetailJobTableProps> = ({
   jobDetail,
 }): ReactElement => {
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
