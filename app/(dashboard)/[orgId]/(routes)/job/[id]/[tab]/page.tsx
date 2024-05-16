@@ -27,7 +27,7 @@ const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
     .with('shortlisted', () => <DetailJobShortlisted jobDetail={jobDetail} />)
     .with('interviewed', () => <DetailJobInterviewed />)
     .with('rejected', () => <DetailJobRejected jobDetail={jobDetail} />)
-    .with('send-email', () => <DetailJobSendEmail />)
+    .with('send-email', () => <DetailJobSendEmail jobDetail={jobDetail} />)
     .otherwise(() => notFound());
 };
 

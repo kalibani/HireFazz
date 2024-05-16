@@ -85,7 +85,11 @@ export type TCV = {
   batchJobId: string;
   location: string;
   reportOfAnalysis: {
+    documentOwner: string;
     matchedPercentage: number;
+    reason: string;
+    email: string;
+    location: string;
   };
   status: ANALYSYS_STATUS;
   isQualified: boolean;

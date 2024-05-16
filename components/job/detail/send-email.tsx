@@ -1,4 +1,5 @@
 'use client';
+import { Loader } from '@/components/share';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -10,31 +11,59 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { TEmail, sendingEmail } from '@/lib/actions/email';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
+import { useStoreEmail } from '@/zustand/useStoreEmail';
 import { Mails } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { FC, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
-  const emailContent =
-    'Dear {{CANDIDATE_FIRST_NAME}}, We hope this email finds you well. We are pleased to inform you that after careful consideration of your application and interview performance, you have been shortlisted for the {{JOB_TITLE}} position at {{JOB_COMPANY}}. Your qualifications and experience stood out and we believe that your skills align well with the requirements of the role. We feel confident that your contributions would greatly benefit our team. Congratulations on reaching this stage, and we look forward to the possibility of welcoming you to our team. Best regards, Skima Team';
-  const dummyReceiver = ['Maul', 'Agus', 'Tatang'];
+  const { ids } = useStoreEmail((state) => state);
+  const selectedCv = jobDetail?.data?.cvAnalysis?.filter((x) =>
+    ids.includes(x.id),
+  );
+  const form = useForm<
+    TEmail & { cc?: string; bcc?: string; attachJobDescription?: string }
+  >();
+  const cc = form.watch('cc');
+  const bcc = form.watch('bcc');
+  const emailContent = useMemo(
+    () => `
+Dear {{CANDIDATE_FIRST_NAME}}, We hope this email finds you well. We are pleased to inform you that after careful consideration of your application and interview performance, you have been shortlisted for the {{JOB_TITLE}} position at {{JOB_COMPANY}}. Your qualifications and experience stood out and we believe that your skills align well with the requirements of the role. We feel confident that your contributions would greatly benefit our team. Congratulations on reaching this stage, and we look forward to the possibility of welcoming you to our team. Best regards, Skima Team
+<br/>
+${cc ? `CC: ${cc}` : ''}
+<br/>
+${bcc ? `BCC: ${bcc}` : ''}
+`,
+    [cc, bcc],
+  );
+  const receiver = selectedCv?.map((x) => x.reportOfAnalysis?.email) || [,];
   const [value, setValue] = useState(emailContent);
-  const form = useForm();
-  const onSubmit = form.handleSubmit((data) => {
-    console.log(data);
+  const [isLoading, setIsLoading] = useState(false);
+  const onSubmit = form.handleSubmit(async (data) => {
+    setIsLoading(true);
+    const res = await sendingEmail({
+      ...data,
+      to: selectedCv?.map((x) => x.reportOfAnalysis?.email) || [],
+      html: value,
+    });
+    setIsLoading(false);
   });
+  useEffect(() => {
+    setValue(emailContent);
+  }, [cc, bcc]);
   return (
     <section className="flex flex-col gap-y-12 py-6">
       <div className="flex flex-col gap-y-2">
         <h1 className="text-[16px] font-semibold text-black">Send Email</h1>
         <div className="flex gap-x-2">
           <p className="text-sm text-black">Send to: </p>
-          {dummyReceiver.map((receiver, index) => (
+          {receiver.map((receiver, index) => (
             <div
               key={index}
               className="flex items-center justify-center rounded border border-gray-300 px-2 text-xs text-slate-400"
@@ -54,7 +83,7 @@ const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
             theme="snow"
             value={value}
             onChange={setValue}
-            className="h-[387px] w-1/2"
+            className="h-[260px] w-1/2"
           />
           <div className="flex w-1/2 flex-col">
             <Form {...form}>
@@ -78,7 +107,7 @@ const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
                   />
                   <FormField
                     control={form.control}
-                    name="replyTo"
+                    name="to"
                     render={({ field }) => (
                       <FormItem className="w-1/2">
                         <FormLabel>Reply to :</FormLabel>
@@ -133,7 +162,7 @@ const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
                 />
                 <FormField
                   control={form.control}
-                  name="type"
+                  name="attachJobDescription"
                   render={({ field }) => (
                     <FormItem className="flex items-center gap-x-4">
                       <FormLabel className="mt-2">
@@ -200,10 +229,13 @@ const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
                 </div>
                 */}
                 <div className="mt-6 flex items-center gap-x-4">
-                  <Button className="flex gap-x-2">
+                  <Button type="submit" className="flex gap-x-2">
                     <Mails /> Send Email
                   </Button>
-                  <span className="text-xs font-medium text-black underline">
+                  <span
+                    onClick={() => form.reset()}
+                    className="text-xs font-medium text-black underline"
+                  >
                     Reset
                   </span>
                 </div>
@@ -212,6 +244,11 @@ const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
           </div>
         </div>
       </div>
+      {isLoading && (
+        <div className="fixed left-0 top-0 z-50 h-full w-full items-start justify-center rounded-lg bg-black bg-opacity-40">
+          <Loader />
+        </div>
+      )}
     </section>
   );
 };

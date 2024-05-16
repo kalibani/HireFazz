@@ -50,6 +50,7 @@ import { TCV, TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import axios from 'axios';
 import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
+import { useStoreEmail } from '@/zustand/useStoreEmail';
 
 const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
   jobDetail,
@@ -62,6 +63,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedAction, setSelectedAction] = useState('SHORTLISTED');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const { setIds } = useStoreEmail((state) => state);
 
   const [isLoading, setIsLoading] = useState(false);
   const cvAnalysis = jobDetail?.data?.cvAnalysis;
@@ -243,6 +245,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
         })
         .finally(handleFinally);
     } else if (selectedAction === 'Send Email') {
+      setIds(getSelectedRowIds());
       push(`/${params?.orgId}/job/${params?.id}/send-email`);
     } else {
       axios

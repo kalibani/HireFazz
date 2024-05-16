@@ -98,26 +98,6 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
       ),
     },
     {
-      accessorKey: 'location',
-      header: ({ column }) => {
-        return (
-          <Button
-            className="w-fit px-4 pl-0 hover:bg-transparent"
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            Location
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return (
-          <p className="capitalize text-slate-400">{row.original.location}</p>
-        );
-      },
-    },
-    {
       id: 'scoreMatch',
       enableHiding: false,
       header: ({ column }) => {

@@ -86,12 +86,15 @@ export const analyzeCv = async ({
                 Step 4: Provide a brief reason for the match percentage, focusing on key areas where the CV aligns with or diverges from the job descriptions and requirements. This explanation should not exceed 100 words. If the job descriptions and requirement is not clear then return The requirements are not clearly defined.
 
                 Step 5: Detect what language is used on the job descriptions and requirements. The reason of the match percentage should use the same language as used in requirements, if the requirements is on English then use English, if the requirements is on Indonesian Language then use Indonesian Language.
-                
+
                 Step 6: Output a JSON object structured like: 
+
                 {
                   "documentOwner": "Name of the CV owner or document author. If the documentOwner is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
                   "matchedPercentage": "calculated match percentage, should in integer format without % symbol",
                   "reason": "brief explanation of the match percentage"
+                  "email": "email of the CV owner or document author. If the email is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
+                  "location": "location of the CV owner or document author. If the location is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
                 }
                 `,
           },
@@ -135,13 +138,15 @@ export const analyzeCv = async ({
   }
 };
 
-
 export const bulkAnalyzeCv = async ({
   cvAnalysisIds,
-  jobId
+  jobId,
 }: {
   cvAnalysisIds: string[];
-  jobId: string
+  jobId: string;
 }) => {
-    return await Promise.all(cvAnalysisIds.map((id) => analyzeCv({ cvAnalysisId: id, jobId })))
-}
+  return await Promise.all(
+    cvAnalysisIds.map((id) => analyzeCv({ cvAnalysisId: id, jobId })),
+  );
+};
+
