@@ -31,7 +31,7 @@ import {
 import { useForm } from 'react-hook-form';
 import TrackingStep from './tracking-step';
 import { useStore } from 'zustand';
-import { useFormStepStore } from '@/zustand/useCreateJob';
+import { FormStepState, useFormStepStore } from '@/zustand/useCreateJob';
 import {
   Table,
   TableBody,
@@ -55,6 +55,8 @@ import { formatDate } from 'date-fns';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@/components/ui/checkbox';
+import { PaginationGroup } from '@/components/ui/pagination';
+import { truncateString } from '@/lib/utils';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -164,6 +166,11 @@ const CVAnalyzer: FC = (): ReactElement => {
 
   const [analyzeAIPercentage, setAnalyzeAIPercentage] = useState<number>(0);
   const [uploadPercentage, setUploadPercentage] = useState<number>(0);
+  const [tags, setTags] = useState<string[]>([]);
+  // pagination state
+  const [perPage, setPerPage] = useState(1)
+  const [itemsInPage, setItemsInPage] = useState<FormStepState['files']>([])
+  const [activePage, setActivePage] = useState(1)
 
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
@@ -220,14 +227,28 @@ const CVAnalyzer: FC = (): ReactElement => {
     return () => clearInterval(interval);
   }, [uploadPercentage, analyzeAIPercentage, jobId]);
 
-  const [tags, setTags] = useState<string[]>([]);
+  // handle files list in pagination
+  useEffect(() => {
+    const startItem = (activePage - 1) * perPage
+    const endItem = activePage * perPage
+
+    const paginatedFile = files.slice(startItem, endItem)
+    setItemsInPage(paginatedFile)
+  }, [files, perPage, activePage])
+
+  // set state of pagination
+  const handlePagination = (type: 'per_page' | 'page', value: string) => {
+    if (type === 'per_page') {
+      setPerPage(Number(value))
+    } else {
+      setActivePage(Number(value))
+    }
+  }
 
   return (
     <section className="flex flex-1 overflow-y-scroll flex-col gap-y-3">
       <div className="flex h-full w-full flex-col items-center justify-start gap-y-8 rounded-lg bg-white p-8">
         <div className="flex w-1/2 flex-col items-center gap-y-4">
-          <h1 className="text-2xl font-semibold">CV Analyzer</h1>
-          <p className="text-sm">Try to upload and see our magic</p>
         </div>
         <Form {...form}>
           <form className="flex w-1/2 flex-col items-center gap-y-4">
@@ -514,7 +535,7 @@ const CVAnalyzer: FC = (): ReactElement => {
         <DialogContent className="flex min-h-[96%] min-w-[96%] flex-col items-center justify-between p-0">
           <div className="flex w-full flex-col items-center">
             <div className="flex w-full flex-col">
-              <TrackingStep step={step} />
+              <TrackingStep step={step} withTitle={false} />
               <hr className="h-1 w-full border-slate-400" />
             </div>
 
@@ -546,13 +567,13 @@ const CVAnalyzer: FC = (): ReactElement => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {files.map((file, index) => (
+                  {itemsInPage.map((file, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">
                         {dataCreateJob?.title}
                       </TableCell>
                       <TableCell className="text-left text-slate-400">
-                        {file.file.name}
+                        {truncateString(file.file.name, 50)}
                       </TableCell>
                       <TableCell className="text-left text-slate-400">
                         {dataCreateJob?.title}
@@ -588,6 +609,13 @@ const CVAnalyzer: FC = (): ReactElement => {
                   ))}
                 </TableBody>
               </Table>
+
+              <PaginationGroup
+                perPage={perPage}
+                totalItems={files.length}
+                activePage={activePage}
+                handlePagination={handlePagination}
+              />
             </div>
           </div>
           <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">

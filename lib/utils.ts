@@ -154,3 +154,14 @@ export const separateThousand = (value: string, separator: string = '.') => {
 export const removeNonDigit = (value: string) => {
   return value.replace(/\D/g, '');
 };
+
+// return truncated string if len is over maxLen
+export const truncateString = (str: string, maxLen: number) => {
+  const value = str
+  const truncated = value.slice(0, maxLen)
+
+  const isOverflow = value.length > truncated.length
+  console.log('isOV', isOverflow, value, truncateString)
+
+  return isOverflow ? `${truncated}...` : str
+}
