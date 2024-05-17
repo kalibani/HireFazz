@@ -20,6 +20,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { formatDateDMY, formatFileSize } from '@/helpers';
 import { FC, ReactElement, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { truncateString } from '@/lib/utils';
 
 const UploadCv: FC = (): ReactElement => {
   const {
@@ -101,12 +102,10 @@ const UploadCv: FC = (): ReactElement => {
       },
       cell: ({ row }) => {
         const value = row.original.file.name
-        const truncated = value.slice(0, 20)
-
-        const isOverflow = value.length > truncated.length
+        const truncated = truncateString(value, 30)
 
         return (
-            <p data-tooltip-target="tooltip-default">{`${truncated}${isOverflow ? '...' : ''}`}</p>
+            <p data-tooltip-target="tooltip-default">{truncated}</p>
         )
       },
     },
