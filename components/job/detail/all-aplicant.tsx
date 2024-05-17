@@ -46,16 +46,13 @@ import {
   useSearchParams,
 } from 'next/navigation';
 import { useState } from 'react';
-import { GetJobDetailResponse } from '@/lib/actions/job/getJob';
+import { TCV, TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import axios from 'axios';
-import { ANALYSYS_STATUS, Cv, CvAnalysis } from '@prisma/client';
+import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
+import { useStoreEmail } from '@/zustand/useStoreEmail';
 
-interface DetailJobTableProps {
-  jobDetail?: GetJobDetailResponse;
-}
-
-const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
+const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
   jobDetail,
 }) => {
   const searchParams = useSearchParams();
@@ -66,11 +63,12 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedAction, setSelectedAction] = useState('SHORTLISTED');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const { setIds } = useStoreEmail((state) => state);
 
   const [isLoading, setIsLoading] = useState(false);
   const cvAnalysis = jobDetail?.data?.cvAnalysis;
 
-  const columns: ColumnDef<CvAnalysis & { cv: Cv }>[] = [
+  const columns: ColumnDef<TCV>[] = [
     {
       accessorKey: 'check',
       header: () => <p></p>,
@@ -247,6 +245,7 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
         })
         .finally(handleFinally);
     } else if (selectedAction === 'Send Email') {
+      setIds(getSelectedRowIds());
       push(`/${params?.orgId}/job/${params?.id}/send-email`);
     } else {
       axios
@@ -269,6 +268,7 @@ const DetailJobAllApplicant: React.FC<DetailJobTableProps> = ({
       axios
         .post('/api/cv-analysis/analyze', { selectedIds })
         .finally(handleFinally);
+      push(`/${params?.orgId}/job/${params?.id}/screened`);
     };
 
     return (

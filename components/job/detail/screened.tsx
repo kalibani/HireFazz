@@ -14,9 +14,19 @@ import { ANALYSYS_STATUS } from '@prisma/client';
 import { ChevronDown, Search, FileSearchIcon } from 'lucide-react';
 import React, { FC, ReactElement } from 'react';
 import { ScreenedItem } from './detail-job-item';
+import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
 
-// Only slicing with mock example
-const DetailJobScreened: FC = (): ReactElement => {
+const DetailJobScreened: FC<TDetailJobTableProps> = ({
+  jobDetail,
+}): ReactElement => {
+  const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
+    (x) => x.status === ANALYSYS_STATUS.ANALYSYS,
+  );
+  const cvOnAnalysis = jobDetail?.data?.cvAnalysis.filter(
+    (x) => x.status === ANALYSYS_STATUS.ON_ANALYSYS,
+  );
+
+  console.log(cvAnalysis);
   const actionList = [
     ANALYSYS_STATUS.SHORTLISTED,
     ANALYSYS_STATUS.REJECTED,
@@ -26,8 +36,8 @@ const DetailJobScreened: FC = (): ReactElement => {
   ];
   // Adjust filter in integration
   const filterBy = ['Name'];
-
-  const totalItems = 5;
+  const totalItems = cvAnalysis?.length ? cvAnalysis?.length : 0;
+  const totalOnAnalysisItems = cvOnAnalysis?.length ? cvOnAnalysis?.length : 0;
   const jobName = 'Software Engineer';
   return (
     <div className="mt-5 flex h-auto flex-col gap-3">
@@ -40,10 +50,14 @@ const DetailJobScreened: FC = (): ReactElement => {
               <b>{totalItems} applicants</b> on <b>“{jobName}”</b>
             </p>
           </div>
-
-          <span className="mt-4 block pl-6 text-sm">
-            Status: <span className="text-blue-700">3/5 Analyzing...</span>
-          </span>
+          {totalOnAnalysisItems > 0 && (
+            <span className="mt-4 block pl-6 text-sm">
+              Status:{' '}
+              <span className="text-blue-700">
+                {totalOnAnalysisItems}/{totalItems} Analyzing...
+              </span>
+            </span>
+          )}
         </div>
 
         <Button className="mt-auto">+ Add to Shortlisted</Button>
@@ -110,44 +124,25 @@ const DetailJobScreened: FC = (): ReactElement => {
 
         <div className="flex items-center gap-2">
           <label className="text-sm">Filter by score</label>
-
           <Slider className="w-[170px]" min={0} max={100} defaultValue={[80]} />
         </div>
       </div>
 
-      <ScreenedItem
-        isChecked={false}
-        flag="high"
-        score="80%"
-        name="Angel Herwitz"
-        skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
-        location="Jakarta"
-        education="Bachelor of Computer"
-        experience="3 Years"
-        description="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book 123123"
-      />
-      <ScreenedItem
-        isChecked={false}
-        flag="low"
-        score="50%"
-        name="Angel Herwitz"
-        skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
-        location="Jakarta"
-        education="Bachelor of Computer"
-        experience="3 Years"
-        description="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book 123123"
-      />
-      <ScreenedItem
-        isChecked={false}
-        flag="high"
-        score="80%"
-        name="Angel Herwitz"
-        skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
-        location="Jakarta"
-        education="Bachelor of Computer"
-        experience="3 Years"
-        description="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book 123123"
-      />
+      {cvAnalysis?.map((cv, index) => (
+        <ScreenedItem
+          key={index}
+          isChecked={false}
+          flag={cv?.reportOfAnalysis?.matchedPercentage > 80 ? 'high' : 'low'}
+          score={`${cv?.reportOfAnalysis?.matchedPercentage}%`}
+          name={`${cv?.reportOfAnalysis?.documentOwner}`}
+          skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
+          location={cv?.reportOfAnalysis.location}
+          education="Bachelor of Computer"
+          experience="3 Years"
+          cvLink={cv?.cv?.url}
+          description={cv?.reportOfAnalysis?.reason}
+        />
+      ))}
 
       <PaginationGroup totalItems={3} perPage={10} />
     </div>

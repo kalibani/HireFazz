@@ -14,9 +14,11 @@ import { ANALYSYS_STATUS } from '@prisma/client';
 import { ChevronDown, Search, FileSearchIcon } from 'lucide-react';
 import React, { FC, ReactElement } from 'react';
 import { ScreenedItem } from './detail-job-item';
+import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
 
-// Only slicing with mock example
-const DetailJobRejected: FC = (): ReactElement => {
+const DetailJobRejected: FC<TDetailJobTableProps> = ({
+  jobDetail,
+}): ReactElement => {
   const actionList = [
     ANALYSYS_STATUS.SHORTLISTED,
     ANALYSYS_STATUS.REJECTED,
@@ -26,6 +28,10 @@ const DetailJobRejected: FC = (): ReactElement => {
   ];
   // Adjust filter in integration
   const filterBy = ['Name'];
+
+  const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
+    (x) => x.status === ANALYSYS_STATUS.REJECTED,
+  );
 
   const totalItems = 5;
   const jobName = 'Software Engineer';
@@ -108,39 +114,20 @@ const DetailJobRejected: FC = (): ReactElement => {
         </div>
       </div>
 
-      <ScreenedItem
-        isChecked={false}
-        flag="low"
-        score="80%"
-        name="Angel Herwitz"
-        skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
-        location="Jakarta"
-        education="Bachelor of Computer"
-        experience="3 Years"
-        description="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book 123123"
-      />
-      <ScreenedItem
-        isChecked={false}
-        flag="low"
-        score="50%"
-        name="Angel Herwitz"
-        skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
-        location="Jakarta"
-        education="Bachelor of Computer"
-        experience="3 Years"
-        description="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book 123123"
-      />
-      <ScreenedItem
-        isChecked={false}
-        flag="low"
-        score="80%"
-        name="Angel Herwitz"
-        skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
-        location="Jakarta"
-        education="Bachelor of Computer"
-        experience="3 Years"
-        description="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book 123123"
-      />
+      {cvAnalysis?.map((cv, index) => (
+        <ScreenedItem
+          key={index}
+          isChecked={false}
+          flag="high"
+          score={`${cv.reportOfAnalysis?.matchedPercentage}%`}
+          name={cv.cv.name}
+          skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
+          location="Jakarta"
+          education="Bachelor of Computer"
+          experience="10 Years"
+          description="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book 123123"
+        />
+      ))}
 
       <PaginationGroup totalItems={3} perPage={10} />
     </div>

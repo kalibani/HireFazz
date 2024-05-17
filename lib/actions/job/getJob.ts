@@ -1,6 +1,6 @@
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
-import { BatchJob, Cv, CvAnalysis } from '@prisma/client';
+import { ANALYSYS_STATUS, BatchJob, Cv, CvAnalysis } from '@prisma/client';
 
 interface PaginationInfo {
   totalItems: number;
@@ -78,6 +78,24 @@ export const getJobList = async (
   }
 };
 
+export type TCV = {
+  id: string;
+  cvId: string;
+  orgId: string;
+  batchJobId: string;
+  location: string;
+  reportOfAnalysis: {
+    documentOwner: string;
+    matchedPercentage: number;
+    reason: string;
+    email: string;
+    location: string;
+  };
+  status: ANALYSYS_STATUS;
+  isQualified: boolean;
+  cv: Cv;
+};
+
 // change Name into Job Detail Response
 export interface Job {
   id: string;
@@ -96,13 +114,17 @@ export interface Job {
   reportOfAnalysis: {
     matchPercentage: number;
   };
-  cvAnalysis: (CvAnalysis & { cv: Cv })[];
+  cvAnalysis: TCV[];
 }
 
 export interface GetJobDetailResponse {
   cvAnalysisPagination: PaginationInfo;
   data?: Job;
 }
+
+export type TDetailJobTableProps = {
+  jobDetail?: GetJobDetailResponse;
+};
 
 export const getByIdJob = async (id: string, take?: number, skip?: number) => {
   try {

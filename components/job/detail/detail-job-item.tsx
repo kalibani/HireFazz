@@ -3,6 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import { clsx } from 'clsx';
 import { BotIcon, Flag, Info, MapPinIcon } from 'lucide-react';
+import Link from 'next/link';
 import { FC, ReactElement } from 'react';
 
 interface ScreenedItemProps {
@@ -16,11 +17,13 @@ interface ScreenedItemProps {
   experience: string;
   skills: string;
   location: string;
+  cvLink?: string;
 }
 
 export const ScreenedItem: FC<ScreenedItemProps> = ({
   isChecked,
   handleCheck,
+  cvLink,
   flag,
   score,
   description,
@@ -99,9 +102,11 @@ export const ScreenedItem: FC<ScreenedItemProps> = ({
           </div>
         </div>
 
-        <Button className="h-fit p-2 text-xs">
-          <span>View CV</span>
-        </Button>
+        <Link href={`${cvLink}`} rel="noopener noreferrer" target={'_blank'}>
+          <Button className="h-fit p-2 text-xs">
+            <span>View CV</span>
+          </Button>
+        </Link>
       </div>
     </div>
   );

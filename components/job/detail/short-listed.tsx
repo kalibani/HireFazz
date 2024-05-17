@@ -43,16 +43,14 @@ import {
   useSearchParams,
 } from 'next/navigation';
 import { useState } from 'react';
-import { GetJobDetailResponse } from '@/lib/actions/job/getJob';
+import { TCV, TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import axios from 'axios';
 import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
 
-interface DetailJobTableProps {
-  jobDetail?: GetJobDetailResponse;
-}
-
-const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
+const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
+  jobDetail,
+}) => {
   const searchParams = useSearchParams();
   const perPage = Number(searchParams.get('per_page') || '10');
   const pathname = usePathname();
@@ -64,11 +62,12 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const [isLoading, setIsLoading] = useState(false);
+
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.SHORTLISTED,
   );
 
-  const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<TCV>[] = [
     {
       accessorKey: 'check',
       header: () => <p></p>,
@@ -99,26 +98,6 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
       ),
     },
     {
-      accessorKey: 'location',
-      header: ({ column }) => {
-        return (
-          <Button
-            className="w-fit px-4 pl-0 hover:bg-transparent"
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            Location
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return (
-          <p className="capitalize text-slate-400">{row.original.location}</p>
-        );
-      },
-    },
-    {
       id: 'scoreMatch',
       enableHiding: false,
       header: ({ column }) => {
@@ -136,7 +115,7 @@ const DetailJobShortListed: React.FC<DetailJobTableProps> = ({ jobDetail }) => {
       cell: ({ row }) => {
         return (
           <p className="capitalize text-slate-400">
-            {row.original.reportOfAnalysis?.matchPercentage}
+            {row.original.reportOfAnalysis?.matchedPercentage}%
           </p>
         );
       },

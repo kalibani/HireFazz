@@ -1,7 +1,7 @@
 import { Loader2 } from 'lucide-react';
 const Loader = () => {
   return (
-    <div className="fixed z-10 flex h-screen w-full flex-col items-center justify-center gap-y-4 bg-white bg-opacity-5">
+    <div className="fixed left-0 top-0 z-30 flex h-screen w-full flex-col items-center justify-center gap-y-4 bg-white bg-opacity-5">
       <div className="relative size-24 animate-spin">
         <Loader2 className="size-24 text-primary" />
       </div>
