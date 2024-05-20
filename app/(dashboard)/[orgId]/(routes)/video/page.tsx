@@ -12,7 +12,6 @@ const Page = async ({ params }: ParamsProps) => {
   const interviews = (await getTemplateInterview({
     organizationId: params.orgId,
   })) as Interview[];
-  console.log(interviews, '<<<');
   return (
     <>
       <div className="mb-8 flex flex-col  rounded-md bg-white p-4">
@@ -23,7 +22,11 @@ const Page = async ({ params }: ParamsProps) => {
       </div>
       <FilterListInterview orgId={params.orgId} />
       {interviews.map((interview) => (
-        <InterviewList key={interview.id} title={interview.title} />
+        <InterviewList
+          key={interview.id}
+          title={interview.title}
+          id={interview.id}
+        />
       ))}
     </>
   );

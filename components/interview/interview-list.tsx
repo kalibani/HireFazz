@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useTransition } from 'react';
 import { Button } from '../ui/button';
 import { Trash2, MoreVertical } from 'lucide-react';
 import {
@@ -8,8 +8,40 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useMutation } from '@tanstack/react-query';
+import deleteTemplate from '@/lib/actions/interview/deleteById';
+import { idProps } from '@/lib/validators/interview';
+import { z } from 'zod';
+import { useRecorderStore } from '@/zustand/recordedStore';
+import { errorHandler } from '@/helpers';
 
-const InterviewList = ({ title }: { title: string }) => {
+const InterviewList = ({ title, id }: { title: string; id: string }) => {
+  const [isPending, startTransition] = useTransition();
+
+  const { setIsLoading } = useRecorderStore();
+  const { mutate } = useMutation({
+    mutationKey: ['delete-template'],
+    mutationFn: (id: z.infer<typeof idProps>) => deleteTemplate(id),
+    onSuccess() {
+      setIsLoading(false);
+    },
+    onError(error) {
+      setIsLoading(false);
+      errorHandler(error);
+    },
+  });
+
+  useEffect(() => {
+    if (isPending) {
+      setIsLoading(isPending);
+    }
+  }, [isPending, setIsLoading]);
+
+  const deleteHandler = () => {
+    startTransition(() => {
+      mutate({ id });
+    });
+  };
   return (
     <div className="my-4 flex w-full items-center justify-between rounded-lg  bg-white p-4">
       <div>
@@ -19,7 +51,11 @@ const InterviewList = ({ title }: { title: string }) => {
         </p>
       </div>
       <div className="flex items-center gap-4">
-        <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
+        <Button
+          variant="ghost"
+          className="h-auto p-0 hover:bg-transparent"
+          onClick={deleteHandler}
+        >
           <Trash2 className="size-5 text-primary" />
         </Button>
         <DropdownMenu>
