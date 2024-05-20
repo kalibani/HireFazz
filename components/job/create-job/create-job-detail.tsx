@@ -55,6 +55,13 @@ const reducer = (state: any, action: any) => {
   }
 };
 
+interface LoadingState {
+  jobDescription?: boolean
+  skill?: boolean
+  responsibilities?: boolean
+  requirement?: boolean
+}
+
 type AutoGenerateType = 'jobDescription' | 'skill' | 'responsibilities' | 'requirement'
 
 const headerMap: Record<AutoGenerateType, string> = {
@@ -73,6 +80,7 @@ const CreateJobDetail = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [listOfEditor, setListOfEditor] = useState<string[]>(['']);
   const [mount, setMount] = useState<boolean>(false);
+  const [loadingState, setLoadingState] = useState<LoadingState>({})
 
   useEffect(() => {
     setMount(true);
@@ -80,9 +88,11 @@ const CreateJobDetail = () => {
 
   useEffect(() => {
     const genrate = () => {
+      setLoadingState((value) => ({ ...value, jobDescription: true }))
       startTransition(async () => {
         const { result } = await genereteJobDescription(dataCreateJob);
         handleChange('jobDescription', result);
+        setLoadingState((value) => ({ ...value, jobDescription: false }))
       });
     };
     if (mount) {
@@ -104,6 +114,8 @@ const CreateJobDetail = () => {
   const autoGenerate = async (
     type: AutoGenerateType,
   ) => {
+    setLoadingState((value) => ({ ...value, [type]: true }))
+
     startTransition(async () => {
       switch (type) {
         case 'skill':
@@ -122,21 +134,25 @@ const CreateJobDetail = () => {
             skillSet = Object.values(skillResult).flat() as string[]
           }
           handleChange('skill', skillSet);
+          setLoadingState((value) => ({ ...value, skill: false }))
           break;
         case 'responsibilities':
           const { result: responsibilitiesResult } =
             await generateResponsibilities(dataCreateJob);
           handleChange('responsibilities', responsibilitiesResult);
+          setLoadingState((value) => ({ ...value, responsibilities: false }))
           break;
         case 'requirement':
           const { result: requirementResult } =
             await generateRequirement(dataCreateJob);
           handleChange('requirement', requirementResult);
+          setLoadingState((value) => ({ ...value, requirement: false }))
           break;
         case 'jobDescription':
           const { result: jobDescriptionResult } =
             await genereteJobDescription(dataCreateJob);
           handleChange('jobDescription', jobDescriptionResult);
+          setLoadingState((value) => ({ ...value, jobDescription: false }))
           break;
         default:
           break;
@@ -188,12 +204,12 @@ const CreateJobDetail = () => {
   const getContent = (type: AutoGenerateType) => {
     if (type === 'skill') {
       return (
-        <div className="w-full bg-white min-h-[218px] rounded-sm p-2 flex flex-wrap gap-3">
+        <div className="w-full bg-white min-h-[218px] overflow-y-scroll rounded-sm p-2 flex flex-wrap gap-3">
           {!state[type].length ? (
             <span>Click Generate button</span>
           ) : (
             state[type]?.flat().map((skillItem: string, idx: number) => (
-              <span key={skillItem + idx} className="py-1 rounded-sm px-2 bg-slate-500 text-white h-8 flex items-center">
+              <span key={skillItem + idx} className="py-1 rounded-sm px-2 bg-slate-500 text-white min-h-8 flex items-center">
                 {skillItem.trim()}
               </span>
             ))
@@ -213,6 +229,12 @@ const CreateJobDetail = () => {
         onChange={(e) => handleChange(type, e.target.value)}
       />
     )
+  }
+
+  const handleAccordionOpen = (type: AutoGenerateType) => {
+    if (!state[type] || !state[type].length) {
+      autoGenerate(type)
+    }
   }
 
   return (
@@ -243,7 +265,7 @@ const CreateJobDetail = () => {
                     Job Summary
                   </AccordionTrigger>
                   <AccordionContent>
-                    {isPending ? (
+                    {loadingState['jobDescription'] ? (
                       <DescriptionSkeleton />
                     ) : (
                       <Textarea
@@ -282,11 +304,11 @@ const CreateJobDetail = () => {
               <div className="overflow-hidden rounded-md  border" key={name}>
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value={type} className="bg-slate-200 p-2">
-                    <AccordionTrigger className="h-auto py-2 text-sm font-normal hover:no-underline">
+                    <AccordionTrigger className="h-auto py-2 text-sm font-normal hover:no-underline" onClick={() => handleAccordionOpen(type)}>
                       {name}
                     </AccordionTrigger>
                     <AccordionContent>
-                      {isPending ? (
+                      {loadingState[type] ? (
                         <DescriptionSkeleton />
                       ) : (
                         getContent(type)

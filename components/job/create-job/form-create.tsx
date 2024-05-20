@@ -106,7 +106,7 @@ const FormCreate = () => {
                 </FormItem>
               )}
             />
-            <div className="flex w-full items-end justify-between">
+            <div className="flex w-full items-end gap-5">
               <FormField
                 control={form.control}
                 name="currency"
@@ -137,7 +137,7 @@ const FormCreate = () => {
                 control={form.control}
                 name="fromNominal"
                 render={({ field }) => (
-                  <FormItem className="w-60">
+                  <FormItem className="flex-1">
                     <FormLabel className="text-sm font-normal">
                       (optional)
                     </FormLabel>
@@ -157,7 +157,7 @@ const FormCreate = () => {
                 control={form.control}
                 name="toNominal"
                 render={({ field }) => (
-                  <FormItem className="w-60">
+                  <FormItem className="flex-1">
                     <FormLabel className="text-sm font-normal"></FormLabel>
                     <FormControl className="tex-slate-400">
                       <Input
