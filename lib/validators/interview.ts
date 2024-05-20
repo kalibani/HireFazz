@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export const idProps = z.object({
+  id: z.string(),
+});
+
 export const Question = z.object({
   timeRead: z.number().optional().nullable(),
   timeAnswered: z.number().optional().nullable(),

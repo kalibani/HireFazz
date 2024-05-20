@@ -52,7 +52,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
     mutationKey: ['create-template'],
     mutationFn: (payload: z.infer<typeof CreateTemplateInterview>) =>
       createTemplateInterview(payload),
-    onSuccess: (data) => {
+    onSuccess: () => {
       replace(`/${orgId}/video`);
       setIsLoading(false);
     },

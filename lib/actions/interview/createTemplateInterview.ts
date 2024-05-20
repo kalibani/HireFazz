@@ -3,6 +3,7 @@
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 import { CreateTemplateInterview } from '@/lib/validators/interview';
+import { revalidatePath } from 'next/cache';
 import z from 'zod';
 
 export default async function createTemplateInterview(
@@ -18,6 +19,7 @@ export default async function createTemplateInterview(
         ...safePayload,
       },
     });
+    revalidatePath('/');
     return data;
   } catch (error) {
     return errorHandler(error);
