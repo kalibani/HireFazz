@@ -71,7 +71,11 @@ const FormQuestion = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex gap-x-4">
-            <VideoRecord videoUrl={questionVideoUrl} type="question" />
+            <VideoRecord
+              videoUrl={questionVideoUrl}
+              type="question"
+              className="w-1/4"
+            />
             <div className="flex-1 gap-y-4">
               <div className="flex items-center gap-x-2">
                 <FileSpreadsheet className="size-4 text-primary" />

@@ -7,15 +7,18 @@ import { cn } from '@/lib/utils';
 const VideoRecord = ({
   videoUrl,
   type,
+  className,
 }: {
   videoUrl: Blob | null | undefined;
   type: 'intro' | 'question';
+  className?: string;
 }) => {
   return (
     <div
       className={cn(
-        'flex  w-1/4 flex-col items-center justify-center overflow-hidden rounded-md border',
+        'flex  aspect-video w-1/2 flex-col items-center justify-center overflow-hidden rounded-md border',
         videoUrl ? 'h-fit' : 'h-[200px]',
+        className,
       )}
     >
       {videoUrl && (
