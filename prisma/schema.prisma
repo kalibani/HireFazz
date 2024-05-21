@@ -135,18 +135,20 @@ model UserOrganization {
 }
 
 model InterviewTemplate {
-  id                   String     @id @default(cuid())
+  id                   String  @id @default(cuid())
   title                String
+  description          String?
   durationTimeRead     Int
   durationTimeAnswered Int
   questionRetake       Int?
   introVideoUrl        String?
+  descriptionIntro     String?
   farewellVideoUrl     String?
   farewellTitle        String?
   farewellDescription  String?
-  questions            Json 
+  questions            Json
 
-  organization   Organization  @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
 }
 
@@ -155,18 +157,19 @@ enum invitedUserStatus {
   NO_RESPONSE
   COMPLETED
 }
+
 model InvitedUser {
-  id             String  @id @default(cuid())
+  id             String            @id @default(cuid())
   candidateName  String
   email          String
   phoneNumber    String?
   batchJobId     String?
-  batchJob       BatchJob? @relation(fields: [batchJobId], references: [id])
+  batchJob       BatchJob?         @relation(fields: [batchJobId], references: [id])
   result         Json
   status         invitedUserStatus @default(INVITED)
-  createdAt      DateTime @default(now())
+  createdAt      DateTime          @default(now())
   expiredDate    DateTime
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization      @relation(fields: [organizationId], references: [id])
   organizationId String
   templateId     String
 }
@@ -227,13 +230,13 @@ model Cv {
 }
 
 model BatchJob {
-  id              String       @id @default(cuid())
+  id              String        @id @default(cuid())
   jobName         String
-  status          JOB_STATUS   @default(CREATED)
+  status          JOB_STATUS    @default(CREATED)
   orgId           String
   jobDescription  String
   location        String
-  createdAt       DateTime     @default(now())
+  createdAt       DateTime      @default(now())
   salaryCurrency  String?
   salaryRangeFrom Int?
   salaryRangeEnd  Int?

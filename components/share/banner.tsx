@@ -33,7 +33,7 @@ const Banner: FC<BannerProps> = ({
           </Button>
         )}
       </div>
-      <Image alt="icon" src={src} />
+      <Image alt="icon" src={src} priority quality={80} />
     </div>
   );
 };

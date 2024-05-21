@@ -1,16 +1,58 @@
 'use client';
 
 import { FileSpreadsheet, Search, Redo, Trash2 } from 'lucide-react';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useTransition } from 'react';
 import { Button } from '../ui/button';
+import { errorHandler } from '@/helpers';
+import deleteTemplate from '@/lib/actions/interview/deleteById';
+import { idProps } from '@/lib/validators/interview';
+import { useMutation } from '@tanstack/react-query';
+import { z } from 'zod';
+import { useRecorderStore } from '@/zustand/recordedStore';
 
 interface QuestionCardProp {
   title: string;
   question: string;
   idx: number;
+  id?: string;
+  type: 'template' | 'questions';
 }
 
-const QuestionCard: FC<QuestionCardProp> = ({ idx, question, title }) => {
+const QuestionCard: FC<QuestionCardProp> = ({
+  idx,
+  question,
+  title,
+  id,
+  type,
+}) => {
+  const [isPending, startTransition] = useTransition();
+  const { setIsLoading } = useRecorderStore();
+
+  const { mutate: mutateDeleteTemplate } = useMutation({
+    mutationKey: ['delete-template'],
+    mutationFn: (id: z.infer<typeof idProps>) => deleteTemplate(id),
+    onSuccess() {
+      setIsLoading(false);
+    },
+    onError(error) {
+      setIsLoading(false);
+      errorHandler(error);
+    },
+  });
+
+  useEffect(() => {
+    if (isPending) {
+      setIsLoading(isPending);
+    }
+  }, [isPending, setIsLoading]);
+
+  const deleteHandler = () => {
+    startTransition(() => {
+      if (type == 'template' && id) {
+        mutateDeleteTemplate({ id });
+      }
+    });
+  };
   return (
     <div className="my-4 rounded-lg border p-4">
       <div className="flex items-center gap-x-2">
@@ -38,6 +80,7 @@ const QuestionCard: FC<QuestionCardProp> = ({ idx, question, title }) => {
           <Button
             variant="ghost"
             className="h-auto gap-x-2 p-0 text-xs font-normal hover:bg-transparent"
+            onClick={deleteHandler}
           >
             <Trash2 className="size-3 text-primary" />
             Delete
