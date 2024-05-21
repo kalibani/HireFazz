@@ -234,7 +234,7 @@ model BatchJob {
   jobName         String
   status          JOB_STATUS    @default(CREATED)
   orgId           String
-  jobDescription  String
+  jobDescription  String       @db.Text
   location        String
   createdAt       DateTime      @default(now())
   salaryCurrency  String?
