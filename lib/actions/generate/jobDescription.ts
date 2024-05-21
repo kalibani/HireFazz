@@ -21,9 +21,9 @@ const generateDescription = async (
     }
   `;
     const response = await openai.chat.completions.create({
-      model: 'gpt-4-0125-preview',
+      model: 'gpt-4o',
       response_format: { type: 'json_object' },
-      temperature: 0,
+      temperature: 0.75,
       messages: [
         {
           role: 'system',
