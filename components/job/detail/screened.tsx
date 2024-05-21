@@ -15,6 +15,7 @@ import { ChevronDown, Search, FileSearchIcon } from 'lucide-react';
 import React, { FC, ReactElement } from 'react';
 import { ScreenedItem } from './detail-job-item';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
+import { P, match } from 'ts-pattern';
 
 const DetailJobScreened: FC<TDetailJobTableProps> = ({
   jobDetail,
@@ -132,7 +133,11 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
         <ScreenedItem
           key={index}
           isChecked={false}
-          flag={cv?.reportOfAnalysis?.matchedPercentage > 80 ? 'high' : 'low'}
+          flag={match(cv?.reportOfAnalysis?.matchedPercentage)
+            .with(P.number.gt(80), () => 'high')
+            .with(P.number.gt(60), () => 'medium')
+            .with(P.number.lt(60), () => 'low')
+            .otherwise(() => '')}
           score={`${cv?.reportOfAnalysis?.matchedPercentage}%`}
           name={`${cv?.reportOfAnalysis?.documentOwner}`}
           skills={`${cv?.reportOfAnalysis?.skills}`}

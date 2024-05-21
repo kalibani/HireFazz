@@ -250,7 +250,6 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
 
   const interviewButton = (() => {
     const selectedIds = getSelectedRowIds();
-
     const onClickInterview = () => {
       setIsLoading(true);
       axios
