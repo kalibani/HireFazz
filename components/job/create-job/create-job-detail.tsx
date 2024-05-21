@@ -209,7 +209,7 @@ const CreateJobDetail = () => {
             <span>Click Generate button</span>
           ) : (
             state[type]?.flat().map((skillItem: string, idx: number) => (
-              <span key={skillItem + idx} className="py-1 rounded-sm px-2 bg-slate-500 text-white min-h-8 flex items-center">
+              <span key={skillItem + idx} className="py-1 rounded-sm px-2 bg-slate-500 text-white min-h-8 h-fit flex items-center">
                 {skillItem.trim()}
               </span>
             ))
