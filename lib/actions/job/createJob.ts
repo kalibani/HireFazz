@@ -12,7 +12,7 @@ export const PayloadAddJob = z.object({
   salaryRangeFrom: z.number().optional(),
   salaryRangeEnd: z.number().optional(),
   experience: z.number(),
-  workModel: z.enum([WORK_MODEL.HYBRID, WORK_MODEL.ONSITE, WORK_MODEL.REMOTE]),
+  workModel: z.enum([WORK_MODEL.HYBRID, WORK_MODEL.ONSITE, WORK_MODEL.REMOTE, WORK_MODEL.CONTRACT, WORK_MODEL.FREELANCE, WORK_MODEL.INTERNSHIP, WORK_MODEL.PART_TIME]),
   jobDescription: z.string(),
   companyName: z.string().optional(),
   orgId: z.string(),
