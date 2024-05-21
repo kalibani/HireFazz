@@ -48,16 +48,17 @@ const Page = async ({ params }: ParamsProps) => {
       </TabsContent>
       <TabsContent value="template" className="mt-0 bg-white p-4">
         <FilterListInterview orgId={params.orgId} />
-        {interviews.map((interview, idx) => (
-          <QuestionCard
-            key={interview.id}
-            title={interview.title}
-            id={interview.id}
-            question={interview.description!}
-            idx={idx}
-            type="template"
-          />
-        ))}
+        {interviews.length > 0 &&
+          interviews?.map((interview, idx) => (
+            <QuestionCard
+              key={interview.id}
+              title={interview.title}
+              id={interview.id}
+              question={interview.description!}
+              idx={idx}
+              type="template"
+            />
+          ))}
       </TabsContent>
     </Tabs>
   );

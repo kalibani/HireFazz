@@ -55,9 +55,13 @@ export const generateResponsibilities = async (
     return { error: 'something went wrong' };
   }
 };
-export const generateRequirement = async (
-  data: z.infer<typeof formSchemaCreateJob>,
-) => {
+export const generateRequirement = async (data: {
+  title: string;
+  experiences: string;
+  location: string;
+  workModel: string;
+  companyName: string;
+}) => {
   try {
     const result: any = await actionRequirement(JSON.stringify(data));
     const isValidJSON = checkValidJSON(result);

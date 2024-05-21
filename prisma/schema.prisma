@@ -8,62 +8,15 @@ datasource db {
   relationMode = "prisma"
 }
 
-enum JOB_STATUS {
-  CREATED
-}
-
-enum SubscriptionType {
-  FREE
-  FLEXIBLE
-  BASIC
-  PRO
-  PREMIUM
-}
-
-enum UserRole {
-  ADMIN
-  USER
-}
-
-enum PACKAGE_TYPE {
-  BASIC
-  PRO
-  PREMIUM
-}
-
-enum WORK_MODEL {
-  ONSITE
-  REMOTE
-  HYBRID
-  PART_TIME
-  INTERNSHIP
-  FREELANCE
-  CONTRACT
-}
-
-enum CV_SOURCE {
-  UPLOAD
-  LINKEDIN
-}
-
-enum ANALYSYS_STATUS {
-  ANALYSYS
-  REJECTED
-  INTERVIEW
-  ON_ANALYSYS
-  PENDING
-  SHORTLISTED
-}
-
 model User {
   id               String             @id @default(cuid())
   name             String?
   email            String?            @unique
   password         String?
   image            String?
-  accounts         Account[]
   emailVerified    DateTime?
   secretIv         String?
+  accounts         Account[]
   userOrganization UserOrganization[]
 }
 
@@ -73,15 +26,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refreshToken      String? @db.Text
+  scope             String?
   accessToken       String? @db.Text
   expiresAt         Int?
-  tokenType         String?
-  scope             String?
   idToken           String? @db.Text
+  refreshToken      String? @db.Text
   sessionState      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenType         String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -116,9 +68,9 @@ model Organization {
   name                  String
   packageType           PACKAGE_TYPE
   limit                 Int
-  logo                  String?
   used                  Int
   agreeTermAndCondition Boolean             @default(false)
+  logo                  String?
   userOrganization      UserOrganization[]
   interviewTemplates    InterviewTemplate[]
   invitedUsers          InvitedUser[]
@@ -135,27 +87,18 @@ model UserOrganization {
 }
 
 model InterviewTemplate {
-  id                   String  @id @default(cuid())
+  id                   String       @id @default(cuid())
   title                String
-  description          String?
   durationTimeRead     Int
   durationTimeAnswered Int
   questionRetake       Int?
   introVideoUrl        String?
-  descriptionIntro     String?
   farewellVideoUrl     String?
   farewellTitle        String?
   farewellDescription  String?
   questions            Json
-
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  organizationId String
-}
-
-enum invitedUserStatus {
-  INVITED
-  NO_RESPONSE
-  COMPLETED
+  organizationId       String
+  organization         Organization @relation(fields: [organizationId], references: [id])
 }
 
 model InvitedUser {
@@ -164,44 +107,35 @@ model InvitedUser {
   email          String
   phoneNumber    String?
   batchJobId     String?
-  batchJob       BatchJob?         @relation(fields: [batchJobId], references: [id])
   result         Json
   status         invitedUserStatus @default(INVITED)
   createdAt      DateTime          @default(now())
   expiredDate    DateTime
-  organization   Organization      @relation(fields: [organizationId], references: [id])
   organizationId String
   templateId     String
+  batchJob       BatchJob?         @relation(fields: [batchJobId], references: [id])
+  organization   Organization      @relation(fields: [organizationId], references: [id])
 }
 
 model userAPILimit {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  count     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  File    File[]
-  Message Message[]
-
-  stripeCustomerId             String?           @unique @map(name: "stripe_customer_id")
-  stripeSubscriptionId         String?           @unique @map(name: "stripe_subscription_id")
-  stripePriceId                String?           @map(name: "stripe_price_id")
-  stripeCurrentPeriodEnd       DateTime?         @map(name: "stripe_current_period_end")
-  GeneratedVoices              GeneratedVoices[]
+  id                           String            @id @default(cuid())
+  userId                       String            @unique
+  count                        Int               @default(0)
+  createdAt                    DateTime          @default(now())
+  updatedAt                    DateTime          @updatedAt
+  stripeCustomerId             String?           @unique @map("stripe_customer_id")
+  stripeSubscriptionId         String?           @unique @map("stripe_subscription_id")
+  stripePriceId                String?           @map("stripe_price_id")
+  stripeCurrentPeriodEnd       DateTime?         @map("stripe_current_period_end")
   subscriptionType             SubscriptionType  @default(FREE)
   currentSubscriptionPeriodEnd DateTime?
-  Transactions                 Transactions[]
-  maxFreeCount                 Int?              @default(100)
   characterCount               Int?
+  maxFreeCount                 Int?              @default(100)
   isUserAgreedTermsOfService   Boolean           @default(false)
-}
-
-enum UploadStatus {
-  PENDING
-  PROCESSING
-  FAILED
-  SUCCESS
+  File                         File[]
+  Message                      Message[]
+  GeneratedVoices              GeneratedVoices[]
+  Transactions                 Transactions[]
 }
 
 model CvAnalysis {
@@ -209,11 +143,11 @@ model CvAnalysis {
   cvId             String
   orgId            String
   batchJobId       String
-  batch            BatchJob        @relation(fields: [batchJobId], references: [id])
   reportOfAnalysis Json?
-  cv               Cv              @relation(fields: [cvId], references: [id])
   status           ANALYSYS_STATUS @default(PENDING)
   isQualified      Boolean         @default(false)
+  batch            BatchJob        @relation(fields: [batchJobId], references: [id])
+  cv               Cv              @relation(fields: [cvId], references: [id])
 }
 
 model Cv {
@@ -225,8 +159,8 @@ model Cv {
   createdAt    DateTime     @default(now())
   orgId        String
   title        String?
-  analyses     CvAnalysis[]
   source       CV_SOURCE
+  analyses     CvAnalysis[]
 }
 
 model BatchJob {
@@ -234,7 +168,7 @@ model BatchJob {
   jobName         String
   status          JOB_STATUS    @default(CREATED)
   orgId           String
-  jobDescription  String       @db.Text
+  jobDescription  String        @db.Text
   location        String
   createdAt       DateTime      @default(now())
   salaryCurrency  String?
@@ -242,55 +176,38 @@ model BatchJob {
   salaryRangeEnd  Int?
   experience      Int?
   companyName     String?
+  workModel       WORK_MODEL
+  keyFocus        Json?
   languageAi      String?
   matchPercentage Int?
-  keyFocus        Json?
-  workModel       WORK_MODEL
   cvAnalysis      CvAnalysis[]
   invitedUser     InvitedUser[]
 }
 
 model File {
-  id   String @id @default(cuid())
-  name String
-
-  uploadStatus     UploadStatus @default(PENDING)
+  id               String        @id @default(cuid())
+  name             String
+  uploadStatus     UploadStatus  @default(PENDING)
   url              String
   key              String
-  messages         Message[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  userId           String?
   reportOfAnalysis Json?
-
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  User      userAPILimit? @relation(fields: [userId], references: [userId])
-  userId    String?
+  messages         Message[]
+  User             userAPILimit? @relation(fields: [userId], references: [userId])
 }
 
 model Message {
-  id   String @id @default(cuid())
-  text String @db.Text()
-
+  id            String        @id @default(cuid())
+  text          String        @db.Text
   isUserMessage Boolean
-
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  User      userAPILimit? @relation(fields: [userId], references: [userId])
-  userId    String?
-  File      File?         @relation(fields: [fileId], references: [id])
-  fileId    String?
-}
-
-enum voiceCategory {
-  created
-  cloned
-  generated
-  professional
-}
-
-enum State {
-  created
-  deleted
-  processing
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  userId        String?
+  fileId        String?
+  User          userAPILimit? @relation(fields: [userId], references: [userId])
+  File          File?         @relation(fields: [fileId], references: [id])
 }
 
 model GeneratedVoices {
@@ -310,18 +227,79 @@ model GeneratedVoices {
   voiceCategory            String
   voiceId                  String
   voiceName                String
-  User                     userAPILimit? @relation(fields: [userId], references: [userId])
   userId                   String?
   isPaid                   Boolean       @default(false)
+  User                     userAPILimit? @relation(fields: [userId], references: [userId])
 }
 
 model Transactions {
   id          String        @id @default(cuid())
-  User        userAPILimit? @relation(fields: [userId], references: [userId])
   userId      String?
   orderId     String
   amountPaid  Decimal
   productName String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  User        userAPILimit? @relation(fields: [userId], references: [userId])
+}
+
+enum JOB_STATUS {
+  CREATED
+}
+
+enum SubscriptionType {
+  FREE
+  FLEXIBLE
+  BASIC
+  PRO
+  PREMIUM
+}
+
+enum PACKAGE_TYPE {
+  BASIC
+  PRO
+  PREMIUM
+}
+
+enum WORK_MODEL {
+  ONSITE
+  REMOTE
+  HYBRID
+  PART_TIME
+  INTERNSHIP
+  FREELANCE
+  CONTRACT
+}
+
+enum CV_SOURCE {
+  UPLOAD
+  LINKEDIN
+}
+
+enum ANALYSYS_STATUS {
+  ANALYSYS
+  REJECTED
+  INTERVIEW
+  ON_ANALYSYS
+  PENDING
+  SHORTLISTED
+}
+
+enum invitedUserStatus {
+  INVITED
+  NO_RESPONSE
+  COMPLETED
+}
+
+enum UploadStatus {
+  PENDING
+  PROCESSING
+  FAILED
+  SUCCESS
+}
+
+enum State {
+  created
+  deleted
+  processing
 }
