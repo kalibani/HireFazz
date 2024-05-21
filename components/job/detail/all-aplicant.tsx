@@ -67,6 +67,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const cvAnalysis = jobDetail?.data?.cvAnalysis;
+  const pagination = jobDetail?.cvAnalysisPagination;
 
   const columns: ColumnDef<TCV>[] = [
     {
@@ -134,11 +135,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
         );
       },
       cell: ({ row }) => {
-        return (
-          <p className="capitalize text-slate-400">
-            {row.original.cv.uploadStatus}
-          </p>
-        );
+        return <p className="text-slate-400">{row.original.cv.uploadStatus}</p>;
       },
     },
     {
@@ -157,9 +154,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
         );
       },
       cell: ({ row }) => {
-        return (
-          <p className="capitalize text-slate-400">{row.original.status}</p>
-        );
+        return <p className="text-slate-400">{row.original.status}</p>;
       },
     },
     {
@@ -226,7 +221,6 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
 
   const getSelectedRowIds = () => {
     const selectedRow = table.getSelectedRowModel().flatRows;
-
     return selectedRow.map((row) => row.original.id);
   };
 
@@ -380,7 +374,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
                 return (
                   <TableHead
                     key={header.id}
-                    className="text-sm font-normal text-black"
+                    className="w-fit text-sm font-normal text-black"
                   >
                     {header.isPlaceholder
                       ? null
@@ -442,7 +436,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
         <div className="space-x-2">
           <Pagination
             itemsPerPage={perPage}
-            totalItems={cvAnalysis?.length || 0}
+            totalItems={pagination?.totalItems || 0}
             onPageChange={(page) => handlePagination('page', page.toString())}
           />
         </div>

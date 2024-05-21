@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { PaginationGroup } from '@/components/ui/pagination';
+import Pagination, { PaginationGroup } from '@/components/ui/pagination';
 import {
   Select,
   SelectContent,
@@ -16,10 +16,14 @@ import React, { FC, ReactElement } from 'react';
 import { ScreenedItem } from './detail-job-item';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import { P, match } from 'ts-pattern';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const DetailJobScreened: FC<TDetailJobTableProps> = ({
   jobDetail,
 }): ReactElement => {
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const pathname = usePathname();
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.ANALYSYS,
   );
@@ -27,6 +31,9 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
   const cvOnAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.ON_ANALYSYS,
   );
+
+  const pagination = jobDetail?.cvAnalysisPagination;
+  const perPage = Number(searchParams.get('per_page') || '10');
 
   const actionList = [
     ANALYSYS_STATUS.SHORTLISTED,
@@ -40,6 +47,17 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
   const totalItems = cvAnalysis?.length ? cvAnalysis?.length : 0;
   const totalOnAnalysisItems = cvOnAnalysis?.length ? cvOnAnalysis?.length : 0;
   const jobName = 'Software Engineer';
+
+  function handlePagination(query: 'per_page' | 'page', value: string) {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(query, value);
+    } else {
+      params.delete(query);
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }
+
   return (
     <div className="mt-5 flex h-auto flex-col gap-3">
       <div className="flex min-h-20 justify-between">
@@ -149,7 +167,11 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
         />
       ))}
 
-      <PaginationGroup totalItems={3} perPage={10} />
+      <Pagination
+        itemsPerPage={perPage}
+        totalItems={pagination?.totalItems || 0}
+        onPageChange={(page) => handlePagination('page', page.toString())}
+      />
     </div>
   );
 };
