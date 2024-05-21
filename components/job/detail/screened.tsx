@@ -22,11 +22,11 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.ANALYSYS,
   );
+
   const cvOnAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.ON_ANALYSYS,
   );
 
-  console.log(cvAnalysis);
   const actionList = [
     ANALYSYS_STATUS.SHORTLISTED,
     ANALYSYS_STATUS.REJECTED,
@@ -135,10 +135,10 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
           flag={cv?.reportOfAnalysis?.matchedPercentage > 80 ? 'high' : 'low'}
           score={`${cv?.reportOfAnalysis?.matchedPercentage}%`}
           name={`${cv?.reportOfAnalysis?.documentOwner}`}
-          skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
+          skills={`${cv?.reportOfAnalysis?.skills}`}
           location={cv?.reportOfAnalysis.location}
-          education="Bachelor of Computer"
-          experience="3 Years"
+          education={cv?.reportOfAnalysis.education}
+          experience={cv?.reportOfAnalysis.experience}
           cvLink={cv?.cv?.url}
           description={cv?.reportOfAnalysis?.reason}
         />

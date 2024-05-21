@@ -14,7 +14,7 @@ interface ScreenedItemProps {
   name: string;
   description: string;
   education: string;
-  experience: string;
+  experience: number;
   skills: string;
   location: string;
   cvLink?: string;

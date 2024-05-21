@@ -47,6 +47,7 @@ import { TCV, TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import axios from 'axios';
 import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
+import { P, match } from 'ts-pattern';
 
 const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
   jobDetail,
@@ -137,7 +138,19 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
       },
       cell: ({ row }) => {
         return (
-          <p className="capitalize text-slate-400">{row.original.status}</p>
+          <p
+            className={match(row.original.reportOfAnalysis?.matchedPercentage)
+              .with(P.number.gt(80), () => 'text-green-500')
+              .with(P.number.gt(60), () => 'text-blue-500')
+              .with(P.number.lt(60), () => 'text-red-500')
+              .otherwise(() => 'Not Qualified')}
+          >
+            {match(row.original.reportOfAnalysis?.matchedPercentage)
+              .with(P.number.gt(80), () => 'High Candidate')
+              .with(P.number.gt(60), () => 'Medium Candidate')
+              .with(P.number.lt(60), () => 'Low Candidate')
+              .otherwise(() => 'Not Qualified')}
+          </p>
         );
       },
     },
@@ -338,9 +351,9 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 );
               })}

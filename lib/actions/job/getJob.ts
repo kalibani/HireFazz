@@ -1,6 +1,6 @@
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
-import { ANALYSYS_STATUS, BatchJob, Cv, CvAnalysis } from '@prisma/client';
+import { ANALYSYS_STATUS, BatchJob, Cv } from '@prisma/client';
 
 interface PaginationInfo {
   totalItems: number;
@@ -90,6 +90,9 @@ export type TCV = {
     reason: string;
     email: string;
     location: string;
+    experience: number;
+    skills: string;
+    education: string;
   };
   status: ANALYSYS_STATUS;
   isQualified: boolean;
