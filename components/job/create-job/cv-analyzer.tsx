@@ -532,7 +532,7 @@ const CVAnalyzer: FC = (): ReactElement => {
             </Button>
           </DialogTrigger>
         </div>
-        <DialogContent className="flex min-h-[90%] min-w-[90%] overflow-y-auto flex-col items-center justify-between p-0">
+        <DialogContent className="flex min-h-[90%] h-[90%] w-[90%] min-w-[90%] overflow-y-auto flex-col items-center justify-between p-0">
           <div className="flex w-full flex-col items-center">
             <div className="flex w-full flex-col">
               <TrackingStep step={step} withTitle={false} />
@@ -622,7 +622,7 @@ const CVAnalyzer: FC = (): ReactElement => {
             <DialogTrigger asChild>
               <Button
                 onClick={() =>
-                  router.push(`${orgId}/job/${jobId}/all-applicant`)
+                  router.push(`${jobId}/all-applicant`)
                 }
               >
                 Finish / Close
