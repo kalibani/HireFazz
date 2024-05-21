@@ -38,7 +38,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { formatDateDMY } from '@/helpers';
+import { formatCapitalizeFirstLetter, formatDateDMY } from '@/helpers';
 import {
   useParams,
   usePathname,
@@ -51,6 +51,12 @@ import axios from 'axios';
 import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
 import { useStoreEmail } from '@/zustand/useStoreEmail';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
+import { match } from 'ts-pattern';
 
 const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
   jobDetail,
@@ -73,6 +79,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
     {
       accessorKey: 'check',
       header: () => <p></p>,
+      size: 10,
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
@@ -96,7 +103,17 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
         );
       },
       cell: ({ row }) => (
-        <p className="mb-1 w-2/3 truncate capitalize">{row.original.cv.name}</p>
+        <p className="mb-1 w-auto truncate capitalize">
+          {row.original.cv.name?.slice?.(0, 20)}
+          {row.original.cv.name?.length > 20 && (
+            <HoverCard>
+              <HoverCardTrigger>...</HoverCardTrigger>
+              <HoverCardContent className="w-full">
+                {row.original.cv.name}
+              </HoverCardContent>
+            </HoverCard>
+          )}
+        </p>
       ),
     },
     {
@@ -135,7 +152,23 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
         );
       },
       cell: ({ row }) => {
-        return <p className="text-slate-400">{row.original.cv.uploadStatus}</p>;
+        return (
+          <p
+            className={match(row.original.cv.uploadStatus)
+              .with('SUCCESS', () => 'text-green-500')
+              .with('PENDING', () => 'text-yellow-500')
+              .with('FAILED', () => 'text-red-500')
+              .with('PROCESSING', () => 'text-blue-500')
+              .otherwise(() => 'text-red-500')}
+          >
+            {match(row.original.cv.uploadStatus)
+              .with('SUCCESS', () => 'Uploaded')
+              .with('PENDING', () => 'Pending')
+              .with('FAILED', () => 'Failed.')
+              .with('PROCESSING', () => 'Uploading...')
+              .otherwise(() => 'Not Uploaded.')}
+          </p>
+        );
       },
     },
     {
@@ -154,7 +187,27 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
         );
       },
       cell: ({ row }) => {
-        return <p className="text-slate-400">{row.original.status}</p>;
+        return (
+          <p
+            className={match(row.original.status)
+              .with('ANALYSYS', () => 'text-green-500')
+              .with('ON_ANALYSYS', () => 'text-blue-500')
+              .with('PENDING', () => 'text-yellow-500')
+              .with('SHORTLISTED', () => 'text-blue-500')
+              .with('REJECTED', () => 'text-red-500')
+              .with('INTERVIEW', () => 'text-green-500')
+              .otherwise(() => 'text-red-500')}
+          >
+            {match(row.original.status)
+              .with('ANALYSYS', () => 'Analyzed!')
+              .with('ON_ANALYSYS', () => 'Analyzing...')
+              .with('PENDING', () => 'Pending')
+              .with('SHORTLISTED', () => 'Shortlisted')
+              .with('REJECTED', () => 'Rejected')
+              .with('INTERVIEW', () => 'Interview')
+              .otherwise(() => 'Failed.')}{' '}
+          </p>
+        );
       },
     },
     {
@@ -177,7 +230,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
               variant="ghost"
               onClick={onDelete}
             >
-              <Trash2 className="text-rose-600" />
+              <Trash2 width={18} className="text-rose-600" />
             </Button>
           </div>
         );
@@ -374,7 +427,8 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
                 return (
                   <TableHead
                     key={header.id}
-                    className="w-fit text-sm font-normal text-black"
+                    className="text-sm font-normal text-black"
+                    style={{ width: `${header.getSize()}px !important` }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -396,7 +450,11 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="py-2">
+                  <TableCell
+                    style={{ width: `${cell.column.getSize()}px !important` }}
+                    key={cell.id}
+                    className="py-2"
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

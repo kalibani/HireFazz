@@ -174,7 +174,7 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
               variant="ghost"
               onClick={onDelete}
             >
-              <Trash2 className="text-rose-600" />
+              <Trash2 width={18} className="text-rose-600" />
             </Button>
           </div>
         );
@@ -218,7 +218,6 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
 
   const getSelectedRowIds = () => {
     const selectedRow = table.getSelectedRowModel().flatRows;
-
     return selectedRow.map((row) => row.original.id);
   };
 
@@ -226,7 +225,6 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
     if (!confirm(`${selectedAction} all selected items?`)) {
       return;
     }
-
     setIsLoading(true);
     if (selectedAction === 'DELETE') {
       axios

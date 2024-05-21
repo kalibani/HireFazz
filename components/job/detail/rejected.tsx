@@ -150,11 +150,18 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
           description={cv?.reportOfAnalysis?.reason}
         />
       ))}
-      <PaginationGroup
-        perPage={perPage}
-        totalItems={pagination?.totalItems || 0}
-        handlePagination={(page) => handlePagination('page', page.toString())}
-      />
+
+      {(cvAnalysis?.length as number) === 0 && (
+        <p className="text-center">No data</p>
+      )}
+
+      {(cvAnalysis?.length as number) > 0 && (
+        <PaginationGroup
+          perPage={perPage}
+          totalItems={pagination?.totalItems || 0}
+          handlePagination={(page) => handlePagination('page', page.toString())}
+        />
+      )}
     </div>
   );
 };
