@@ -129,25 +129,41 @@ export type TDetailJobTableProps = {
   jobDetail?: GetJobDetailResponse;
 };
 
-export const getByIdJob = async (id: string, take = 10, skip = 0) => {
+export const getByIdJob = async (
+  id: string,
+  take = 10,
+  skip = 0,
+  location?: string,
+) => {
   try {
-    // Fetch the total count of cvAnalysis for the job
+    const cvAnalysisWhere: any = {};
+    if (location) {
+      cvAnalysisWhere.location = {
+        contains: location,
+        mode: 'insensitive', // Case-insensitive search
+      };
+    }
+
     const totalCountResult = await prismadb.batchJob.findUnique({
       where: { id },
       select: {
         _count: {
-          select: { cvAnalysis: true },
+          select: {
+            cvAnalysis: {
+              where: cvAnalysisWhere,
+            },
+          },
         },
       },
     });
 
     const totalCount = totalCountResult?._count?.cvAnalysis || 0;
 
-    // Fetch the paginated cvAnalysis data
     const jobDetail = await prismadb.batchJob.findUnique({
       where: { id },
       include: {
         cvAnalysis: {
+          where: cvAnalysisWhere,
           include: {
             cv: true,
           },
@@ -161,6 +177,7 @@ export const getByIdJob = async (id: string, take = 10, skip = 0) => {
       cvAnalysisPagination: {
         totalItems: totalCount,
         totalPage: take ? Math.ceil(totalCount / take) : 1,
+        currentPage: Math.floor(skip / take) + 1,
       },
       data: jobDetail,
     };

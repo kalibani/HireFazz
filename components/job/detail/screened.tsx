@@ -24,6 +24,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const pathname = usePathname();
+
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.ANALYSYS,
   );
@@ -46,7 +47,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
   const filterBy = ['Name'];
   const totalItems = cvAnalysis?.length ? cvAnalysis?.length : 0;
   const totalOnAnalysisItems = cvOnAnalysis?.length ? cvOnAnalysis?.length : 0;
-  const jobName = 'Software Engineer';
+  const jobName = jobDetail?.data?.jobName;
 
   function handlePagination(query: 'per_page' | 'page', value: string) {
     const params = new URLSearchParams(searchParams);
@@ -167,10 +168,10 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
         />
       ))}
 
-      <Pagination
-        itemsPerPage={perPage}
+      <PaginationGroup
+        perPage={perPage}
         totalItems={pagination?.totalItems || 0}
-        onPageChange={(page) => handlePagination('page', page.toString())}
+        handlePagination={(page) => handlePagination('page', page.toString())}
       />
     </div>
   );

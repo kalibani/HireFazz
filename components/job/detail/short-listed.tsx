@@ -143,13 +143,13 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
               .with(P.number.gt(80), () => 'text-green-500')
               .with(P.number.gt(60), () => 'text-blue-500')
               .with(P.number.lt(60), () => 'text-red-500')
-              .otherwise(() => '')}
+              .otherwise(() => 'text-red-500')}
           >
             {match(row.original.reportOfAnalysis?.matchedPercentage)
               .with(P.number.gt(80), () => 'High Candidate')
               .with(P.number.gt(60), () => 'Medium Candidate')
               .with(P.number.lt(60), () => 'Low Candidate')
-              .otherwise(() => '')}
+              .otherwise(() => 'Low Candidate')}
           </p>
         );
       },

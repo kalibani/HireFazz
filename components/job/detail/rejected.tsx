@@ -16,6 +16,7 @@ import React, { FC, ReactElement } from 'react';
 import { ScreenedItem } from './detail-job-item';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import { P, match } from 'ts-pattern';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const DetailJobRejected: FC<TDetailJobTableProps> = ({
   jobDetail,
@@ -30,12 +31,29 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
   // Adjust filter in integration
   const filterBy = ['Name'];
 
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const pathname = usePathname();
+
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.REJECTED,
   );
 
-  const totalItems = 5;
-  const jobName = 'Software Engineer';
+  const pagination = jobDetail?.cvAnalysisPagination;
+  const perPage = Number(searchParams.get('per_page') || '10');
+
+  function handlePagination(query: 'per_page' | 'page', value: string) {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(query, value);
+    } else {
+      params.delete(query);
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }
+
+  const totalItems = cvAnalysis?.length ? cvAnalysis?.length : 0;
+  const jobName = jobDetail?.data?.jobName;
   return (
     <div className="mt-5 flex h-auto flex-col gap-3">
       <div className="flex min-h-20 justify-between">
@@ -49,7 +67,6 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
           </div>
         </div>
       </div>
-
       {/* FILTERS */}
       <div className="flex justify-between gap-3 rounded-md border border-slate-200 px-2 py-3">
         <div className="mr-3 flex items-center gap-1">
@@ -114,7 +131,6 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
           <Slider className="w-[170px]" min={0} max={100} defaultValue={[80]} />
         </div>
       </div>
-
       {cvAnalysis?.map((cv, index) => (
         <ScreenedItem
           key={index}
@@ -134,8 +150,11 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
           description={cv?.reportOfAnalysis?.reason}
         />
       ))}
-
-      <PaginationGroup totalItems={3} perPage={10} />
+      <PaginationGroup
+        perPage={perPage}
+        totalItems={pagination?.totalItems || 0}
+        handlePagination={(page) => handlePagination('page', page.toString())}
+      />
     </div>
   );
 };
