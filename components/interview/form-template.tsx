@@ -37,7 +37,7 @@ const FormSchema = z.object({
   durationTimeRead: z.string(),
   title: z.string(),
   durationTimeAnswered: z.string(),
-  description: z.string(),
+  description: z.string().optional(),
   descriptionIntro: z.string().optional(),
 });
 
@@ -70,7 +70,13 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
   }, [isPending, setIsLoading]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    const { title, durationTimeAnswered, durationTimeRead } = data;
+    const {
+      title,
+      durationTimeAnswered,
+      durationTimeRead,
+      description,
+      descriptionIntro,
+    } = data;
 
     if (questions.length > 0) {
       startTransition(async () => {
@@ -105,6 +111,8 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
               durationTimeRead: Number(durationTimeRead),
               introVideoUrl: introUrl as string,
               questions: resolvedQuestions,
+              description,
+              descriptionIntro,
             };
             mutate(payload);
           }
@@ -276,6 +284,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
                 <Button
                   className="gap-2 px-4 py-2 text-sm font-normal"
                   type="submit"
+                  disabled={questions.length === 0}
                 >
                   <Save className="size-4" />
                   Save Template

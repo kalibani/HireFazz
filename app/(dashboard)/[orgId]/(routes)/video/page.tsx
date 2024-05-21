@@ -1,4 +1,3 @@
-import InterviewList from '@/components/interview/interview-list';
 import { getTemplateInterview } from '@/lib/actions/interview/getTemplatesInterview';
 import { ParamsProps } from '@/types/types';
 import FilterListInterview from '@/components/interview/filter-list-interview';
@@ -8,12 +7,17 @@ import QuestionCard from '@/components/interview/question-card';
 type Interview = {
   id: string;
   title: string;
+  description?: string;
+  descriptionIntro?: string;
+  introVideoUrl?: string;
 };
 
 const Page = async ({ params }: ParamsProps) => {
   const interviews = (await getTemplateInterview({
     organizationId: params.orgId,
   })) as Interview[];
+
+  console.log(interviews, '<<<');
   return (
     <Tabs defaultValue="candidates">
       <div className="mb-8 flex flex-col  rounded-md bg-white p-4">
@@ -45,16 +49,11 @@ const Page = async ({ params }: ParamsProps) => {
       <TabsContent value="template" className="mt-0 bg-white p-4">
         <FilterListInterview orgId={params.orgId} />
         {interviews.map((interview, idx) => (
-          // <InterviewList
-          //   key={interview.id}
-          //   title={interview.title}
-          //   id={interview.id}
-          // />
           <QuestionCard
             key={interview.id}
             title={interview.title}
             id={interview.id}
-            question="Descriptive Template"
+            question={interview.description!}
             idx={idx}
             type="template"
           />
