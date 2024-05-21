@@ -24,4 +24,6 @@ export const CreateTemplateInterview = z.object({
   introVideoUrl: z.string().optional().nullable(),
   farewellVideoUrl: z.string().optional().nullable(),
   questions: z.array(Question),
+  description: z.string().optional().nullable(),
+  descriptionIntro: z.string().optional().nullable(),
 });

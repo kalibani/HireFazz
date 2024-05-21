@@ -43,7 +43,7 @@ const InterviewList = ({ title, id }: { title: string; id: string }) => {
     });
   };
   return (
-    <div className="my-4 flex w-full items-center justify-between rounded-lg  bg-white p-4">
+    <div className="my-4 flex w-full items-center justify-between rounded-lg  border bg-white p-4">
       <div>
         <h4 className="text-lg font-bold">{title}</h4>
         <p className="text-sm font-normal text-slate-400">
@@ -58,23 +58,6 @@ const InterviewList = ({ title, id }: { title: string; id: string }) => {
         >
           <Trash2 className="size-5 text-primary" />
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
-              <MoreVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            alignOffset={0}
-            className="flex flex-col gap-y-2 p-2"
-          >
-            <Button variant="ghost">Edit Question</Button>
-            <Button variant="ghost">Preview Question</Button>
-            <Button variant="ghost">Close Interview</Button>
-            <Button variant="ghost">Result</Button>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </div>
   );
