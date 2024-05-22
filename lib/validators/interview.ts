@@ -9,7 +9,7 @@ export const Question = z.object({
   timeAnswered: z.number().optional().nullable(),
   questionRetake: z.number().optional().nullable(),
   title: z.string(),
-  description: z.string(),
+  question: z.string(),
   videoUrl: z.string(),
   id: z.string(),
 });
@@ -27,4 +27,8 @@ export const CreateTemplateInterview = z.object({
   questions: z.array(Question),
   description: z.string().optional().nullable(),
   descriptionIntro: z.string().optional().nullable(),
+});
+
+export const UpdateTemplateInterview = CreateTemplateInterview.extend({
+  id: z.string(),
 });

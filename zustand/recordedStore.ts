@@ -2,6 +2,7 @@ import { blobToFormData } from '@/lib/utils';
 import { create } from 'zustand';
 
 interface questionState {
+  id?: string;
   videoUrl?: Blob | null;
   question: string;
   timeRead?: number;
@@ -13,9 +14,9 @@ interface RecorderState {
   durationTimeRead: number;
   durationTimeAnswered: number;
   questionRetake?: number;
-  introVideoUrl?: Blob | null;
+  introVideoUrl?: Blob | null | string;
   farewellVideoUrl?: Blob | null;
-  questionVideoUrl?: Blob | null;
+  questionVideoUrl?: Blob | null | string;
   farewellTitle?: string;
   farewellDescription?: string;
   questions: questionState[];
@@ -27,8 +28,9 @@ interface RecorderState {
     durationTimeAnswered?: number;
     questionRetake?: number;
   }) => void;
-  setVideoUrl: (url: Blob | null, type: 'intro' | 'question') => void;
+  setVideoUrl: (url: Blob | null | string, type: 'intro' | 'question') => void;
   setQuestion: (data: questionState) => void;
+  setQuestionFromDb: (data: questionState[]) => void;
   removeQuestion: (index: number) => void;
   setIsLoading: (data: boolean) => void;
 }
@@ -75,6 +77,7 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   },
   setQuestion: (data) =>
     set((state) => ({ questions: [...state.questions, data] })),
+  setQuestionFromDb: (data) => set(() => ({ questions: data })),
   removeQuestion: (index) =>
     set((state) => ({
       questions: state.questions.filter((_, i) => i !== index),

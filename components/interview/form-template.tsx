@@ -1,5 +1,5 @@
 'use client';
-import React, { useTransition } from 'react';
+import React, { useEffect, useTransition } from 'react';
 import VideoRecord from './video-record';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Button } from '../ui/button';
@@ -28,13 +28,18 @@ import {
 import QuestionCard from './question-card';
 import Link from 'next/link';
 import createTemplateInterview from '@/lib/actions/interview/createTemplateInterview';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { errorHandler } from '@/helpers';
 import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 import { blobToFormData } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CreateTemplateInterview } from '@/lib/validators/interview';
+import {
+  CreateTemplateInterview,
+  UpdateTemplateInterview,
+} from '@/lib/validators/interview';
 import { v4 as uuidv4 } from 'uuid';
+import getOneTemplateInterview from '@/lib/actions/interview/getOneTemplate';
+import updateTemplate from '@/lib/actions/interview/updateTemplateInterview';
 
 const FormSchema = z.object({
   durationTimeRead: z.string(),
@@ -44,16 +49,27 @@ const FormSchema = z.object({
   descriptionIntro: z.string().optional(),
 });
 
-const FormTemplate = ({ orgId }: { orgId: string }) => {
+const FormTemplate = ({
+  orgId,
+  queryId,
+}: {
+  orgId: string;
+  queryId?: string;
+}) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
   const { replace } = useRouter();
-  const params = useSearchParams();
-  const { introVideoUrl, questions, setIsLoading } = useRecorderStore();
+  const { introVideoUrl, questions, setQuestionFromDb, setVideoUrl } =
+    useRecorderStore();
   const [isPending, startTransition] = useTransition();
-  console.log(params.get('id'), '<<<<<');
+
+  const { data } = useQuery<any>({
+    enabled: !!queryId,
+    queryKey: ['get-template', queryId],
+    queryFn: () => getOneTemplateInterview(queryId!),
+  });
 
   const { mutate } = useMutation({
     mutationKey: ['create-template'],
@@ -64,6 +80,30 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
     },
   });
 
+  const { mutate: mutateUpdate } = useMutation({
+    mutationKey: ['create-template'],
+    mutationFn: (payload: z.infer<typeof UpdateTemplateInterview>) =>
+      updateTemplate(payload),
+    onSuccess: () => {
+      replace(`/${orgId}/video`);
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      setQuestionFromDb(data.questions);
+      setVideoUrl(data.introVideoUrl, 'intro');
+      form.setValue('title', data.title);
+      form.setValue('description', data.description || '');
+      form.setValue('descriptionIntro', data.descriptionIntro || '');
+      form.setValue('durationTimeRead', String(data.durationTimeRead) || '');
+      form.setValue(
+        'durationTimeAnswered',
+        String(data.durationTimeAnswered) || '',
+      );
+    }
+  }, [data, form]);
+  console.log(introVideoUrl);
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     const {
       title,
@@ -91,7 +131,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
                 ? Number(durationTimeRead)
                 : Number(item.timeRead),
               videoUrl: url ?? '',
-              description: item.question,
+              question: item.question,
               questionRetake: 0,
             };
           });
@@ -110,7 +150,11 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
               description,
               descriptionIntro,
             };
-            mutate(payload);
+            if (data && queryId) {
+              mutateUpdate({ ...payload, id: queryId });
+            } else {
+              mutate(payload);
+            }
           }
         } catch (error) {
           errorHandler(error);
@@ -124,7 +168,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
         <h4 className="mb-4 text-xl font-semibold">Template</h4>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex items-center justify-between ">
+            <div className="flex items-center justify-between bg-slate-400">
               <div className="flex flex-col p-0">
                 <FormField
                   control={form.control}
@@ -161,8 +205,12 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
                   )}
                 />
               </div>
-              <div className="flex w-fit gap-x-4">
-                <VideoRecord videoUrl={introVideoUrl} type="intro" />
+              <div className="flex w-1/2 gap-x-4 bg-orange-300">
+                <VideoRecord
+                  videoUrl={introVideoUrl}
+                  type="intro"
+                  className="w-1/4 bg-red-400"
+                />
                 <div className="flex flex-col">
                   <div className="item-center flex gap-x-2">
                     <Video />
@@ -196,14 +244,14 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
                 <FormField
                   control={form.control}
                   name="durationTimeRead"
-                  render={({ field }: { field: any }) => (
+                  render={({ field }) => (
                     <FormItem className="flex items-center gap-x-2 p-0">
                       <FormLabel className="w-fit text-xs">
                         Time to Thinking:
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">
@@ -234,7 +282,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">
@@ -259,7 +307,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
             {Array.isArray(questions) &&
               questions.map((item, index) => (
                 <QuestionCard
-                  key={index}
+                  key={item.id}
                   idx={index}
                   question={item.question}
                   title={item.title}

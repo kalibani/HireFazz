@@ -1,4 +1,4 @@
-import { getTemplateInterview } from '@/lib/actions/interview/getTemplatesInterview';
+import getTemplateInterview from '@/lib/actions/interview/getTemplatesInterview';
 import { ParamsProps } from '@/types/types';
 import FilterListInterview from '@/components/interview/filter-list-interview';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

@@ -128,17 +128,21 @@ export const blobToFile = (blob: Blob, fileName: string): File => {
 // };
 
 export const blobToFormData = async (
-  blob: Blob,
+  blob: Blob | string,
   filename: string,
-): Promise<FormData> => {
-  const formData = new FormData();
-  formData.append('file', blob, filename);
+): Promise<any> => {
+  if (typeof blob !== 'string') {
+    const formData = new FormData();
+    formData.append('file', blob, filename);
 
-  if (!formData.has('file')) {
-    throw new Error('Blob could not be appended to FormData');
+    if (!formData.has('file')) {
+      throw new Error('Blob could not be appended to FormData');
+    }
+
+    return formData;
+  } else {
+    return blob;
   }
-
-  return formData;
 };
 
 export const separateThousand = (value: string, separator: string = '.') => {
@@ -157,11 +161,11 @@ export const removeNonDigit = (value: string) => {
 
 // return truncated string if len is over maxLen
 export const truncateString = (str: string, maxLen: number) => {
-  const value = str
-  const truncated = value.slice(0, maxLen)
+  const value = str;
+  const truncated = value.slice(0, maxLen);
 
-  const isOverflow = value.length > truncated.length
-  console.log('isOV', isOverflow, value, truncateString)
+  const isOverflow = value.length > truncated.length;
+  console.log('isOV', isOverflow, value, truncateString);
 
-  return isOverflow ? `${truncated}...` : str
-}
+  return isOverflow ? `${truncated}...` : str;
+};

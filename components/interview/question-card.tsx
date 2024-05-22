@@ -52,7 +52,6 @@ const QuestionCard: FC<QuestionCardProp> = ({
       push(`${pathname}/create?${params.toString()}`);
     }
   };
-
   return (
     <>
       <div className="my-4 rounded-lg border p-4">
