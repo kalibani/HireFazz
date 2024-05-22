@@ -11,11 +11,11 @@ const generateDescription = async (
     const typeSpecificInstruction = {
       desc: 'Generate a general description based on the data provided.',
       'skill set':
-        'Generate a list of professional skills based on the data provided, using simple sentences without explicit labels.',
+        'Generate a list of key skill points based on the data provided, using simple keywords or short phrases without explicit labels.',
       'requirement job':
-        'Generate a list of professional skills job requirements based on the data provided, using simple sentences without explicit labels.',
+        'Generate a list of up to 8 professional skills job requirements based on the data provided, using simple sentences without explicit labels.',
       responsibilities:
-        'Generate a list of professional responsibilities based on the data provided, using simple sentences without explicit labels.',
+        'Generate a list of up to 8 professional responsibilities based on the data provided, using simple sentences without explicit labels.',
     };
     const prompt = `
       Given the following data, generate a ${type}:
