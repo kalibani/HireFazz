@@ -47,6 +47,7 @@ import { TCV, TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import axios from 'axios';
 import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
+import { P, match } from 'ts-pattern';
 
 const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
   jobDetail,
@@ -137,7 +138,19 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
       },
       cell: ({ row }) => {
         return (
-          <p className="capitalize text-slate-400">{row.original.status}</p>
+          <p
+            className={match(row.original.reportOfAnalysis?.matchedPercentage)
+              .with(P.number.gt(80), () => 'text-green-500')
+              .with(P.number.gt(60), () => 'text-blue-500')
+              .with(P.number.lt(60), () => 'text-red-500')
+              .otherwise(() => 'text-red-500')}
+          >
+            {match(row.original.reportOfAnalysis?.matchedPercentage)
+              .with(P.number.gt(80), () => 'High Candidate')
+              .with(P.number.gt(60), () => 'Medium Candidate')
+              .with(P.number.lt(60), () => 'Low Candidate')
+              .otherwise(() => 'Low Candidate')}
+          </p>
         );
       },
     },
@@ -161,7 +174,7 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
               variant="ghost"
               onClick={onDelete}
             >
-              <Trash2 className="text-rose-600" />
+              <Trash2 width={18} className="text-rose-600" />
             </Button>
           </div>
         );
@@ -205,7 +218,6 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
 
   const getSelectedRowIds = () => {
     const selectedRow = table.getSelectedRowModel().flatRows;
-
     return selectedRow.map((row) => row.original.id);
   };
 
@@ -213,7 +225,6 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
     if (!confirm(`${selectedAction} all selected items?`)) {
       return;
     }
-
     setIsLoading(true);
     if (selectedAction === 'DELETE') {
       axios
@@ -237,7 +248,6 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
 
   const interviewButton = (() => {
     const selectedIds = getSelectedRowIds();
-
     const onClickInterview = () => {
       setIsLoading(true);
       axios

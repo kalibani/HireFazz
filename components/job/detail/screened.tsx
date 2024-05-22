@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { PaginationGroup } from '@/components/ui/pagination';
+import Pagination, { PaginationGroup } from '@/components/ui/pagination';
 import {
   Select,
   SelectContent,
@@ -15,18 +15,27 @@ import { ChevronDown, Search, FileSearchIcon } from 'lucide-react';
 import React, { FC, ReactElement } from 'react';
 import { ScreenedItem } from './detail-job-item';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
+import { P, match } from 'ts-pattern';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const DetailJobScreened: FC<TDetailJobTableProps> = ({
   jobDetail,
 }): ReactElement => {
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const pathname = usePathname();
+
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.ANALYSYS,
   );
+
   const cvOnAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.ON_ANALYSYS,
   );
 
-  console.log(cvAnalysis);
+  const pagination = jobDetail?.cvAnalysisPagination;
+  const perPage = Number(searchParams.get('per_page') || '10');
+
   const actionList = [
     ANALYSYS_STATUS.SHORTLISTED,
     ANALYSYS_STATUS.REJECTED,
@@ -38,7 +47,18 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
   const filterBy = ['Name'];
   const totalItems = cvAnalysis?.length ? cvAnalysis?.length : 0;
   const totalOnAnalysisItems = cvOnAnalysis?.length ? cvOnAnalysis?.length : 0;
-  const jobName = 'Software Engineer';
+  const jobName = jobDetail?.data?.jobName;
+
+  function handlePagination(query: 'per_page' | 'page', value: string) {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(query, value);
+    } else {
+      params.delete(query);
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }
+
   return (
     <div className="mt-5 flex h-auto flex-col gap-3">
       <div className="flex min-h-20 justify-between">
@@ -132,19 +152,33 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
         <ScreenedItem
           key={index}
           isChecked={false}
-          flag={cv?.reportOfAnalysis?.matchedPercentage > 80 ? 'high' : 'low'}
+          flag={match(cv?.reportOfAnalysis?.matchedPercentage)
+            .with(P.number.gt(80), () => 'high')
+            .with(P.number.gt(60), () => 'medium')
+            .with(P.number.lt(60), () => 'low')
+            .otherwise(() => '')}
           score={`${cv?.reportOfAnalysis?.matchedPercentage}%`}
           name={`${cv?.reportOfAnalysis?.documentOwner}`}
-          skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
+          skills={`${cv?.reportOfAnalysis?.skills}`}
           location={cv?.reportOfAnalysis.location}
-          education="Bachelor of Computer"
-          experience="3 Years"
+          education={cv?.reportOfAnalysis.education}
+          experience={cv?.reportOfAnalysis.experience}
           cvLink={cv?.cv?.url}
           description={cv?.reportOfAnalysis?.reason}
         />
       ))}
 
-      <PaginationGroup totalItems={3} perPage={10} />
+      {(cvAnalysis?.length as number) === 0 && (
+        <p className="text-center">No data</p>
+      )}
+
+      {(cvAnalysis?.length as number) > 0 && (
+        <PaginationGroup
+          perPage={perPage}
+          totalItems={pagination?.totalItems || 0}
+          handlePagination={(page) => handlePagination('page', page.toString())}
+        />
+      )}
     </div>
   );
 };

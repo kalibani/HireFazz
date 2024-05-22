@@ -95,6 +95,9 @@ export const analyzeCv = async ({
                   "reason": "brief explanation of the match percentage"
                   "email": "email of the CV owner or document author. If the email is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
                   "location": "location of the CV owner or document author. If the location is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
+                  "experience": "experience of the CV owner or document author. If the experience is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
+                  "skills": "skills of the CV owner or document author divide by "-". If the skills are not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
+                  "education": "last education of the CV owner or document author. If the education is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
                 }
                 `,
           },
@@ -149,4 +152,3 @@ export const bulkAnalyzeCv = async ({
     cvAnalysisIds.map((id) => analyzeCv({ cvAnalysisId: id, jobId })),
   );
 };
-

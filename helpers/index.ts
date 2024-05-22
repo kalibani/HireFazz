@@ -57,4 +57,8 @@ export const formatFileSize = (sizeInBytes: number): string => {
   } else {
     return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
   }
-}
+};
+
+export const formatCapitalizeFirstLetter = (str: string): string => {
+  return str.toLowerCase().charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};

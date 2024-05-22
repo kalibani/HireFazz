@@ -15,6 +15,8 @@ import { ChevronDown, Search, FileSearchIcon } from 'lucide-react';
 import React, { FC, ReactElement } from 'react';
 import { ScreenedItem } from './detail-job-item';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
+import { P, match } from 'ts-pattern';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const DetailJobRejected: FC<TDetailJobTableProps> = ({
   jobDetail,
@@ -29,12 +31,29 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
   // Adjust filter in integration
   const filterBy = ['Name'];
 
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const pathname = usePathname();
+
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.REJECTED,
   );
 
-  const totalItems = 5;
-  const jobName = 'Software Engineer';
+  const pagination = jobDetail?.cvAnalysisPagination;
+  const perPage = Number(searchParams.get('per_page') || '10');
+
+  function handlePagination(query: 'per_page' | 'page', value: string) {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(query, value);
+    } else {
+      params.delete(query);
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }
+
+  const totalItems = cvAnalysis?.length ? cvAnalysis?.length : 0;
+  const jobName = jobDetail?.data?.jobName;
   return (
     <div className="mt-5 flex h-auto flex-col gap-3">
       <div className="flex min-h-20 justify-between">
@@ -48,7 +67,6 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
           </div>
         </div>
       </div>
-
       {/* FILTERS */}
       <div className="flex justify-between gap-3 rounded-md border border-slate-200 px-2 py-3">
         <div className="mr-3 flex items-center gap-1">
@@ -113,23 +131,37 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
           <Slider className="w-[170px]" min={0} max={100} defaultValue={[80]} />
         </div>
       </div>
-
       {cvAnalysis?.map((cv, index) => (
         <ScreenedItem
           key={index}
           isChecked={false}
-          flag="high"
-          score={`${cv.reportOfAnalysis?.matchedPercentage}%`}
-          name={cv.cv.name}
-          skills="Code Ninja (Java, Python, etc.) - Design Mastermind (Scalable Systems) - Debugging Detective - Git"
-          location="Jakarta"
-          education="Bachelor of Computer"
-          experience="10 Years"
-          description="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book 123123"
+          flag={match(cv?.reportOfAnalysis?.matchedPercentage)
+            .with(P.number.gt(80), () => 'high')
+            .with(P.number.gt(60), () => 'medium')
+            .with(P.number.lt(60), () => 'low')
+            .otherwise(() => '')}
+          score={`${cv?.reportOfAnalysis?.matchedPercentage}%`}
+          name={`${cv?.reportOfAnalysis?.documentOwner}`}
+          skills={`${cv?.reportOfAnalysis?.skills}`}
+          location={cv?.reportOfAnalysis.location}
+          education={cv?.reportOfAnalysis.education}
+          experience={cv?.reportOfAnalysis.experience}
+          cvLink={cv?.cv?.url}
+          description={cv?.reportOfAnalysis?.reason}
         />
       ))}
 
-      <PaginationGroup totalItems={3} perPage={10} />
+      {(cvAnalysis?.length as number) === 0 && (
+        <p className="text-center">No data</p>
+      )}
+
+      {(cvAnalysis?.length as number) > 0 && (
+        <PaginationGroup
+          perPage={perPage}
+          totalItems={pagination?.totalItems || 0}
+          handlePagination={(page) => handlePagination('page', page.toString())}
+        />
+      )}
     </div>
   );
 };

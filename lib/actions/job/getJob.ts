@@ -1,6 +1,6 @@
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
-import { ANALYSYS_STATUS, BatchJob, Cv, CvAnalysis } from '@prisma/client';
+import { ANALYSYS_STATUS, BatchJob, Cv } from '@prisma/client';
 
 interface PaginationInfo {
   totalItems: number;
@@ -90,6 +90,9 @@ export type TCV = {
     reason: string;
     email: string;
     location: string;
+    experience: number;
+    skills: string;
+    education: string;
   };
   status: ANALYSYS_STATUS;
   isQualified: boolean;
@@ -126,12 +129,41 @@ export type TDetailJobTableProps = {
   jobDetail?: GetJobDetailResponse;
 };
 
-export const getByIdJob = async (id: string, take?: number, skip?: number) => {
+export const getByIdJob = async (
+  id: string,
+  take = 10,
+  skip = 0,
+  location?: string,
+) => {
   try {
+    const cvAnalysisWhere: any = {};
+    if (location) {
+      cvAnalysisWhere.location = {
+        contains: location,
+        mode: 'insensitive', // Case-insensitive search
+      };
+    }
+
+    const totalCountResult = await prismadb.batchJob.findUnique({
+      where: { id },
+      select: {
+        _count: {
+          select: {
+            cvAnalysis: {
+              where: cvAnalysisWhere,
+            },
+          },
+        },
+      },
+    });
+
+    const totalCount = totalCountResult?._count?.cvAnalysis || 0;
+
     const jobDetail = await prismadb.batchJob.findUnique({
       where: { id },
       include: {
         cvAnalysis: {
+          where: cvAnalysisWhere,
           include: {
             cv: true,
           },
@@ -141,14 +173,15 @@ export const getByIdJob = async (id: string, take?: number, skip?: number) => {
       },
     });
 
-    const totalCount = jobDetail?.cvAnalysis.length || 0;
     const result = {
       cvAnalysisPagination: {
         totalItems: totalCount,
         totalPage: take ? Math.ceil(totalCount / take) : 1,
+        currentPage: Math.floor(skip / take) + 1,
       },
       data: jobDetail,
     };
+
     return result;
   } catch (error) {
     return errorHandler(error);
