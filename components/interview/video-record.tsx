@@ -34,11 +34,7 @@ const VideoRecord = ({
           </video>
         </div>
       )}
-      {/* <div className=" aspect-video size-full">
-        <video controls>
-          <source src={videoUrl} />
-        </video>
-      </div> */}
+
       <PopupRecord
         type={type}
         title="Interview Intro"

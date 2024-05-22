@@ -3,7 +3,7 @@ import { create } from 'zustand';
 
 interface questionState {
   id?: string;
-  videoUrl?: Blob | null;
+  videoUrl?: Blob | null | string;
   question: string;
   timeRead?: number;
   timeAnswered?: number;
@@ -20,19 +20,13 @@ interface RecorderState {
   farewellTitle?: string;
   farewellDescription?: string;
   questions: questionState[];
-  isLoading: boolean;
-  setTitle: (title: string, type: 'title' | 'farewell' | 'desc') => void;
-  setFormFirst: (data: {
-    title: string;
-    durationTimeRead?: number;
-    durationTimeAnswered?: number;
-    questionRetake?: number;
-  }) => void;
+  isAddQuestion: boolean;
+
   setVideoUrl: (url: Blob | null | string, type: 'intro' | 'question') => void;
   setQuestion: (data: questionState) => void;
   setQuestionFromDb: (data: questionState[]) => void;
   removeQuestion: (index: number) => void;
-  setIsLoading: (data: boolean) => void;
+  setIsAddQuestion: () => void;
 }
 
 export const useRecorderStore = create<RecorderState>((set) => ({
@@ -45,29 +39,9 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   questionVideoUrl: null,
   farewellDescription: '',
   farewellTitle: '',
-  isLoading: false,
   questions: [],
-  urlAny: new FormData(),
+  isAddQuestion: false,
 
-  setTitle: (title, type) => {
-    if (type === 'title') {
-      set({ title });
-    } else if (type === 'farewell') {
-      set({ farewellTitle: title });
-    } else if (type === 'desc') {
-      set({ farewellDescription: title });
-    }
-  },
-  setFormFirst: (data) => {
-    const { durationTimeAnswered, durationTimeRead, questionRetake, title } =
-      data;
-    set({
-      title,
-      durationTimeAnswered,
-      durationTimeRead,
-      questionRetake,
-    });
-  },
   setVideoUrl: (url, type) => {
     if (type === 'intro') {
       set({ introVideoUrl: url });
@@ -75,13 +49,17 @@ export const useRecorderStore = create<RecorderState>((set) => ({
       set({ questionVideoUrl: url });
     }
   },
+
   setQuestion: (data) =>
     set((state) => ({ questions: [...state.questions, data] })),
+
   setQuestionFromDb: (data) => set(() => ({ questions: data })),
+
   removeQuestion: (index) =>
     set((state) => ({
       questions: state.questions.filter((_, i) => i !== index),
     })),
 
-  setIsLoading: (data) => set({ isLoading: data }),
+  setIsAddQuestion: () =>
+    set((state) => ({ isAddQuestion: !state.isAddQuestion })),
 }));

@@ -24,7 +24,7 @@ const PopupRecord = ({
     <Dialog>
       <DialogTrigger className="flex items-center gap-x-2 text-sm text-slate-400">
         {triggerName}
-        <Video />
+        <Video className="size-4" />
       </DialogTrigger>
       <DialogContent className="h-fit w-fit">
         <DialogHeader>

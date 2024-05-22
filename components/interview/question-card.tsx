@@ -3,14 +3,15 @@
 import { FileSpreadsheet, Search, Redo, Trash2 } from 'lucide-react';
 import React, { FC, useEffect, useTransition } from 'react';
 import { Button } from '../ui/button';
-
+import { errorHandler } from '@/helpers';
 import deleteTemplate from '@/lib/actions/interview/deleteById';
 import { idProps } from '@/lib/validators/interview';
 import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
-
-import { Loader } from '@/components/share';
+import { useRecorderStore } from '@/zustand/recordedStore';
+import { Loader } from '../share';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { query } from 'winston';
 
 interface QuestionCardProp {
   title: string;
@@ -27,10 +28,10 @@ const QuestionCard: FC<QuestionCardProp> = ({
   id,
   type,
 }) => {
-  const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const { push } = useRouter();
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
 
   const { mutate: mutateDeleteTemplate } = useMutation({
     mutationKey: ['delete-template'],
@@ -41,6 +42,8 @@ const QuestionCard: FC<QuestionCardProp> = ({
     startTransition(() => {
       if (type == 'template' && id) {
         mutateDeleteTemplate({ id });
+      } else {
+        console.log('not ework');
       }
     });
   };

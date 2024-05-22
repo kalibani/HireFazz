@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useTransition } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import VideoRecord from './video-record';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Button } from '../ui/button';
@@ -40,6 +40,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import getOneTemplateInterview from '@/lib/actions/interview/getOneTemplate';
 import updateTemplate from '@/lib/actions/interview/updateTemplateInterview';
+import FormQuestion from './form-question';
 
 const FormSchema = z.object({
   durationTimeRead: z.string(),
@@ -61,8 +62,14 @@ const FormTemplate = ({
   });
 
   const { replace } = useRouter();
-  const { introVideoUrl, questions, setQuestionFromDb, setVideoUrl } =
-    useRecorderStore();
+  const {
+    introVideoUrl,
+    questions,
+    setQuestionFromDb,
+    setVideoUrl,
+    isAddQuestion,
+    setIsAddQuestion,
+  } = useRecorderStore();
   const [isPending, startTransition] = useTransition();
 
   const { data } = useQuery<any>({
@@ -103,7 +110,10 @@ const FormTemplate = ({
       );
     }
   }, [data, form]);
-  console.log(introVideoUrl);
+
+  const addQuestionsHandle = () => {
+    setIsAddQuestion();
+  };
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     const {
       title,
@@ -168,14 +178,14 @@ const FormTemplate = ({
         <h4 className="mb-4 text-xl font-semibold">Template</h4>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex items-center justify-between bg-slate-400">
-              <div className="flex flex-col p-0">
+            <div className="flex items-center justify-between ">
+              <div className="flex flex-col gap-y-4 p-0">
                 <FormField
                   control={form.control}
                   name="title"
                   render={({ field }) => (
-                    <FormItem className="flex w-full items-center gap-x-4 p-0">
-                      <FormLabel className="w-full  font-normal">
+                    <FormItem className="space-y-0">
+                      <FormLabel className="m-0  w-full font-normal">
                         Name Template
                       </FormLabel>
                       <Input
@@ -183,7 +193,7 @@ const FormTemplate = ({
                         onChange={field.onChange}
                         value={field.value}
                       />
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -191,7 +201,7 @@ const FormTemplate = ({
                   control={form.control}
                   name="description"
                   render={({ field }) => (
-                    <FormItem className="flex w-full items-center gap-x-4 p-0">
+                    <FormItem className="space-y-0">
                       <FormLabel className="w-full font-normal">
                         Description
                       </FormLabel>
@@ -200,16 +210,16 @@ const FormTemplate = ({
                         onChange={field.onChange}
                         value={field.value}
                       />
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
               </div>
-              <div className="flex w-1/2 gap-x-4 bg-orange-300">
+              <div className="flex w-1/2 items-center gap-x-4">
                 <VideoRecord
                   videoUrl={introVideoUrl}
                   type="intro"
-                  className="w-1/4 bg-red-400"
+                  className="w-1/3"
                 />
                 <div className="flex flex-col">
                   <div className="item-center flex gap-x-2">
@@ -230,7 +240,7 @@ const FormTemplate = ({
                           placeholder="Greeting Message"
                           value={field.value}
                         />
-                        <FormMessage />
+                        <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
@@ -245,7 +255,7 @@ const FormTemplate = ({
                   control={form.control}
                   name="durationTimeRead"
                   render={({ field }) => (
-                    <FormItem className="flex items-center gap-x-2 p-0">
+                    <FormItem className="space-y-0">
                       <FormLabel className="w-fit text-xs">
                         Time to Thinking:
                       </FormLabel>
@@ -268,7 +278,7 @@ const FormTemplate = ({
                         </SelectContent>
                       </Select>
 
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -276,7 +286,7 @@ const FormTemplate = ({
                   control={form.control}
                   name="durationTimeAnswered"
                   render={({ field }) => (
-                    <FormItem className="flex items-center gap-x-2 p-0">
+                    <FormItem className="space-y-0">
                       <FormLabel className="w-fit text-xs">
                         Time to Answer:
                       </FormLabel>
@@ -298,33 +308,44 @@ const FormTemplate = ({
                         </SelectContent>
                       </Select>
 
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
               </div>
             </div>
-            {Array.isArray(questions) &&
-              questions.map((item, index) => (
-                <QuestionCard
-                  key={item.id}
-                  idx={index}
-                  question={item.question}
-                  title={item.title}
-                  type="questions"
-                />
-              ))}
+
+            {isAddQuestion && (
+              <div className="my-4">
+                <h4 className="text-xl font-semibold">Add Question</h4>
+                <FormQuestion />
+              </div>
+            )}
+
+            <div className="my-4">
+              <h4 className="text-xl font-semibold">Questions</h4>
+              {Array.isArray(questions) &&
+                questions.map((item, index) => (
+                  <QuestionCard
+                    key={item.id}
+                    idx={index}
+                    question={item.question}
+                    title={item.title}
+                    type="questions"
+                  />
+                ))}
+            </div>
+
             <div className="my-4">
               <div className="flex items-center justify-between">
-                <Link href={`/${orgId}/video/create/question`}>
-                  <Button
-                    className="p-0 text-sm font-normal text-black"
-                    variant="link"
-                    type="button"
-                  >
-                    + Add Question
-                  </Button>
-                </Link>
+                <Button
+                  className="p-0 text-sm font-normal text-black"
+                  variant="link"
+                  type="button"
+                  onClick={addQuestionsHandle}
+                >
+                  + Add Question
+                </Button>
                 <Button
                   className="gap-2 px-4 py-2 text-sm font-normal"
                   type="submit"

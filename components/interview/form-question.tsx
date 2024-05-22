@@ -25,7 +25,6 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 const FormSchema = z.object({
   timeRead: z.string().optional(),
@@ -35,9 +34,6 @@ const FormSchema = z.object({
 });
 
 const FormQuestion = () => {
-  const { back } = useRouter();
-  const queryParams = useSearchParams();
-
   const [isSettings, setIsSettings] = useState<boolean>(false);
   const {
     setQuestion,
@@ -46,16 +42,19 @@ const FormQuestion = () => {
     questionVideoUrl,
     durationTimeAnswered,
     durationTimeRead,
+    setIsAddQuestion,
   } = useRecorderStore();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+
   useEffect(() => {
     setVideoUrl(null, 'question');
   }, []);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    console.log(questionVideoUrl, data, '???');
     setQuestion({
       title: data.title,
       question: data.question,
@@ -63,13 +62,13 @@ const FormQuestion = () => {
       timeRead: Number(data.timeRead) ?? durationTimeRead,
       videoUrl: questionVideoUrl,
     });
-    back();
+    setIsAddQuestion();
   };
 
   return (
     <div className="rounded-md bg-white p-4">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form>
           <div className="flex gap-x-4">
             <VideoRecord
               videoUrl={questionVideoUrl}
@@ -97,15 +96,10 @@ const FormQuestion = () => {
                         <Button
                           variant="ghost"
                           className="h-0 p-0 hover:bg-transparent"
-                        >
-                          <Trash2 className="size-3 text-primary" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          className="h-0 p-0 hover:bg-transparent"
                           onClick={() => setIsSettings(!isSettings)}
+                          type="button"
                         >
-                          <Settings className="size-3 text-primary" />
+                          <Settings className="size-5 text-primary" />
                         </Button>
                       </div>
                     </div>
@@ -193,14 +187,15 @@ const FormQuestion = () => {
             <Button
               className="text-sm font-normal"
               variant="secondary"
-              onClick={() => back()}
+              onClick={() => setIsAddQuestion()}
               type="button"
             >
-              Go Back
+              close
             </Button>
             <Button
               className="gap-2 px-4 py-2 text-sm font-normal"
-              type="submit"
+              type="button"
+              onClick={form.handleSubmit(onSubmit)}
             >
               <Save className="size-4" />
               Add Question
