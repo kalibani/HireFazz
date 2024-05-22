@@ -32,6 +32,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
   const { push } = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  const { setIsAddQuestion } = useRecorderStore();
 
   const { mutate: mutateDeleteTemplate } = useMutation({
     mutationKey: ['delete-template'],
@@ -45,14 +46,19 @@ const QuestionCard: FC<QuestionCardProp> = ({
       } else {
         console.log('not ework');
       }
-    });
+          });
   };
 
   const editHandler = () => {
-    if (id) {
-      const params = new URLSearchParams(searchParams);
-      params.set('id', id);
-      push(`${pathname}/create?${params.toString()}`);
+    if (type === 'template') {
+      if (id) {
+        const params = new URLSearchParams(searchParams);
+        params.set('id', id);
+        push(`${pathname}/create?${params.toString()}`);
+      }
+    } else {
+      setIsAddQuestion();
+      console.log('masuk edit quest', { id, idx, type, title, question });
     }
   };
   return (

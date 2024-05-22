@@ -172,6 +172,7 @@ const FormTemplate = ({
       });
     }
   };
+
   return (
     <>
       <div className="mt-5">
@@ -331,6 +332,7 @@ const FormTemplate = ({
                     idx={index}
                     question={item.question}
                     title={item.title}
+                    id={item.id}
                     type="questions"
                   />
                 ))}
