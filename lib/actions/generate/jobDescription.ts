@@ -5,21 +5,39 @@ import { errorHandler } from '@/helpers';
 
 const generateDescription = async (
   data: string,
-  type: 'desc' | 'skill set' | 'responsibilities' | 'requirement',
+  type: 'desc' | 'skill set' | 'responsibilities' | 'requirement job',
 ) => {
   try {
+    const typeSpecificInstruction = {
+      desc: 'Generate a general description based on the data provided.',
+      'skill set':
+        'Generate a list of professional skills based on the data provided, using simple sentences without explicit labels.',
+      'requirement job':
+        'Generate a list of professional skills job requirements based on the data provided, using simple sentences without explicit labels.',
+      responsibilities:
+        'Generate a list of professional responsibilities based on the data provided, using simple sentences without explicit labels.',
+    };
     const prompt = `
-    following the steps to create ${type} based on provided data. Restart each step before proceeding.
-    Data: ${data}
+      Given the following data, generate a ${type}:
 
-    Step 1: Read the data.
-    Step 2: Create a simple and clear ${type} based on the provided information.
+      Data: ${data}
 
-     Output a JSON object structured like: 
-    {
-      "result":"the result output of ${type} generate"
-    }
-  `;
+      Requirements:
+      1. Read the data carefully.
+      2. Create a clear and concise ${type}.
+     ${typeSpecificInstruction[type] || ''}
+
+      Return the output as a JSON object in the following format:
+       {
+        "result": ${
+          type === 'requirement job' ||
+          type === 'responsibilities' ||
+          type === 'skill set'
+            ? '[Generated list here]'
+            : '"Generated ${type} here"'
+        }
+      }
+    `;
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       response_format: { type: 'json_object' },
@@ -31,7 +49,7 @@ const generateDescription = async (
         },
         {
           role: 'user',
-          content: `create ${type}.`,
+          content: `Generate the ${type}.`,
         },
       ],
     });
@@ -52,4 +70,4 @@ export const actionResponsibility = async (data: string) =>
   generateDescription(data, 'responsibilities');
 
 export const actionRequirement = async (data: string) =>
-  generateDescription(data, 'requirement');
+  generateDescription(data, 'requirement job');

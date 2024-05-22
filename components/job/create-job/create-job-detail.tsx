@@ -126,6 +126,7 @@ const CreateJobDetail = () => {
             dataCreateJob.title,
           );
           let skillSet: string[] = [];
+          console.log({ skillResult }, '<<<<<');
 
           // skill result can either be: string, array, object
           // modify if there is new case
@@ -145,17 +146,15 @@ const CreateJobDetail = () => {
         case 'responsibilities':
           const { result: responsibilitiesResult } =
             await generateResponsibilities(dataCreateJob);
+          console.log({ responsibilitiesResult }, '<<<<<');
           handleChange('responsibilities', responsibilitiesResult);
           setLoadingState((value) => ({ ...value, responsibilities: false }));
           break;
         case 'requirement':
-          const { result: requirementResult } = await generateRequirement({
-            title,
-            experiences,
-            location,
-            workModel,
-            companyName,
-          });
+          const { result: requirementResult } =
+            await generateRequirement(dataCreateJob);
+          console.log({ requirementResult }, '<<<<<');
+
           handleChange('requirement', requirementResult);
           setLoadingState((value) => ({ ...value, requirement: false }));
           break;
