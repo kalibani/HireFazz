@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useTransition } from 'react';
+import React, { useTransition } from 'react';
 import VideoRecord from './video-record';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Button } from '../ui/button';
@@ -7,6 +7,8 @@ import { Save, Video } from 'lucide-react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { Loader } from '@/components/share';
+
 import {
   Form,
   FormControl,
@@ -30,8 +32,9 @@ import { useMutation } from '@tanstack/react-query';
 import { errorHandler } from '@/helpers';
 import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 import { blobToFormData } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CreateTemplateInterview } from '@/lib/validators/interview';
+import { v4 as uuidv4 } from 'uuid';
 
 const FormSchema = z.object({
   durationTimeRead: z.string(),
@@ -47,8 +50,10 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
   });
 
   const { replace } = useRouter();
+  const params = useSearchParams();
   const { introVideoUrl, questions, setIsLoading } = useRecorderStore();
   const [isPending, startTransition] = useTransition();
+  console.log(params.get('id'), '<<<<<');
 
   const { mutate } = useMutation({
     mutationKey: ['create-template'],
@@ -56,18 +61,8 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
       createTemplateInterview(payload),
     onSuccess: () => {
       replace(`/${orgId}/video`);
-      setIsLoading(false);
-    },
-    onError: (error) => {
-      setIsLoading(false);
     },
   });
-
-  useEffect(() => {
-    if (isPending) {
-      setIsLoading(isPending);
-    }
-  }, [isPending, setIsLoading]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     const {
@@ -88,6 +83,7 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
             const url = urlFormData && (await uploadVideo(urlFormData));
             return {
               ...item,
+              id: uuidv4(),
               timeAnswered: !item.timeAnswered
                 ? Number(durationTimeAnswered)
                 : Number(item.timeAnswered),
@@ -294,6 +290,12 @@ const FormTemplate = ({ orgId }: { orgId: string }) => {
           </form>
         </Form>
       </div>
+
+      {isPending && (
+        <div className="fixed left-0 top-0 z-50 h-full w-full items-start justify-center rounded-lg bg-black bg-opacity-40">
+          <Loader />
+        </div>
+      )}
     </>
   );
 };

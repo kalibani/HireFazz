@@ -11,6 +11,7 @@ export const Question = z.object({
   title: z.string(),
   description: z.string(),
   videoUrl: z.string(),
+  id: z.string(),
 });
 
 export const CreateTemplateInterview = z.object({
