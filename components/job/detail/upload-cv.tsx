@@ -6,6 +6,7 @@ import CVAnalyzer from '../create-job/cv-analyzer';
 import UploadCv from '../create-job/upload-cv';
 import { useFormStepStore } from '@/zustand/useCreateJob';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
+import { useParams } from 'next/navigation';
 
 type TWorkModel =
   | 'HYBRID'
@@ -17,10 +18,13 @@ type TWorkModel =
   | 'CONTRACT';
 
 const DetailUploadCVStep: FC<TDetailJobTableProps> = ({ jobDetail }) => {
+  const { id } = useParams();
+
   const { step, setStep, setFormCreateJob } = useStore(
     useFormStepStore,
     (state) => state,
   );
+
   useEffect(() => {
     setStep(2);
     setFormCreateJob({
@@ -31,7 +35,8 @@ const DetailUploadCVStep: FC<TDetailJobTableProps> = ({ jobDetail }) => {
       companyName: jobDetail?.data?.companyName as string,
       workModel: jobDetail?.data?.workModel as TWorkModel,
     });
-  }, []);
+  }, [id]);
+
   return (
     <div className="flex h-full flex-col space-y-3">
       {step === 2 && <UploadCv />}
