@@ -8,6 +8,7 @@ import DetailJobSendEmail from '@/components/job/detail/send-email';
 import DetailJobShortlisted from '@/components/job/detail/short-listed';
 import DetailJobRejected from '@/components/job/detail/rejected';
 import { DetailJobInterviewed } from '@/components/job/detail/interviewed';
+import DetailUploadCVStep from '@/components/job/detail/upload-cv';
 
 const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
   const jobId = params.id || '';
@@ -28,6 +29,7 @@ const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
     .with('interviewed', () => <DetailJobInterviewed />)
     .with('rejected', () => <DetailJobRejected jobDetail={jobDetail} />)
     .with('send-email', () => <DetailJobSendEmail jobDetail={jobDetail} />)
+    .with('upload-cv', () => <DetailUploadCVStep jobDetail={jobDetail} />)
     .otherwise(() => notFound());
 };
 
