@@ -57,6 +57,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@/components/ui/checkbox';
 import { PaginationGroup } from '@/components/ui/pagination';
 import { truncateString } from '@/lib/utils';
+import { updateJobCvs } from '@/lib/actions/job/update-cv-job';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -156,21 +157,21 @@ const schema = z.object({
   matchPercentage: z.string(),
 });
 
-const CVAnalyzer: FC = (): ReactElement => {
+const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
   const [jobId, setJobId] = useState<string>('');
 
-  const { orgId } = useParams();
+  const { orgId, id } = useParams();
 
   const [analyzeAIPercentage, setAnalyzeAIPercentage] = useState<number>(0);
   const [uploadPercentage, setUploadPercentage] = useState<number>(0);
   const [tags, setTags] = useState<string[]>([]);
   // pagination state
-  const [perPage, setPerPage] = useState(10)
-  const [itemsInPage, setItemsInPage] = useState<FormStepState['files']>([])
-  const [activePage, setActivePage] = useState(1)
+  const [perPage, setPerPage] = useState(10);
+  const [itemsInPage, setItemsInPage] = useState<FormStepState['files']>([]);
+  const [activePage, setActivePage] = useState(1);
 
   const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
     useStore(useFormStepStore, (state) => state);
@@ -229,27 +230,26 @@ const CVAnalyzer: FC = (): ReactElement => {
 
   // handle files list in pagination
   useEffect(() => {
-    const startItem = (activePage - 1) * perPage
-    const endItem = activePage * perPage
+    const startItem = (activePage - 1) * perPage;
+    const endItem = activePage * perPage;
 
-    const paginatedFile = files.slice(startItem, endItem)
-    setItemsInPage(paginatedFile)
-  }, [files, perPage, activePage])
+    const paginatedFile = files.slice(startItem, endItem);
+    setItemsInPage(paginatedFile);
+  }, [files, perPage, activePage]);
 
   // set state of pagination
   const handlePagination = (type: 'per_page' | 'page', value: string) => {
     if (type === 'per_page') {
-      setPerPage(Number(value))
+      setPerPage(Number(value));
     } else {
-      setActivePage(Number(value))
+      setActivePage(Number(value));
     }
-  }
+  };
 
   return (
-    <section className="flex flex-1 overflow-y-scroll flex-col gap-y-3">
+    <section className="flex flex-1 flex-col gap-y-3 overflow-y-scroll">
       <div className="flex h-full w-full flex-col items-center justify-start gap-y-8 rounded-lg bg-white p-8">
-        <div className="flex w-1/2 flex-col items-center gap-y-4">
-        </div>
+        <div className="flex w-1/2 flex-col items-center gap-y-4"></div>
         <Form {...form}>
           <form className="flex w-1/2 flex-col items-center gap-y-4">
             <div className="flex w-full items-center gap-x-4">
@@ -525,14 +525,23 @@ const CVAnalyzer: FC = (): ReactElement => {
           <DialogTrigger asChild>
             <Button
               onClick={() => {
-                createJobHandle();
+                isUpdate
+                  ? updateJobCvs(
+                      {
+                        orgId: orgId as string,
+                        jobId: id as string,
+                        analyzeCv: form.watch('analyzeCv'),
+                      },
+                      formData,
+                    )
+                  : createJobHandle();
               }}
             >
               Create
             </Button>
           </DialogTrigger>
         </div>
-        <DialogContent className="flex min-h-[90%] h-[90%] w-[90%] min-w-[90%] overflow-y-auto flex-col items-center justify-between p-0">
+        <DialogContent className="flex h-[90%] min-h-[90%] w-[90%] min-w-[90%] flex-col items-center justify-between overflow-y-auto p-0">
           <div className="flex w-full flex-col items-center">
             <div className="flex w-full flex-col">
               <TrackingStep step={step} withTitle={false} />
@@ -620,11 +629,7 @@ const CVAnalyzer: FC = (): ReactElement => {
           </div>
           <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">
             <DialogTrigger asChild>
-              <Button
-                onClick={() =>
-                  router.push(`${jobId}/all-applicant`)
-                }
-              >
+              <Button onClick={() => router.push(`${jobId}/all-applicant`)}>
                 Finish / Close
               </Button>
             </DialogTrigger>

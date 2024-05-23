@@ -38,7 +38,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { formatCapitalizeFirstLetter, formatDateDMY } from '@/helpers';
+import { formatDateDMY } from '@/helpers';
 import {
   useParams,
   usePathname,
