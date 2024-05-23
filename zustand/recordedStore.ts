@@ -21,12 +21,14 @@ interface RecorderState {
   farewellDescription?: string;
   questions: questionState[];
   isAddQuestion: boolean;
+  questionForm: questionState | null;
 
   setVideoUrl: (url: Blob | null | string, type: 'intro' | 'question') => void;
-  setQuestion: (data: questionState) => void;
+  setQuestion: (data: questionState, id?: string) => void;
   setQuestionFromDb: (data: questionState[]) => void;
   removeQuestion: (index: number) => void;
-  setIsAddQuestion: () => void;
+  setIsAddQuestion: (data: boolean) => void;
+  setQuestionForm: (data?: questionState) => void;
 }
 
 export const useRecorderStore = create<RecorderState>((set) => ({
@@ -41,6 +43,7 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   farewellTitle: '',
   questions: [],
   isAddQuestion: false,
+  questionForm: null,
 
   setVideoUrl: (url, type) => {
     if (type === 'intro') {
@@ -50,8 +53,24 @@ export const useRecorderStore = create<RecorderState>((set) => ({
     }
   },
 
-  setQuestion: (data) =>
-    set((state) => ({ questions: [...state.questions, data] })),
+  setQuestion: (data) => {
+    if (data.id) {
+      set((state) => {
+        const existingState = state.questions.filter(
+          (item) => item.id !== data.id,
+        );
+
+        return {
+          questionForm: null,
+          questions: [...existingState, data],
+        };
+      });
+    } else {
+      set((state) => ({ questions: [...state.questions, data] }));
+    }
+  },
+
+  setQuestionForm: (data) => set({ questionForm: data || null }),
 
   setQuestionFromDb: (data) => set(() => ({ questions: data })),
 
@@ -60,6 +79,5 @@ export const useRecorderStore = create<RecorderState>((set) => ({
       questions: state.questions.filter((_, i) => i !== index),
     })),
 
-  setIsAddQuestion: () =>
-    set((state) => ({ isAddQuestion: !state.isAddQuestion })),
+  setIsAddQuestion: (data) => set({ isAddQuestion: data }),
 }));

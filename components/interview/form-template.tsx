@@ -1,5 +1,10 @@
 'use client';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, {
+  startTransition,
+  useEffect,
+  useState,
+  useTransition,
+} from 'react';
 import VideoRecord from './video-record';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Button } from '../ui/button';
@@ -41,6 +46,8 @@ import { v4 as uuidv4 } from 'uuid';
 import getOneTemplateInterview from '@/lib/actions/interview/getOneTemplate';
 import updateTemplate from '@/lib/actions/interview/updateTemplateInterview';
 import FormQuestion from './form-question';
+import { url } from 'inspector';
+import updateTemplateInterview from '@/lib/actions/interview/updateTemplateInterview';
 
 const FormSchema = z.object({
   durationTimeRead: z.string(),
@@ -69,51 +76,56 @@ const FormTemplate = ({
     setVideoUrl,
     isAddQuestion,
     setIsAddQuestion,
+    setQuestionForm,
   } = useRecorderStore();
   const [isPending, startTransition] = useTransition();
 
-  const { data } = useQuery<any>({
+  const { data: dataTemplate } = useQuery<any>({
     enabled: !!queryId,
     queryKey: ['get-template', queryId],
     queryFn: () => getOneTemplateInterview(queryId!),
   });
 
-  const { mutate } = useMutation({
-    mutationKey: ['create-template'],
-    mutationFn: (payload: z.infer<typeof CreateTemplateInterview>) =>
-      createTemplateInterview(payload),
-    onSuccess: () => {
-      replace(`/${orgId}/video`);
-    },
+  const createTemplate = useMutation(createTemplateInterview, {
+    onSuccess: () => replace(`/${orgId}/video`),
   });
 
-  const { mutate: mutateUpdate } = useMutation({
-    mutationKey: ['create-template'],
-    mutationFn: (payload: z.infer<typeof UpdateTemplateInterview>) =>
-      updateTemplate(payload),
-    onSuccess: () => {
-      replace(`/${orgId}/video`);
-    },
+  const updateTemplate = useMutation(updateTemplateInterview, {
+    onSuccess: () => replace(`/${orgId}/video`),
   });
 
   useEffect(() => {
-    if (data) {
-      setQuestionFromDb(data.questions);
-      setVideoUrl(data.introVideoUrl, 'intro');
-      form.setValue('title', data.title);
-      form.setValue('description', data.description || '');
-      form.setValue('descriptionIntro', data.descriptionIntro || '');
-      form.setValue('durationTimeRead', String(data.durationTimeRead) || '');
-      form.setValue(
-        'durationTimeAnswered',
-        String(data.durationTimeAnswered) || '',
-      );
+    if (dataTemplate) {
+      const {
+        title,
+        description,
+        descriptionIntro,
+        durationTimeRead,
+        durationTimeAnswered,
+        introVideoUrl,
+        questions,
+      } = dataTemplate;
+      setQuestionFromDb(questions);
+      setVideoUrl(introVideoUrl, 'intro');
+      form.setValue('title', title);
+      form.setValue('description', description || '');
+      form.setValue('descriptionIntro', descriptionIntro || '');
+      form.setValue('durationTimeRead', String(durationTimeRead) || '');
+      form.setValue('durationTimeAnswered', String(durationTimeAnswered) || '');
     }
-  }, [data, form]);
+  }, [dataTemplate, form, setQuestionFromDb, setVideoUrl]);
 
-  const addQuestionsHandle = () => {
-    setIsAddQuestion();
+  const handleAddQuestion = () => {
+    console.log('masuk add');
+    setQuestionForm({
+      videoUrl: '',
+      id: '',
+      title: '',
+      question: '',
+    });
+    setIsAddQuestion(true);
   };
+
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     const {
       title,
@@ -126,45 +138,55 @@ const FormTemplate = ({
     if (questions.length > 0) {
       startTransition(async () => {
         try {
-          const payloadQuestions: any = questions.map(async (item) => {
-            const urlFormData: any =
-              item.videoUrl &&
-              (await blobToFormData(item.videoUrl, 'questions'));
-            const url = urlFormData && (await uploadVideo(urlFormData));
-            return {
-              ...item,
-              id: uuidv4(),
-              timeAnswered: !item.timeAnswered
-                ? Number(durationTimeAnswered)
-                : Number(item.timeAnswered),
-              timeRead: !item.timeRead
-                ? Number(durationTimeRead)
-                : Number(item.timeRead),
-              videoUrl: url ?? '',
-              question: item.question,
-              questionRetake: 0,
-            };
-          });
-          const resolvedQuestions = await Promise.all(payloadQuestions);
-          if (orgId) {
-            const introVideo =
-              introVideoUrl && (await blobToFormData(introVideoUrl, 'intro'));
-            const introUrl = introVideo && (await uploadVideo(introVideo));
-            const payload: z.infer<typeof CreateTemplateInterview> = {
-              organizationId: orgId,
-              title,
-              durationTimeAnswered: Number(durationTimeAnswered),
-              durationTimeRead: Number(durationTimeRead),
-              introVideoUrl: introUrl as string,
-              questions: resolvedQuestions,
-              description,
-              descriptionIntro,
-            };
-            if (data && queryId) {
-              mutateUpdate({ ...payload, id: queryId });
+          const resolvedQuestions = await Promise.all(
+            questions.map(async (item) => {
+              let url = '';
+              if (item.videoUrl) {
+                const urlFormData = await blobToFormData(
+                  item.videoUrl,
+                  'questions',
+                );
+                if (typeof urlFormData !== 'string') {
+                  url = (await uploadVideo(urlFormData)) as string;
+                } else {
+                  url = urlFormData;
+                }
+              }
+              return {
+                ...item,
+                id: uuidv4(),
+                timeAnswered: Number(item.timeAnswered || durationTimeAnswered),
+                timeRead: Number(item.timeRead || durationTimeRead),
+                videoUrl: url,
+                questionRetake: 0,
+              };
+            }),
+          );
+
+          let introUrl = '';
+          if (introVideoUrl) {
+            const introVideo = await blobToFormData(introVideoUrl, 'intro');
+            if (typeof introVideo !== 'string') {
+              introUrl = (await uploadVideo(introVideo)) as string;
             } else {
-              mutate(payload);
+              introUrl = introVideo;
             }
+          }
+          const payload: z.infer<typeof CreateTemplateInterview> = {
+            organizationId: orgId,
+            title,
+            durationTimeAnswered: Number(durationTimeAnswered),
+            durationTimeRead: Number(durationTimeRead),
+            introVideoUrl: introUrl,
+            questions: resolvedQuestions,
+            description,
+            descriptionIntro,
+          };
+
+          if (!queryId) {
+            createTemplate.mutate(payload);
+          } else {
+            updateTemplate.mutate({ ...payload, id: queryId });
           }
         } catch (error) {
           errorHandler(error);
@@ -191,8 +213,7 @@ const FormTemplate = ({
                       </FormLabel>
                       <Input
                         className="h-auto w-full min-w-[200px] border font-normal ring-0"
-                        onChange={field.onChange}
-                        value={field.value}
+                        {...field}
                       />
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -208,8 +229,7 @@ const FormTemplate = ({
                       </FormLabel>
                       <Input
                         className="h-auto min-w-[200px] border font-normal ring-0"
-                        onChange={field.onChange}
-                        value={field.value}
+                        {...field}
                       />
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -237,9 +257,8 @@ const FormTemplate = ({
                       <FormItem className="flex w-full items-center gap-x-4 p-0">
                         <Input
                           className="h-auto min-w-[392px] border font-normal ring-0"
-                          onChange={field.onChange}
                           placeholder="Greeting Message"
-                          value={field.value}
+                          {...field}
                         />
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -261,6 +280,7 @@ const FormTemplate = ({
                         Time to Thinking:
                       </FormLabel>
                       <Select
+                        {...field}
                         onValueChange={field.onChange}
                         value={field.value}
                       >
@@ -292,6 +312,7 @@ const FormTemplate = ({
                         Time to Answer:
                       </FormLabel>
                       <Select
+                        {...field}
                         onValueChange={field.onChange}
                         value={field.value}
                       >
@@ -328,11 +349,16 @@ const FormTemplate = ({
               {Array.isArray(questions) &&
                 questions.map((item, index) => (
                   <QuestionCard
-                    key={item.id}
+                    key={index}
                     idx={index}
                     question={item.question}
                     title={item.title}
                     id={item.id}
+                    videoUrl={
+                      typeof item.videoUrl === 'string'
+                        ? item.videoUrl
+                        : undefined
+                    }
                     type="questions"
                   />
                 ))}
@@ -344,7 +370,7 @@ const FormTemplate = ({
                   className="p-0 text-sm font-normal text-black"
                   variant="link"
                   type="button"
-                  onClick={addQuestionsHandle}
+                  onClick={handleAddQuestion}
                 >
                   + Add Question
                 </Button>

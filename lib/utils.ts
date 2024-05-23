@@ -126,23 +126,22 @@ export const blobToFile = (blob: Blob, fileName: string): File => {
 //     }
 //   });
 // };
-
 export const blobToFormData = async (
   blob: Blob | string,
   filename: string,
-): Promise<any> => {
-  if (typeof blob !== 'string') {
-    const formData = new FormData();
-    formData.append('file', blob, filename);
-
-    if (!formData.has('file')) {
-      throw new Error('Blob could not be appended to FormData');
-    }
-
-    return formData;
-  } else {
+): Promise<FormData | string> => {
+  if (typeof blob === 'string') {
     return blob;
   }
+
+  const formData = new FormData();
+  formData.append('file', blob, filename);
+
+  if (!formData.has('file')) {
+    throw new Error('Blob could not be appended to FormData');
+  }
+
+  return formData;
 };
 
 export const separateThousand = (value: string, separator: string = '.') => {
