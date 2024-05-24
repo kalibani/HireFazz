@@ -9,6 +9,7 @@ import { useRecorderStore } from '@/zustand/recordedStore';
 import { Loader } from '../share';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import deleteQuestion from '@/lib/actions/interview/deleteQuestion';
+import PopupPreviewQuestions from './popup-preview';
 
 interface QuestionCardProp {
   title: string;
@@ -99,13 +100,16 @@ const QuestionCard: FC<QuestionCardProp> = ({
           </div>
           <div className="mt-2 flex items-start justify-between">
             <div className="flex gap-x-4">
-              <Button
+              {/* <Button
                 variant="ghost"
                 className="h-auto gap-x-2 p-0 text-xs font-normal hover:bg-transparent"
+                type="button"
+                onClick={() => console.log('masuk preview')}
               >
                 <Search className="size-3 text-primary" />
                 Preview
-              </Button>
+              </Button> */}
+              <PopupPreviewQuestions/>
               <Button
                 variant="ghost"
                 className="h-auto gap-x-2  p-0 text-xs font-normal hover:bg-transparent"
