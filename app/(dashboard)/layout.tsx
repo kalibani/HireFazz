@@ -7,7 +7,7 @@ const DashboardLayout: FC<PropsWithChildren> = async ({
 }): Promise<ReactElement> => {
   const org = await orgList();
   return (
-    <div className="flex h-auto bg-[#F2F2F7]">
+    <div className="flex h-full bg-[#F2F2F7]">
       <SideBar />
       <Navbar orgs={org} />
       <main className="h-full w-full overflow-y-auto py-[60px] pl-[80px]">

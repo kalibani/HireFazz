@@ -279,7 +279,7 @@ const CreateJobDetail = () => {
     // skills to render list of button that will directly update the text editor when click (base on last checked status in data)
     if (type === 'skill') {
       return (
-        <div className="flex flex-col gap-3 min-h-[218px] w-full flex-wrap overflow-y-scroll rounded-sm bg-white p-2">
+        <div className="flex flex-col gap-3 min-h-[218px] w-full flex-wrap overflow-y-auto rounded-sm bg-white p-2">
           {state[type].map((data: DetailItem, idx: number) => {
             return (
               <div key={idx} className="flex gap-2 items-center">
@@ -299,7 +299,7 @@ const CreateJobDetail = () => {
     }
 
     return (
-      <div className="flex flex-col gap-3 min-h-[218px] w-full flex-wrap overflow-y-scroll rounded-sm bg-white p-2">
+      <div className="flex flex-col gap-3 min-h-[218px] w-full flex-wrap overflow-y-auto rounded-sm bg-white p-2">
         {state[type].map((data: DetailItem, idx: number) => {
           return (
             <div key={idx} className="flex gap-2 items-center">
@@ -320,9 +320,9 @@ const CreateJobDetail = () => {
 
   return (
     <div className="flex w-full flex-1 flex-col items-center overflow-y-scroll rounded-md bg-white py-8">
-      <div className="w-ful flex flex-col items-center justify-center overflow-y-auto px-12 py-8">
+      <div className="w-full flex flex-col items-center justify-center overflow-y-auto px-12 py-4">
         <div className="flex w-full gap-x-3">
-          <div className="h-[530px] max-w-[445px] w-full space-y-2 overflow-y-auto">
+          <div className="h-full max-w-[445px] w-full space-y-2 overflow-y-auto">
             <div className="overflow-hidden rounded-md border">
               <div className="border-b p-4">
                 <div className="flex items-center gap-2">
@@ -424,14 +424,14 @@ const CreateJobDetail = () => {
             ))}
           </div>
 
-          <div className="flex flex-col gap-y-4">
-            <div className="h-[530px] sm:min-w-3/4 lg:min-w-[742px] rounded-md bg-white">
+          <div className="flex flex-1 flex-col gap-y-4">
+            <div className="flex-1 w-full rounded-md bg-white">
               <ReactQuill
                 //@ts-ignore
                 theme="snow"
                 value={value}
                 onChange={setValue}
-                className="h-[485px] border-none"
+                className="h-[calc(100%-44px)] w-full border-none"
               />
             </div>
             <div className="flex justify-between">
