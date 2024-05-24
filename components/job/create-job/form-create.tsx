@@ -25,11 +25,9 @@ import { useFormStepStore } from '@/zustand/useCreateJob';
 import { formSchemaCreateJob } from '@/lib/validators/createJob';
 import { removeNonDigit, separateThousand } from '@/lib/utils';
 import { WORK_MODEL } from '@prisma/client';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-
 
 const FormCreate = () => {
-  const { setStep, setFormCreateJob } = useFormStepStore((state) => state);
+  const { setStep, setFormCreateJob, dataCreateJob } = useFormStepStore((state) => state);
   const form = useForm<z.infer<typeof formSchemaCreateJob>>({
     resolver: zodResolver(formSchemaCreateJob),
     defaultValues: {
@@ -42,6 +40,7 @@ const FormCreate = () => {
       toNominal: '',
       location: '',
     },
+    values: dataCreateJob,
   });
 
   const onSubmit = (values: z.infer<typeof formSchemaCreateJob>) => {
