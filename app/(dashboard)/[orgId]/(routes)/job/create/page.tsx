@@ -6,7 +6,7 @@ import { ReactElement } from 'react';
 
 const CreateNewJob: NextPage = (): ReactElement => {
   return (
-    <SectionWrap className="h-[calc(100%-57px)]">
+    <SectionWrap className="h-full">
       <CreateStep />
     </SectionWrap>
   );
