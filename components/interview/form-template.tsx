@@ -1,10 +1,5 @@
 'use client';
-import React, {
-  startTransition,
-  useEffect,
-  useState,
-  useTransition,
-} from 'react';
+import React, { useEffect, useTransition } from 'react';
 import VideoRecord from './video-record';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Button } from '../ui/button';
@@ -37,16 +32,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { errorHandler } from '@/helpers';
 import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 import { blobToFormData } from '@/lib/utils';
-import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  CreateTemplateInterview,
-  UpdateTemplateInterview,
-} from '@/lib/validators/interview';
+import { useRouter } from 'next/navigation';
+import { CreateTemplateInterview } from '@/lib/validators/interview';
 import { v4 as uuidv4 } from 'uuid';
 import getOneTemplateInterview from '@/lib/actions/interview/getOneTemplate';
-import updateTemplate from '@/lib/actions/interview/updateTemplateInterview';
 import FormQuestion from './form-question';
-import { url } from 'inspector';
 import updateTemplateInterview from '@/lib/actions/interview/updateTemplateInterview';
 
 const FormSchema = z.object({

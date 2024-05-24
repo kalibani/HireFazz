@@ -87,7 +87,7 @@ const FormQuestion = () => {
   };
 
   return (
-    <div className="rounded-md bg-white p-4">
+    <div className=" rounded-md bg-white p-4">
       <Form {...form}>
         <div className="flex gap-x-4">
           <VideoRecord

@@ -80,7 +80,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
   };
   return (
     <>
-      <div className="round bg-slate-40 flex w-full gap-x-4 rounded-md border p-4">
+      <div className="round my-4  flex w-full gap-x-4 rounded-md border p-4">
         {videoUrl && (
           <div className="h-auto w-[250px] overflow-hidden rounded-md">
             <video controls className="aspect-video size-full rounded-md">
@@ -88,14 +88,16 @@ const QuestionCard: FC<QuestionCardProp> = ({
             </video>
           </div>
         )}
-        <div className="flex justify-between">
-          <div className="flex items-center gap-x-2">
-            <FileSpreadsheet className="size-4 text-primary" />
-            <h4 className="text-xl font-semibold">Question #{idx + 1}</h4>
-          </div>
-          <h4 className="my-2 text-xl font-semibold">{title}</h4>
-          <div className="mt-2 flex items-start justify-between">
+        <div className="flex w-full items-end justify-between ">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-x-2">
+              <FileSpreadsheet className="size-4 text-primary" />
+              <h4 className="text-xl font-semibold">Question #{idx + 1}</h4>
+            </div>
+            <h4 className="my-2 text-xl font-semibold">{title}</h4>
             <p className="line-clamp-2 max-w-4xl p-0 text-sm">{question}</p>
+          </div>
+          <div className="mt-2 flex items-start justify-between">
             <div className="flex gap-x-4">
               <Button
                 variant="ghost"
