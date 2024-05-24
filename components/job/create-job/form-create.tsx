@@ -116,7 +116,7 @@ const FormCreate = () => {
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={dataCreateJob.currency || field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="w-20">
@@ -146,6 +146,7 @@ const FormCreate = () => {
                         {...field}
                         onChange={(e) => onSalaryInputChange(e, field.onChange)}
                         className="h-auto w-full text-sm "
+                        value={field.value ? separateThousand(field.value) : undefined}
                       />
                     </FormControl>
                     <FormMessage />
@@ -164,6 +165,7 @@ const FormCreate = () => {
                         {...field}
                         onChange={(e) => onSalaryInputChange(e, field.onChange)}
                         className="h-auto w-full text-sm "
+                        value={field.value ? separateThousand(field.value) : undefined}
                       />
                     </FormControl>
                     <FormMessage />
@@ -183,7 +185,7 @@ const FormCreate = () => {
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={dataCreateJob.experiences || field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -209,7 +211,7 @@ const FormCreate = () => {
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={dataCreateJob.workModel || field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
