@@ -1,7 +1,7 @@
 import { blobToFormData } from '@/lib/utils';
 import { create } from 'zustand';
 
-interface questionState {
+export interface questionState {
   id?: string;
   videoUrl?: Blob | null | string;
   question: string;

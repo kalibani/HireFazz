@@ -67,6 +67,7 @@ const Page = async ({ params }: ParamsProps) => {
                 question={interview.description!}
                 idx={idx}
                 type="template"
+                dataSource={interview}
               />
             ))
           ) : (

@@ -1,3 +1,4 @@
+'use server';
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 import z from 'zod';

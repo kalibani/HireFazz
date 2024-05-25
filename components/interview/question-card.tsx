@@ -18,6 +18,7 @@ interface QuestionCardProp {
   id?: string;
   videoUrl?: string | undefined;
   type: 'template' | 'questions';
+  dataSource?: any;
 }
 
 const QuestionCard: FC<QuestionCardProp> = ({
@@ -27,6 +28,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
   id,
   videoUrl,
   type,
+  dataSource,
 }) => {
   const searchParams = useSearchParams();
   const queryId = searchParams.get('id');
@@ -100,16 +102,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
           </div>
           <div className="mt-2 flex items-start justify-between">
             <div className="flex gap-x-4">
-              {/* <Button
-                variant="ghost"
-                className="h-auto gap-x-2 p-0 text-xs font-normal hover:bg-transparent"
-                type="button"
-                onClick={() => console.log('masuk preview')}
-              >
-                <Search className="size-3 text-primary" />
-                Preview
-              </Button> */}
-              <PopupPreviewQuestions/>
+              <PopupPreviewQuestions dataSource={dataSource} />
               <Button
                 variant="ghost"
                 className="h-auto gap-x-2  p-0 text-xs font-normal hover:bg-transparent"

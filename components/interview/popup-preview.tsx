@@ -1,20 +1,27 @@
-import { Copy, Search } from 'lucide-react';
+'use client';
+
+import { Search, MessageCircleQuestion, FileText } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
-const PopupPreviewQuestions = () => {
+const PopupPreviewQuestions = ({ dataSource }: { dataSource?: any }) => {
+  const [indexOfQuestion, setIndexOfQuestion] = useState(0);
+  console.log(dataSource, '<<<<< ???');
+
+  const indexContentHAndler = (index: number) => {
+    console.log(index);
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -29,18 +36,64 @@ const PopupPreviewQuestions = () => {
       </DialogTrigger>
       <DialogContent className="max-w-5xl">
         <DialogHeader className="border-b py-4">
-          <DialogTitle className="text-center text-2xl font-semibold">
+          <DialogTitle className="text-center text-xl font-semibold">
             Preview Interview Question
           </DialogTitle>
         </DialogHeader>
-        <div className="flex w-[200px] justify-between space-x-2">
-          <div>Listquestion</div>
-          <div>Content</div>
-          <div>video</div>
+        <div className="flex  w-full justify-between space-x-2">
+          <div className="space-y-2">
+            <h4 className="flex items-center gap-x-2 text-xl font-semibold text-primary">
+              <MessageCircleQuestion />
+              List Question
+            </h4>
+            <div className="flex flex-col gap-y-2">
+              <Button className={cn('h-0 w-fit p-4')} variant="ghost">
+                Intro
+              </Button>
+              {dataSource?.questions.map((question, idx) => (
+                <Button
+                  key={question.id}
+                  className={cn('h-0 w-fit p-4')}
+                  variant="default"
+                  onClick={() => indexContentHAndler(idx)}
+                >
+                  Question #{idx + 1}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <div className="flex  w-1/3 flex-col gap-y-2 ">
+            <h4 className="flex items-center gap-x-2 text-xl font-semibold text-primary">
+              <FileText />
+              Question 1 of {dataSource?.questions.length}
+            </h4>
+            <div className="mt-4 font-normal">
+              <p className="text-sm text-primary">Title Question</p>
+              <p className="mt-1 text-xs">{dataSource.questions[0].title}</p>
+            </div>
+            <div className="mt-4 font-normal">
+              <p className="text-sm text-primary">Detail Question</p>
+              <p className="mt-1 text-xs">{dataSource.questions[0].question}</p>
+            </div>
+            <div className="mt-4 font-normal">
+              <p className="text-sm text-primary">Time</p>
+              <p className="mt-1 text-xs">Time to Think : 30 Seconds</p>
+              <p className="mt-1 text-xs">Time to Answer : 30 Seconds</p>
+            </div>
+          </div>
+          <div className="size-full w-1/4">
+            {dataSource.questions[0].videoUrl && (
+              <div className="flex aspect-video  overflow-hidden rounded-md">
+                <video controls className="rounded-md">
+                  <source src={dataSource.questions[0].videoUrl} />
+                </video>
+              </div>
+            )}
+          </div>
         </div>
-        <DialogFooter className="sm:justify-start">
+        <DialogFooter className="mt-4 sm:justify-start">
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button type="button" variant="secondary" size="sm">
               Close
             </Button>
           </DialogClose>
