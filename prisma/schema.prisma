@@ -89,6 +89,8 @@ model UserOrganization {
 model InterviewTemplate {
   id                   String       @id @default(cuid())
   title                String
+  description          String?
+  descriptionIntro     String?
   durationTimeRead     Int
   durationTimeAnswered Int
   questionRetake       Int?

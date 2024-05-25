@@ -1,8 +1,9 @@
 import { blobToFormData } from '@/lib/utils';
 import { create } from 'zustand';
 
-interface questionState {
-  videoUrl?: Blob | null;
+export interface questionState {
+  id?: string;
+  videoUrl?: Blob | null | string;
   question: string;
   timeRead?: number;
   timeAnswered?: number;
@@ -13,24 +14,21 @@ interface RecorderState {
   durationTimeRead: number;
   durationTimeAnswered: number;
   questionRetake?: number;
-  introVideoUrl?: Blob | null;
+  introVideoUrl?: Blob | null | string;
   farewellVideoUrl?: Blob | null;
-  questionVideoUrl?: Blob | null;
+  questionVideoUrl?: Blob | null | string;
   farewellTitle?: string;
   farewellDescription?: string;
   questions: questionState[];
-  isLoading: boolean;
-  setTitle: (title: string, type: 'title' | 'farewell' | 'desc') => void;
-  setFormFirst: (data: {
-    title: string;
-    durationTimeRead?: number;
-    durationTimeAnswered?: number;
-    questionRetake?: number;
-  }) => void;
-  setVideoUrl: (url: Blob | null, type: 'intro' | 'question') => void;
-  setQuestion: (data: questionState) => void;
+  isAddQuestion: boolean;
+  questionForm: questionState | null;
+
+  setVideoUrl: (url: Blob | null | string, type: 'intro' | 'question') => void;
+  setQuestion: (data: questionState, id?: string) => void;
+  setQuestionFromDb: (data: questionState[]) => void;
   removeQuestion: (index: number) => void;
-  setIsLoading: (data: boolean) => void;
+  setIsAddQuestion: (data: boolean) => void;
+  setQuestionForm: (data?: questionState) => void;
 }
 
 export const useRecorderStore = create<RecorderState>((set) => ({
@@ -43,29 +41,10 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   questionVideoUrl: null,
   farewellDescription: '',
   farewellTitle: '',
-  isLoading: false,
   questions: [],
-  urlAny: new FormData(),
+  isAddQuestion: false,
+  questionForm: null,
 
-  setTitle: (title, type) => {
-    if (type === 'title') {
-      set({ title });
-    } else if (type === 'farewell') {
-      set({ farewellTitle: title });
-    } else if (type === 'desc') {
-      set({ farewellDescription: title });
-    }
-  },
-  setFormFirst: (data) => {
-    const { durationTimeAnswered, durationTimeRead, questionRetake, title } =
-      data;
-    set({
-      title,
-      durationTimeAnswered,
-      durationTimeRead,
-      questionRetake,
-    });
-  },
   setVideoUrl: (url, type) => {
     if (type === 'intro') {
       set({ introVideoUrl: url });
@@ -73,12 +52,32 @@ export const useRecorderStore = create<RecorderState>((set) => ({
       set({ questionVideoUrl: url });
     }
   },
-  setQuestion: (data) =>
-    set((state) => ({ questions: [...state.questions, data] })),
+
+  setQuestion: (data) => {
+    if (data.id) {
+      set((state) => {
+        const existingState = state.questions.filter(
+          (item) => item.id !== data.id,
+        );
+
+        return {
+          questionForm: null,
+          questions: [...existingState, data],
+        };
+      });
+    } else {
+      set((state) => ({ questions: [...state.questions, data] }));
+    }
+  },
+
+  setQuestionForm: (data) => set({ questionForm: data || null }),
+
+  setQuestionFromDb: (data) => set(() => ({ questions: data })),
+
   removeQuestion: (index) =>
     set((state) => ({
       questions: state.questions.filter((_, i) => i !== index),
     })),
 
-  setIsLoading: (data) => set({ isLoading: data }),
+  setIsAddQuestion: (data) => set({ isAddQuestion: data }),
 }));

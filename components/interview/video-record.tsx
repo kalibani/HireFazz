@@ -9,14 +9,14 @@ const VideoRecord = ({
   type,
   className,
 }: {
-  videoUrl: Blob | null | undefined;
+  videoUrl: any;
   type: 'intro' | 'question';
   className?: string;
 }) => {
   return (
     <div
       className={cn(
-        'flex  aspect-video w-1/2 flex-col items-center justify-center overflow-hidden rounded-md border',
+        'flex  w-1/2 flex-col items-center justify-center overflow-hidden rounded-md border',
         videoUrl ? 'h-fit' : 'h-[200px]',
         className,
       )}
@@ -24,10 +24,17 @@ const VideoRecord = ({
       {videoUrl && (
         <div className=" aspect-video size-full">
           <video controls>
-            <source src={URL.createObjectURL(videoUrl)} />
+            <source
+              src={
+                typeof videoUrl === 'string'
+                  ? videoUrl
+                  : URL.createObjectURL(videoUrl)
+              }
+            />
           </video>
         </div>
       )}
+
       <PopupRecord
         type={type}
         title="Interview Intro"

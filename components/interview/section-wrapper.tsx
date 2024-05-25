@@ -11,14 +11,14 @@ const SectionWrapLoad = ({
   children: React.ReactNode;
   isScroll?: boolean;
 }) => {
-  const isLoading = useRecorderStore((state) => state.isLoading);
+  // const isLoading = useRecorderStore((state) => state.isLoading);
   return (
     <section className="rounded-md bg-white p-4">
-      {isLoading && (
+      {/* {isLoading && (
         <div className="fixed left-0 top-0 h-full w-full bg-black/50">
           <Loader />
         </div>
-      )}
+      )} */}
       {children}
     </section>
   );

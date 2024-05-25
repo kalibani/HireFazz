@@ -126,11 +126,14 @@ export const blobToFile = (blob: Blob, fileName: string): File => {
 //     }
 //   });
 // };
-
 export const blobToFormData = async (
-  blob: Blob,
+  blob: Blob | string,
   filename: string,
-): Promise<FormData> => {
+): Promise<FormData | string> => {
+  if (typeof blob === 'string') {
+    return blob;
+  }
+
   const formData = new FormData();
   formData.append('file', blob, filename);
 
@@ -157,11 +160,11 @@ export const removeNonDigit = (value: string) => {
 
 // return truncated string if len is over maxLen
 export const truncateString = (str: string, maxLen: number) => {
-  const value = str
-  const truncated = value.slice(0, maxLen)
+  const value = str;
+  const truncated = value.slice(0, maxLen);
 
-  const isOverflow = value.length > truncated.length
-  console.log('isOV', isOverflow, value, truncateString)
+  const isOverflow = value.length > truncated.length;
+  console.log('isOV', isOverflow, value, truncateString);
 
-  return isOverflow ? `${truncated}...` : str
-}
+  return isOverflow ? `${truncated}...` : str;
+};

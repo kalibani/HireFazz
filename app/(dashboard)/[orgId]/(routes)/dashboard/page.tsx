@@ -10,10 +10,10 @@ import {
   ArrowUpRight,
   SearchCheck,
 } from 'lucide-react';
-import { NextPage } from 'next';
 import { currentUser } from '@/lib/auth';
+import { ParamsProps } from '@/types/types';
 
-const DashboardPage: NextPage = async () => {
+const DashboardPage = async ({ params }: ParamsProps) => {
   const user = await currentUser();
   return (
     <SectionWrap isScroll>
@@ -35,7 +35,7 @@ const DashboardPage: NextPage = async () => {
           />
         ))}
       </div>
-      <CardFeature />
+      <CardFeature orgId={params.orgId} />
       <div className="h-full space-y-4 rounded-lg bg-white px-3 py-2">
         <div className="px-2">
           <h4 className="text-xl font-semibold">Latest Job</h4>
