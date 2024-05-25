@@ -15,12 +15,35 @@ import {
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
-const PopupPreviewQuestions = ({ dataSource }: { dataSource?: any }) => {
-  const [indexOfQuestion, setIndexOfQuestion] = useState(0);
-  console.log(dataSource, '<<<<< ???');
+interface PropsDataSource {
+  description?: string;
+  descriptionIntro?: string;
+  introVideoUrl?: string;
+  durationTimeAnswered: number;
+  durationTimeRead: number;
+  id: string;
+  title: string;
+  questions: [
+    {
+      id: string;
+      question: string;
+      timeAnswered: number;
+      timeRead: number;
+      title: number;
+      videoUrl?: string;
+    },
+  ];
+}
+
+const PopupPreviewQuestions = ({
+  dataSource,
+}: {
+  dataSource?: PropsDataSource;
+}) => {
+  const [listQuestion, setListQuestion] = useState<number>(0);
 
   const indexContentHAndler = (index: number) => {
-    console.log(index);
+    setListQuestion(index);
   };
   return (
     <Dialog>
@@ -41,56 +64,108 @@ const PopupPreviewQuestions = ({ dataSource }: { dataSource?: any }) => {
           </DialogTitle>
         </DialogHeader>
         <div className="flex  w-full justify-between space-x-2">
-          <div className="space-y-2">
+          <div className="flex flex-col gap-y-2">
             <h4 className="flex items-center gap-x-2 text-xl font-semibold text-primary">
               <MessageCircleQuestion />
               List Question
             </h4>
-            <div className="flex flex-col gap-y-2">
-              <Button className={cn('h-0 w-fit p-4')} variant="ghost">
+            <div className="mt-4 flex flex-col gap-y-2">
+              <Button
+                className={cn('h-0 w-fit p-4')}
+                variant={listQuestion === 0 ? 'default' : 'ghost'}
+                onClick={() => indexContentHAndler(0)}
+              >
                 Intro
               </Button>
-              {dataSource?.questions.map((question, idx) => (
+              {dataSource?.questions.map((question, idx: number) => (
                 <Button
                   key={question.id}
                   className={cn('h-0 w-fit p-4')}
-                  variant="default"
-                  onClick={() => indexContentHAndler(idx)}
+                  variant={listQuestion === idx + 1 ? 'default' : 'ghost'}
+                  onClick={() => indexContentHAndler(idx + 1)}
                 >
                   Question #{idx + 1}
                 </Button>
               ))}
             </div>
           </div>
-          <div className="flex  w-1/3 flex-col gap-y-2 ">
-            <h4 className="flex items-center gap-x-2 text-xl font-semibold text-primary">
-              <FileText />
-              Question 1 of {dataSource?.questions.length}
-            </h4>
-            <div className="mt-4 font-normal">
-              <p className="text-sm text-primary">Title Question</p>
-              <p className="mt-1 text-xs">{dataSource.questions[0].title}</p>
+          {listQuestion !== 0 && (
+            <div className="flex  w-1/3 flex-col gap-y-2 ">
+              <h4 className="flex items-center gap-x-2 text-xl font-semibold text-primary">
+                <FileText />
+                Question {listQuestion} of {dataSource?.questions.length}
+              </h4>
+              <div className="mt-4 font-normal">
+                <p className="text-sm text-primary">Title Question</p>
+                <p className="mt-1 text-xs">
+                  {dataSource?.questions[listQuestion - 1].title}
+                </p>
+              </div>
+              <div className="mt-4 font-normal">
+                <p className="text-sm text-primary">Detail Question</p>
+                <p className="mt-1 text-xs">
+                  {dataSource?.questions[listQuestion - 1].question}
+                </p>
+              </div>
+              <div className="mt-4 font-normal">
+                <p className="text-sm text-primary">Time</p>
+                <p className="mt-1 text-xs">
+                  Time to Think :
+                  {dataSource?.questions[listQuestion - 1].timeRead} Seconds
+                </p>
+                <p className="mt-1 text-xs">
+                  Time to Answer :{' '}
+                  {dataSource?.questions[listQuestion - 1].timeAnswered} Seconds
+                </p>
+              </div>
             </div>
-            <div className="mt-4 font-normal">
-              <p className="text-sm text-primary">Detail Question</p>
-              <p className="mt-1 text-xs">{dataSource.questions[0].question}</p>
+          )}
+          {listQuestion === 0 && (
+            <div className="flex  w-1/3 flex-col gap-y-2 ">
+              <h4 className="flex items-center gap-x-2 text-xl font-semibold text-primary">
+                Intro
+              </h4>
+              <div className="mt-4 font-normal">
+                <p className="text-sm text-primary">Title Intro</p>
+                <p className="mt-1 text-xs">{dataSource?.title}</p>
+              </div>
+              <div className="mt-4 font-normal">
+                <p className="text-sm text-primary">Detail Question</p>
+                <p className="mt-1 text-xs">{dataSource?.descriptionIntro}</p>
+              </div>
+              <div className="mt-4 font-normal">
+                <p className="text-sm text-primary">Time</p>
+                <p className="mt-1 text-xs">
+                  Time to Think : {dataSource?.durationTimeRead} Seconds
+                </p>
+                <p className="mt-1 text-xs">
+                  Time to Answer : {dataSource?.durationTimeAnswered} Seconds
+                </p>
+              </div>
             </div>
-            <div className="mt-4 font-normal">
-              <p className="text-sm text-primary">Time</p>
-              <p className="mt-1 text-xs">Time to Think : 30 Seconds</p>
-              <p className="mt-1 text-xs">Time to Answer : 30 Seconds</p>
-            </div>
-          </div>
+          )}
+
           <div className="size-full w-1/4">
-            {dataSource.questions[0].videoUrl && (
+            {listQuestion !== 0 &&
+              dataSource?.questions[listQuestion - 1]?.videoUrl && (
+                <div className="flex aspect-video  overflow-hidden rounded-md">
+                  <video controls className="rounded-md">
+                    <source
+                      src={dataSource?.questions[listQuestion - 1]?.videoUrl}
+                    />
+                  </video>
+                </div>
+              )}
+            {listQuestion === 0 && (
               <div className="flex aspect-video  overflow-hidden rounded-md">
                 <video controls className="rounded-md">
-                  <source src={dataSource.questions[0].videoUrl} />
+                  <source src={dataSource?.introVideoUrl} />
                 </video>
               </div>
             )}
           </div>
         </div>
+
         <DialogFooter className="mt-4 sm:justify-start">
           <DialogClose asChild>
             <Button type="button" variant="secondary" size="sm">

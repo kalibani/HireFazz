@@ -15,7 +15,6 @@ import { ParamsProps } from '@/types/types';
 
 const DashboardPage = async ({ params }: ParamsProps) => {
   const user = await currentUser();
-  console.log(params.orgId);
   return (
     <SectionWrap isScroll>
       <Banner

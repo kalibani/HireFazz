@@ -106,7 +106,6 @@ const FormTemplate = ({
   }, [dataTemplate, form, setQuestionFromDb, setVideoUrl]);
 
   const handleAddQuestion = () => {
-    console.log('masuk add');
     setQuestionForm({
       videoUrl: '',
       id: '',
@@ -184,7 +183,7 @@ const FormTemplate = ({
       });
     }
   };
-
+  console.log(questions, dataTemplate, '???');
   return (
     <>
       <div className="mt-5">
@@ -350,6 +349,7 @@ const FormTemplate = ({
                         : undefined
                     }
                     type="questions"
+                    dataSource={dataTemplate}
                   />
                 ))}
             </div>

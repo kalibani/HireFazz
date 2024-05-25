@@ -30,10 +30,10 @@ import { UserButton } from '../auth';
 const routes = [
   { label: 'Dashboard', icon: Home, href: '/dashboard' },
   { label: 'Job list', icon: ListChecks, href: '/job' },
+  { label: 'Video', icon: Video, href: '/video' },
   { label: 'Candidates', icon: FileText, href: '/candidates' },
   { label: 'Integration', icon: Handshake, href: '/integrations' },
   { label: 'Users', icon: Users, href: '/users' },
-  { label: 'Video', icon: Video, href: '/video' },
   { label: 'User', icon: User, href: '/interview' },
 ];
 
