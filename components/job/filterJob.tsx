@@ -10,7 +10,12 @@ import {
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 
 export const FilterJob = () => {
   const { orgId } = useParams();
@@ -20,7 +25,10 @@ export const FilterJob = () => {
   const { replace } = useRouter();
 
   // FUTURE IMPROVEMENT: add debounce on search input
-  function handleSearch(query: 'location' | 'jobName' | 'status', term: string) {
+  function handleSearch(
+    query: 'location' | 'jobName' | 'status',
+    term: string,
+  ) {
     const params = new URLSearchParams(searchParams);
     if (term) {
       params.set(query, term);
@@ -34,11 +42,19 @@ export const FilterJob = () => {
     <div className="flex items-end justify-between">
       <div className="max-w-[200px] flex-1">
         <label className="mb-1 ml-4 text-sm">Search</label>
-        <Input placeholder="Location" defaultValue={searchParams.get('location') || ''} onChange={(e) => handleSearch('location', e.target.value)} />
+        <Input
+          placeholder="Location"
+          defaultValue={searchParams.get('location') || ''}
+          onChange={(e) => handleSearch('location', e.target.value)}
+        />
       </div>
       <div className="max-w-[200px] flex-1">
         <label className="mb-1 ml-4 text-sm">Search</label>
-        <Input placeholder="Search Job" defaultValue={searchParams.get('jobName') || ''} onChange={(e) => handleSearch('jobName', e.target.value)} />
+        <Input
+          placeholder="Search Job"
+          defaultValue={searchParams.get('jobName') || ''}
+          onChange={(e) => handleSearch('jobName', e.target.value)}
+        />
       </div>
       <div className="max-w-[200px] flex-1">
         <label className="mb-1 ml-4 text-sm">Status</label>
@@ -55,7 +71,7 @@ export const FilterJob = () => {
       </div>
 
       <Link href={`/${orgId}/job/create`}>
-        <Button variant="secondary">+ Create New Job</Button>
+        <Button>+ Create New Job</Button>
       </Link>
     </div>
   );

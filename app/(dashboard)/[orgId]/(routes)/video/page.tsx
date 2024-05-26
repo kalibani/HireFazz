@@ -57,7 +57,7 @@ const Page = async ({ params }: ParamsProps) => {
           </div>
         </TabsContent>
         <TabsContent value="template" className="mt-0 bg-white p-4">
-          <FilterListInterview orgId={params.orgId} />
+          <FilterListInterview orgId={params.orgId} isTemplate />
           {interviews.length > 0 ? (
             interviews?.map((interview, idx) => (
               <QuestionCard

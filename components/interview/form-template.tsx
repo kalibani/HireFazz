@@ -26,7 +26,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import QuestionCard from './question-card';
-import Link from 'next/link';
 import createTemplateInterview from '@/lib/actions/interview/createTemplateInterview';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { errorHandler } from '@/helpers';
@@ -50,9 +49,11 @@ const FormSchema = z.object({
 const FormTemplate = ({
   orgId,
   queryId,
+  isTemplate = false,
 }: {
   orgId: string;
   queryId?: string;
+  isTemplate?: boolean;
 }) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -85,7 +86,7 @@ const FormTemplate = ({
   });
 
   useEffect(() => {
-    if (dataTemplate) {
+    if (dataTemplate && orgId) {
       const {
         title,
         description,
@@ -102,8 +103,11 @@ const FormTemplate = ({
       form.setValue('descriptionIntro', descriptionIntro || '');
       form.setValue('durationTimeRead', String(durationTimeRead) || '');
       form.setValue('durationTimeAnswered', String(durationTimeAnswered) || '');
+    } else {
+      setQuestionFromDb([]);
+      setVideoUrl('', 'intro');
     }
-  }, [dataTemplate, form, setQuestionFromDb, setVideoUrl]);
+  }, [dataTemplate, form, setQuestionFromDb, setVideoUrl, orgId]);
 
   const handleAddQuestion = () => {
     setQuestionForm({
@@ -183,7 +187,6 @@ const FormTemplate = ({
       });
     }
   };
-  console.log(questions, dataTemplate, '???');
   return (
     <>
       <div className="mt-5">
@@ -192,22 +195,30 @@ const FormTemplate = ({
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex items-center justify-between ">
               <div className="flex flex-col gap-y-4 p-0">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0">
-                      <FormLabel className="m-0  w-full font-normal">
-                        Name Template
-                      </FormLabel>
-                      <Input
-                        className="h-auto w-full min-w-[200px] border font-normal ring-0"
-                        {...field}
-                      />
-                      <FormMessage className="text-xs" />
-                    </FormItem>
+                <div className="flex items-end gap-x-4">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0">
+                        <FormLabel className="m-0  w-full font-normal">
+                          Name Template
+                        </FormLabel>
+                        <Input
+                          className="h-auto w-full min-w-[200px] border font-normal ring-0"
+                          {...field}
+                        />
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                  {!isTemplate && (
+                    <Button variant="ghost" className="italic" type="button">
+                      or Select Template
+                    </Button>
                   )}
-                />
+                </div>
+
                 <FormField
                   control={form.control}
                   name="description"
@@ -217,7 +228,7 @@ const FormTemplate = ({
                         Description
                       </FormLabel>
                       <Input
-                        className="h-auto min-w-[200px] border font-normal ring-0"
+                        className="h-auto w-1/2 min-w-[200px] border font-normal ring-0"
                         {...field}
                       />
                       <FormMessage className="text-xs" />
@@ -271,7 +282,7 @@ const FormTemplate = ({
                       <Select
                         {...field}
                         onValueChange={field.onChange}
-                        value={field.value}
+                        defaultValue={field.value}
                       >
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">
@@ -303,7 +314,7 @@ const FormTemplate = ({
                       <Select
                         {...field}
                         onValueChange={field.onChange}
-                        value={field.value}
+                        defaultValue={field.value}
                       >
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">

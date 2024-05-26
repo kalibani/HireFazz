@@ -8,7 +8,7 @@ const page = ({ params, searchParams }: ParamsProps) => {
       <p className="text-sm font-normal text-slate-400">
         {`${searchParams.id ? 'Edit' : 'Create'} detail Interview with question here`}
       </p>
-      <FormTemplate orgId={params.orgId} queryId={searchParams.id} isTemplate />
+      <FormTemplate orgId={params.orgId} queryId={searchParams.id} />
     </div>
   );
 };
