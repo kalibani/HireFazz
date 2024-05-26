@@ -74,6 +74,7 @@ model Organization {
   userOrganization      UserOrganization[]
   interviewTemplates    InterviewTemplate[]
   invitedUsers          InvitedUser[]
+  interviewCandidates InterviewCandidates[]
 }
 
 model UserOrganization {
@@ -108,16 +109,29 @@ model InvitedUser {
   candidateName  String
   email          String
   phoneNumber    String?
-  batchJobId     String?
   result         Json
   status         invitedUserStatus @default(INVITED)
   createdAt      DateTime          @default(now())
   expiredDate    DateTime
   organizationId String
-  templateId     String
-  batchJob       BatchJob?         @relation(fields: [batchJobId], references: [id])
   organization   Organization      @relation(fields: [organizationId], references: [id])
+  interviewCandidatesId String
+  interviewCandidates   InterviewCandidates      @relation(fields: [interviewCandidatesId], references: [id])
+  
 }
+
+model InterviewCandidates {
+  id             String            @id @default(cuid())
+  templateId     String
+  batchJobId     String?
+  batchJob       BatchJob?         @relation(fields: [batchJobId], references: [id])
+  organizationId String
+  organization   Organization      @relation(fields: [organizationId], references: [id])
+  name String
+  status STATUS_INTERVIEW @default(OPEN)
+  candidates InvitedUser[]
+}
+
 
 model userAPILimit {
   id                           String            @id @default(cuid())
@@ -183,7 +197,7 @@ model BatchJob {
   languageAi      String?
   matchPercentage Int?
   cvAnalysis      CvAnalysis[]
-  invitedUser     InvitedUser[]
+  interviewCandidates InterviewCandidates[]
 }
 
 model File {
@@ -243,6 +257,11 @@ model Transactions {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   User        userAPILimit? @relation(fields: [userId], references: [userId])
+}
+
+enum STATUS_INTERVIEW {
+  OPEN
+  CLOSE
 }
 
 enum JOB_STATUS {
