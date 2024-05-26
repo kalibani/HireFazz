@@ -64,16 +64,17 @@ model Role {
 }
 
 model Organization {
-  id                    String              @id @default(cuid())
+  id                    String                @id @default(cuid())
   name                  String
   packageType           PACKAGE_TYPE
   limit                 Int
   used                  Int
-  agreeTermAndCondition Boolean             @default(false)
+  agreeTermAndCondition Boolean               @default(false)
   logo                  String?
   userOrganization      UserOrganization[]
   interviewTemplates    InterviewTemplate[]
   invitedUsers          InvitedUser[]
+  interviewCandidates   InterviewCandidates[]
 }
 
 model UserOrganization {
@@ -104,19 +105,30 @@ model InterviewTemplate {
 }
 
 model InvitedUser {
-  id             String            @id @default(cuid())
-  candidateName  String
-  email          String
-  phoneNumber    String?
-  batchJobId     String?
-  result         Json
-  status         invitedUserStatus @default(INVITED)
-  createdAt      DateTime          @default(now())
-  expiredDate    DateTime
-  organizationId String
+  id                    String              @id @default(cuid())
+  candidateName         String
+  email                 String
+  phoneNumber           String?
+  result                Json
+  status                invitedUserStatus   @default(INVITED)
+  createdAt             DateTime            @default(now())
+  expiredDate           DateTime
+  organizationId        String
+  organization          Organization        @relation(fields: [organizationId], references: [id])
+  interviewCandidatesId String
+  interviewCandidates   InterviewCandidates @relation(fields: [interviewCandidatesId], references: [id])
+}
+
+model InterviewCandidates {
+  id             String           @id @default(cuid())
   templateId     String
-  batchJob       BatchJob?         @relation(fields: [batchJobId], references: [id])
-  organization   Organization      @relation(fields: [organizationId], references: [id])
+  batchJobId     String?
+  batchJob       BatchJob?        @relation(fields: [batchJobId], references: [id])
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+  name           String
+  status         STATUS_INTERVIEW @default(OPEN)
+  candidates     InvitedUser[]
 }
 
 model userAPILimit {
@@ -166,24 +178,24 @@ model Cv {
 }
 
 model BatchJob {
-  id              String        @id @default(cuid())
-  jobName         String
-  status          JOB_STATUS    @default(CREATED)
-  orgId           String
-  jobDescription  String        @db.Text
-  location        String
-  createdAt       DateTime      @default(now())
-  salaryCurrency  String?
-  salaryRangeFrom Int?
-  salaryRangeEnd  Int?
-  experience      Int?
-  companyName     String?
-  workModel       WORK_MODEL
-  keyFocus        Json?
-  languageAi      String?
-  matchPercentage Int?
-  cvAnalysis      CvAnalysis[]
-  invitedUser     InvitedUser[]
+  id                  String                @id @default(cuid())
+  jobName             String
+  status              JOB_STATUS            @default(CREATED)
+  orgId               String
+  jobDescription      String                @db.Text
+  location            String
+  createdAt           DateTime              @default(now())
+  salaryCurrency      String?
+  salaryRangeFrom     Int?
+  salaryRangeEnd      Int?
+  experience          Int?
+  companyName         String?
+  workModel           WORK_MODEL
+  keyFocus            Json?
+  languageAi          String?
+  matchPercentage     Int?
+  cvAnalysis          CvAnalysis[]
+  interviewCandidates InterviewCandidates[]
 }
 
 model File {
@@ -243,6 +255,11 @@ model Transactions {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   User        userAPILimit? @relation(fields: [userId], references: [userId])
+}
+
+enum STATUS_INTERVIEW {
+  OPEN
+  CLOSE
 }
 
 enum JOB_STATUS {
