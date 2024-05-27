@@ -35,32 +35,32 @@ type TColumn = {
   email: string;
 };
 
-const dummyData: TColumn[] = [
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-  { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-];
+// const dummyData: TColumn[] = [
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
+//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
+// ];
 
-const TableInvite = () => {
+const TableInvite = ({ dataSource }: { dataSource: any }) => {
   const { replace } = useRouter();
   const pathname = usePathname();
 
@@ -68,27 +68,20 @@ const TableInvite = () => {
   const perPage = searchParams.get('per_page') || '10';
   const currPage = searchParams.get('page') || '1';
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [tableItems, setTableItems] = useState<TColumn[]>(dummyData);
+  const [tableItems, setTableItems] = useState<TColumn[]>([]);
   const [isPending, startTransition] = useTransition();
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   useEffect(() => {
-    // const allItems = tableItems;
-    // let itemInPage: TColumn[] = tableItems;
-
-    if (tableItems.length) {
+    if (dataSource.length) {
       const firstItem = (Number(currPage) - 1) * Number(perPage);
       const lastItem = Number(currPage) * Number(perPage);
-      // itemInPage = itemInPage.slice(firstItem, lastItem);
-      const itemInPage = tableItems.slice(firstItem, lastItem);
+      const itemInPage = dataSource.slice(firstItem, lastItem);
       setTableItems(itemInPage);
     }
-    // console.log({ itemInPage }, '???');
-    // setTableItems(itemInPage);
-  }, [perPage, currPage]);
+  }, [perPage, currPage, dataSource]);
 
-  console.log({ tableItems }, '???');
   const columns: ColumnDef<TColumn>[] = [
     {
       accessorKey: 'name',
@@ -242,7 +235,7 @@ const TableInvite = () => {
 
       <PaginationGroup
         perPage={Number(perPage || '10')}
-        totalItems={dummyData.length}
+        totalItems={dataSource.length || []}
         activePage={currPage ? Number(currPage) : undefined}
         handlePagination={handlePagination}
       />

@@ -1,23 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Input } from '../ui/input';
-import { Pencil } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import TableInvite from './Table-invite';
+import { cn } from '@/lib/utils';
+import { v4 as uuidv4 } from 'uuid';
+import Papa from 'papaparse';
 
+const CandidateSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+});
 const FormSchema = z.object({
-  title: z.string(),
-  candidates: z.array(
-    z.object({
-      name: z.string(),
-      email: z.string().email(),
-    }),
-  ),
+  title: z.string().min(2),
+  candidates: z.array(CandidateSchema),
 });
 
 const InviteCandidates = () => {
@@ -34,9 +36,40 @@ const InviteCandidates = () => {
     name: 'candidates',
   });
 
+  const [importedCandidates, setImportedCandidates] = useState<any[]>([]);
+
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    console.log(data, '<<<<');
+    const parsedData = (
+      data.candidates as z.infer<typeof CandidateSchema>[]
+    ).map((item) => ({
+      id: uuidv4(),
+      name: item.name,
+      email: item.email,
+    }));
+    const allCandidates = [...parsedData, ...importedCandidates];
+    setImportedCandidates(allCandidates);
   };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      Papa.parse(file, {
+        header: true,
+        complete: (results) => {
+          const parsedData = (
+            results.data as z.infer<typeof CandidateSchema>[]
+          ).map((item) => ({
+            id: uuidv4(),
+            name: item.name,
+            email: item.email,
+          }));
+          const allCandidates = [...parsedData, ...importedCandidates];
+          setImportedCandidates(allCandidates);
+        },
+      });
+    }
+  };
+
   return (
     <Form {...form}>
       <div className="rounded-md bg-white p-4">
@@ -77,7 +110,7 @@ const InviteCandidates = () => {
 
             <div className="space-y-2">
               {fields.map((field, index) => (
-                <div className="flex w-1/2 items-end gap-x-2" key={field.id}>
+                <div className="flex  w-1/2  gap-x-2" key={field.id}>
                   <FormField
                     control={form.control}
                     name={`candidates.${index}.name`}
@@ -111,13 +144,19 @@ const InviteCandidates = () => {
                       </FormItem>
                     )}
                   />
-                  <Button
-                    type="button"
-                    onClick={() => remove(index)}
-                    disabled={fields.length === 1}
-                  >
-                    Delete
-                  </Button>
+                  <div className=" flex items-end justify-end ">
+                    <Button
+                      type="button"
+                      onClick={() => remove(index)}
+                      disabled={fields.length === 1}
+                      variant="ghost"
+                      className={cn(
+                        fields.length === 1 && 'cursor-not-allowed',
+                      )}
+                    >
+                      <Trash2 className="size-4 text-primary" />
+                    </Button>
+                  </div>
                 </div>
               ))}
               <Button
@@ -126,16 +165,29 @@ const InviteCandidates = () => {
               >
                 Add New Form Candidates
               </Button>
-              <div>
+              <div className="space-x-2">
                 <Button type="submit">Invite</Button>
+                <Button type="button" variant="ghost">
+                  <label className="cursor-pointer">
+                    Import file
+                    <input
+                      type="file"
+                      accept=".csv"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                </Button>
               </div>
             </div>
           </form>
         </div>
-        <TableInvite />
+        <TableInvite dataSource={importedCandidates} />
       </div>
       <div className="flex justify-end">
-        <Button>Next Step</Button>
+        <Button type="button" disabled>
+          Next Step
+        </Button>
       </div>
     </Form>
   );
