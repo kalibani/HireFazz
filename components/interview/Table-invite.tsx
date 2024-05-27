@@ -1,6 +1,4 @@
 'use client';
-import { formatDateDMY } from '@/helpers';
-import { Checkbox } from '@radix-ui/react-checkbox';
 
 import { ArrowUpDown, Trash2 } from 'lucide-react';
 import React, { useEffect, useState, useTransition } from 'react';
@@ -63,7 +61,7 @@ const dummyData: TColumn[] = [
 ];
 
 const TableInvite = () => {
-  const { replace, refresh, push } = useRouter();
+  const { replace } = useRouter();
   const pathname = usePathname();
 
   const searchParams = useSearchParams();
@@ -77,15 +75,17 @@ const TableInvite = () => {
 
   useEffect(() => {
     // const allItems = tableItems;
-    let itemInPage: TColumn[] = tableItems;
+    // let itemInPage: TColumn[] = tableItems;
 
     if (tableItems.length) {
       const firstItem = (Number(currPage) - 1) * Number(perPage);
       const lastItem = Number(currPage) * Number(perPage);
-      itemInPage = itemInPage.slice(firstItem, lastItem);
+      // itemInPage = itemInPage.slice(firstItem, lastItem);
+      const itemInPage = tableItems.slice(firstItem, lastItem);
+      setTableItems(itemInPage);
     }
-    console.log({ itemInPage }, '???');
-    setTableItems(itemInPage);
+    // console.log({ itemInPage }, '???');
+    // setTableItems(itemInPage);
   }, [perPage, currPage]);
 
   console.log({ tableItems }, '???');
