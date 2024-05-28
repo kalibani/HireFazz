@@ -2,13 +2,10 @@
 
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
+import { DeleteDataSchema } from '@/lib/validators/interview';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
-const PropsDataSchema = z.object({
-  id: z.string(),
-  queryId: z.string(),
-});
 type Question = {
   id: string;
 };
@@ -26,10 +23,10 @@ async function updateTemplateQuestions(queryId: string, questions: Question[]) {
 }
 
 export default async function deleteQuestion(
-  payload: z.infer<typeof PropsDataSchema>,
+  payload: z.infer<typeof DeleteDataSchema>,
 ) {
   try {
-    const { id, queryId } = PropsDataSchema.parse(payload);
+    const { id, queryId } = DeleteDataSchema.parse(payload);
 
     const template = await findTemplateById(queryId);
     if (!template) {
@@ -48,7 +45,6 @@ export default async function deleteQuestion(
     const updatedQuestions =
       // @ts-ignore
       template.questions.filter((question: any) => question.id !== id) || [];
-    console.log(updatedQuestions, '<<');
     await updateTemplateQuestions(queryId, updatedQuestions);
 
     revalidatePath('/');

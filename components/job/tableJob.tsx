@@ -220,7 +220,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
 
   return (
     <div className="mt-4">
-      <Table>
+      <Table className="border">
         <TableHeader className="bg-slate-200">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

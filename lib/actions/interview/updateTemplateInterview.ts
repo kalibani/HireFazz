@@ -6,15 +6,13 @@ import { UpdateTemplateInterview } from '@/lib/validators/interview';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
-export default async function updateTemplate(
+export default async function updateTemplateInterview(
   payload: z.infer<typeof UpdateTemplateInterview>,
 ) {
   try {
     const validatedData = UpdateTemplateInterview.parse(payload);
-    if (!validatedData) {
-      return { error: 'please recheck the payload' + { payload } };
-    }
-    const pyloadUpdate = {
+
+    const payloadUpdate = {
       organizationId: validatedData.organizationId,
       title: validatedData.title,
       durationTimeRead: validatedData.durationTimeRead,
@@ -32,7 +30,7 @@ export default async function updateTemplate(
       where: {
         id: validatedData.id,
       },
-      data: pyloadUpdate,
+      data: payloadUpdate,
     });
     revalidatePath('/');
     return { success: 'data updated' };

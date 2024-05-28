@@ -90,8 +90,6 @@ model UserOrganization {
 model InterviewTemplate {
   id                   String       @id @default(cuid())
   title                String
-  description          String?
-  descriptionIntro     String?
   durationTimeRead     Int
   durationTimeAnswered Int
   questionRetake       Int?
@@ -101,6 +99,8 @@ model InterviewTemplate {
   farewellDescription  String?
   questions            Json
   organizationId       String
+  description          String?
+  descriptionIntro     String?
   organization         Organization @relation(fields: [organizationId], references: [id])
 }
 
@@ -114,8 +114,8 @@ model InvitedUser {
   createdAt             DateTime            @default(now())
   expiredDate           DateTime
   organizationId        String
-  organization          Organization        @relation(fields: [organizationId], references: [id])
   interviewCandidatesId String
+  organization          Organization        @relation(fields: [organizationId], references: [id])
   interviewCandidates   InterviewCandidates @relation(fields: [interviewCandidatesId], references: [id])
 }
 
@@ -123,11 +123,11 @@ model InterviewCandidates {
   id             String           @id @default(cuid())
   templateId     String
   batchJobId     String?
-  batchJob       BatchJob?        @relation(fields: [batchJobId], references: [id])
   organizationId String
-  organization   Organization     @relation(fields: [organizationId], references: [id])
   name           String
   status         STATUS_INTERVIEW @default(OPEN)
+  batchJob       BatchJob?        @relation(fields: [batchJobId], references: [id])
+  organization   Organization     @relation(fields: [organizationId], references: [id])
   candidates     InvitedUser[]
 }
 

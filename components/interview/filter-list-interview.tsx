@@ -5,8 +5,15 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { Input } from '../ui/input';
 import { Search } from 'lucide-react';
+import { title } from 'process';
 
-const FilterListInterview = ({ orgId }: { orgId: string }) => {
+const FilterListInterview = ({
+  orgId,
+  isTemplate = false,
+}: {
+  orgId: string;
+  isTemplate?: boolean;
+}) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex max-w-[200px]  items-center rounded-md border  bg-white p-2">
@@ -16,8 +23,16 @@ const FilterListInterview = ({ orgId }: { orgId: string }) => {
         />
         <Search className="size-3" />
       </div>
-      <Link href={`/${orgId}/video/create`}>
-        <Button>+ Create Template</Button>
+      <Link
+        href={
+          isTemplate
+            ? `/${orgId}/video/create`
+            : `/${orgId}/video/invite-candidates`
+        }
+      >
+        <Button>
+          + {isTemplate ? 'Create Template' : 'Create Interview Candidates'}
+        </Button>
       </Link>
     </div>
   );
