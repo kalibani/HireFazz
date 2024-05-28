@@ -59,33 +59,3 @@ export default async function createInviteCandidates(
     errorHandler(error);
   }
 }
-
-// // Example usage
-// const payload = {
-//   importedCandidates: [
-//     {
-//       id: '17772422-af76-4d9f-bc61-337942273827',
-//       name: 'dimas',
-//       email: 'dimas@dimas.com',
-//     },
-//     {
-//       id: '6b87850b-edf9-47bc-8d2b-a2fe2e72b191',
-//       name: 'adada',
-//       email: 'adada@ad.com',
-//     },
-//   ],
-//   title: 'ok',
-//   orgId: 'clw0ai1vm000074a13acvt49q',
-//   templateId: 'clwhusspr00018oq2yyukv5l1',
-// };
-
-// createInterview(payload)
-//   .then((result) => {
-//     console.log('Interview created successfully', result);
-//   })
-//   .catch((error) => {
-//     console.error('Error creating interview', error);
-//   })
-//   .finally(() => {
-//     prismadb.$disconnect();
-//   });

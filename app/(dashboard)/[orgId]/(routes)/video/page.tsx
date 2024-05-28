@@ -16,7 +16,6 @@ const Page = async ({ params }: ParamsProps) => {
   const candidates = (await getCandidates({
     id: params.orgId,
   })) as TCandidateListSchema[];
-  console.log(candidates);
   return (
     <>
       <Banner
