@@ -108,7 +108,7 @@ const FormTemplate = ({
       setVideoUrl('', 'intro');
     }
   }, [dataTemplate, form, setQuestionFromDb, setVideoUrl, orgId]);
-
+  console.log(dataTemplate);
   const handleAddQuestion = () => {
     setQuestionForm({
       videoUrl: '',

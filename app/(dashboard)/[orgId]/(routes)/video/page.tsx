@@ -5,20 +5,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import QuestionCard from '@/components/interview/question-card';
 import { Banner } from '@/components/share';
 import dashboard from '@/public/icon/icon-banner-dashboard.svg';
-
-type Interview = {
-  id: string;
-  title: string;
-  description?: string;
-  descriptionIntro?: string;
-  introVideoUrl?: string;
-  questions?: any;
-};
+import { TInterview } from '@/lib/validators/interview';
 
 const Page = async ({ params }: ParamsProps) => {
   const interviews = (await getTemplateInterview({
     organizationId: params.orgId,
-  })) as Interview[];
+  })) as TInterview[];
   return (
     <>
       <Banner

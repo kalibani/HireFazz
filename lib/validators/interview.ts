@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { TypeOf, z } from 'zod';
 
 export const idProps = z.object({
   id: z.string(),
@@ -32,3 +32,13 @@ export const CreateTemplateInterview = z.object({
 export const UpdateTemplateInterview = CreateTemplateInterview.extend({
   id: z.string(),
 });
+
+export const InterviewDataSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string().optional(),
+  descriptionIntro: z.string().optional(),
+  introVideoUrl: z.string().optional(),
+  questions: Question.optional(),
+});
+export type TInterview = z.infer<typeof InterviewDataSchema>;

@@ -27,7 +27,7 @@ const FilterListInterview = ({
         href={
           isTemplate
             ? `/${orgId}/video/create`
-            : `/${orgId}/video/create-candidates`
+            : `/${orgId}/video/invite-candidates`
         }
       >
         <Button>

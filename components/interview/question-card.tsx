@@ -7,14 +7,19 @@ import deleteTemplate from '@/lib/actions/interview/deleteById';
 import { useMutation } from '@tanstack/react-query';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Loader } from '../share';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import deleteQuestion from '@/lib/actions/interview/deleteQuestion';
 import PopupPreviewQuestions from './popup-preview';
 
 interface QuestionCardProp {
   title: string;
   question: string;
-  idx: number;
+  idx?: number;
   id?: string;
   videoUrl?: string | undefined;
   type: 'template' | 'questions';
@@ -31,6 +36,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
   dataSource,
 }) => {
   const searchParams = useSearchParams();
+  const params = useParams();
   const queryId = searchParams.get('id');
   const { push, refresh } = useRouter();
   const pathname = usePathname();
@@ -67,9 +73,9 @@ const QuestionCard: FC<QuestionCardProp> = ({
 
     if (type === 'template') {
       if (id) {
-        const params = new URLSearchParams(searchParams);
-        params.set('id', id);
-        push(`${pathname}/create?${params.toString()}`);
+        const queryParams = new URLSearchParams(searchParams);
+        queryParams.set('id', id);
+        push(`/${params.orgId}/video/create?${queryParams.toString()}`);
       }
     } else {
       setIsAddQuestion(true);
@@ -95,7 +101,9 @@ const QuestionCard: FC<QuestionCardProp> = ({
           <div className="flex flex-col">
             <div className="flex items-center gap-x-2">
               <FileSpreadsheet className="size-4 text-primary" />
-              <h4 className="text-xl font-semibold">Question #{idx + 1}</h4>
+              <h4 className="text-xl font-semibold">
+                {idx ? `Question #${idx + 1}` : 'Question'}
+              </h4>
             </div>
             <h4 className="my-2 text-xl font-semibold">{title}</h4>
             <p className="line-clamp-2 max-w-4xl p-0 text-sm">{question}</p>

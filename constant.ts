@@ -11,7 +11,10 @@ import insight from '@/public/image/insight.png';
 
 export const MAX_FREE_COUNTS = 100;
 
-export const PER_PAGE_ITEMS = ['10', '20', '50', '100']
+export const LINK_TEMPLATE_CSV =
+  'https://utfs.io/f/77d6ec9e-d673-418c-bdfc-1b630ae4271c-1v55sg.csv';
+
+export const PER_PAGE_ITEMS = ['10', '20', '50', '100'];
 
 export const PLANS = [
   {
