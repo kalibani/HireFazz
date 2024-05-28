@@ -1,7 +1,7 @@
 'use client';
 
 import { FileSpreadsheet, Search, Redo, Trash2 } from 'lucide-react';
-import React, { FC, useTransition } from 'react';
+import React, { FC, startTransition, useCallback, useTransition } from 'react';
 import { Button } from '../ui/button';
 import deleteTemplate from '@/lib/actions/interview/deleteById';
 import { useMutation } from '@tanstack/react-query';
@@ -15,6 +15,10 @@ import {
 } from 'next/navigation';
 import deleteQuestion from '@/lib/actions/interview/deleteQuestion';
 import PopupPreviewQuestions from './popup-preview';
+import { DeleteDataSchema, idProps } from '@/lib/validators/interview';
+import { z } from 'zod';
+import { type } from 'os';
+import { title } from 'process';
 
 interface QuestionCardProp {
   title: string;
@@ -43,25 +47,34 @@ const QuestionCard: FC<QuestionCardProp> = ({
   const [isPending, startTransition] = useTransition();
   const { setIsAddQuestion, setQuestionForm, questions } = useRecorderStore();
 
-  const deleteOneTemplate = useMutation(deleteTemplate, {
-    onSuccess() {
-      refresh();
+  const deleteTemplateOne = useCallback(
+    async (id: string) => {
+      const deleted = await deleteTemplate({ id });
+      if (deleted && !isPending) {
+        refresh();
+      }
     },
-  });
-  const deleteOneQuestion = useMutation(deleteQuestion, {
-    onSuccess() {
-      refresh();
+    [isPending, refresh],
+  );
+
+  const deleteOneQuestion = useCallback(
+    async (payload: z.infer<typeof DeleteDataSchema>) => {
+      const deleted = await deleteQuestion(payload);
+      if (deleted && !isPending) {
+        refresh();
+      }
     },
-  });
+    [isPending, refresh],
+  );
 
   const deleteHandler = () => {
     setIsAddQuestion(false);
     startTransition(() => {
       if (type == 'template' && id) {
-        deleteOneTemplate.mutate({ id });
+        deleteTemplateOne(id);
       } else {
         if (id && queryId) {
-          deleteOneQuestion.mutate({ id, queryId });
+          deleteOneQuestion({ id, queryId });
         }
       }
     });
@@ -101,12 +114,15 @@ const QuestionCard: FC<QuestionCardProp> = ({
           <div className="flex flex-col">
             <div className="flex items-center gap-x-2">
               <FileSpreadsheet className="size-4 text-primary" />
-              <h4 className="text-xl font-semibold">
-                {idx ? `Question #${idx + 1}` : 'Question'}
+              <h4 className="text-xl font-semibold capitalize">
+                {idx ? `${type} #${idx + 1}` : type}
               </h4>
             </div>
             <h4 className="my-2 text-xl font-semibold">{title}</h4>
             <p className="line-clamp-2 max-w-4xl p-0 text-sm">{question}</p>
+            <p className="line-clamp-2 max-w-4xl p-0 text-sm">
+              total questions : {question.length}
+            </p>
           </div>
           <div className="mt-2 flex items-start justify-between">
             <div className="flex gap-x-4">

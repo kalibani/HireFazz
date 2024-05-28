@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useTransition } from 'react';
+import React, { useCallback, useEffect, useTransition } from 'react';
 import VideoRecord from './video-record';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Button } from '../ui/button';
@@ -26,17 +26,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import QuestionCard from './question-card';
-import createTemplateInterview from '@/lib/actions/interview/createTemplateInterview';
-import { useMutation, useQuery } from '@tanstack/react-query';
+
 import { errorHandler } from '@/helpers';
 import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 import { blobToFormData } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { CreateTemplateInterview } from '@/lib/validators/interview';
 import { v4 as uuidv4 } from 'uuid';
-import getOneTemplateInterview from '@/lib/actions/interview/getOneTemplate';
 import FormQuestion from './form-question';
 import updateTemplateInterview from '@/lib/actions/interview/updateTemplateInterview';
+import createTemplateInterview from '@/lib/actions/interview/createTemplateInterview';
 
 const FormSchema = z.object({
   durationTimeRead: z.string(),
@@ -50,9 +48,11 @@ const FormTemplate = ({
   orgId,
   queryId,
   isTemplate = false,
+  dataTemplate,
 }: {
   orgId: string;
   queryId?: string;
+  dataTemplate?: any;
   isTemplate?: boolean;
 }) => {
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -71,19 +71,25 @@ const FormTemplate = ({
   } = useRecorderStore();
   const [isPending, startTransition] = useTransition();
 
-  const { data: dataTemplate } = useQuery<any>({
-    enabled: !!queryId,
-    queryKey: ['get-template', queryId],
-    queryFn: () => getOneTemplateInterview(queryId!),
-  });
+  const updateTemplate = useCallback(
+    async (payload: any) => {
+      const data = await updateTemplateInterview(payload);
+      if (data?.success && !isPending) {
+        replace(`/${orgId}/video`);
+      }
+    },
+    [isPending, orgId, replace],
+  );
 
-  const createTemplate = useMutation(createTemplateInterview, {
-    onSuccess: () => replace(`/${orgId}/video`),
-  });
-
-  const updateTemplate = useMutation(updateTemplateInterview, {
-    onSuccess: () => replace(`/${orgId}/video`),
-  });
+  const createTemplate = useCallback(
+    async (payload: any) => {
+      const data = await createTemplateInterview(payload);
+      if (data && !isPending) {
+        replace(`/${orgId}/video`);
+      }
+    },
+    [isPending, orgId, replace],
+  );
 
   useEffect(() => {
     if (dataTemplate && orgId) {
@@ -105,10 +111,11 @@ const FormTemplate = ({
       form.setValue('durationTimeAnswered', String(durationTimeAnswered) || '');
     } else {
       setQuestionFromDb([]);
+      form.reset();
       setVideoUrl('', 'intro');
     }
   }, [dataTemplate, form, setQuestionFromDb, setVideoUrl, orgId]);
-  console.log(dataTemplate);
+
   const handleAddQuestion = () => {
     setQuestionForm({
       videoUrl: '',
@@ -127,7 +134,6 @@ const FormTemplate = ({
       description,
       descriptionIntro,
     } = data;
-
     if (questions.length > 0) {
       startTransition(async () => {
         try {
@@ -165,7 +171,7 @@ const FormTemplate = ({
               introUrl = introVideo;
             }
           }
-          const payload: z.infer<typeof CreateTemplateInterview> = {
+          const payload: any = {
             organizationId: orgId,
             title,
             durationTimeAnswered: Number(durationTimeAnswered),
@@ -177,9 +183,9 @@ const FormTemplate = ({
           };
 
           if (!queryId) {
-            createTemplate.mutate(payload);
+            createTemplate(payload);
           } else {
-            updateTemplate.mutate({ ...payload, id: queryId });
+            updateTemplate({ ...payload, id: queryId });
           }
         } catch (error) {
           errorHandler(error);
@@ -280,7 +286,7 @@ const FormTemplate = ({
                         Time to Thinking:
                       </FormLabel>
                       <Select
-                        {...field}
+                        // {...field}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
@@ -312,7 +318,7 @@ const FormTemplate = ({
                         Time to Answer:
                       </FormLabel>
                       <Select
-                        {...field}
+                        // {...field}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
@@ -378,7 +384,7 @@ const FormTemplate = ({
                 <Button
                   className="gap-2 px-4 py-2 text-sm font-normal"
                   type="submit"
-                  disabled={questions.length === 0}
+                  disabled={questions?.length === 0}
                 >
                   <Save className="size-4" />
                   Save Template

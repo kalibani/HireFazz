@@ -9,14 +9,11 @@ import { z } from 'zod';
 export default async function deleteTemplate(id: z.infer<typeof idProps>) {
   try {
     const safePayload = idProps.parse(id);
-    if (!safePayload) {
-      return { error: 'please recheck the payload' + { id } };
-    }
-    const data = await prismadb.interviewTemplate.delete({
+    await prismadb.interviewTemplate.delete({
       where: { id: safePayload.id },
     });
     revalidatePath('/');
-    return data;
+    return { success: 'Template Deleted' };
   } catch (error) {
     return errorHandler(error);
   }

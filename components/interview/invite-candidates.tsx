@@ -71,16 +71,32 @@ const InviteCandidates = ({
   }, [watchTemplate, interviews]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    const parsedData = (
-      data.candidates as z.infer<typeof CandidateSchema>[]
-    ).map((item) => ({
-      id: uuidv4(),
-      name: item.name,
-      email: item.email,
-    }));
-    const allCandidates = [...parsedData, ...importedCandidates];
-    setTitle(data.title);
-    setImportedCandidates(allCandidates);
+    console.log(data, '<<<<');
+    if (data.candidates) {
+      const parsedData = (
+        data.candidates as z.infer<typeof CandidateSchema>[]
+      ).map((item) => ({
+        id: uuidv4(),
+        name: item.name,
+        email: item.email,
+      }));
+      const allCandidates = importedCandidates.map((imported) => {
+        const existingIndex = parsedData.findIndex(
+          (p) => p.email === imported.emai,
+        );
+        if (existingIndex !== -1) {
+          return parsedData[existingIndex];
+        }
+        return imported;
+      });
+      const newCandidates = parsedData.filter(
+        (p) => !importedCandidates.some((i) => i.email !== p.email),
+      );
+      const finalCandidates = [...allCandidates, ...newCandidates];
+
+      setTitle(data.title);
+      setImportedCandidates(finalCandidates);
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,6 +136,7 @@ const InviteCandidates = ({
         orgId,
       });
     }
+    form.reset();
   };
 
   return (

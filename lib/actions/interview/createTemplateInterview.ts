@@ -11,9 +11,6 @@ export default async function createTemplateInterview(
 ) {
   try {
     const safePayload = CreateTemplateInterview.parse(payload);
-    if (!safePayload) {
-      return { error: 'please recheck the payload' + { payload } };
-    }
     const data = await prismadb.interviewTemplate.create({
       data: {
         ...safePayload,

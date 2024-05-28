@@ -33,6 +33,11 @@ export const UpdateTemplateInterview = CreateTemplateInterview.extend({
   id: z.string(),
 });
 
+export const DeleteDataSchema = z.object({
+  id: z.string(),
+  queryId: z.string(),
+});
+
 export const InterviewDataSchema = z.object({
   id: z.string(),
   title: z.string(),
