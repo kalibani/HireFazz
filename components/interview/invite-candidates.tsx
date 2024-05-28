@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Input } from '../ui/input';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, PlusCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import TableInvite from './Table-invite';
 import { cn } from '@/lib/utils';
@@ -22,7 +22,7 @@ const FormSchema = z.object({
   candidates: z.array(CandidateSchema),
 });
 
-const InviteCandidates = () => {
+const InviteCandidates = ({ orgId }: { orgId: string }) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -37,6 +37,7 @@ const InviteCandidates = () => {
   });
 
   const [importedCandidates, setImportedCandidates] = useState<any[]>([]);
+  const [title, setTitle] = useState('');
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     const parsedData = (
@@ -47,6 +48,7 @@ const InviteCandidates = () => {
       email: item.email,
     }));
     const allCandidates = [...parsedData, ...importedCandidates];
+    setTitle(data.title);
     setImportedCandidates(allCandidates);
   };
 
@@ -66,6 +68,26 @@ const InviteCandidates = () => {
           const allCandidates = [...parsedData, ...importedCandidates];
           setImportedCandidates(allCandidates);
         },
+      });
+    }
+  };
+
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href =
+      'https://utfs.io/f/77d6ec9e-d673-418c-bdfc-1b630ae4271c-1v55sg.csv';
+    link.download = 'candidates.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const invitedHandler = () => {
+    if (importedCandidates && title && orgId) {
+      console.log('Send >>>>', {
+        importedCandidates,
+        title,
+        orgId,
       });
     }
   };
@@ -156,15 +178,17 @@ const InviteCandidates = () => {
                     >
                       <Trash2 className="size-4 text-primary" />
                     </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => append({ name: '', email: '' })}
+                    >
+                      <PlusCircle className="size-4 text-primary" />
+                    </Button>
                   </div>
                 </div>
               ))}
-              <Button
-                type="button"
-                onClick={() => append({ name: '', email: '' })}
-              >
-                Add New Form Candidates
-              </Button>
+
               <div className="space-x-2">
                 <Button type="submit">Invite</Button>
                 <Button type="button" variant="ghost">
@@ -178,6 +202,9 @@ const InviteCandidates = () => {
                     />
                   </label>
                 </Button>
+                <Button type="button" onClick={handleDownload} variant="ghost">
+                  Download CSV
+                </Button>
               </div>
             </div>
           </form>
@@ -185,7 +212,11 @@ const InviteCandidates = () => {
         <TableInvite dataSource={importedCandidates} />
       </div>
       <div className="flex justify-end">
-        <Button type="button" disabled>
+        <Button
+          type="button"
+          disabled={importedCandidates.length === 0}
+          onClick={invitedHandler}
+        >
           Next Step
         </Button>
       </div>
