@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useTransition } from 'react';
 import {
   Form,
   FormControl,
@@ -29,6 +29,8 @@ import {
 } from '../ui/select';
 import { LINK_TEMPLATE_CSV } from '@/constant';
 import QuestionCard from './question-card';
+import createInviteCandidates from '@/lib/actions/interview/inviteCandidates';
+import { usePathname, useRouter } from 'next/navigation';
 
 const CandidateSchema = z.object({
   name: z.string().min(2),
@@ -59,7 +61,9 @@ const InviteCandidates = ({
     control: form.control,
     name: 'candidates',
   });
-
+  const pathname = usePathname();
+  const { push } = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [importedCandidates, setImportedCandidates] = useState<any[]>([]);
   const [title, setTitle] = useState('');
 
@@ -71,7 +75,6 @@ const InviteCandidates = ({
   }, [watchTemplate, interviews]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    console.log(data, '<<<<');
     if (data.candidates) {
       const parsedData = (
         data.candidates as z.infer<typeof CandidateSchema>[]
@@ -130,10 +133,17 @@ const InviteCandidates = ({
 
   const invitedHandler = () => {
     if (importedCandidates && title && orgId) {
-      console.log('Send >>>>', {
-        importedCandidates,
-        title,
-        orgId,
+      startTransition(() => {
+        const payload = {
+          importedCandidates,
+          title,
+          orgId,
+          templateId: selectedTemplate.id,
+        };
+        createInviteCandidates(payload)
+          .then((data) => console.log(data?.success))
+          .catch((error) => console.log(error))
+          .finally(() => push(`/${orgId}/video`));
       });
     }
     form.reset();
