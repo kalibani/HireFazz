@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useReducer, useState, useTransition } from 'react';
-import { ArrowRight, Info, Plus, CheckIcon } from 'lucide-react';
+import { ArrowRight, Info, Plus, CheckIcon, X } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Accordion,
@@ -39,7 +39,7 @@ const initialState = {
 const dataAccordion: dataAccordionType[] = [
   { name: 'Skills', type: 'skill' },
   { name: 'Responsibilities', type: 'responsibilities' },
-  { name: 'Requirement', type: 'requirement' },
+  { name: 'Requirements', type: 'requirement' },
 ];
 
 type dataAccordionType = {
@@ -72,6 +72,7 @@ type AutoGenerateType =
 interface DetailItem {
   value: string
   checked: boolean
+  hidden?: boolean
 }
 
 const headerMap: Record<AutoGenerateType, string> = {
@@ -91,6 +92,7 @@ const CreateJobDetail = () => {
   const [listOfEditor, setListOfEditor] = useState<string[]>(['']);
   const [mount, setMount] = useState<boolean>(false);
   const [loadingState, setLoadingState] = useState<LoadingState>({});
+  const [checkedSkillsList, setCheckedSkillsList] = useState<Set<string>>(new Set())
   const { companyName, currency, experiences, location, title, workModel } =
     dataCreateJob;
   useEffect(() => {
@@ -114,7 +116,6 @@ const CreateJobDetail = () => {
   useEffect(() => {
     if (listOfEditor) {
       setValue(listOfEditor.join(''));
-      console.log('ini list editor', listOfEditor)
     }
   }, [listOfEditor]);
 
@@ -150,7 +151,8 @@ const CreateJobDetail = () => {
           // make it as array of object, so we can utilize checkbox functionality
           const preparedSkillResult = skillSet.map((skill: string) => ({
             value: skill,
-            checked: false,
+            // initial checked if already existed in editor
+            checked: checkedSkillsList.has(skill),
           }))
           handleChange('skill', preparedSkillResult);
           setLoadingState((value) => ({ ...value, skill: false }));
@@ -201,15 +203,7 @@ const CreateJobDetail = () => {
           newListOfEditor[0] = htmlDescription;
           break;
         case 'skill':
-          // add space after comma
-          const checkedSkills = state[type].filter((skill: DetailItem) => skill.checked).map((item: DetailItem) => item.value)
-          const listOfSkill = generateHtmlList(checkedSkills)
-          const skillHtml = `<p><strong>${headerMap[type]} :</strong></p>${listOfSkill}<br/>`;
-          if (listOfSkill.length) {
-            newListOfEditor[1] = skillHtml;
-          } else {
-            newListOfEditor[1] = ''
-          }
+          renderSkilltoEditor(Array.from(checkedSkillsList))
           break;
         case 'responsibilities':
           const checkedResponsibilities = state[type].filter((responsibility: DetailItem) => responsibility.checked).map((item: DetailItem) => item.value)
@@ -265,15 +259,57 @@ const CreateJobDetail = () => {
 
     newData[idx].checked = isChecked
     handleChange(type, newData)
+    
     if (type === 'skill') {
-      addToEditor('skill')
+      const newSet = new Set(checkedSkillsList)
+      if (isChecked) {
+        newSet.add(newData[idx].value)
+      } else {
+        newSet.delete(newData[idx].value)
+      }
+      setCheckedSkillsList(newSet)
+      renderSkilltoEditor(Array.from(newSet))
     }
+  }
+
+  const handleDeleteSkill = (item: string) => {
+    const newSkill = state.skill.map((skill: DetailItem) => {
+      if (skill.value === item) {
+        return {
+          ...skill,
+          hidden: true
+        }
+      } else {
+        return skill
+      }
+    })
+    handleChange('skill', newSkill);
+    
+  }
+
+  const renderSkilltoEditor = (skill: string[]) => {
+        setListOfEditor((prev: string[]) => {
+          const newListOfEditor = [...prev]
+          const checkedSkills = skill
+          const listOfSkill = generateHtmlList(checkedSkills)
+          const skillHtml = `<p><strong>${headerMap['skill']} :</strong></p>${listOfSkill}<br/>`;
+          if (listOfSkill.length) {
+            newListOfEditor[1] = skillHtml;
+          } else {
+            newListOfEditor[1] = ''
+          }
+          return newListOfEditor
+        })
   }
 
   // to display content from dataAccordion, output: accordion content base on data type
   const getContent = (type: AutoGenerateType) => {
     if (!state[type].length) {
-      return <span>Click Generate button</span>
+      return (
+        <div className="flex flex-col gap-3 min-h-[218px] w-full flex-wrap overflow-y-auto rounded-sm bg-white p-2">
+           <span>Click Generate button</span>
+        </div>
+      )
     }
 
     // skills to render list of button that will directly update the text editor when click (base on last checked status in data)
@@ -281,15 +317,24 @@ const CreateJobDetail = () => {
       return (
         <div className="flex flex-col gap-3 min-h-[218px] w-full flex-wrap overflow-y-auto rounded-sm bg-white p-2">
           {state[type].map((data: DetailItem, idx: number) => {
+            if (data.hidden) return null
             return (
-              <div key={idx} className="flex gap-2 items-center">
-                <Button className="flex gap-2 h-fit items-center text-left" variant={data.checked ? 'default' : 'outline'} onClick={() => updateCheckData(type, idx, !data.checked)}>
+              <div key={data.value + idx} className="flex gap-2 items-center">
+                <Button className="relative flex gap-2 h-fit items-center text-left" variant={data.checked ? 'default' : 'outline'} onClick={() => updateCheckData(type, idx, !data.checked)}>
                   {data.checked ? (
                     <CheckIcon className="size-4 shrink-0" />
                   ) : (
                     <Plus className="size-4 shrink-0" />
                   )}
                   <span>{data.value}</span>
+
+                  <div className="absolute -top-2 -right-2 z-10 size-4 flex justify-center items-center bg-slate-300 rounded-full" onClick={(e) => {
+                      e.stopPropagation()
+                      handleDeleteSkill(data.value)
+                    }}
+                  >
+                    <X className="size-3" />
+                  </div>
                 </Button>
               </div>
             )
