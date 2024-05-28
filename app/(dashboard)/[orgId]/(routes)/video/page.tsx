@@ -5,12 +5,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import QuestionCard from '@/components/interview/question-card';
 import { Banner } from '@/components/share';
 import dashboard from '@/public/icon/icon-banner-dashboard.svg';
-import { TInterview } from '@/lib/validators/interview';
+import { TCandidateListSchema, TInterview } from '@/lib/validators/interview';
+import getCandidates from '@/lib/actions/interview/getCandidates';
+import CandidatesCard from '@/components/interview/candidate-card';
 
 const Page = async ({ params }: ParamsProps) => {
   const interviews = (await getTemplateInterview({
     organizationId: params.orgId,
   })) as TInterview[];
+  const candidates = (await getCandidates({
+    id: params.orgId,
+  })) as TCandidateListSchema[];
+  console.log(candidates);
   return (
     <>
       <Banner
@@ -44,8 +50,16 @@ const Page = async ({ params }: ParamsProps) => {
         </TabsList>
         <TabsContent value="candidates" className="mt-0 bg-white p-4">
           <FilterListInterview orgId={params.orgId} />
-          <div className="my-4 w-full text-center">
-            <p>No Data</p>
+          <div className="my-4 w-full ">
+            {candidates.length > 0 ? (
+              candidates.map((item, idx) => (
+                <CandidatesCard key={item.id} dataSource={item} index={idx} />
+              ))
+            ) : (
+              <div className="my-4 w-full text-center">
+                <p>No Data</p>
+              </div>
+            )}
           </div>
         </TabsContent>
         <TabsContent value="template" className="mt-0 bg-white p-4">

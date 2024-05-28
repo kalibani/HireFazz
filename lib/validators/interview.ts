@@ -47,3 +47,32 @@ export const InterviewDataSchema = z.object({
   questions: Question.optional(),
 });
 export type TInterview = z.infer<typeof InterviewDataSchema>;
+
+export const CandidateSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+});
+
+export const CreateInviteCandidateSchema = z.object({
+  importedCandidates: CandidateSchema.array(),
+  title: z.string(),
+  orgId: z.string(),
+  templateId: z.string(),
+});
+
+export type TCreateInviteCandidateSchema = z.infer<
+  typeof CreateInviteCandidateSchema
+>;
+export type TCandidateSchema = z.infer<typeof CandidateSchema>;
+
+export const CandidateListSchema = z.object({
+  id: z.string(),
+  templateId: z.string(),
+  name: z.string(),
+  status: z.string(),
+  candidates: z.any().array(),
+  candidatesCount: z.number(),
+  templateName: z.string(),
+});
+export type TCandidateListSchema = z.infer<typeof CandidateListSchema>;
