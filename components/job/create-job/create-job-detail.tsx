@@ -39,7 +39,7 @@ const initialState = {
 const dataAccordion: dataAccordionType[] = [
   { name: 'Skills', type: 'skill' },
   { name: 'Responsibilities', type: 'responsibilities' },
-  { name: 'Requirement', type: 'requirement' },
+  { name: 'Requirements', type: 'requirement' },
 ];
 
 type dataAccordionType = {
