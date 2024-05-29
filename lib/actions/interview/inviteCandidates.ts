@@ -8,6 +8,13 @@ import {
 } from '@/lib/validators/interview';
 import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
+import { sendInviteCandidate } from '../sendEmail/send-invite-candidates';
+import EmailTemplateCandidates from '@/components/email-template/email-template-candidates';
+import react from 'react';
+import React from 'react';
+import { link } from 'fs';
+
+const domain = process.env.NEXT_PUBLIC_APP_URL;
 
 export default async function createInviteCandidates(
   payload: TCreateInviteCandidateSchema,
@@ -52,9 +59,22 @@ export default async function createInviteCandidates(
     await prismadb.invitedUser.createMany({
       data: invitedUsers,
     });
+
+    // // Step 4: Send invitation emails
+    for (const user of invitedUsers) {
+      const from = 'teams@berrylabs.io';
+      const subject = 'Interview Invitation';
+
+      await sendInviteCandidate(
+        user.candidateName,
+        user.email,
+        user.id,
+        from,
+        subject,
+      );
+    }
     revalidatePath('/');
-    // return { interviewCandidates, invitedUsers };
-    return { success: 'Candidates Invited' };
+    return { success: 'Candidates Invited', invitedUsers };
   } catch (error) {
     errorHandler(error);
   }

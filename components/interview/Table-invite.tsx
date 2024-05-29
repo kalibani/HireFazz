@@ -35,31 +35,6 @@ type TColumn = {
   email: string;
 };
 
-// const dummyData: TColumn[] = [
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Dimas Wicaksono', email: 'dev@berrylabs.io' },
-//   { id: uuidv4(), name: 'Riko orlando', email: 'dev@berrylabs.io' },
-// ];
-
 const TableInvite = ({ dataSource }: { dataSource: any }) => {
   const { replace } = useRouter();
   const pathname = usePathname();
@@ -116,7 +91,7 @@ const TableInvite = ({ dataSource }: { dataSource: any }) => {
         );
       },
       cell: ({ row }) => (
-        <p className="w-full capitalize text-slate-400">{row.original.email}</p>
+        <p className="w-full text-slate-400">{row.original.email}</p>
       ),
     },
     {

@@ -31,6 +31,8 @@ import { LINK_TEMPLATE_CSV } from '@/constant';
 import QuestionCard from './question-card';
 import createInviteCandidates from '@/lib/actions/interview/inviteCandidates';
 import { usePathname, useRouter } from 'next/navigation';
+import { Loader } from '../share';
+import { sendInviteCandidate } from '@/lib/actions/sendEmail/send-invite-candidates';
 
 const CandidateSchema = z.object({
   name: z.string().min(2),
@@ -141,150 +143,155 @@ const InviteCandidates = ({
           templateId: selectedTemplate.id,
         };
         createInviteCandidates(payload)
-          .then((data) => console.log(data?.success))
+          .then(async (data) => console.log(data?.success))
           .catch((error) => console.log(error))
-          .finally(() => push(`/${orgId}/video`));
+          .finally(() => {
+            push(`/${orgId}/video`);
+          });
       });
     }
     form.reset();
   };
 
   return (
-    <Form {...form}>
-      <div className="rounded-md bg-white p-4">
-        <h3 className="text-2xl font-semibold">Create Interview Candidates</h3>
-        <div className="mt-4 ">
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex w-full gap-x-2 ">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem className="w-full space-y-0">
-                    <FormLabel className="m-0 w-full font-normal">
-                      Name Interview
-                    </FormLabel>
-                    <Input
-                      className="h-auto w-full border font-normal ring-0"
-                      {...field}
-                    />
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="template"
-                render={({ field }) => (
-                  <FormItem className="w-full space-y-0">
-                    <FormLabel className="m-0  w-full font-normal">
-                      Select Template question
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Choose Template" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="w-full">
-                        {interviews.length > 0 &&
-                          interviews?.map((item) => (
-                            <SelectItem value={item.id} key={item.id}>
-                              {item.title}
-                            </SelectItem>
-                          ))}
-                        {interviews.length === 0 && (
-                          <div className="flex flex-col justify-center gap-y-1 p-1 text-sm">
-                            <p>you don't have template</p>
-                            <Button className="h-auto p-1">
-                              Create Template
-                            </Button>
-                          </div>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-            </div>
+    <>
+      <Form {...form}>
+        <div className="rounded-md bg-white p-4">
+          <h3 className="text-2xl font-semibold">
+            Create Interview Candidates
+          </h3>
+          <div className="mt-4 ">
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="flex w-full gap-x-2 ">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem className="w-full space-y-0">
+                      <FormLabel className="m-0 w-full font-normal">
+                        Name Interview
+                      </FormLabel>
+                      <Input
+                        className="h-auto w-full border font-normal ring-0"
+                        {...field}
+                      />
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="template"
+                  render={({ field }) => (
+                    <FormItem className="w-full space-y-0">
+                      <FormLabel className="m-0  w-full font-normal">
+                        Select Template question
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Choose Template" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="w-full">
+                          {interviews.length > 0 &&
+                            interviews?.map((item) => (
+                              <SelectItem value={item.id} key={item.id}>
+                                {item.title}
+                              </SelectItem>
+                            ))}
+                          {interviews.length === 0 && (
+                            <div className="flex flex-col justify-center gap-y-1 p-1 text-sm">
+                              <p>you don't have template</p>
+                              <Button className="h-auto p-1">
+                                Create Template
+                              </Button>
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-            {watchTemplate && (
-              <QuestionCard
-                key={selectedTemplate.id}
-                title={selectedTemplate.title}
-                id={selectedTemplate.id}
-                question={selectedTemplate.description!}
-                type="template"
-                dataSource={selectedTemplate}
-              />
-            )}
+              {watchTemplate && (
+                <QuestionCard
+                  key={selectedTemplate.id}
+                  title={selectedTemplate.title}
+                  id={selectedTemplate.id}
+                  question={selectedTemplate.description!}
+                  type="template"
+                  dataSource={selectedTemplate}
+                />
+              )}
 
-            <h4 className="my-4 text-xl font-semibold">Invites Candidates</h4>
+              <h4 className="my-4 text-xl font-semibold">Invites Candidates</h4>
 
-            <div className="space-y-2">
-              {fields.map((field, index) => (
-                <div className="flex  w-full  gap-x-2" key={field.id}>
-                  <FormField
-                    control={form.control}
-                    name={`candidates.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem className="w-full space-y-0">
-                        <FormLabel className="m-0 font-normal">
-                          Full Name
-                        </FormLabel>
-                        <Input
-                          className="h-auto border font-normal ring-0"
-                          {...field}
-                        />
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`candidates.${index}.email`}
-                    render={({ field }) => (
-                      <FormItem className="w-full space-y-0">
-                        <FormLabel className="m-0 font-normal">
-                          Email{' '}
-                        </FormLabel>
-                        <div className="flex gap-x-2">
+              <div className="space-y-2">
+                {fields.map((field, index) => (
+                  <div className="flex  w-full  gap-x-2" key={field.id}>
+                    <FormField
+                      control={form.control}
+                      name={`candidates.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem className="w-full space-y-0">
+                          <FormLabel className="m-0 font-normal">
+                            Full Name
+                          </FormLabel>
                           <Input
-                            type="email"
                             className="h-auto border font-normal ring-0"
                             {...field}
                           />
-                          <div className="flex items-center gap-x-1">
-                            <Button
-                              type="button"
-                              onClick={() => remove(index)}
-                              disabled={fields.length === 1}
-                              variant="ghost"
-                              className={cn(
-                                'h-auto p-1',
-                                fields.length === 1 && 'cursor-not-allowed',
-                              )}
-                            >
-                              <Trash2 className="size-4 text-primary" />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              onClick={() => append({ name: '', email: '' })}
-                              className="h-auto p-1"
-                            >
-                              <PlusCircle className="size-4 text-primary" />
-                            </Button>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`candidates.${index}.email`}
+                      render={({ field }) => (
+                        <FormItem className="w-full space-y-0">
+                          <FormLabel className="m-0 font-normal">
+                            Email{' '}
+                          </FormLabel>
+                          <div className="flex gap-x-2">
+                            <Input
+                              type="email"
+                              className="h-auto border font-normal ring-0"
+                              {...field}
+                            />
+                            <div className="flex items-center gap-x-1">
+                              <Button
+                                type="button"
+                                onClick={() => remove(index)}
+                                disabled={fields.length === 1}
+                                variant="ghost"
+                                className={cn(
+                                  'h-auto p-1',
+                                  fields.length === 1 && 'cursor-not-allowed',
+                                )}
+                              >
+                                <Trash2 className="size-4 text-primary" />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => append({ name: '', email: '' })}
+                                className="h-auto p-1"
+                              >
+                                <PlusCircle className="size-4 text-primary" />
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* <div className=" flex items-end justify-end ">
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* <div className=" flex items-end justify-end ">
                     <Button
                       type="button"
                       onClick={() => remove(index)}
@@ -305,52 +312,54 @@ const InviteCandidates = ({
                       <PlusCircle className="size-4 text-primary" />
                     </Button>
                   </div> */}
-                </div>
-              ))}
+                  </div>
+                ))}
 
-              <div className="space-x-2">
-                <Button type="submit">Invite</Button>
-                <Button type="button" variant="ghost">
-                  <label className="cursor-pointer">
-                    Import file
-                    <input
-                      type="file"
-                      accept=".csv"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </label>
-                </Button>
+                <div className="space-x-2">
+                  <Button type="submit">Invite</Button>
+                  <Button type="button" variant="ghost">
+                    <label className="cursor-pointer">
+                      Import file
+                      <input
+                        type="file"
+                        accept=".csv"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                  </Button>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
+          <div className=" my-4 items-center gap-x-2 rounded-md bg-yellow-100 p-2 text-center text-sm italic">
+            <p>
+              Click the link bellow to download the template file and get
+              started easily.
+            </p>
+            <Button
+              type="button"
+              onClick={handleDownload}
+              variant="link"
+              className="h-0 p-0"
+            >
+              Download CSV
+            </Button>
+          </div>
+          <TableInvite dataSource={importedCandidates} />
         </div>
-        <div className=" my-4 items-center gap-x-2 rounded-md bg-yellow-100 p-2 text-center text-sm italic">
-          <p>
-            Click the link bellow to download the template file and get started
-            easily.
-          </p>
+        <div className="flex justify-end">
           <Button
             type="button"
-            onClick={handleDownload}
-            variant="link"
-            className="h-0 p-0"
+            disabled={importedCandidates.length === 0}
+            onClick={invitedHandler}
           >
-            Download CSV
+            Next Step
           </Button>
         </div>
-        <TableInvite dataSource={importedCandidates} />
-      </div>
-      <div className="flex justify-end">
-        <Button
-          type="button"
-          disabled={importedCandidates.length === 0}
-          onClick={invitedHandler}
-        >
-          Next Step
-        </Button>
-      </div>
-    </Form>
+      </Form>
+      {isPending && <Loader />}
+    </>
   );
 };
 
