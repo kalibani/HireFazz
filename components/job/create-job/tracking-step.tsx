@@ -3,7 +3,14 @@ import React from 'react';
 
 type TitleMap = Record<number, { title: string; subTitle: string }>
 
-const TrackingStep = ({ step, withTitle = true }: { step: number; withTitle?: boolean }) => {
+interface TrackingStepProps {
+  step: number
+  withTitle?: boolean
+  customTitle?: string
+  customSubTitle?: string
+}
+
+const TrackingStep = ({ step, withTitle = true, customTitle, customSubTitle }: TrackingStepProps) => {
   const titleMap: TitleMap = {
     0: {
       title: 'Create New Job',
@@ -23,8 +30,8 @@ const TrackingStep = ({ step, withTitle = true }: { step: number; withTitle?: bo
     }
   }
 
-  const formTitle = titleMap[step]?.title || titleMap[0].title
-  const formSubTitle = titleMap[step]?.subTitle || titleMap[0].subTitle
+  const formTitle = customTitle ?? (titleMap[step]?.title || titleMap[0].title)
+  const formSubTitle = customSubTitle ?? (titleMap[step]?.subTitle || titleMap[0].subTitle)
 
   return (
     <div className="flex items-center justify-between gap-x-2 rounded-md bg-white py-8 text-xs capitalize px-5">

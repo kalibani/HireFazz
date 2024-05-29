@@ -84,7 +84,7 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
   }
 
   return (
-    <div className="flex w-full flex-col gap-5">
+    <div className="flex w-full flex-col gap-3 h-full">
       <div className="mx-5 flex items-center gap-2">
         <FileSearchIcon className="text-red-500" />
         {!!data.length && jobTitle ? (
@@ -104,7 +104,7 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
         <InputFilter label="Search" placeholder="Search by Name" value={query || ''} onChange={(value) => handleSearch('search', value)} />
       </div>
 
-      <div className="border-b">
+      <div className="border-b flex-1">
         <Table>
           <TableHeader className="bg-slate-200">
             {table.getHeaderGroups().map((headerGroup) => (
