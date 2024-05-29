@@ -58,7 +58,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { PaginationGroup } from '@/components/ui/pagination';
 import { truncateString } from '@/lib/utils';
 import { updateJobCvs } from '@/lib/actions/job/update-cv-job';
-import { TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import {
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@radix-ui/react-tooltip';
 import { Tooltip } from '@/components/ui/tooltip';
 
 const IconRobot: FC = (): ReactElement => (
@@ -310,6 +314,10 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      <SelectItem value="">
+                        Custom Criteria ( You can reshape Custom criteria on AI
+                        CV analyzer )
+                      </SelectItem>
                       <SelectItem value="custom-criteria">
                         Custom Criteria
                       </SelectItem>
@@ -488,6 +496,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                 </div>
               </>
             )}
+
             <div className="flex w-full items-center gap-x-4">
               <FormField
                 control={form.control}
@@ -529,13 +538,13 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
               onClick={() => {
                 isUpdate
                   ? updateJobCvs(
-                    {
-                      orgId: orgId as string,
-                      jobId: id as string,
-                      analyzeCv: form.watch('analyzeCv'),
-                    },
-                    formData,
-                  )
+                      {
+                        orgId: orgId as string,
+                        jobId: id as string,
+                        analyzeCv: form.watch('analyzeCv'),
+                      },
+                      formData,
+                    )
                   : createJobHandle();
               }}
             >
@@ -544,9 +553,13 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
           </DialogTrigger>
         </div>
         <DialogContent className="flex h-[90%] min-h-[90%] w-[90%] min-w-[90%] flex-col items-center justify-between overflow-y-auto p-0">
-          <div className="flex w-full h-full flex-col items-center">
+          <div className="flex h-full w-full flex-col items-center">
             <div className="flex w-full flex-col">
-              <TrackingStep step={step} customTitle={dataCreateJob.title} customSubTitle="" />
+              <TrackingStep
+                step={step}
+                customTitle={dataCreateJob.title}
+                customSubTitle=""
+              />
               <hr className="h-1 w-full border-slate-400" />
             </div>
 
@@ -560,7 +573,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
               </p>
             </div>
 
-            <div className="mt-8 flex-1 overflow-y-auto h-full w-full px-8">
+            <div className="mt-8 h-full w-full flex-1 overflow-y-auto px-8">
               <Table className="border border-solid border-slate-200">
                 <TableHeader className="bg-slate-200">
                   <TableRow>
@@ -585,7 +598,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                               <p>{truncateString(file.file.name, 30)}</p>
                             </TooltipTrigger>
                             <TooltipContent
-                              className="bg-gray-900 p-2 rounded-md text-slate-300"
+                              className="rounded-md bg-gray-900 p-2 text-slate-300"
                               hidden={file.file.name.length <= 30}
                             >
                               {file.file.name}
