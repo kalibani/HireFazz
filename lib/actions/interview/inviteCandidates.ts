@@ -8,13 +8,8 @@ import {
 } from '@/lib/validators/interview';
 import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
+import crypto from 'crypto';
 import { sendInviteCandidate } from '../sendEmail/send-invite-candidates';
-import EmailTemplateCandidates from '@/components/email-template/email-template-candidates';
-import react from 'react';
-import React from 'react';
-import { link } from 'fs';
-
-const domain = process.env.NEXT_PUBLIC_APP_URL;
 
 export default async function createInviteCandidates(
   payload: TCreateInviteCandidateSchema,
@@ -45,36 +40,72 @@ export default async function createInviteCandidates(
       },
     });
 
-    // Step 3: Create InvitedUser records
-    const invitedUsers = importedCandidates.map((candidate) => ({
-      id: candidate.id,
-      candidateName: candidate.name,
-      email: candidate.email,
-      expiredDate: new Date(new Date().setDate(new Date().getDate() + 7)), // Example: setting expiration date to 7 days from now
-      organizationId: orgId,
-      interviewCandidatesId: interviewCandidates.id,
-      result: questions as Prisma.InputJsonValue,
-    }));
+    if (!interviewCandidates) {
+      throw new Error('Failed to create InterviewCandidates');
+    }
 
-    await prismadb.invitedUser.createMany({
-      data: invitedUsers,
+    // Step 3: Create InvitedUser records
+    const invitedUsersdata = importedCandidates.map((candidate) => {
+      const cryptoCode: string = crypto.randomBytes(2).toString('hex'); // Generate a 4-digit string
+      return {
+        id: candidate.id,
+        candidateName: candidate.name,
+        email: candidate.email,
+        expiredDate: new Date(new Date().setDate(new Date().getDate() + 7)), // Example: setting expiration date to 7 days from now
+        organizationId: orgId,
+        interviewCandidatesId: interviewCandidates.id,
+        result: questions as Prisma.InputJsonValue,
+        isUsed: false,
+        keyCode: cryptoCode as string,
+      };
     });
 
-    // // Step 4: Send invitation emails
-    for (const user of invitedUsers) {
-      const from = 'teams@berrylabs.io';
-      const subject = 'Interview Invitation';
+    // Ensure all records are created successfully
+    for (const userData of invitedUsersdata) {
+      try {
+        const from = 'teams@berrylabs.io';
+        const subject = 'Interview Invitation';
+        await prismadb.invitedUser.create({
+          data: userData,
+        });
 
-      await sendInviteCandidate(
-        user.candidateName,
-        user.email,
-        user.id,
-        from,
-        subject,
-      );
+        const responseEmail = await sendInviteCandidate(
+          userData.candidateName,
+          userData.email,
+          userData.id,
+          title,
+          from,
+          subject,
+          userData.keyCode,
+        );
+        if (responseEmail.error) {
+          return { error: responseEmail.error.message };
+        }
+      } catch (error) {
+        console.error(`Failed to insert user: ${userData.email}`, error);
+        throw error;
+      }
     }
+
+    // // // Step 4: Send invitation emails
+    // for (const user of invitedUsersdata) {
+    //   const from = 'teams@berrylabs.io';
+    //   const subject = 'Interview Invitation';
+
+    //   const responseEmail = await sendInviteCandidate(
+    //     user.candidateName,
+    //     user.email,
+    //     user.id,
+    //     from,
+    //     subject,
+    //     user.keyCode,
+    //   );
+    //   if (responseEmail.error) {
+    //     return { error: responseEmail.error.message };
+    //   }
+    // }
     revalidatePath('/');
-    return { success: 'Candidates Invited', invitedUsers };
+    return { success: 'Candidates Invited', invitedUsersdata };
   } catch (error) {
     errorHandler(error);
   }
