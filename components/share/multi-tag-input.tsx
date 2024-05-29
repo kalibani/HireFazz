@@ -1,4 +1,4 @@
-import { PictureInPicture, PictureInPicture2, X } from 'lucide-react';
+import { PictureInPicture2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Fragment, forwardRef, useRef, useState } from 'react';
 import { Button } from '../ui/button';
@@ -24,16 +24,11 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter' || e.key === ',') {
         e.preventDefault();
-        const newTag = inputValue.trim();
-        if (newTag && !tags.includes(newTag)) {
-          setTags([...tags, newTag]);
-        }
-        setInputValue('');
+        addTag();
       }
     };
 
-    const addNewTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      e.preventDefault();
+    const addTag = () => {
       const newTag = inputValue.trim();
       if (newTag && !tags.includes(newTag)) {
         setTags([...tags, newTag]);
@@ -63,21 +58,21 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
                 className="h-auto border-none p-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
               />
             </div>
-            {inputValue.length > 3 && (
-              <Button className="w-full" onClick={addNewTag}>
+            {inputValue.length > 2 && (
+              <Button className="w-full" onClick={addTag}>
                 New Add
               </Button>
             )}
           </div>
           {tags.map((tag, index) => (
             <div key={index} className="flex items-center gap-2">
-              <div className="relative flex h-fit min-w-16 items-center gap-2 rounded-md border px-2 py-1 text-center">
-                {tag}
+              <div className="relative flex h-fit min-w-16 items-center gap-2 rounded-md  bg-primary px-2 py-1 text-sm capitalize">
+                <p className="text-center text-white">{tag}</p>
                 <div
                   onClick={() => removeTag(tag)}
-                  className="absolute -right-2 -top-2 z-10 flex size-4 cursor-pointer items-center justify-center  rounded-full bg-slate-300"
+                  className="absolute -right-2 -top-2 z-10 flex size-4 cursor-pointer items-center justify-center  rounded-full bg-slate-400"
                 >
-                  <X className="size-3" />
+                  <X className="size-3 text-white" />
                 </div>
               </div>
             </div>
