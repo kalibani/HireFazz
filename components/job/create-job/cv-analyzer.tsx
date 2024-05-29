@@ -58,6 +58,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { PaginationGroup } from '@/components/ui/pagination';
 import { truncateString } from '@/lib/utils';
 import { updateJobCvs } from '@/lib/actions/job/update-cv-job';
+import { TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -527,13 +529,13 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
               onClick={() => {
                 isUpdate
                   ? updateJobCvs(
-                      {
-                        orgId: orgId as string,
-                        jobId: id as string,
-                        analyzeCv: form.watch('analyzeCv'),
-                      },
-                      formData,
-                    )
+                    {
+                      orgId: orgId as string,
+                      jobId: id as string,
+                      analyzeCv: form.watch('analyzeCv'),
+                    },
+                    formData,
+                  )
                   : createJobHandle();
               }}
             >
@@ -542,9 +544,9 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
           </DialogTrigger>
         </div>
         <DialogContent className="flex h-[90%] min-h-[90%] w-[90%] min-w-[90%] flex-col items-center justify-between overflow-y-auto p-0">
-          <div className="flex w-full flex-col items-center">
+          <div className="flex w-full h-full flex-col items-center">
             <div className="flex w-full flex-col">
-              <TrackingStep step={step} withTitle={false} />
+              <TrackingStep step={step} customTitle={dataCreateJob.title} customSubTitle="" />
               <hr className="h-1 w-full border-slate-400" />
             </div>
 
@@ -558,19 +560,17 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
               </p>
             </div>
 
-            <div className="mt-8 w-full px-8">
+            <div className="mt-8 flex-1 overflow-y-auto h-full w-full px-8">
               <Table className="border border-solid border-slate-200">
                 <TableHeader className="bg-slate-200">
                   <TableRow>
-                    <TableHead>Job Name ↓ </TableHead>
                     <TableHead className="text-center">Name of file</TableHead>
-                    <TableHead className="text-center">Job</TableHead>
-                    <TableHead className="text-center">Added On</TableHead>
+                    <TableHead className="text-center">Source</TableHead>
                     <TableHead className="w-fit text-center">Upload</TableHead>
 
                     {form.watch('analyzeCv') && (
                       <TableHead className="w-fit text-center">
-                        Annalyze AI
+                        Analyze AI
                       </TableHead>
                     )}
                   </TableRow>
@@ -578,19 +578,25 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                 <TableBody>
                   {itemsInPage.map((file, index) => (
                     <TableRow key={index}>
-                      <TableCell className="font-medium">
-                        {dataCreateJob?.title}
+                      <TableCell className="text-center text-slate-400">
+                        <TooltipProvider delayDuration={0}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <p>{truncateString(file.file.name, 30)}</p>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              className="bg-gray-900 p-2 rounded-md text-slate-300"
+                              hidden={file.file.name.length <= 30}
+                            >
+                              {file.file.name}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </TableCell>
-                      <TableCell className="text-left text-slate-400">
-                        {truncateString(file.file.name, 50)}
+                      <TableCell className="text-center text-slate-400">
+                        From Device
                       </TableCell>
-                      <TableCell className="text-left text-slate-400">
-                        {dataCreateJob?.title}
-                      </TableCell>
-                      <TableCell className="text-left text-slate-400">
-                        {formatDate(file?.file?.lastModified, 'dd MMM, yyyy')}
-                      </TableCell>
-                      <TableCell className="text-left text-slate-400">
+                      <TableCell className="text-center text-slate-400">
                         <div className="flex w-full items-center gap-x-4">
                           <Progress
                             value={uploadPercentage}
@@ -602,7 +608,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                         </div>
                       </TableCell>
                       {form.watch('analyzeCv') && (
-                        <TableCell className="text-left text-green-500">
+                        <TableCell className="text-center text-green-500">
                           <div className="flex w-full items-center gap-x-4">
                             <Progress
                               value={analyzeAIPercentage}

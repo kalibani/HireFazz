@@ -63,7 +63,7 @@ const FormCreate = () => {
 
   return (
     <div className="flex flex-1 overflow-y-scroll w-full flex-col items-center rounded-md bg-white  py-8">
-      <div className="w-1/2">
+      <div className="w-1/2 h-full ">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
