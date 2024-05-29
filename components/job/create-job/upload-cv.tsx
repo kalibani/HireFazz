@@ -53,7 +53,6 @@ const UploadCv: FC = (): ReactElement => {
   interface UploadCVData {
     file: File;
   }
-  console.log({ files, dataCreateJob, dataDetailJob, totalSize });
   // handle filter & pagination in client side, since cv upload is in client state
   useEffect(() => {
     const allItems = files;

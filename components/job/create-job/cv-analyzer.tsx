@@ -355,58 +355,6 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                       </FormItem>
                     )}
                   />
-
-                  <div className="flex w-full gap-x-4">
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        setTags((prevTags) => [...prevTags, 'Experience']);
-                        form.setValue('keyFocus', [...tags, 'Experience']);
-                      }}
-                      className="w-fit bg-slate-300 text-black"
-                    >
-                      + Experience
-                    </Button>
-
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        setTags((prevTags) => [
-                          ...prevTags,
-                          'Sallary Expectation',
-                        ]);
-                        form.setValue('keyFocus', [
-                          ...tags,
-                          'Sallary Expectation',
-                        ]);
-                      }}
-                      className="w-fit bg-slate-300 text-black"
-                    >
-                      + Sallary Expectation
-                    </Button>
-
-                    <Button
-                      type="button"
-                      className="w-fit bg-slate-300 text-black"
-                      onClick={() => {
-                        setTags((prevTags) => [...prevTags, 'Education']);
-                        form.setValue('keyFocus', [...tags, 'Education']);
-                      }}
-                    >
-                      + Education
-                    </Button>
-
-                    <Button
-                      type="button"
-                      className="w-fit bg-slate-300 text-black"
-                      onClick={() => {
-                        setTags((prevTags) => [...prevTags, 'Age']);
-                        form.setValue('keyFocus', [...tags, 'Age']);
-                      }}
-                    >
-                      + Age
-                    </Button>
-                  </div>
                 </div>
 
                 <div className="flex w-full gap-x-4">
