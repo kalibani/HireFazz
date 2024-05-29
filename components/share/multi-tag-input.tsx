@@ -59,8 +59,8 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
               />
             </div>
             {inputValue.length > 2 && (
-              <Button className="w-full" onClick={addTag}>
-                New Add
+              <Button className="w-full capitalize" onClick={addTag}>
+                New {inputValue}
               </Button>
             )}
           </div>
