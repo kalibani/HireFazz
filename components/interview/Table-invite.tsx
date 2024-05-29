@@ -126,7 +126,7 @@ const TableInvite = ({ dataSource }: { dataSource: any }) => {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: true,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
@@ -142,7 +142,7 @@ const TableInvite = ({ dataSource }: { dataSource: any }) => {
     } else {
       params.delete(query);
     }
-    replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
   return (
     <>

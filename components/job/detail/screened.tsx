@@ -56,7 +56,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
     } else {
       params.delete(query);
     }
-    replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
   return (

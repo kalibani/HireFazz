@@ -41,7 +41,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const pageSize = Number(perPage || 5);
+  const pageSize = Number(perPage || 10);
 
   const columns: ColumnDef<any>[] = [
     {
@@ -194,7 +194,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: true,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     rowCount: jobData?.data.length,
@@ -215,7 +215,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
     } else {
       params.delete(query);
     }
-    replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
   return (

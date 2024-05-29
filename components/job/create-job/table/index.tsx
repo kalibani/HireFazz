@@ -58,11 +58,11 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    manualPagination: true,
     state: {
       sorting,
       columnFilters,
@@ -80,7 +80,7 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
     } else {
       params.delete(type);
     }
-    replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
   return (
@@ -104,9 +104,9 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
         <InputFilter label="Search" placeholder="Search by Name" value={query || ''} onChange={(value) => handleSearch('search', value)} />
       </div>
 
-      <div className="border-b flex-1">
+      <div className="border-b flex-1 h-full">
         <Table>
-          <TableHeader className="bg-slate-200">
+          <TableHeader className="bg-slate-200 sticky top-0">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -158,7 +158,7 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
         </Table>
       </div>
 
-      <div className="px-4 py-4">
+      <div className="px-4 py-1">
         <PaginationGroup
           perPage={Number(perPage || '10')}
           totalItems={props.totalItems || data.length}
