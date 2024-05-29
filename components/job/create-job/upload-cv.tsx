@@ -21,7 +21,11 @@ import { formatDateDMY, formatFileSize } from '@/helpers';
 import { FC, ReactElement, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { truncateString } from '@/lib/utils';
-import { TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import {
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@radix-ui/react-tooltip';
 import { Tooltip } from '@/components/ui/tooltip';
 
 const UploadCv: FC = (): ReactElement => {
@@ -31,13 +35,16 @@ const UploadCv: FC = (): ReactElement => {
     handleDeleteFile,
     handleUploadButtonClick,
     setStep,
+    dataCreateJob,
+    dataDetailJob,
+    totalSize,
   } = useFormStepStore((state) => state);
   const { setIsModalOpen } = usePopupModal();
-  const [tableItems, setTableItems] = useState<FormStepState['files']>([])
+  const [tableItems, setTableItems] = useState<FormStepState['files']>([]);
   const searchParams = useSearchParams();
-  const perPage = searchParams.get('per_page') || '10'
-  const currPage = searchParams.get('page') || '1'
-  const query = searchParams.get('search')
+  const perPage = searchParams.get('per_page') || '10';
+  const currPage = searchParams.get('page') || '1';
+  const query = searchParams.get('search');
 
   const handleNext = () => {
     setStep(3);
@@ -46,23 +53,22 @@ const UploadCv: FC = (): ReactElement => {
   interface UploadCVData {
     file: File;
   }
-
   // handle filter & pagination in client side, since cv upload is in client state
   useEffect(() => {
-    const allItems = files
-    let itemInPage: FormStepState['files'] = allItems
+    const allItems = files;
+    let itemInPage: FormStepState['files'] = allItems;
     if (query) {
-      const namePattern = new RegExp(query)
-      itemInPage = allItems.filter((item) => namePattern.test(item.file.name))
+      const namePattern = new RegExp(query);
+      itemInPage = allItems.filter((item) => namePattern.test(item.file.name));
     }
     if (allItems.length) {
-      const firstItem = (Number(currPage) - 1) * Number(perPage)
-      const lastItem = Number(currPage) * Number(perPage)
-      itemInPage = itemInPage.slice(firstItem, lastItem)
+      const firstItem = (Number(currPage) - 1) * Number(perPage);
+      const lastItem = Number(currPage) * Number(perPage);
+      itemInPage = itemInPage.slice(firstItem, lastItem);
     }
 
-    setTableItems(itemInPage)
-  }, [files, perPage, currPage, query])
+    setTableItems(itemInPage);
+  }, [files, perPage, currPage, query]);
 
   const columns: ColumnDef<UploadCVData>[] = [
     {
@@ -103,8 +109,8 @@ const UploadCv: FC = (): ReactElement => {
         );
       },
       cell: ({ row }) => {
-        const value = row.original.file.name
-        const truncated = truncateString(value, 30)
+        const value = row.original.file.name;
+        const truncated = truncateString(value, 30);
 
         return (
           <TooltipProvider delayDuration={0}>
@@ -113,14 +119,14 @@ const UploadCv: FC = (): ReactElement => {
                 <p>{truncated}</p>
               </TooltipTrigger>
               <TooltipContent
-                className="bg-gray-900 p-2 rounded-md text-slate-300"
+                className="rounded-md bg-gray-900 p-2 text-slate-300"
                 hidden={value.length <= 30}
               >
                 {value}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        )
+        );
       },
     },
     {
@@ -233,12 +239,16 @@ const UploadCv: FC = (): ReactElement => {
                     // temporary disabled, while focus on upload from device
                     disabled
                   >
-                    <FileStack className="mr-2 size-4" /> From Bank CV (Candidates)
+                    <FileStack className="mr-2 size-4" /> From Bank CV
+                    (Candidates)
                   </Button>
                 </div>
               </TooltipTrigger>
 
-              <TooltipContent className="bg-gray-900 px-2 text-slate-300 rounded-md py-1 shadow-md" sideOffset={5}>
+              <TooltipContent
+                className="rounded-md bg-gray-900 px-2 py-1 text-slate-300 shadow-md"
+                sideOffset={5}
+              >
                 Coming Soon
               </TooltipContent>
             </Tooltip>
@@ -267,7 +277,9 @@ const UploadCv: FC = (): ReactElement => {
                   </Select>
                   <Button
                     className="text-sm font-normal"
-                    onClick={() => setIsModalOpen(MODAL_ENUM.THIRD_PARTY_CV, true)}
+                    onClick={() =>
+                      setIsModalOpen(MODAL_ENUM.THIRD_PARTY_CV, true)
+                    }
                     // temporary disabled, while focus on upload from device
                     disabled
                   >
@@ -276,15 +288,23 @@ const UploadCv: FC = (): ReactElement => {
                 </div>
               </TooltipTrigger>
 
-              <TooltipContent className="bg-gray-900 px-2 text-slate-300 rounded-md py-1 shadow-md" sideOffset={5}>
+              <TooltipContent
+                className="rounded-md bg-gray-900 px-2 py-1 text-slate-300 shadow-md"
+                sideOffset={5}
+              >
                 Coming Soon
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
       </div>
-      <div className={`flex ${tableItems.length < 3 ? 'flex-1 h-full' : 'h-fit'} w-full flex-col items-center rounded-md bg-white px-1 py-6`}>
-        <TableCV<UploadCVData> data={tableItems} columns={columns} totalItems={files.length} dataFrom="Device" />
+      <div className="flex h-full w-full flex-1 flex-col items-center rounded-md bg-white px-1 py-6">
+        <TableCV<UploadCVData>
+          data={tableItems}
+          columns={columns}
+          totalItems={files.length}
+          dataFrom="Device"
+        />
       </div>
       <div className="flex w-full justify-between rounded-md bg-white px-4 py-5">
         <Button

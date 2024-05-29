@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { PictureInPicture2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Fragment, forwardRef, useRef, useState } from 'react';
 import { Button } from '../ui/button';
@@ -24,12 +24,16 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter' || e.key === ',') {
         e.preventDefault();
-        const newTag = inputValue.trim();
-        if (newTag && !tags.includes(newTag)) {
-          setTags([...tags, newTag]);
-        }
-        setInputValue('');
+        addTag();
       }
+    };
+
+    const addTag = () => {
+      const newTag = inputValue.trim();
+      if (newTag && !tags.includes(newTag)) {
+        setTags([...tags, newTag]);
+      }
+      setInputValue('');
     };
 
     const removeTag = (tagToRemove: string) => {
@@ -41,35 +45,38 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
         <div
           className={`flex w-full flex-wrap gap-2 rounded-md ${tags.length !== 0 && 'mb-3'}`}
         >
-          <div className="flex w-full flex-row flex-wrap gap-y-2 items-center gap-x-2 rounded-lg border-2 p-2">
-            <div className="flex flex-wrap gap-2 w-fit">
-              {tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="inline-flex h-8 items-center w-fit truncate rounded-md border bg-secondary pl-2 text-sm text-secondary-foreground transition-all hover:bg-secondary/80"
-                >
-                  {tag}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => removeTag(tag)}
-                    className={cn('h-full px-3 py-1 hover:bg-transparent')}
-                  >
-                    <X size={14} />
-                  </Button>
-                </span>
-              ))}
-            <Input
-              ref={inputRef}
-              type="text"
-              placeholder={placeholder}
-              value={inputValue}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              className="border-none px-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-            />
+          <div className="mb-3 flex w-full flex-col flex-wrap items-center gap-y-4 rounded-lg border p-2">
+            <div className="flex w-full items-center gap-x-2">
+              <PictureInPicture2 className="size-4 text-primary" />
+              <Input
+                ref={inputRef}
+                type="text"
+                placeholder={placeholder}
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                className="h-auto border-none p-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+              />
             </div>
+            {inputValue.length > 2 && (
+              <Button className="w-full" onClick={addTag}>
+                New Add
+              </Button>
+            )}
           </div>
+          {tags.map((tag, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <div className="relative flex h-fit min-w-16 items-center gap-2 rounded-md  bg-primary px-2 py-1 text-sm capitalize">
+                <p className="text-center text-white">{tag}</p>
+                <div
+                  onClick={() => removeTag(tag)}
+                  className="absolute -right-2 -top-2 z-10 flex size-4 cursor-pointer items-center justify-center  rounded-full bg-slate-400"
+                >
+                  <X className="size-3 text-white" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </Fragment>
     );

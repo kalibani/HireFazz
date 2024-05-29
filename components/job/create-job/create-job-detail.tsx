@@ -70,9 +70,9 @@ type AutoGenerateType =
   | 'requirement';
 
 interface DetailItem {
-  value: string
-  checked: boolean
-  hidden?: boolean
+  value: string;
+  checked: boolean;
+  hidden?: boolean;
 }
 
 const headerMap: Record<AutoGenerateType, string> = {
@@ -92,7 +92,9 @@ const CreateJobDetail = () => {
   const [listOfEditor, setListOfEditor] = useState<string[]>(['']);
   const [mount, setMount] = useState<boolean>(false);
   const [loadingState, setLoadingState] = useState<LoadingState>({});
-  const [checkedSkillsList, setCheckedSkillsList] = useState<Set<string>>(new Set())
+  const [checkedSkillsList, setCheckedSkillsList] = useState<Set<string>>(
+    new Set(),
+  );
   const { companyName, currency, experiences, location, title, workModel } =
     dataCreateJob;
   useEffect(() => {
@@ -134,7 +136,6 @@ const CreateJobDetail = () => {
             dataCreateJob.title,
           );
           let skillSet: string[] = [];
-          console.log({ skillResult }, '<<<<<');
 
           // skill result can either be: string, array, object
           // modify if there is new case
@@ -153,31 +154,33 @@ const CreateJobDetail = () => {
             value: skill,
             // initial checked if already existed in editor
             checked: checkedSkillsList.has(skill),
-          }))
+          }));
           handleChange('skill', preparedSkillResult);
           setLoadingState((value) => ({ ...value, skill: false }));
           break;
         case 'responsibilities':
           const { result: responsibilitiesResult } =
             await generateResponsibilities(dataCreateJob);
-          console.log({ responsibilitiesResult }, '<<<<<');
           // make it as array of object, so we can utilize checkbox functionality
-          const preparedResponsibilitiesResult = responsibilitiesResult.map((responsibility: string) => ({
-            value: responsibility,
-            checked: false,
-          }))
+          const preparedResponsibilitiesResult = responsibilitiesResult.map(
+            (responsibility: string) => ({
+              value: responsibility,
+              checked: false,
+            }),
+          );
           handleChange('responsibilities', preparedResponsibilitiesResult);
           setLoadingState((value) => ({ ...value, responsibilities: false }));
           break;
         case 'requirement':
           const { result: requirementResult } =
             await generateRequirement(dataCreateJob);
-          console.log({ requirementResult }, '<<<<<');
           // make it as array of object, so we can utilize checkbox functionality
-          const preparedRequirementResult = requirementResult.map((requirement: string) => ({
-            value: requirement,
-            checked: false,
-          }))
+          const preparedRequirementResult = requirementResult.map(
+            (requirement: string) => ({
+              value: requirement,
+              checked: false,
+            }),
+          );
 
           handleChange('requirement', preparedRequirementResult);
           setLoadingState((value) => ({ ...value, requirement: false }));
@@ -203,24 +206,30 @@ const CreateJobDetail = () => {
           newListOfEditor[0] = htmlDescription;
           break;
         case 'skill':
-          renderSkilltoEditor(Array.from(checkedSkillsList))
+          renderSkilltoEditor(Array.from(checkedSkillsList));
           break;
         case 'responsibilities':
-          const checkedResponsibilities = state[type].filter((responsibility: DetailItem) => responsibility.checked).map((item: DetailItem) => item.value)
-          const listOfResponsiblities = generateHtmlList(checkedResponsibilities)
+          const checkedResponsibilities = state[type]
+            .filter((responsibility: DetailItem) => responsibility.checked)
+            .map((item: DetailItem) => item.value);
+          const listOfResponsiblities = generateHtmlList(
+            checkedResponsibilities,
+          );
           if (listOfResponsiblities.length) {
             newListOfEditor[2] = `<p><strong>${headerMap[type]} :</strong></p>${listOfResponsiblities}<br/>`;
           } else {
-            newListOfEditor[2] = ''
+            newListOfEditor[2] = '';
           }
           break;
         case 'requirement':
-          const checkedRequirements = state[type].filter((requirement: DetailItem) => requirement.checked).map((item: DetailItem) => item.value)
-          const listOfRequirement = generateHtmlList(checkedRequirements)
+          const checkedRequirements = state[type]
+            .filter((requirement: DetailItem) => requirement.checked)
+            .map((item: DetailItem) => item.value);
+          const listOfRequirement = generateHtmlList(checkedRequirements);
           if (listOfRequirement.length) {
             newListOfEditor[3] = `<p><strong>${headerMap[type]} :</strong></p>${listOfRequirement}<br/>`;
           } else {
-            newListOfEditor[3] = ''
+            newListOfEditor[3] = '';
           }
           break;
         default:
@@ -231,14 +240,14 @@ const CreateJobDetail = () => {
   };
 
   const generateHtmlList = (arr: string[]) => {
-    if (!arr.length) return ''
+    if (!arr.length) return '';
     const value = `
       <ul>
         ${arr.map((item) => `<li>${item}</li>`).join('')}
       </ul>
-    `
-    return value
-  }
+    `;
+    return value;
+  };
 
   const nextStep = () => {
     setFormDetailJob(value);
@@ -253,74 +262,81 @@ const CreateJobDetail = () => {
     return <Loader />;
   }
 
-  const updateCheckData = (type: AutoGenerateType, idx: number, isChecked: boolean) => {
-    const newData = [...state[type]]
-    if (!newData.length) return
+  const updateCheckData = (
+    type: AutoGenerateType,
+    idx: number,
+    isChecked: boolean,
+  ) => {
+    const newData = [...state[type]];
+    if (!newData.length) return;
 
-    newData[idx].checked = isChecked
-    handleChange(type, newData)
-    
+    newData[idx].checked = isChecked;
+    handleChange(type, newData);
+
     if (type === 'skill') {
-      const newSet = new Set(checkedSkillsList)
+      const newSet = new Set(checkedSkillsList);
       if (isChecked) {
-        newSet.add(newData[idx].value)
+        newSet.add(newData[idx].value);
       } else {
-        newSet.delete(newData[idx].value)
+        newSet.delete(newData[idx].value);
       }
-      setCheckedSkillsList(newSet)
-      renderSkilltoEditor(Array.from(newSet))
+      setCheckedSkillsList(newSet);
+      renderSkilltoEditor(Array.from(newSet));
     }
-  }
+  };
 
   const handleDeleteSkill = (item: string) => {
     const newSkill = state.skill.map((skill: DetailItem) => {
       if (skill.value === item) {
         return {
           ...skill,
-          hidden: true
-        }
+          hidden: true,
+        };
       } else {
-        return skill
+        return skill;
       }
-    })
+    });
     handleChange('skill', newSkill);
-    
-  }
+  };
 
   const renderSkilltoEditor = (skill: string[]) => {
-        setListOfEditor((prev: string[]) => {
-          const newListOfEditor = [...prev]
-          const checkedSkills = skill
-          const listOfSkill = generateHtmlList(checkedSkills)
-          const skillHtml = `<p><strong>${headerMap['skill']} :</strong></p>${listOfSkill}<br/>`;
-          if (listOfSkill.length) {
-            newListOfEditor[1] = skillHtml;
-          } else {
-            newListOfEditor[1] = ''
-          }
-          return newListOfEditor
-        })
-  }
+    setListOfEditor((prev: string[]) => {
+      const newListOfEditor = [...prev];
+      const checkedSkills = skill;
+      const listOfSkill = generateHtmlList(checkedSkills);
+      const skillHtml = `<p><strong>${headerMap['skill']} :</strong></p>${listOfSkill}<br/>`;
+      if (listOfSkill.length) {
+        newListOfEditor[1] = skillHtml;
+      } else {
+        newListOfEditor[1] = '';
+      }
+      return newListOfEditor;
+    });
+  };
 
   // to display content from dataAccordion, output: accordion content base on data type
   const getContent = (type: AutoGenerateType) => {
     if (!state[type].length) {
       return (
-        <div className="flex flex-col gap-3 min-h-[218px] w-full flex-wrap overflow-y-auto rounded-sm bg-white p-2">
-           <span>Click Generate button</span>
+        <div className="flex min-h-[218px] w-full flex-col flex-wrap gap-3 overflow-y-auto rounded-sm bg-white p-2">
+          <span>Click Generate button</span>
         </div>
-      )
+      );
     }
 
     // skills to render list of button that will directly update the text editor when click (base on last checked status in data)
     if (type === 'skill') {
       return (
-        <div className="flex flex-col gap-3 min-h-[218px] w-full flex-wrap overflow-y-auto rounded-sm bg-white p-2">
+        <div className="flex min-h-[218px] w-full flex-col flex-wrap gap-3 overflow-y-auto rounded-sm bg-white p-2">
           {state[type].map((data: DetailItem, idx: number) => {
-            if (data.hidden) return null
+            if (data.hidden) return null;
             return (
-              <div key={data.value + idx} className="flex gap-2 items-center">
-                <Button className="relative flex gap-2 h-fit items-center text-left" variant={data.checked ? 'default' : 'outline'} onClick={() => updateCheckData(type, idx, !data.checked)}>
+              <div key={data.value + idx} className="flex items-center gap-2">
+                <Button
+                  className="relative flex h-fit items-center gap-2 text-left"
+                  variant={data.checked ? 'default' : 'outline'}
+                  onClick={() => updateCheckData(type, idx, !data.checked)}
+                >
                   {data.checked ? (
                     <CheckIcon className="size-4 shrink-0" />
                   ) : (
@@ -328,33 +344,39 @@ const CreateJobDetail = () => {
                   )}
                   <span>{data.value}</span>
 
-                  <div className="absolute -top-2 -right-2 z-10 size-4 flex justify-center items-center bg-slate-300 rounded-full" onClick={(e) => {
-                      e.stopPropagation()
-                      handleDeleteSkill(data.value)
+                  <div
+                    className="absolute -right-2 -top-2 z-10 flex size-4 items-center justify-center rounded-full bg-slate-300"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteSkill(data.value);
                     }}
                   >
                     <X className="size-3" />
                   </div>
                 </Button>
               </div>
-            )
+            );
           })}
         </div>
-      )
+      );
     }
 
     return (
-      <div className="flex flex-col gap-3 min-h-[218px] w-full flex-wrap overflow-y-auto rounded-sm bg-white p-2">
+      <div className="flex min-h-[218px] w-full flex-col flex-wrap gap-3 overflow-y-auto rounded-sm bg-white p-2">
         {state[type].map((data: DetailItem, idx: number) => {
           return (
-            <div key={idx} className="flex gap-2 items-center">
-              <Checkbox onCheckedChange={(checked) => updateCheckData(type, idx, Boolean(checked))} />
+            <div key={idx} className="flex items-center gap-2">
+              <Checkbox
+                onCheckedChange={(checked) =>
+                  updateCheckData(type, idx, Boolean(checked))
+                }
+              />
               <span>{data.value}</span>
             </div>
-          )
+          );
         })}
       </div>
-    )
+    );
   };
 
   const handleAccordionOpen = (type: AutoGenerateType) => {
@@ -364,10 +386,10 @@ const CreateJobDetail = () => {
   };
 
   return (
-    <div className="flex w-full h-full flex-1 flex-col items-center overflow-y-scroll rounded-md bg-white py-8">
-      <div className="w-full h-full flex flex-col items-center justify-center overflow-y-auto px-12 py-4">
+    <div className="flex h-full w-full flex-1 flex-col items-center overflow-y-scroll rounded-md bg-white py-8">
+      <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto px-12 py-4">
         <div className="flex h-full w-full gap-x-3">
-          <div className="h-full max-w-[445px] w-full space-y-2 overflow-y-auto">
+          <div className="h-full w-full max-w-[445px] space-y-2 overflow-y-auto">
             <div className="overflow-hidden rounded-md border">
               <div className="border-b p-4">
                 <div className="flex items-center gap-2">
@@ -458,7 +480,8 @@ const CreateJobDetail = () => {
                             onClick={() => addToEditor(type)}
                             disabled={isPending}
                           >
-                            Add to Editor <ArrowRight className="ml-1 h-4 w-4" />
+                            Add to Editor{' '}
+                            <ArrowRight className="ml-1 h-4 w-4" />
                           </Button>
                         )}
                       </div>
@@ -470,7 +493,7 @@ const CreateJobDetail = () => {
           </div>
 
           <div className="flex flex-1 flex-col gap-y-4">
-            <div className="flex-1 w-full rounded-md bg-white">
+            <div className="w-full flex-1 rounded-md bg-white">
               <ReactQuill
                 //@ts-ignore
                 theme="snow"
