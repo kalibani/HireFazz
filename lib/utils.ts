@@ -164,7 +164,6 @@ export const truncateString = (str: string, maxLen: number) => {
   const truncated = value.slice(0, maxLen);
 
   const isOverflow = value.length > truncated.length;
-  console.log('isOV', isOverflow, value, truncateString);
 
   return isOverflow ? `${truncated}...` : str;
 };
