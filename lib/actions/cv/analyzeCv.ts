@@ -66,47 +66,57 @@ export const analyzeCv = async ({
         pineconeIndex,
         namespace: cvAnalyze.id,
       });
-      const results = await vectorStore.similaritySearch(job.jobDescription, 4);
+
+      const formatKeyFocus = (keyFocus: string[]): string => {
+        if (keyFocus.length === 0) return 'keyFocus: None';
+        const formatted = keyFocus.join(', ');
+        return `key focus: ${formatted}`;
+      };
+      const results = await vectorStore.similaritySearch(
+        `${job.jobDescription}, ${formatKeyFocus}`,
+        4,
+      );
       const response = await openai.chat.completions.create({
-        model: 'gpt-4-0125-preview',
-        temperature: 0,
+        model: 'gpt-4o',
+        temperature: 0.75,
         // stream: true,
         response_format: { type: 'json_object' },
         messages: [
           {
             role: 'system',
-            content: `Use the following steps to analyze the CV document based on the requirements provided. Please restate each step before proceeding.
-            
-                Step 1: List all the job description and requirements specified by the user.
-                
-                Step 2: Analyze the CV document to identify information related to the job descriptions and requirements listed in Step 1. Extract all the relevant details.
-                
-                Step 3: Calculate the match percentage based on how many of the listed requirements are met by the information found in the CV. The calculation should consider all aspects, with particular emphasis on experience and skills. The match percentage should reflect the degree to which the CV meets the job requirements.
-                
-                Step 4: Provide a brief reason for the match percentage, focusing on key areas where the CV aligns with or diverges from the job descriptions and requirements. This explanation should not exceed 100 words. If the job descriptions and requirement is not clear then return The requirements are not clearly defined.
+            content: `
+                 Use the following steps to analyze the CV document based on the provided job description and requirements. Please restate each step before proceeding.
 
-                Step 5: Detect what language is used on the job descriptions and requirements. The reason of the match percentage should use the same language as used in requirements, if the requirements is on English then use English, if the requirements is on Indonesian Language then use Indonesian Language.
+     Step 1: List all the job descriptions and requirements specified by the user. key focus
 
-                Step 6: Output a JSON object structured like: 
+     Step 2: Analyze the CV document, prioritizing the key focus areas if available. If the key focus areas do not provide sufficient data, use the job description and requirements. Extract all relevant details.
 
-                {
-                  "documentOwner": "Name of the CV owner or document author. If the documentOwner is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
-                  "matchedPercentage": "calculated match percentage, should in integer format without % symbol",
-                  "reason": "brief explanation of the match percentage"
-                  "email": "email of the CV owner or document author. If the email is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
-                  "location": "location of the CV owner or document author. If the location is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
-                  "experience": "experience of the CV owner or document author. If the experience is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
-                  "skills": "skills of the CV owner or document author divide by "-". If the skills are not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
-                  "education": "last education of the CV owner or document author. If the education is not specified, just return empty string like ''. Do not return Not Specified or Anonymous",
-                }
-                `,
+     Step 3: Calculate the match percentage based on how many of the listed requirements are met by the information found in the CV. The calculation should consider all aspects, with particular emphasis on experience and skills. The match percentage should reflect the degree to which the CV meets the job requirements.
+
+     Step 4: Provide a brief reason for the match percentage, focusing on key areas where the CV aligns with or diverges from the job descriptions and requirements. This explanation should not exceed 100 words. If the job descriptions and requirements are not clear, return "The requirements are not clearly defined."
+
+     Step 5: Detect the language used in the job descriptions and requirements. The reason for the match percentage should use the same language as the requirements. If the requirements are in English, use English. If the requirements are in Indonesian, use Indonesian.
+
+     Step 6: Output a JSON object structured as follows:
+
+     {
+       "documentOwner": "Name of the CV owner or document author. If the documentOwner is not specified, just return an empty string like ''. Do not return 'Not Specified' or 'Anonymous'.",
+       "matchedPercentage": "Calculated match percentage in integer format without % symbol.",
+       "reason": "Brief explanation of the match percentage.",
+       "email": "Email of the CV owner or document author. If the email is not specified, just return an empty string like ''. Do not return 'Not Specified' or 'Anonymous'.",
+       "location": "Location of the CV owner or document author. If the location is not specified, just return an empty string like ''. Do not return 'Not Specified' or 'Anonymous'.",
+       "experience": "Experience of the CV owner or document author. If the experience is not specified, just return an empty string like ''. Do not return 'Not Specified' or 'Anonymous'.",
+       "skills": "Skills of the CV owner or document author, separated by '-'. If the skills are not specified, just return an empty string like ''. Do not return 'Not Specified' or 'Anonymous'.",
+       "education": "Last education of the CV owner or document author. If the education is not specified, just return an empty string like ''. Do not return 'Not Specified' or 'Anonymous'."
+     }
+            `,
           },
           {
             role: 'user',
             content: `CV Document:
         ${results.map((r) => r.pageContent).join('\n\n')}
-        
-        User Input: ${job.jobDescription}
+
+        User Input: ${(job.jobDescription, job.keyFocus)}
         `,
           },
         ],

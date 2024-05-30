@@ -262,12 +262,14 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   return (
     <section className="flex flex-1 flex-col gap-y-3 overflow-y-scroll">
       <div className="flex h-full w-full flex-col items-center justify-start gap-y-8 rounded-lg bg-white p-8">
-        <div className="flex w-1/2 flex-col items-center gap-y-4 rounded-md bg-yellow-200 p-4 text-sm font-normal capitalize italic">
-          <p>
-            To proceed with the analysis,{' '}
-            <strong>please upload your CV files.</strong> Thank you!
-          </p>
-        </div>
+        {files.length === 0 && (
+          <div className="flex w-1/2 flex-col items-center gap-y-4 rounded-md bg-yellow-200 p-4 text-sm font-normal capitalize italic">
+            <p>
+              To proceed with the analysis,{' '}
+              <strong>please upload your CV files.</strong> Thank you!
+            </p>
+          </div>
+        )}
         <Form {...form}>
           <form className="flex w-1/2 flex-col items-center gap-y-4">
             <div className="flex w-full items-center gap-x-4">
