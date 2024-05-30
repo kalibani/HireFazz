@@ -168,6 +168,7 @@ const schema = z.object({
   language: z.string(),
   matchPercentage: z.string(),
 });
+const percentages = [10, 20, 30, 40, 50, 60, 70, 80];
 
 const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   const form = useForm<z.infer<typeof schema>>({
@@ -422,15 +423,16 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                                 />
                               </SelectTrigger>
                             </FormControl>
+
                             <SelectContent>
-                              <SelectItem value="10">10%</SelectItem>
-                              <SelectItem value="20">20%</SelectItem>
-                              <SelectItem value="30">30%</SelectItem>
-                              <SelectItem value="40">40%</SelectItem>
-                              <SelectItem value="50">50%</SelectItem>
-                              <SelectItem value="60">60%</SelectItem>
-                              <SelectItem value="70">70%</SelectItem>
-                              <SelectItem value="80">80%</SelectItem>
+                              {percentages.map((percentage) => (
+                                <SelectItem
+                                  key={percentage}
+                                  value={percentage.toString()}
+                                >
+                                  {percentage}%
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </FormItem>
