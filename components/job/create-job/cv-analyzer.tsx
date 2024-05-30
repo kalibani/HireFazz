@@ -211,8 +211,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
         keyFocus: form.watch('keyFocus'),
       };
       const job = await createJob(createPayload, formData);
-      const resJobid = job?.id;
-      setJobId(resJobid);
+      setJobId(job?.id);
     }
   };
 
