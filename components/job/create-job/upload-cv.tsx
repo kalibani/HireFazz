@@ -35,9 +35,6 @@ const UploadCv: FC = (): ReactElement => {
     handleDeleteFile,
     handleUploadButtonClick,
     setStep,
-    dataCreateJob,
-    dataDetailJob,
-    totalSize,
   } = useFormStepStore((state) => state);
   const { setIsModalOpen } = usePopupModal();
   const [tableItems, setTableItems] = useState<FormStepState['files']>([]);
@@ -317,7 +314,6 @@ const UploadCv: FC = (): ReactElement => {
         <Button
           className="min-w-32"
           onClick={handleNext}
-          disabled={files.length <= 0}
         >
           Next
         </Button>
