@@ -64,6 +64,12 @@ import {
   TooltipTrigger,
 } from '@radix-ui/react-tooltip';
 import { Tooltip } from '@/components/ui/tooltip';
+import { Accordion } from '@radix-ui/react-accordion';
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -166,6 +172,9 @@ const schema = z.object({
 const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      analyzeCv: true,
+    },
   });
   const [jobId, setJobId] = useState<string>('');
 
@@ -205,8 +214,6 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
       setJobId(resJobid);
     }
   };
-
-  const customCriteria = form.watch('customCriteria');
 
   const router = useRouter();
 
@@ -255,7 +262,12 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   return (
     <section className="flex flex-1 flex-col gap-y-3 overflow-y-scroll">
       <div className="flex h-full w-full flex-col items-center justify-start gap-y-8 rounded-lg bg-white p-8">
-        <div className="flex w-1/2 flex-col items-center gap-y-4"></div>
+        <div className="flex w-1/2 flex-col items-center gap-y-4 rounded-md bg-yellow-200 p-4 text-sm font-normal capitalize italic">
+          <p>
+            To proceed with the analysis,{' '}
+            <strong>please upload your CV files.</strong> Thank you!
+          </p>
+        </div>
         <Form {...form}>
           <form className="flex w-1/2 flex-col items-center gap-y-4">
             <div className="flex w-full items-center gap-x-4">
@@ -299,151 +311,135 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
               </div>
             </div>
 
-            <FormField
-              control={form.control}
-              name="customCriteria"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Custom Criteria ( You can reshape Custom criteria on AI  CV analyzer )" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="">
-                        Custom Criteria ( You can reshape Custom criteria on AI
-                        CV analyzer )
-                      </SelectItem>
-                      <SelectItem value="custom-criteria">
-                        Custom Criteria
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-
-            {customCriteria === 'custom-criteria' && (
-              <>
-                <div className="flex w-full flex-col gap-y-4">
-                  <FormField
-                    control={form.control}
-                    name="keyFocus"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel className="flex items-center gap-x-2 py-2">
-                          Key Focus
-                        </FormLabel>
-                        <FormControl>
-                          <TagInput
-                            {...field}
-                            tags={tags}
-                            className="sm:min-w-[450px]"
-                            setTags={(newTags) => {
-                              setTags(newTags);
-                              form.setValue(
-                                'keyFocus',
-                                newTags as [string, ...string[]],
-                              );
-                            }}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="flex w-full gap-x-4">
-                  <FormField
-                    control={form.control}
-                    name="language"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel className="flex items-center gap-x-2 py-2">
-                          Language AI{' '}
-                          <HoverCard>
-                            <HoverCardTrigger>
-                              <IconQuestionMark />
-                            </HoverCardTrigger>
-                            <HoverCardContent className="h-fit w-[160px] rounded-lg border border-slate-400 p-3">
-                              <span className="text-left text-xs text-slate-400">
-                                Language to use on the reason of the CV Score
-                              </span>
-                            </HoverCardContent>
-                          </HoverCard>
-                        </FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full rounded-md border px-4"
+            >
+              <AccordionItem value="customCriteria" className="border-b-0">
+                <AccordionTrigger className="h-0 text-sm font-normal hover:no-underline ">
+                  Custom Criteria ( You can reshape Custom criteria on AI CV
+                  analyzer )
+                </AccordionTrigger>
+                <AccordionContent className="mt-4">
+                  <div className="flex w-full flex-col gap-y-4">
+                    <FormField
+                      control={form.control}
+                      name="keyFocus"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel className="flex items-center gap-x-2 py-2">
+                            Key Focus
+                          </FormLabel>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                defaultValue={'indonesia'}
-                                placeholder="Indonesia"
-                              />
-                            </SelectTrigger>
+                            <TagInput
+                              {...field}
+                              tags={tags}
+                              className="sm:min-w-[450px]"
+                              setTags={(newTags) => {
+                                setTags(newTags);
+                                form.setValue(
+                                  'keyFocus',
+                                  newTags as [string, ...string[]],
+                                );
+                              }}
+                            />
                           </FormControl>
-                          <SelectContent>
-                            <SelectItem value="indonesia">Indonesia</SelectItem>
-                            <SelectItem value="english">English</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="matchPercentage"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel className="flex items-center gap-x-2 py-2">
-                          Set Match Percentage{' '}
-                          <HoverCard>
-                            <HoverCardTrigger>
-                              <IconQuestionMark />
-                            </HoverCardTrigger>
-                            <HoverCardContent className="h-fit w-[160px] rounded-lg border border-slate-400 p-3">
-                              <span className="text-left text-xs text-slate-400">
-                                Minimum required percentage match between the CV
-                                and job specifications
-                              </span>
-                            </HoverCardContent>
-                          </HoverCard>
-                        </FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                defaultValue={60}
-                                placeholder="60%"
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="10">10%</SelectItem>
-                            <SelectItem value="20">20%</SelectItem>
-                            <SelectItem value="30">30%</SelectItem>
-                            <SelectItem value="40">40%</SelectItem>
-                            <SelectItem value="50">50%</SelectItem>
-                            <SelectItem value="60">60%</SelectItem>
-                            <SelectItem value="70">70%</SelectItem>
-                            <SelectItem value="80">80%</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </>
-            )}
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="mt-4 flex w-full gap-x-4">
+                    <FormField
+                      control={form.control}
+                      name="language"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel className="flex items-center gap-x-2 py-2">
+                            Language AI{' '}
+                            <HoverCard>
+                              <HoverCardTrigger>
+                                <IconQuestionMark />
+                              </HoverCardTrigger>
+                              <HoverCardContent className="h-fit w-[160px] rounded-lg border border-slate-400 p-3">
+                                <span className="text-left text-xs text-slate-400">
+                                  Language to use on the reason of the CV Score
+                                </span>
+                              </HoverCardContent>
+                            </HoverCard>
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  defaultValue={'indonesia'}
+                                  placeholder="Indonesia"
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="indonesia">
+                                Indonesia
+                              </SelectItem>
+                              <SelectItem value="english">English</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="matchPercentage"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel className="flex items-center gap-x-2 py-2">
+                            Set Match Percentage{' '}
+                            <HoverCard>
+                              <HoverCardTrigger>
+                                <IconQuestionMark />
+                              </HoverCardTrigger>
+                              <HoverCardContent className="h-fit w-[160px] rounded-lg border border-slate-400 p-3">
+                                <span className="text-left text-xs text-slate-400">
+                                  Minimum required percentage match between the
+                                  CV and job specifications
+                                </span>
+                              </HoverCardContent>
+                            </HoverCard>
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  defaultValue={60}
+                                  placeholder="60%"
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="10">10%</SelectItem>
+                              <SelectItem value="20">20%</SelectItem>
+                              <SelectItem value="30">30%</SelectItem>
+                              <SelectItem value="40">40%</SelectItem>
+                              <SelectItem value="50">50%</SelectItem>
+                              <SelectItem value="60">60%</SelectItem>
+                              <SelectItem value="70">70%</SelectItem>
+                              <SelectItem value="80">80%</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
 
             <div className="flex w-full items-center gap-x-4">
               <FormField
@@ -483,6 +479,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
           </Button>
           <DialogTrigger asChild>
             <Button
+              disabled={files.length === 0}
               onClick={() => {
                 isUpdate
                   ? updateJobCvs(
