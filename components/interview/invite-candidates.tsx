@@ -146,7 +146,7 @@ const InviteCandidates = ({
           .then(async (data) => console.log(data?.success))
           .catch((error) => console.log(error))
           .finally(() => {
-            push(`/${orgId}/video`);
+            push(`${pathname}/video?tab=candidates`);
           });
       });
     }

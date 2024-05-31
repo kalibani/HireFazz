@@ -8,14 +8,17 @@ import dashboard from '@/public/icon/icon-banner-dashboard.svg';
 import { TCandidateListSchema, TInterview } from '@/lib/validators/interview';
 import getCandidates from '@/lib/actions/interview/getCandidates';
 import CandidatesCard from '@/components/interview/candidate-card';
+import { FC } from 'react';
+import TriggerTab from '@/components/interview/trigger-tab';
 
-const Page = async ({ params }: ParamsProps) => {
+const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
   const interviews = (await getTemplateInterview({
     organizationId: params.orgId,
   })) as TInterview[];
   const candidates = (await getCandidates({
     id: params.orgId,
   })) as TCandidateListSchema[];
+
   return (
     <>
       <Banner
@@ -25,28 +28,14 @@ const Page = async ({ params }: ParamsProps) => {
         src={dashboard}
         isButton={false}
       />
-      <Tabs defaultValue="candidates">
+      <Tabs defaultValue={searchParams.tab || 'candidates'}>
         <div className="mb-8 flex flex-col  rounded-md bg-white p-4">
           <h3 className="text-2xl font-semibold">List Automatic Interview</h3>
           <p className="text-sm font-normal text-slate-400">
             There is automatic has been created.
           </p>
         </div>
-
-        <TabsList className="h-auto rounded-none p-0">
-          <TabsTrigger
-            value="candidates"
-            className="rounded-none rounded-tr-md py-3 focus-visible:ring-0 focus-visible:ring-offset-0"
-          >
-            Interview Candidates
-          </TabsTrigger>
-          <TabsTrigger
-            value="template"
-            className="rounded-none rounded-tr-md py-3"
-          >
-            Template Interview
-          </TabsTrigger>
-        </TabsList>
+        <TriggerTab />
         <TabsContent value="candidates" className="mt-0 bg-white p-4">
           <FilterListInterview orgId={params.orgId} />
           <div className="my-4 w-full ">

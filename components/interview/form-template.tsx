@@ -60,6 +60,7 @@ const FormTemplate = ({
   });
 
   const { replace } = useRouter();
+
   const {
     introVideoUrl,
     questions,
@@ -71,21 +72,16 @@ const FormTemplate = ({
   } = useRecorderStore();
   const [isPending, startTransition] = useTransition();
 
-  const updateTemplate = useCallback(
-    async (payload: any) => {
-      const data = await updateTemplateInterview(payload);
-      if (data?.success && !isPending) {
-        replace(`/${orgId}/video`);
+  const templateHandler = useCallback(
+    async (payload: any, id?: string) => {
+      let data;
+      if (id) {
+        data = await updateTemplateInterview({ ...payload, id });
+      } else {
+        data = await createTemplateInterview(payload);
       }
-    },
-    [isPending, orgId, replace],
-  );
-
-  const createTemplate = useCallback(
-    async (payload: any) => {
-      const data = await createTemplateInterview(payload);
       if (data && !isPending) {
-        replace(`/${orgId}/video`);
+        replace(`/${orgId}/video?tab=template`);
       }
     },
     [isPending, orgId, replace],
@@ -182,11 +178,7 @@ const FormTemplate = ({
             descriptionIntro,
           };
 
-          if (!queryId) {
-            createTemplate(payload);
-          } else {
-            updateTemplate({ ...payload, id: queryId });
-          }
+          templateHandler(payload, queryId);
         } catch (error) {
           errorHandler(error);
         }
