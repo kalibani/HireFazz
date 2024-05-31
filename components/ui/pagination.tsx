@@ -1,5 +1,5 @@
 'use client'
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Button } from './button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 import { PER_PAGE_ITEMS } from '@/constant'
@@ -13,16 +13,13 @@ interface PaginationProps {
 
 const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage, onPageChange }) => {
   const [page, setPage] = useState(1)
-  const isInitialPageSetted = useRef(false)
   const totalPage = Math.ceil(totalItems / itemsPerPage)
   const prevDisable = page === 1 || totalPage === 0
   const nextDisable = page === totalPage || totalPage === 0
 
   useEffect(() => {
-    // if there is initial page, then set the page to initial page only once
-    if (activePage && !isInitialPageSetted.current) {
+    if (activePage) {
       setPage(activePage)
-      isInitialPageSetted.current = true
     }
   }, [activePage])
 

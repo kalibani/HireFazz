@@ -33,7 +33,7 @@ interface TableCVProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   dataFrom?: string;
-  totalItems?: number
+  totalItems: number
 }
 
 const TableCV = <T,>(props: TableCVProps<T>) => {
@@ -77,6 +77,11 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
     const params = new URLSearchParams(searchParams);
     if (value) {
       params.set(type, value);
+
+      // set to first page if item per page or search is changes
+      if (type === 'per_page' || type === 'search') {
+        params.set('page', '1')
+      } 
     } else {
       params.delete(type);
     }
@@ -87,9 +92,9 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
     <div className="flex w-full flex-col gap-3 h-full">
       <div className="mx-5 flex items-center gap-2">
         <FileSearchIcon className="text-red-500" />
-        {!!data.length && jobTitle ? (
+        {!!props.totalItems && jobTitle ? (
           <p>
-            There is <b>{data.length} CVs</b> has been added with job tittle{' '}
+            There is <b>{props.totalItems} CVs</b> has been added with job tittle{' '}
             <b>
               “{jobTitle}” from {dataFrom}
             </b>{' '}
@@ -161,7 +166,8 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
       <div className="px-4 py-1">
         <PaginationGroup
           perPage={Number(perPage || '10')}
-          totalItems={props.totalItems || data.length}
+          // if there is filter, use total filtered data, if no: use total items
+          totalItems={!query?.length ? props.totalItems : data.length}
           activePage={currPage ? Number(currPage) : undefined}
           handlePagination={handleSearch}
         />

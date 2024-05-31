@@ -263,6 +263,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   const handlePagination = (type: 'per_page' | 'page', value: string) => {
     if (type === 'per_page') {
       setPerPage(Number(value));
+      setActivePage(1)
     } else {
       setActivePage(Number(value));
     }

@@ -212,6 +212,11 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
     const params = new URLSearchParams(searchParams);
     if (value) {
       params.set(query, value);
+
+      // set page to 1 if change item in page
+      if (query === 'per_page') {
+        params.set('page', '1')
+      }
     } else {
       params.delete(query);
     }
