@@ -74,6 +74,12 @@ const CandidatesCard = ({
               >
                 Update Status
               </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={(e) => updateStatusHandler(dataSource.id, e)}
+              >
+                Add Candidates
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
