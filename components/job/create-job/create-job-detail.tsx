@@ -22,6 +22,7 @@ import {
 import dynamic from 'next/dynamic';
 import { Loader } from '@/components/share';
 import { Checkbox } from '@/components/ui/checkbox';
+import { errorToast } from '@/components/toasterProvider';
 
 const ReactQuill = dynamic(
   () => import('react-quill'),
@@ -83,7 +84,7 @@ const headerMap: Record<AutoGenerateType, string> = {
 };
 
 const CreateJobDetail = () => {
-  const { setStep, setFormDetailJob, dataCreateJob } = useFormStepStore(
+  const { setStep, setFormDetailJob, dataCreateJob, dataDetailJob } = useFormStepStore(
     (state) => state,
   );
 
@@ -105,7 +106,7 @@ const CreateJobDetail = () => {
     const genrate = () => {
       setLoadingState((value) => ({ ...value, jobDescription: true }));
       startTransition(async () => {
-        const { result } = await genereteJobDescription(dataCreateJob);
+        const { result } = await genereteJobDescription(dataCreateJob).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
         handleChange('jobDescription', result);
         setLoadingState((value) => ({ ...value, jobDescription: false }));
       });
@@ -134,7 +135,7 @@ const CreateJobDetail = () => {
         case 'skill':
           const { result: skillResult } = await generateSkill(
             dataCreateJob.title,
-          );
+          ).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
           let skillSet: string[] = [];
 
           // skill result can either be: string, array, object
@@ -160,7 +161,7 @@ const CreateJobDetail = () => {
           break;
         case 'responsibilities':
           const { result: responsibilitiesResult } =
-            await generateResponsibilities(dataCreateJob);
+            await generateResponsibilities(dataCreateJob).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
           // make it as array of object, so we can utilize checkbox functionality
           const preparedResponsibilitiesResult = responsibilitiesResult.map(
             (responsibility: string) => ({
@@ -173,7 +174,7 @@ const CreateJobDetail = () => {
           break;
         case 'requirement':
           const { result: requirementResult } =
-            await generateRequirement(dataCreateJob);
+            await generateRequirement(dataCreateJob).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
           // make it as array of object, so we can utilize checkbox functionality
           const preparedRequirementResult = requirementResult.map(
             (requirement: string) => ({
@@ -187,7 +188,7 @@ const CreateJobDetail = () => {
           break;
         case 'jobDescription':
           const { result: jobDescriptionResult } =
-            await genereteJobDescription(dataCreateJob);
+            await genereteJobDescription(dataCreateJob).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
           handleChange('jobDescription', jobDescriptionResult);
           setLoadingState((value) => ({ ...value, jobDescription: false }));
           break;
@@ -497,7 +498,7 @@ const CreateJobDetail = () => {
               <ReactQuill
                 //@ts-ignore
                 theme="snow"
-                value={value}
+                value={value || dataDetailJob}
                 onChange={setValue}
                 className="h-[calc(100%-44px)] w-full border-none"
               />
@@ -506,7 +507,7 @@ const CreateJobDetail = () => {
               <Button variant="outline" className="min-w-32" onClick={prevStep}>
                 Previous
               </Button>
-              <Button className="min-w-32" disabled={!value} onClick={nextStep}>
+              <Button className="min-w-32" disabled={!(value || dataDetailJob)} onClick={nextStep}>
                 Next
               </Button>
             </div>

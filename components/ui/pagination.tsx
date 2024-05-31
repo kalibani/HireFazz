@@ -105,7 +105,7 @@ export const PaginationGroup: FC<PaginationGroupProps> = ({
   handlePagination
 }) => {
   return (
-    <div className="flex items-center justify-between mt-5">
+    <div className="flex items-center justify-between py-3">
       <div className="max-w-44 flex gap-2 items-center">
         <span>View</span>
         <Select onValueChange={(value) => handlePagination?.('per_page', value)}>

@@ -70,6 +70,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { errorToast } from '@/components/toasterProvider';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -188,8 +189,9 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   const [perPage, setPerPage] = useState(10);
   const [itemsInPage, setItemsInPage] = useState<FormStepState['files']>([]);
   const [activePage, setActivePage] = useState(1);
+  const [isErrorCreate, setIsErrorCreate] = useState(false)
 
-  const { step, dataCreateJob, dataDetailJob, setStep, files, formData } =
+  const { step, dataCreateJob, dataDetailJob, setStep, setFiles, files, formData, resetFormCreateJob, resetFormDetailJob } =
     useStore(useFormStepStore, (state) => state);
 
   const createJobHandle = async () => {
@@ -210,8 +212,15 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
         matchPercentage: form.watch('matchPercentage'),
         keyFocus: form.watch('keyFocus'),
       };
-      const job = await createJob(createPayload, formData);
-      setJobId(job?.id);
+
+      try {
+        const job = await createJob(createPayload, formData)
+        setJobId(job?.id);
+        setIsErrorCreate(false)
+      } catch (error) {
+        setIsErrorCreate(true)
+        return errorToast(typeof error === 'string' ? error : undefined)
+      }
     }
   };
 
@@ -258,6 +267,14 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
       setActivePage(Number(value));
     }
   };
+
+  const navigateToAllApplicant = () => {
+    resetFormCreateJob()
+    resetFormDetailJob()
+    setFiles([])
+    setStep(0)
+    router.push(`${jobId}/all-applicant`)
+  }
 
   return (
     <section className="flex flex-1 flex-col gap-y-3 overflow-y-scroll">
@@ -475,7 +492,8 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
         </Form>
       </div>
 
-      <Dialog>
+      {/* Prevent open if there is error creating job */}
+      <Dialog open={isErrorCreate ? false : undefined}>
         <div className="flex w-full justify-between rounded-lg bg-white px-8 py-4">
           <Button onClick={() => setStep(2)} variant="outline">
             Previous
@@ -501,8 +519,8 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
           </DialogTrigger>
         </div>
         <DialogContent className="flex h-[90%] min-h-[90%] w-[90%] min-w-[90%] flex-col items-center justify-between overflow-y-auto p-0">
-          <div className="flex h-full w-full flex-col items-center">
-            <div className="flex w-full flex-col">
+          <div className="flex w-full h-full flex-col items-center -translate-y-[32px]">
+            <div className="flex w-full flex-col sticky top-[35px] z-40">
               <TrackingStep
                 step={step}
                 customTitle={dataCreateJob.title}
@@ -523,7 +541,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
 
             <div className="mt-8 h-full w-full flex-1 overflow-y-auto px-8">
               <Table className="border border-solid border-slate-200">
-                <TableHeader className="bg-slate-200">
+                <TableHeader className="bg-slate-200 sticky -top-[1px] z-10">
                   <TableRow>
                     <TableHead className="text-center">Name of file</TableHead>
                     <TableHead className="text-center">Source</TableHead>
@@ -596,7 +614,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
           </div>
           <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">
             <DialogTrigger asChild>
-              <Button onClick={() => router.push(`${jobId}/all-applicant`)}>
+              <Button onClick={navigateToAllApplicant}>
                 Finish / Close
               </Button>
             </DialogTrigger>
