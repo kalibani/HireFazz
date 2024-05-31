@@ -4,7 +4,6 @@ import { FileSpreadsheet, Search, Redo, Trash2 } from 'lucide-react';
 import React, { FC, startTransition, useCallback, useTransition } from 'react';
 import { Button } from '../ui/button';
 import deleteTemplate from '@/lib/actions/interview/deleteById';
-import { useMutation } from '@tanstack/react-query';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Loader } from '../share';
 import {
@@ -17,8 +16,6 @@ import deleteQuestion from '@/lib/actions/interview/deleteQuestion';
 import PopupPreviewQuestions from './popup-preview';
 import { DeleteDataSchema, idProps } from '@/lib/validators/interview';
 import { z } from 'zod';
-import { type } from 'os';
-import { title } from 'process';
 
 interface QuestionCardProp {
   title: string;
@@ -42,6 +39,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
   const searchParams = useSearchParams();
   const params = useParams();
   const queryId = searchParams.get('id');
+  const idInvite = searchParams.get('idInvite');
   const { push, refresh } = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -127,25 +125,29 @@ const QuestionCard: FC<QuestionCardProp> = ({
           <div className="mt-2 flex items-start justify-between">
             <div className="flex gap-x-4">
               <PopupPreviewQuestions dataSource={dataSource} />
-              <Button
-                variant="ghost"
-                className="h-auto gap-x-2  p-0 text-xs font-normal hover:bg-transparent"
-                onClick={editHandler}
-                type="button"
-              >
-                <Redo className="size-3 text-primary" />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                className="h-auto gap-x-2 p-0 text-xs font-normal hover:bg-transparent"
-                onClick={deleteHandler}
-                type="button"
-                disabled={questions.length <= 1 && type === 'questions'}
-              >
-                <Trash2 className="size-3 text-primary" />
-                Delete
-              </Button>
+              {!idInvite && (
+                <>
+                  <Button
+                    variant="ghost"
+                    className="h-auto gap-x-2  p-0 text-xs font-normal hover:bg-transparent"
+                    onClick={editHandler}
+                    type="button"
+                  >
+                    <Redo className="size-3 text-primary" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="h-auto gap-x-2 p-0 text-xs font-normal hover:bg-transparent"
+                    onClick={deleteHandler}
+                    type="button"
+                    disabled={questions.length <= 1 && type === 'questions'}
+                  >
+                    <Trash2 className="size-3 text-primary" />
+                    Delete
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

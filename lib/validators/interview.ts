@@ -76,3 +76,13 @@ export const CandidateListSchema = z.object({
   templateName: z.string(),
 });
 export type TCandidateListSchema = z.infer<typeof CandidateListSchema>;
+
+export const DetailCandidate = z.object({
+  id: z.string(),
+  templateId: z.string(),
+  batchJobId: z.string().optional().nullable(),
+  organizationId: z.string(),
+  name: z.string(),
+  status: z.string(),
+});
+export type TDetailCandidate = z.infer<typeof DetailCandidate>;

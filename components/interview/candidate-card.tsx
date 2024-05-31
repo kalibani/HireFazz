@@ -46,7 +46,7 @@ const CandidatesCard = ({
                 errorToast(typeof error === 'string' ? error : undefined),
               ),
         )
-        .with('add', () => push(`${pathname}/invite-candidates?id=${id}`))
+        .with('add', () => push(`${pathname}/invite-candidates?idInvite=${id}`))
         .otherwise(() => notFound());
     });
   };

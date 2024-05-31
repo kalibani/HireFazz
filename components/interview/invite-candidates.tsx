@@ -1,6 +1,13 @@
 'use client';
 
-import React, { useMemo, useState, useTransition } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import {
   Form,
   FormControl,
@@ -13,13 +20,12 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Input } from '../ui/input';
-import { Pencil, Trash2, PlusCircle } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import TableInvite from './Table-invite';
-import { cn } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 import Papa from 'papaparse';
-import { TInterview } from '@/lib/validators/interview';
+import { TDetailCandidate, TInterview } from '@/lib/validators/interview';
 import {
   Select,
   SelectContent,
@@ -30,46 +36,69 @@ import {
 import { LINK_TEMPLATE_CSV } from '@/constant';
 import QuestionCard from './question-card';
 import createInviteCandidates from '@/lib/actions/interview/inviteCandidates';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Loader } from '../share';
-import { sendInviteCandidate } from '@/lib/actions/sendEmail/send-invite-candidates';
 
-const CandidateSchema = z.object({
+import PopUpImportChecker from './popup-import-email';
+
+export const CandidateSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
 });
 const FormSchema = z.object({
   title: z.string().min(2),
   template: z.string(),
-  candidates: z.array(CandidateSchema),
+  name: z.string().min(2),
+  email: z.string().email(),
 });
+type Candidate = z.infer<typeof CandidateSchema>;
 
+const mergeCandidates = (
+  newCandidates: Candidate[],
+  existingCandidates: Candidate[],
+): Candidate[] => {
+  const finalCandidates = existingCandidates.filter(
+    (imported) =>
+      !newCandidates.some((candidate) => candidate.email === imported.email),
+  );
+
+  return [...finalCandidates, ...newCandidates];
+};
 const InviteCandidates = ({
   orgId,
   interviews,
+  candidate,
 }: {
   orgId: string;
   interviews: TInterview[];
+  candidate: TDetailCandidate;
 }) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      title: '',
-      candidates: [{ name: '', email: '' }],
+      name: '',
+      email: '',
     },
   });
 
-  const { fields, remove, append } = useFieldArray({
-    control: form.control,
-    name: 'candidates',
-  });
+  const searchParam = useSearchParams();
+  const id = searchParam.get('idInvite');
   const pathname = usePathname();
   const { push } = useRouter();
   const [isPending, startTransition] = useTransition();
   const [importedCandidates, setImportedCandidates] = useState<any[]>([]);
   const [title, setTitle] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const [invalidData, setInvalidData] = useState<any[]>([]);
 
   const watchTemplate = form.watch('template');
+
+  useEffect(() => {
+    if (id && candidate) {
+      form.setValue('title', candidate.name);
+      form.setValue('template', candidate.templateId);
+    }
+  }, [id, form, candidate]);
 
   const selectedTemplate = useMemo(() => {
     const selectedCard = interviews.filter((item) => item.id === watchTemplate);
@@ -77,48 +106,53 @@ const InviteCandidates = ({
   }, [watchTemplate, interviews]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    if (data.candidates) {
-      const parsedData = (
-        data.candidates as z.infer<typeof CandidateSchema>[]
-      ).map((item) => ({
+    if (!!data) {
+      const parsedData = {
         id: uuidv4(),
-        name: item.name,
-        email: item.email,
-      }));
-      const allCandidates = importedCandidates.map((imported) => {
-        const existingIndex = parsedData.findIndex(
-          (p) => p.email === imported.emai,
-        );
-        if (existingIndex !== -1) {
-          return parsedData[existingIndex];
-        }
-        return imported;
-      });
-      const newCandidates = parsedData.filter(
-        (p) => !importedCandidates.some((i) => i.email !== p.email),
-      );
-      const finalCandidates = [...allCandidates, ...newCandidates];
-
+        name: data.name,
+        email: data.email,
+      };
+      const finalCandidates = mergeCandidates([parsedData], importedCandidates);
       setTitle(data.title);
       setImportedCandidates(finalCandidates);
+      if (!!id) {
+        form.resetField('name');
+        form.resetField('email');
+      }
     }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const fileInput = event.target;
+    const file = fileInput.files?.[0];
     if (file) {
       Papa.parse(file, {
         header: true,
         complete: (results) => {
-          const parsedData = (
-            results.data as z.infer<typeof CandidateSchema>[]
-          ).map((item) => ({
-            id: uuidv4(),
-            name: item.name,
-            email: item.email,
-          }));
-          const allCandidates = [...parsedData, ...importedCandidates];
-          setImportedCandidates(allCandidates);
+          const validCandidates: any[] = [];
+          const invalidCandidates: any[] = [];
+
+          (results.data as z.infer<typeof CandidateSchema>[]).forEach(
+            (item) => {
+              if (CandidateSchema.safeParse(item).success) {
+                validCandidates.push({ ...item, id: uuidv4() });
+              } else {
+                invalidCandidates.push({ ...item, id: uuidv4() });
+              }
+            },
+          );
+          const finalCandidates = mergeCandidates(
+            validCandidates,
+            importedCandidates,
+          );
+          setImportedCandidates(finalCandidates);
+          if (invalidCandidates.length > 0) {
+            setInvalidData(invalidCandidates);
+            setIsOpen(true);
+          }
+
+          // Clear the input value to allow re-selection of the same file
+          fileInput.value = '';
         },
       });
     }
@@ -150,7 +184,30 @@ const InviteCandidates = ({
           });
       });
     }
-    form.reset();
+  };
+
+  const handleFormSubmit = (updatedData: any) => {
+    console.log('Form submitted with data:', updatedData);
+    const validCandidates: any[] = [];
+    const invalidCandidates: any[] = [];
+
+    updatedData.forEach((item: any) => {
+      if (CandidateSchema.safeParse(item).success) {
+        validCandidates.push({ ...item });
+      } else {
+        invalidCandidates.push({ ...item });
+      }
+    });
+    const finalCandidates = mergeCandidates(
+      validCandidates,
+      importedCandidates,
+    );
+    setImportedCandidates(finalCandidates);
+    if (invalidCandidates.length > 0) {
+      setInvalidData(invalidCandidates);
+      setIsOpen(true);
+    }
+    // setImportedCandidates
   };
 
   return (
@@ -173,6 +230,7 @@ const InviteCandidates = ({
                       </FormLabel>
                       <Input
                         className="h-auto w-full border font-normal ring-0"
+                        disabled={!!candidate && !!id}
                         {...field}
                       />
                       <FormMessage className="text-xs" />
@@ -190,6 +248,7 @@ const InviteCandidates = ({
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        disabled={!!candidate && !!id}
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
@@ -231,8 +290,7 @@ const InviteCandidates = ({
 
               <h4 className="my-4 text-xl font-semibold">Invites Candidates</h4>
 
-              <div className="space-y-2">
-                {fields.map((field, index) => (
+              {/* {fields.map((field, index) => (
                   <div className="flex  w-full  gap-x-2" key={field.id}>
                     <FormField
                       control={form.control}
@@ -291,44 +349,52 @@ const InviteCandidates = ({
                         </FormItem>
                       )}
                     />
-                    {/* <div className=" flex items-end justify-end ">
-                    <Button
-                      type="button"
-                      onClick={() => remove(index)}
-                      disabled={fields.length === 1}
-                      variant="ghost"
-                      className={cn(
-                        fields.length === 1 && 'cursor-not-allowed',
-                      )}
-                    >
-                      <Trash2 className="size-4 text-primary" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => append({ name: '', email: '' })}
-                      className="h-auto p-1"
-                    >
-                      <PlusCircle className="size-4 text-primary" />
-                    </Button>
-                  </div> */}
                   </div>
-                ))}
+                ))} */}
 
-                <div className="space-x-2">
-                  <Button type="submit">Invite</Button>
-                  <Button type="button" variant="ghost">
-                    <label className="cursor-pointer">
-                      Import file
-                      <input
-                        type="file"
-                        accept=".csv"
-                        onChange={handleFileChange}
-                        className="hidden"
+              <div className="flex  w-full  gap-x-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="w-full space-y-0">
+                      <FormLabel className="m-0 font-normal">
+                        Full Name
+                      </FormLabel>
+                      <Input
+                        className="h-auto border font-normal ring-0"
+                        {...field}
                       />
-                    </label>
-                  </Button>
-                </div>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="w-full space-y-0">
+                      <FormLabel className="m-0 font-normal">Email</FormLabel>
+                      <div className="flex gap-x-2">
+                        <Input
+                          type="email"
+                          className="h-auto border font-normal ring-0"
+                          {...field}
+                        />
+                        <div className="flex items-center gap-x-1">
+                          <Button
+                            type="submit"
+                            variant="ghost"
+                            className="h-auto p-1"
+                          >
+                            <PlusCircle className="size-4 text-primary" />
+                          </Button>
+                        </div>
+                      </div>
+                    </FormItem>
+                  )}
+                />
               </div>
             </form>
           </div>
@@ -346,6 +412,17 @@ const InviteCandidates = ({
               Download CSV
             </Button>
           </div>
+          <Button type="button" variant="secondary">
+            <label className="cursor-pointer">
+              Import file
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </label>
+          </Button>
           <TableInvite dataSource={importedCandidates} />
         </div>
         <div className="flex justify-end">
@@ -354,10 +431,17 @@ const InviteCandidates = ({
             disabled={importedCandidates.length === 0}
             onClick={invitedHandler}
           >
-            Next Step
+            Save
           </Button>
         </div>
       </Form>
+      {isOpen && (
+        <PopUpImportChecker
+          setIsOpen={setIsOpen}
+          dataSource={invalidData}
+          onSubmit={handleFormSubmit}
+        />
+      )}
       {isPending && <Loader />}
     </>
   );
