@@ -70,6 +70,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { errorToast } from '@/components/toasterProvider';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -188,6 +189,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   const [perPage, setPerPage] = useState(10);
   const [itemsInPage, setItemsInPage] = useState<FormStepState['files']>([]);
   const [activePage, setActivePage] = useState(1);
+  const [isErrorCreate, setIsErrorCreate] = useState(false)
 
   const { step, dataCreateJob, dataDetailJob, setStep, setFiles, files, formData, resetFormCreateJob, resetFormDetailJob } =
     useStore(useFormStepStore, (state) => state);
@@ -210,8 +212,15 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
         matchPercentage: form.watch('matchPercentage'),
         keyFocus: form.watch('keyFocus'),
       };
-      const job = await createJob(createPayload, formData);
-      setJobId(job?.id);
+
+      try {
+        const job = await createJob(createPayload, formData)
+        setJobId(job?.id);
+        setIsErrorCreate(false)
+      } catch (error) {
+        setIsErrorCreate(true)
+        return errorToast(typeof error === 'string' ? error : undefined)
+      }
     }
   };
 
@@ -483,7 +492,8 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
         </Form>
       </div>
 
-      <Dialog>
+      {/* Prevent open if there is error creating job */}
+      <Dialog open={isErrorCreate ? false : undefined}>
         <div className="flex w-full justify-between rounded-lg bg-white px-8 py-4">
           <Button onClick={() => setStep(2)} variant="outline">
             Previous
