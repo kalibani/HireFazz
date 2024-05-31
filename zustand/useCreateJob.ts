@@ -16,6 +16,8 @@ export interface FormStepState {
   setFormCreateJob: (data: z.infer<typeof formSchemaCreateJob>) => void;
   setFormDetailJob: (data: string) => void;
   setTotalSize: (total: number) => void;
+  resetFormCreateJob: () => void
+  resetFormDetailJob: () => void
   setFiles: (data: any[]) => void;
   handleFileChange: (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -25,18 +27,20 @@ export interface FormStepState {
   handleUploadButtonClick: () => void;
 }
 
+const defaultDataCreateJob: z.infer<typeof formSchemaCreateJob> =  {
+  title: '',
+  companyName: '',
+  workModel: 'REMOTE',
+  currency: 'IDR',
+  experiences: '0',
+  fromNominal: '',
+  toNominal: '',
+  location: '',
+}
+
 export const useFormStepStore = create<FormStepState>((set) => ({
   step: 0,
-  dataCreateJob: {
-    title: '',
-    companyName: '',
-    workModel: 'REMOTE',
-    currency: 'IDR',
-    experiences: '0',
-    fromNominal: '',
-    toNominal: '',
-    location: '',
-  },
+  dataCreateJob: defaultDataCreateJob,
   dataDetailJob: '',
   totalSize: 0,
   files: [],
@@ -51,6 +55,8 @@ export const useFormStepStore = create<FormStepState>((set) => ({
       files: state.files.filter((_, i) => i !== index),
     }));
   },
+  resetFormCreateJob: () => set({ dataCreateJob: { ...defaultDataCreateJob } }),
+  resetFormDetailJob: () => set({ dataDetailJob: '' }),
   handleFileChange: (event, from: string) => {
     let totalFileSize = 0;
     const selectedFiles = event.target.files

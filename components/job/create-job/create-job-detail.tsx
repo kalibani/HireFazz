@@ -83,7 +83,7 @@ const headerMap: Record<AutoGenerateType, string> = {
 };
 
 const CreateJobDetail = () => {
-  const { setStep, setFormDetailJob, dataCreateJob } = useFormStepStore(
+  const { setStep, setFormDetailJob, dataCreateJob, dataDetailJob } = useFormStepStore(
     (state) => state,
   );
 
@@ -497,7 +497,7 @@ const CreateJobDetail = () => {
               <ReactQuill
                 //@ts-ignore
                 theme="snow"
-                value={value}
+                value={value || dataDetailJob}
                 onChange={setValue}
                 className="h-[calc(100%-44px)] w-full border-none"
               />
@@ -506,7 +506,7 @@ const CreateJobDetail = () => {
               <Button variant="outline" className="min-w-32" onClick={prevStep}>
                 Previous
               </Button>
-              <Button className="min-w-32" disabled={!value} onClick={nextStep}>
+              <Button className="min-w-32" disabled={!(value || dataDetailJob)} onClick={nextStep}>
                 Next
               </Button>
             </div>
