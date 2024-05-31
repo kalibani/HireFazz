@@ -3,7 +3,6 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -42,6 +41,7 @@ const PopUpImportChecker: FC<FormGridProps> = ({
   setIsOpen,
 }) => {
   const [formData, setFormData] = useState(dataSource);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (
     id: string,
@@ -57,14 +57,31 @@ const PopUpImportChecker: FC<FormGridProps> = ({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log({ formData });
-    // onSubmit(formData);
-    // setIsOpen(false);
+    const newErrors: Record<string, string> = {};
+
+    // Validate email format
+    formData.forEach((candidate) => {
+      const validationResult = PropsCandidateSchema.safeParse(candidate);
+      if (!validationResult.success) {
+        validationResult.error.errors.forEach((error) => {
+          newErrors[candidate.id + error.path] = error.message;
+        });
+      }
+    });
+
+    if (Object.keys(newErrors).length === 0) {
+      // If no errors, submit the form
+      onSubmit(formData);
+      setIsOpen(false);
+    } else {
+      // If errors, update state to show red borders
+      setErrors(newErrors);
+    }
   };
 
   return (
     <Dialog open={true} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild className="w-full">
         <Button variant="outline">Edit Profile</Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl">
@@ -108,7 +125,7 @@ const PopUpImportChecker: FC<FormGridProps> = ({
                       onChange={(e) =>
                         handleChange(candidate.id, 'email', e.target.value)
                       }
-                      className="w-full"
+                      className={`w-full ${errors[candidate.id + 'email'] ? 'border-primary' : ''}`}
                     />
                   </TableCell>
                 </TableRow>
