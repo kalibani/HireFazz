@@ -88,7 +88,7 @@ const ModalUploadCv = () => {
             {!files.length ? (
               <p className="text-center text-slate-400 text-sm my-auto">No CV here</p>
             ): (
-              <TableCV<UploadCVData> data={files} columns={UploadCVColumns} />
+              <TableCV<UploadCVData> data={files} columns={UploadCVColumns} totalItems={files.length} />
             )}
         </>
       )
@@ -98,7 +98,7 @@ const ModalUploadCv = () => {
       return (
         <div className="mt-16">          
           {!!mockThirdPartyCVData.length ? (
-            <TableCV<ThirdPartyCVData> data={mockThirdPartyCVData} columns={ThirdPartyColumns} dataFrom={mockThirdPartyCVFrom} />
+            <TableCV<ThirdPartyCVData> data={mockThirdPartyCVData} columns={ThirdPartyColumns} dataFrom={mockThirdPartyCVFrom} totalItems={mockThirdPartyCVData.length} />
           ): (
             <ImportCVTable data={mockImportPlatformData} />
           )}

@@ -295,11 +295,11 @@ const UploadCv: FC = (): ReactElement => {
           </TooltipProvider>
         </div>
       </div>
-      <div className="flex flex-1 h-full w-full flex-col items-center rounded-md bg-white px-1 py-6">
+      <div className={`flex ${tableItems.length < 3 ? 'flex-1 h-full' : 'h-fit'} w-full flex-col items-center rounded-md bg-white px-1 py-6`}>
         <TableCV<UploadCVData>
           data={tableItems}
           columns={columns}
-          totalItems={tableItems.length}
+          totalItems={files.length}
           dataFrom="Device"
         />
       </div>
