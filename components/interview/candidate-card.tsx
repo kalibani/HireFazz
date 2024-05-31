@@ -12,7 +12,9 @@ import {
 import updateStatusCandidate from '@/lib/actions/interview/updateStatusCandidates';
 import { Loader } from '../share';
 import { cn } from '@/lib/utils';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, notFound } from 'next/navigation';
+import { errorToast, successToast } from '../toasterProvider';
+import { match } from 'ts-pattern';
 
 const CandidatesCard = ({
   dataSource,
@@ -21,15 +23,31 @@ const CandidatesCard = ({
   dataSource: TCandidateListSchema;
   index: number;
 }) => {
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-  const updateStatusHandler = (id: string, e: React.MouseEvent) => {
+  const actionHandler = (
+    id: string,
+    type: 'update' | 'delete' | 'add',
+    e: React.MouseEvent,
+  ) => {
     e.stopPropagation();
-    startTransition(async () => {
-      updateStatusCandidate(id, dataSource.status === 'OPEN' ? 'CLOSE' : 'OPEN')
-        .then((data) => console.log(data?.success, 'masuk'))
-        .catch((error) => console.log(error));
+    startTransition(() => {
+      match(type)
+        .with(
+          'update',
+          async () =>
+            await updateStatusCandidate(
+              id,
+              dataSource.status === 'OPEN' ? 'CLOSE' : 'OPEN',
+            )
+              .then((data) => successToast(data?.success))
+              .catch((error) =>
+                errorToast(typeof error === 'string' ? error : undefined),
+              ),
+        )
+        .with('add', () => push(`${pathname}/invite-candidates?id=${id}`))
+        .otherwise(() => notFound());
     });
   };
   return (
@@ -65,18 +83,21 @@ const CandidatesCard = ({
               <CircleEllipsis className="text-primary" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={(e) => actionHandler(dataSource.id, 'delete', e)}
+              >
                 Delete
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={(e) => updateStatusHandler(dataSource.id, e)}
+                onClick={(e) => actionHandler(dataSource.id, 'update', e)}
               >
                 Update Status
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={(e) => updateStatusHandler(dataSource.id, e)}
+                onClick={(e) => actionHandler(dataSource.id, 'add', e)}
               >
                 Add Candidates
               </DropdownMenuItem>
