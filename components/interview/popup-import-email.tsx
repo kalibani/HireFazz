@@ -22,11 +22,12 @@ import {
 } from '../ui/table';
 import { Input } from '../ui/input';
 import { z } from 'zod';
+import { FormMessage } from '../ui/form';
 
 const PropsCandidateSchema = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.string().email({ message: 'invalid email address' }),
 });
 type TPropsCandidateSchema = z.infer<typeof PropsCandidateSchema>;
 interface FormGridProps {
@@ -53,6 +54,25 @@ const PopUpImportChecker: FC<FormGridProps> = ({
         candidate.id === id ? { ...candidate, [field]: value } : candidate,
       ),
     );
+
+    if (field === 'email') {
+      const candidate = formData.find((candidate) => candidate.id === id);
+      if (candidate) {
+        const updatedCandidate = { ...candidate, email: value };
+        const validationResult = PropsCandidateSchema.pick({
+          email: true,
+        }).safeParse(updatedCandidate);
+        setErrors((prevErrors) => {
+          const newErrors = { ...prevErrors };
+          if (validationResult.success) {
+            delete newErrors[id + 'email'];
+          } else {
+            newErrors[id + 'email'] = validationResult.error.errors[0].message;
+          }
+          return newErrors;
+        });
+      }
+    }
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -70,22 +90,27 @@ const PopUpImportChecker: FC<FormGridProps> = ({
     });
 
     if (Object.keys(newErrors).length === 0) {
-      // If no errors, submit the form
-      onSubmit(formData);
+      const finalCandidates = formData.map((candidate) => {
+        const existingCandidate = dataSource.find(
+          (item) => item.id === candidate.id,
+        );
+        return existingCandidate
+          ? { ...existingCandidate, email: candidate.email }
+          : candidate;
+      });
+      onSubmit(finalCandidates);
       setIsOpen(false);
     } else {
-      // If errors, update state to show red borders
       setErrors(newErrors);
     }
   };
-
   return (
     <Dialog open={true} onOpenChange={setIsOpen}>
       <DialogTrigger asChild className="w-full">
         <Button variant="outline">Edit Profile</Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl">
-        <DialogHeader>
+        <DialogHeader className="w-full">
           <DialogTitle>
             Fix Your Email Format for a Perfect Submission
           </DialogTitle>
@@ -127,6 +152,9 @@ const PopUpImportChecker: FC<FormGridProps> = ({
                       }
                       className={`w-full ${errors[candidate.id + 'email'] ? 'border-primary' : ''}`}
                     />
+                    <p className="text-xs text-primary">
+                      {errors[candidate.id + 'email']}
+                    </p>
                   </TableCell>
                 </TableRow>
               ))}

@@ -24,6 +24,7 @@ interface QuestionCardProp {
   id?: string;
   videoUrl?: string | undefined;
   type: 'template' | 'questions';
+  isCandidates?: boolean;
   dataSource?: any;
 }
 
@@ -34,6 +35,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
   id,
   videoUrl,
   type,
+  isCandidates = false,
   dataSource,
 }) => {
   const searchParams = useSearchParams();
@@ -125,7 +127,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
           <div className="mt-2 flex items-start justify-between">
             <div className="flex gap-x-4">
               <PopupPreviewQuestions dataSource={dataSource} />
-              {!idInvite && (
+              {!idInvite && !isCandidates && (
                 <>
                   <Button
                     variant="ghost"

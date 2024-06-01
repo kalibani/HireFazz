@@ -80,7 +80,7 @@ const CandidatesCard = ({
 
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <CircleEllipsis className="text-primary" />
+              <CircleEllipsis className="size-8 text-primary" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem

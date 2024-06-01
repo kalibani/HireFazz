@@ -11,6 +11,7 @@ import {
   Text,
   Tailwind,
 } from '@react-email/components';
+import { title } from 'process';
 import * as React from 'react';
 
 interface EmailTemplateCandidatesProps {
@@ -34,9 +35,7 @@ const EmailTemplateCandidates: React.FC<EmailTemplateCandidatesProps> = ({
         <Body className="mx-auto my-auto bg-white px-2 font-sans">
           <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
             <Section className="mt-[32px] text-center">
-              <h1 className="text-xl font-semibold text-red-600">
-                Logo using url path
-              </h1>
+              <h1 className="text-xl font-semibold text-red-600">{title}</h1>
             </Section>
             <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
               <strong>Selamat 🎉</strong>

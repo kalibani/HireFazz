@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 const page: FC<ParamsProps> = ({ params }) => {
   return (
     <div>
-      {params.id} <p>apaan dah</p>
+      {params.id} <p>Detail page invite candidates</p>
     </div>
   );
 };
