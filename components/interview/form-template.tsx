@@ -35,11 +35,12 @@ import { v4 as uuidv4 } from 'uuid';
 import FormQuestion from './form-question';
 import updateTemplateInterview from '@/lib/actions/interview/updateTemplateInterview';
 import createTemplateInterview from '@/lib/actions/interview/createTemplateInterview';
+import { Textarea } from '../ui/textarea';
 
 const FormSchema = z.object({
-  durationTimeRead: z.string(),
-  title: z.string(),
-  durationTimeAnswered: z.string(),
+  durationTimeRead: z.string({ message: 'select your duration time' }),
+  title: z.string().min(2, { message: 'Input name Template' }),
+  durationTimeAnswered: z.string({ message: 'select your duration time' }),
   description: z.string().optional(),
   descriptionIntro: z.string().optional(),
 });
@@ -47,13 +48,11 @@ const FormSchema = z.object({
 const FormTemplate = ({
   orgId,
   queryId,
-  isTemplate = false,
   dataTemplate,
 }: {
   orgId: string;
   queryId?: string;
   dataTemplate?: any;
-  isTemplate?: boolean;
 }) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -149,7 +148,7 @@ const FormTemplate = ({
               }
               return {
                 ...item,
-                id: uuidv4(),
+                // id: uuidv4(),
                 timeAnswered: Number(item.timeAnswered || durationTimeAnswered),
                 timeRead: Number(item.timeRead || durationTimeRead),
                 videoUrl: url,
@@ -191,31 +190,25 @@ const FormTemplate = ({
         <h4 className="mb-4 text-xl font-semibold">Template</h4>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex items-center justify-between ">
-              <div className="flex flex-col gap-y-4 p-0">
-                <div className="flex items-end gap-x-4">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem className="space-y-0">
-                        <FormLabel className="m-0  w-full font-normal">
-                          Name Template
-                        </FormLabel>
-                        <Input
-                          className="h-auto w-full min-w-[200px] border font-normal ring-0"
-                          {...field}
-                        />
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {!isTemplate && (
-                    <Button variant="ghost" className="italic" type="button">
-                      or Select Template
-                    </Button>
+            <div className="flex items-end justify-between gap-x-10 ">
+              <div className="flex w-1/2 flex-col gap-y-4 p-0">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className="m-0  w-full font-normal">
+                        Name Template{' '}
+                        <span className="text-destructive">*</span>
+                      </FormLabel>
+                      <Input
+                        className="h-auto w-full border font-normal ring-0"
+                        {...field}
+                      />
+                      <FormMessage className="text-xs" />
+                    </FormItem>
                   )}
-                </div>
+                />
 
                 <FormField
                   control={form.control}
@@ -225,8 +218,9 @@ const FormTemplate = ({
                       <FormLabel className="w-full font-normal">
                         Description
                       </FormLabel>
-                      <Input
-                        className="h-auto w-1/2 min-w-[200px] border font-normal ring-0"
+                      <Textarea
+                        minRows={5}
+                        className="h-auto w-full border font-normal ring-0"
                         {...field}
                       />
                       <FormMessage className="text-xs" />
@@ -234,11 +228,11 @@ const FormTemplate = ({
                   )}
                 />
               </div>
-              <div className="flex w-1/2 items-center gap-x-4">
+              <div className="flex h-full w-1/2 items-center gap-x-4">
                 <VideoRecord
                   videoUrl={introVideoUrl}
                   type="intro"
-                  className="w-1/3"
+                  className="w-1/2"
                 />
                 <div className="flex flex-col">
                   <div className="item-center flex gap-x-2">
@@ -252,9 +246,10 @@ const FormTemplate = ({
                     control={form.control}
                     name="descriptionIntro"
                     render={({ field }) => (
-                      <FormItem className="flex w-full items-center gap-x-4 p-0">
-                        <Input
+                      <FormItem className="flex w-1/2 items-center gap-x-4 p-0">
+                        <Textarea
                           className="h-auto min-w-[392px] border font-normal ring-0"
+                          minRows={5}
                           placeholder="Greeting Message"
                           {...field}
                         />
@@ -275,7 +270,8 @@ const FormTemplate = ({
                   render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="w-fit text-xs">
-                        Time to Thinking:
+                        Time to Thinking{' '}
+                        <span className="text-destructive">*</span>
                       </FormLabel>
                       <Select
                         // {...field}
@@ -307,7 +303,8 @@ const FormTemplate = ({
                   render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="w-fit text-xs">
-                        Time to Answer:
+                        Time to Answer{' '}
+                        <span className="text-destructive">*</span>
                       </FormLabel>
                       <Select
                         // {...field}

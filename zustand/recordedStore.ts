@@ -1,4 +1,4 @@
-import { blobToFormData } from '@/lib/utils';
+'use client';
 import { create } from 'zustand';
 
 export interface questionState {
@@ -8,6 +8,7 @@ export interface questionState {
   timeRead?: number;
   timeAnswered?: number;
   title: string;
+  idx?: number;
 }
 interface RecorderState {
   title: string;
@@ -56,13 +57,17 @@ export const useRecorderStore = create<RecorderState>((set) => ({
   setQuestion: (data) => {
     if (data.id) {
       set((state) => {
-        const existingState = state.questions.filter(
-          (item) => item.id !== data.id,
-        );
-
+        let newData: questionState[] = state.questions;
+        const existingIndex = newData.findIndex((item) => item.id === data.id);
+        console.log({ existingIndex });
+        if (existingIndex !== -1) {
+          newData[existingIndex] = { ...data };
+        } else {
+          newData.push(data);
+        }
         return {
           questionForm: null,
-          questions: [...existingState, data],
+          questions: newData,
         };
       });
     } else {

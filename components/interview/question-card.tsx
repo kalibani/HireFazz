@@ -97,6 +97,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
         id,
         title,
         question,
+        idx,
       });
     }
   };
@@ -120,36 +121,37 @@ const QuestionCard: FC<QuestionCardProp> = ({
             </div>
             <h4 className="my-2 text-xl font-semibold">{title}</h4>
             <p className="line-clamp-2 max-w-4xl p-0 text-sm">{question}</p>
-            <p className="line-clamp-2 max-w-4xl p-0 text-sm">
-              total questions : {question.length}
-            </p>
+            {!!dataSource?.questions && (
+              <p className="line-clamp-2 max-w-4xl p-0 text-sm">
+                total questions : {dataSource.questions.length}
+              </p>
+            )}
           </div>
           <div className="mt-2 flex items-start justify-between">
             <div className="flex gap-x-4">
               <PopupPreviewQuestions dataSource={dataSource} />
-              {!idInvite && !isCandidates && (
-                <>
-                  <Button
-                    variant="ghost"
-                    className="h-auto gap-x-2  p-0 text-xs font-normal hover:bg-transparent"
-                    onClick={editHandler}
-                    type="button"
-                  >
-                    <Redo className="size-3 text-primary" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="h-auto gap-x-2 p-0 text-xs font-normal hover:bg-transparent"
-                    onClick={deleteHandler}
-                    type="button"
-                    disabled={questions.length <= 1 && type === 'questions'}
-                  >
-                    <Trash2 className="size-3 text-primary" />
-                    Delete
-                  </Button>
-                </>
-              )}
+
+              <>
+                <Button
+                  variant="ghost"
+                  className="h-auto gap-x-2  p-0 text-xs font-normal hover:bg-transparent"
+                  onClick={editHandler}
+                  type="button"
+                >
+                  <Redo className="size-3 text-primary" />
+                  Edit
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="h-auto gap-x-2 p-0 text-xs font-normal hover:bg-transparent"
+                  onClick={deleteHandler}
+                  type="button"
+                  disabled={questions.length <= 1 && type !== 'template'}
+                >
+                  <Trash2 className="size-3 text-primary" />
+                  Delete
+                </Button>
+              </>
             </div>
           </div>
         </div>
