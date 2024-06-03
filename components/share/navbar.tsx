@@ -9,6 +9,8 @@ import {
 } from '../ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useParams, useRouter } from 'next/navigation';
+import { Button } from '../ui/button';
+import { useTopupModal } from '@/hooks/use-topup-modal';
 
 type TNavbar = {
   orgs:
@@ -23,6 +25,7 @@ type TNavbar = {
 };
 
 const Navbar: FC<TNavbar> = (props): ReactElement => {
+  const { onOpen } = useTopupModal();
   const params = useParams();
   const { replace } = useRouter();
   const selectedOrganization = props.orgs
@@ -31,6 +34,9 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
   return (
     <nav className="fixed z-10 flex w-full items-center justify-between gap-x-4 border-b bg-white px-3 py-[7.5px] pl-[90px]">
       <span className="w-full text-sm font-medium">{currentDate}</span>
+      <Button onClick={onOpen} size="sm">
+        Topup
+      </Button>
       <DropdownMenu>
         <DropdownMenuContent className="w-40" align="start">
           <span className="cursor-pointer">
