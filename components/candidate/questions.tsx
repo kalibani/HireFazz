@@ -72,7 +72,7 @@ const Questions: FC<{ id: string }> = async ({ id }) => {
             <li>Clear voice mic</li>
             <li>Good lighting</li>
           </ul>
-        <Button>Next Step</Button>
+          <Button>Next Step</Button>
         </div>
       </div>
     );
