@@ -18,7 +18,7 @@ const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
   const candidates = (await getCandidates({
     id: params.orgId,
   })) as TCandidateListSchema[];
-
+  console.log(interviews, '?');
   return (
     <>
       <Banner

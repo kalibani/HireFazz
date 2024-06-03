@@ -59,7 +59,6 @@ export const useRecorderStore = create<RecorderState>((set) => ({
       set((state) => {
         let newData: questionState[] = state.questions;
         const existingIndex = newData.findIndex((item) => item.id === data.id);
-        console.log({ existingIndex });
         if (existingIndex !== -1) {
           newData[existingIndex] = { ...data };
         } else {

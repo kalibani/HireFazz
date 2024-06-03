@@ -257,7 +257,7 @@ const InviteCandidates = ({
         <form onSubmit={form.handleSubmit(invitedHandler)}>
           <div className="rounded-md bg-white p-4">
             <h3 className="text-2xl font-semibold">
-              Create Interview Candidates
+              {id ? 'Edit ' : 'Create '}Interview Candidates
             </h3>
             <div className="mt-4 ">
               <div className="flex w-full gap-x-2 ">
@@ -285,7 +285,7 @@ const InviteCandidates = ({
                   render={({ field }) => (
                     <FormItem className="w-full space-y-0">
                       <FormLabel className="m-0  w-full font-normal">
-                        Select Template question {JSON.stringify(field.value)}
+                        Select Template question
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <Select
