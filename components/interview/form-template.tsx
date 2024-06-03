@@ -1,5 +1,10 @@
 'use client';
-import React, { useCallback, useEffect, useTransition } from 'react';
+import React, {
+  startTransition,
+  useCallback,
+  useEffect,
+  useTransition,
+} from 'react';
 import VideoRecord from './video-record';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Button } from '../ui/button';
@@ -7,7 +12,7 @@ import { Save, Video } from 'lucide-react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Loader } from '@/components/share';
+import { HeaderNavigation, Loader } from '@/components/share';
 
 import {
   Form,
@@ -36,6 +41,7 @@ import FormQuestion from './form-question';
 import updateTemplateInterview from '@/lib/actions/interview/updateTemplateInterview';
 import createTemplateInterview from '@/lib/actions/interview/createTemplateInterview';
 import { Textarea } from '../ui/textarea';
+import toast from 'react-hot-toast';
 
 const FormSchema = z.object({
   durationTimeRead: z.string({ message: 'select your duration time' }),
@@ -56,6 +62,13 @@ const FormTemplate = ({
 }) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      durationTimeAnswered: '',
+      durationTimeRead: '',
+      title: '',
+      description: '',
+      descriptionIntro: '',
+    },
   });
 
   const { replace } = useRouter();
@@ -73,17 +86,23 @@ const FormTemplate = ({
 
   const templateHandler = useCallback(
     async (payload: any, id?: string) => {
-      let data;
-      if (id) {
-        data = await updateTemplateInterview({ ...payload, id });
-      } else {
-        data = await createTemplateInterview(payload);
-      }
-      if (data && !isPending) {
+      try {
+        if (id) {
+          const updatedData = await updateTemplateInterview({ ...payload, id });
+          updatedData && toast.success(updatedData?.success);
+        } else {
+          const createdData = await createTemplateInterview(payload);
+          //@ts-ignore
+          createdData && toast.success(createdData?.success);
+        }
+      } catch (error) {
+        //@ts-ignore
+        toast.error(error.message);
+      } finally {
         replace(`/${orgId}/video?tab=template`);
       }
     },
-    [isPending, orgId, replace],
+    [orgId, replace],
   );
 
   useEffect(() => {
@@ -271,12 +290,12 @@ const FormTemplate = ({
                     <FormItem className="space-y-0">
                       <FormLabel className="w-fit text-xs">
                         Time to Thinking{' '}
-                        <span className="text-destructive">*</span>
+                        <span className="text-destructive">*</span>{' '}
                       </FormLabel>
                       <Select
-                        // {...field}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">
@@ -303,13 +322,12 @@ const FormTemplate = ({
                   render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="w-fit text-xs">
-                        Time to Answer{' '}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <Select
-                        // {...field}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">

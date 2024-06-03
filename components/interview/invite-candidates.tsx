@@ -1,14 +1,6 @@
 'use client';
 
-import React, {
-  Dispatch,
-  SetStateAction,
-  startTransition,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react';
+import React, { useEffect, useMemo, useState, useTransition } from 'react';
 import {
   Form,
   FormControl,
@@ -81,14 +73,10 @@ const InviteCandidates = ({
   interviews: TInterview[];
   candidate: TDetailCandidate;
 }) => {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-    },
-  });
-
+  const [editData, setEditData] = useState<{
+    name: string;
+    templateId: string;
+  }>();
   const searchParam = useSearchParams();
   const id = searchParam.get('idInvite');
   const pathname = usePathname();
@@ -99,12 +87,26 @@ const InviteCandidates = ({
   const [isOpen, setIsOpen] = useState(false);
   const [invalidData, setInvalidData] = useState<any[]>([]);
 
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      template: '',
+      title: '',
+    },
+    values: {
+      title: editData?.name || '',
+      template: editData?.templateId || '',
+    },
+  });
+
   const watchTemplate = form.watch('template');
 
   useEffect(() => {
+    form.reset();
     if (id && candidate) {
-      form.setValue('title', candidate.name);
-      form.setValue('template', candidate.templateId);
+      setEditData(candidate);
     }
   }, [id, form, candidate]);
 
@@ -172,7 +174,6 @@ const InviteCandidates = ({
       });
     }
   };
-
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = LINK_TEMPLATE_CSV;
@@ -284,12 +285,12 @@ const InviteCandidates = ({
                   render={({ field }) => (
                     <FormItem className="w-full space-y-0">
                       <FormLabel className="m-0  w-full font-normal">
-                        Select Template question{' '}
+                        Select Template question {JSON.stringify(field.value)}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                         disabled={!!candidate && !!id}
                       >
                         <FormControl>
@@ -321,10 +322,10 @@ const InviteCandidates = ({
 
               {watchTemplate && (
                 <QuestionCard
-                  key={selectedTemplate.id}
-                  title={selectedTemplate.title}
-                  id={selectedTemplate.id}
-                  question={selectedTemplate.description!}
+                  key={selectedTemplate?.id}
+                  title={selectedTemplate?.title}
+                  id={selectedTemplate?.id}
+                  question={selectedTemplate?.description!}
                   type="template"
                   dataSource={selectedTemplate}
                   isCandidates

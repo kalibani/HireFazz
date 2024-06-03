@@ -1,7 +1,7 @@
 import getTemplateInterview from '@/lib/actions/interview/getTemplatesInterview';
 import { ParamsProps } from '@/types/types';
 import FilterListInterview from '@/components/interview/filter-list-interview';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import QuestionCard from '@/components/interview/question-card';
 import { Banner } from '@/components/share';
 import dashboard from '@/public/icon/icon-banner-dashboard.svg';

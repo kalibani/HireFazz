@@ -11,13 +11,13 @@ export default async function createTemplateInterview(
 ) {
   try {
     const safePayload = CreateTemplateInterview.parse(payload);
-    const data = await prismadb.interviewTemplate.create({
+    await prismadb.interviewTemplate.create({
       data: {
         ...safePayload,
       },
     });
     revalidatePath('/');
-    return data;
+    return { success: 'Template has ben created' };
   } catch (error) {
     return errorHandler(error);
   }

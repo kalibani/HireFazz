@@ -1,4 +1,5 @@
 import InviteCandidates from '@/components/interview/invite-candidates';
+import { HeaderNavigation } from '@/components/share';
 import getOneCandidate from '@/lib/actions/interview/getOneCandidate';
 import getTemplateInterview from '@/lib/actions/interview/getTemplatesInterview';
 import { TInterview } from '@/lib/validators/interview';
@@ -11,12 +12,15 @@ const page = async ({ params, searchParams }: ParamsProps) => {
 
   const candidate = await getOneCandidate({ id: searchParams.idInvite });
   return (
-    <InviteCandidates
-      orgId={params.orgId}
-      interviews={interviews}
-      //@ts-ignore
-      candidate={candidate}
-    />
+    <>
+      <HeaderNavigation />
+      <InviteCandidates
+        orgId={params.orgId}
+        interviews={interviews}
+        //@ts-ignore
+        candidate={candidate}
+      />
+    </>
   );
 };
 
