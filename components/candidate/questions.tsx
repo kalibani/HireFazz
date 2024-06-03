@@ -4,6 +4,7 @@ import InvalidCandidate from './invalid-candidates';
 import Logo from '@/public/icons/logo.svg';
 import Image from 'next/image';
 import { Video, MessagesSquare, ClipboardList } from 'lucide-react';
+import { Button } from '../ui/button';
 
 interface Iintro {
   videoUrl: string;
@@ -34,7 +35,11 @@ const Questions: FC<{ id: string }> = async ({ id }) => {
             <Video className="size-4" />
             <p>Intro</p>
           </div>
-          <div className=" aspect-video h-64 overflow-hidden rounded-xl border">
+          <div className=" flex aspect-video h-64 flex-col items-center justify-center overflow-hidden rounded-xl border bg-slate-500/50">
+            <p className="text-xl text-white">no video</p>
+            <Video className="size-20 font-bold text-white" />
+          </div>
+          {/* <div className=" aspect-video h-64 overflow-hidden rounded-xl border">
             <video
               controls
               className="inset-0 aspect-video h-full w-full"
@@ -42,7 +47,7 @@ const Questions: FC<{ id: string }> = async ({ id }) => {
             >
               <source src={intro?.videoUrl} />
             </video>
-          </div>
+          </div> */}
         </div>
         <div className="flex w-[500px]  flex-col justify-center p-6">
           <h4 className="my-5 flex items-center gap-x-2 text-left text-xl font-semibold text-primary">
@@ -67,6 +72,7 @@ const Questions: FC<{ id: string }> = async ({ id }) => {
             <li>Clear voice mic</li>
             <li>Good lighting</li>
           </ul>
+        <Button>Next Step</Button>
         </div>
       </div>
     );
