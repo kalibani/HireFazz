@@ -21,14 +21,17 @@ export default async function createInviteCandidates(
     // Step 1: Find the template from InterviewTemplate based on templateId
     const template = await prismadb.interviewTemplate.findUnique({
       where: { id: templateId },
-      select: { questions: true },
+      select: {
+        questions: true,
+        title: true,
+        introVideoUrl: true,
+        descriptionIntro: true,
+      },
     });
 
     if (!template) {
       throw new Error('Template not found');
     }
-
-    const questions = template.questions;
 
     // Step 2: Create InterviewCandidates
     const interviewCandidates = await prismadb.interviewCandidates.create({
@@ -54,7 +57,15 @@ export default async function createInviteCandidates(
         expiredDate: new Date(new Date().setDate(new Date().getDate() + 7)), // Example: setting expiration date to 7 days from now
         organizationId: orgId,
         interviewCandidatesId: interviewCandidates.id,
-        result: questions as Prisma.InputJsonValue,
+        result: {
+          intro: {
+            videoUrl: template.introVideoUrl,
+            templateName: template.title,
+            name:interviewCandidates.name,
+            description: template.descriptionIntro,
+          },
+          questions: template.questions as Prisma.InputJsonValue,
+        },
         isUsed: false,
         keyCode: cryptoCode as string,
       };
