@@ -11,6 +11,7 @@ export default async function deleteTemplate(id: z.infer<typeof idProps>) {
     const safePayload = idProps.parse(id);
     await prismadb.interviewTemplate.delete({
       where: { id: safePayload.id },
+    
     });
     revalidatePath('/');
     return { success: 'Template Deleted' };
@@ -18,3 +19,4 @@ export default async function deleteTemplate(id: z.infer<typeof idProps>) {
     return errorHandler(error);
   }
 }
+
