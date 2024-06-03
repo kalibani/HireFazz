@@ -130,7 +130,6 @@ model InterviewTemplate {
   farewellVideoUrl     String?
   farewellTitle        String?
   farewellDescription  String?
-  isDeleted            Boolean?     @default(false)
   questions            Json
   organizationId       String
   description          String?
@@ -157,16 +156,15 @@ model InvitedUser {
 }
 
 model InterviewCandidates {
-  id             String  @id @default(cuid())
+  id             String           @id @default(cuid())
   templateId     String
   batchJobId     String?
   organizationId String
-
-  name         String
-  status       STATUS_INTERVIEW @default(OPEN)
-  batchJob     BatchJob?        @relation(fields: [batchJobId], references: [id])
-  organization Organization     @relation(fields: [organizationId], references: [id])
-  candidates   InvitedUser[]
+  name           String
+  status         STATUS_INTERVIEW @default(OPEN)
+  batchJob       BatchJob?        @relation(fields: [batchJobId], references: [id])
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+  candidates     InvitedUser[]
 }
 
 model userAPILimit {
@@ -340,14 +338,6 @@ enum ANALYSYS_STATUS {
   ON_ANALYSYS
   PENDING
   SHORTLISTED
-}
-
-enum invitedUserStatus {
-  INVITED
-  OPEN
-  NO_RESPONSE
-  COMPLETED
-  EXPIRED
 }
 
 enum UploadStatus {
