@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface PropsDataSource {
   description?: string;
@@ -40,11 +40,28 @@ const PopupPreviewQuestions = ({
 }: {
   dataSource?: PropsDataSource;
 }) => {
-  const [listQuestion, setListQuestion] = useState<number>(0);
+  const [idState, setidState] = useState<string>('');
+  const [stepQues, setStepQues] = useState<'intro' | 'ques'>('intro');
+  const [indexOfVideoQuestion, setIndexOfVideoQuestion] = useState<
+    string | undefined
+  >(dataSource?.introVideoUrl);
+  const [indexList, setIndexList] = useState(0);
 
-  const indexContentHAndler = (index: number) => {
-    setListQuestion(index);
+  const indexContentHandler = (
+    id: string,
+    type: 'intro' | 'ques',
+    index?: number,
+  ) => {
+    setidState(id);
+    setStepQues(type);
+    if (type === 'ques' && index !== undefined) {
+      setIndexList(index);
+      setIndexOfVideoQuestion(dataSource?.questions[index - 1]?.videoUrl);
+    } else {
+      setIndexOfVideoQuestion(dataSource?.introVideoUrl);
+    }
   };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -72,8 +89,14 @@ const PopupPreviewQuestions = ({
             <div className="mt-4 flex flex-col gap-y-2">
               <Button
                 className={cn('h-0 w-fit p-4')}
-                variant={listQuestion === 0 ? 'default' : 'ghost'}
-                onClick={() => indexContentHAndler(0)}
+                variant={
+                  idState === dataSource?.id || stepQues == 'intro'
+                    ? 'default'
+                    : 'ghost'
+                }
+                onClick={() =>
+                  indexContentHandler(dataSource?.id || '', 'intro')
+                }
               >
                 Intro
               </Button>
@@ -81,46 +104,48 @@ const PopupPreviewQuestions = ({
                 <Button
                   key={question.id}
                   className={cn('h-0 w-fit p-4')}
-                  variant={listQuestion === idx + 1 ? 'default' : 'ghost'}
-                  onClick={() => indexContentHAndler(idx + 1)}
+                  variant={idState === question.id ? 'default' : 'ghost'}
+                  onClick={() =>
+                    indexContentHandler(question.id, 'ques', idx + 1)
+                  }
                 >
                   Question #{idx + 1}
                 </Button>
               ))}
             </div>
           </div>
-          {listQuestion !== 0 && (
+          {stepQues === 'ques' && (
             <div className="flex  w-1/3 flex-col gap-y-2 ">
               <h4 className="flex items-center gap-x-2 text-xl font-semibold text-primary">
                 <FileText />
-                Question {listQuestion} of {dataSource?.questions.length}
+                Question {indexList} of {dataSource?.questions.length}
               </h4>
               <div className="mt-4 font-normal">
                 <p className="text-sm text-primary">Title Question</p>
                 <p className="mt-1 text-xs">
-                  {dataSource?.questions[listQuestion - 1].title}
+                  {dataSource?.questions[indexList - 1]?.title}
                 </p>
               </div>
               <div className="mt-4 font-normal">
                 <p className="text-sm text-primary">Detail Question</p>
                 <p className="mt-1 text-xs">
-                  {dataSource?.questions[listQuestion - 1].question}
+                  {dataSource?.questions[indexList - 1].question}
                 </p>
               </div>
               <div className="mt-4 font-normal">
                 <p className="text-sm text-primary">Time</p>
                 <p className="mt-1 text-xs">
-                  Time to Think :
-                  {dataSource?.questions[listQuestion - 1].timeRead} Seconds
+                  Time to Think :{dataSource?.questions[indexList - 1].timeRead}{' '}
+                  Seconds
                 </p>
                 <p className="mt-1 text-xs">
                   Time to Answer :{' '}
-                  {dataSource?.questions[listQuestion - 1].timeAnswered} Seconds
+                  {dataSource?.questions[indexList - 1].timeAnswered} Seconds
                 </p>
               </div>
             </div>
           )}
-          {listQuestion === 0 && (
+          {stepQues === 'intro' && (
             <div className="flex  w-1/3 flex-col gap-y-2 ">
               <h4 className="flex items-center gap-x-2 text-xl font-semibold text-primary">
                 Intro
@@ -146,20 +171,14 @@ const PopupPreviewQuestions = ({
           )}
 
           <div className="size-full w-1/4">
-            {listQuestion !== 0 &&
-              dataSource?.questions[listQuestion - 1]?.videoUrl && (
-                <div className="flex aspect-video  overflow-hidden rounded-md">
-                  <video controls className="rounded-md">
-                    <source
-                      src={dataSource?.questions[listQuestion - 1]?.videoUrl}
-                    />
-                  </video>
-                </div>
-              )}
-            {listQuestion === 0 && (
-              <div className="flex aspect-video  overflow-hidden rounded-md">
-                <video controls className="rounded-md">
-                  <source src={dataSource?.introVideoUrl} />
+            {indexOfVideoQuestion && (
+              <div className="flex aspect-video overflow-hidden rounded-md">
+                <video
+                  key={indexOfVideoQuestion}
+                  controls
+                  className="rounded-md"
+                >
+                  <source src={indexOfVideoQuestion} />
                 </video>
               </div>
             )}

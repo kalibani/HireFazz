@@ -4,7 +4,6 @@ import { FileSpreadsheet, Search, Redo, Trash2 } from 'lucide-react';
 import React, { FC, startTransition, useCallback, useTransition } from 'react';
 import { Button } from '../ui/button';
 import deleteTemplate from '@/lib/actions/interview/deleteById';
-import { useMutation } from '@tanstack/react-query';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Loader } from '../share';
 import {
@@ -17,6 +16,7 @@ import deleteQuestion from '@/lib/actions/interview/deleteQuestion';
 import PopupPreviewQuestions from './popup-preview';
 import { DeleteDataSchema, idProps } from '@/lib/validators/interview';
 import { z } from 'zod';
+import toast from 'react-hot-toast';
 import { type } from 'os';
 import { title } from 'process';
 
@@ -27,6 +27,7 @@ interface QuestionCardProp {
   id?: string;
   videoUrl?: string | undefined;
   type: 'template' | 'questions';
+  isCandidates?: boolean;
   dataSource?: any;
 }
 
@@ -37,15 +38,18 @@ const QuestionCard: FC<QuestionCardProp> = ({
   id,
   videoUrl,
   type,
+  isCandidates = false,
   dataSource,
 }) => {
   const searchParams = useSearchParams();
   const params = useParams();
   const queryId = searchParams.get('id');
+  const idInvite = searchParams.get('idInvite');
   const { push, refresh } = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-  const { setIsAddQuestion, setQuestionForm, questions } = useRecorderStore();
+  const { setIsAddQuestion, setQuestionForm, removeQuestion } =
+    useRecorderStore();
 
   const deleteTemplateOne = useCallback(
     async (id: string) => {
@@ -59,15 +63,25 @@ const QuestionCard: FC<QuestionCardProp> = ({
 
   const deleteOneQuestion = useCallback(
     async (payload: z.infer<typeof DeleteDataSchema>) => {
-      const deleted = await deleteQuestion(payload);
-      if (deleted && !isPending) {
+      try {
+        const data: any = await deleteQuestion(payload);
+
+        if (data?.error) {
+          toast.error(data.error);
+        } else if (data?.success && !isPending) {
+          toast.success(data.success);
+          refresh();
+        }
+      } catch (error: any) {
+        toast.error(error?.message);
+      } finally {
         refresh();
       }
     },
     [isPending, refresh],
   );
 
-  const deleteHandler = () => {
+  const deleteHandler = (idx: number) => {
     setIsAddQuestion(false);
     startTransition(() => {
       if (type == 'template' && id) {
@@ -76,6 +90,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
         if (id && queryId) {
           deleteOneQuestion({ id, queryId });
         }
+        removeQuestion(idx);
       }
     });
   };
@@ -97,6 +112,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
         id,
         title,
         question,
+        idx,
       });
     }
   };
@@ -120,32 +136,37 @@ const QuestionCard: FC<QuestionCardProp> = ({
             </div>
             <h4 className="my-2 text-xl font-semibold">{title}</h4>
             <p className="line-clamp-2 max-w-4xl p-0 text-sm">{question}</p>
-            <p className="line-clamp-2 max-w-4xl p-0 text-sm">
-              total questions : {question.length}
-            </p>
+            {!!dataSource?.questions && isCandidates && (
+              <p className="line-clamp-2 max-w-4xl p-0 text-sm">
+                total questions : {dataSource.questions.length}
+              </p>
+            )}
           </div>
           <div className="mt-2 flex items-start justify-between">
             <div className="flex gap-x-4">
               <PopupPreviewQuestions dataSource={dataSource} />
-              <Button
-                variant="ghost"
-                className="h-auto gap-x-2  p-0 text-xs font-normal hover:bg-transparent"
-                onClick={editHandler}
-                type="button"
-              >
-                <Redo className="size-3 text-primary" />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                className="h-auto gap-x-2 p-0 text-xs font-normal hover:bg-transparent"
-                onClick={deleteHandler}
-                type="button"
-                disabled={questions.length <= 1 && type === 'questions'}
-              >
-                <Trash2 className="size-3 text-primary" />
-                Delete
-              </Button>
+              {!isCandidates && (
+                <>
+                  <Button
+                    variant="ghost"
+                    className="h-auto gap-x-2  p-0 text-xs font-normal hover:bg-transparent"
+                    onClick={editHandler}
+                    type="button"
+                  >
+                    <Redo className="size-3 text-primary" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="h-auto gap-x-2 p-0 text-xs font-normal hover:bg-transparent"
+                    onClick={() => deleteHandler(idx || 0)}
+                    type="button"
+                  >
+                    <Trash2 className="size-3 text-primary" />
+                    Delete
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

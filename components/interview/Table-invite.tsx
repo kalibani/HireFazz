@@ -1,7 +1,13 @@
 'use client';
 
 import { ArrowUpDown, Trash2 } from 'lucide-react';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+  useTransition,
+} from 'react';
 import { Button } from '../ui/button';
 import {
   ColumnDef,
@@ -24,8 +30,6 @@ import {
 } from '../ui/table';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { v4 as uuidv4 } from 'uuid';
-
 import { PaginationGroup } from '../ui/pagination';
 import { Loader } from '../share';
 
@@ -35,7 +39,13 @@ type TColumn = {
   email: string;
 };
 
-const TableInvite = ({ dataSource }: { dataSource: any }) => {
+const TableInvite = ({
+  dataSource,
+  setImportedCandidates,
+}: {
+  dataSource: any;
+  setImportedCandidates: Dispatch<SetStateAction<TColumn[]>>;
+}) => {
   const { replace } = useRouter();
   const pathname = usePathname();
 
@@ -104,6 +114,7 @@ const TableInvite = ({ dataSource }: { dataSource: any }) => {
               (item) => item.id !== row.original.id,
             );
             setTableItems(newData);
+            setImportedCandidates(newData);
           });
         };
         return (
@@ -207,13 +218,14 @@ const TableInvite = ({ dataSource }: { dataSource: any }) => {
           </TableBody>
         </Table>
       </div>
-
-      <PaginationGroup
-        perPage={Number(perPage || '10')}
-        totalItems={dataSource.length || []}
-        activePage={currPage ? Number(currPage) : undefined}
-        handlePagination={handlePagination}
-      />
+      {tableItems.length > 0 && (
+        <PaginationGroup
+          perPage={Number(perPage || '10')}
+          totalItems={dataSource.length || []}
+          activePage={currPage ? Number(currPage) : undefined}
+          handlePagination={handlePagination}
+        />
+      )}
 
       {isPending && <Loader />}
     </>

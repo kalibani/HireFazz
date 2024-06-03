@@ -12,6 +12,9 @@ import {
 import updateStatusCandidate from '@/lib/actions/interview/updateStatusCandidates';
 import { Loader } from '../share';
 import { cn } from '@/lib/utils';
+import { useRouter, usePathname, notFound } from 'next/navigation';
+import { errorToast, successToast } from '../toasterProvider';
+import { match } from 'ts-pattern';
 
 const CandidatesCard = ({
   dataSource,
@@ -20,18 +23,39 @@ const CandidatesCard = ({
   dataSource: TCandidateListSchema;
   index: number;
 }) => {
+  const { replace, push } = useRouter();
+  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-
-  const updateStatusHandler = (id: string) => {
-    startTransition(async () => {
-      updateStatusCandidate(id, dataSource.status === 'OPEN' ? 'CLOSE' : 'OPEN')
-        .then((data) => console.log(data?.success, 'masuk'))
-        .catch((error) => console.log(error));
+  const actionHandler = (
+    id: string,
+    type: 'update' | 'delete' | 'add',
+    e: React.MouseEvent,
+  ) => {
+    e.stopPropagation();
+    startTransition(() => {
+      match(type)
+        .with(
+          'update',
+          async () =>
+            await updateStatusCandidate(
+              id,
+              dataSource.status === 'OPEN' ? 'CLOSE' : 'OPEN',
+            )
+              .then((data) => successToast(data?.success))
+              .catch((error) =>
+                errorToast(typeof error === 'string' ? error : undefined),
+              ),
+        )
+        .with('add', () => push(`${pathname}/invite-candidates?idInvite=${id}`))
+        .otherwise(() => notFound());
     });
   };
   return (
     <>
-      <div className="my-4 flex min-h-36  flex-col justify-between rounded-md border p-4">
+      <div
+        className="my-4 flex min-h-36 flex-col justify-between rounded-md border p-4 hover:cursor-pointer hover:border-primary"
+        onClick={() => replace(`${pathname}/${dataSource.id}`)}
+      >
         <div className="flex items-center justify-between">
           <h4 className="text-2xl font-semibold">
             {dataSource.name} Candidates # {index + 1}
@@ -56,17 +80,26 @@ const CandidatesCard = ({
 
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <CircleEllipsis className="text-primary" />
+              <CircleEllipsis className="size-8 text-primary" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={(e) => actionHandler(dataSource.id, 'delete', e)}
+              >
                 Delete
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() => updateStatusHandler(dataSource.id)}
+                onClick={(e) => actionHandler(dataSource.id, 'update', e)}
               >
                 Update Status
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={(e) => actionHandler(dataSource.id, 'add', e)}
+              >
+                Add Candidates
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

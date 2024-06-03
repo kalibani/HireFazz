@@ -63,6 +63,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
 }) => {
   const searchParams = useSearchParams();
   const perPage = Number(searchParams.get('per_page') || '10');
+  const activePage = Number(searchParams.get('page') || '1');
   const pathname = usePathname();
   const params = useParams();
   const { replace, refresh, push } = useRouter();
@@ -241,6 +242,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
   function handlePagination(query: 'per_page' | 'page', value: string) {
     const params = new URLSearchParams(searchParams);
     if (value) {
+      params.set('page', '1');
       params.set(query, value);
     } else {
       params.delete(query);
@@ -493,6 +495,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
         </div>
         <div className="space-x-2">
           <Pagination
+            activePage={activePage}
             itemsPerPage={perPage}
             totalItems={pagination?.totalItems || 0}
             onPageChange={(page) => handlePagination('page', page.toString())}

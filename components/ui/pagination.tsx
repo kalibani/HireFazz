@@ -5,10 +5,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { PER_PAGE_ITEMS } from '@/constant'
 
 interface PaginationProps {
-  activePage?: number
-  totalItems: number
-  itemsPerPage: number
-  onPageChange?: (page: number) => void
+  activePage?: number;
+  totalItems: number;
+  itemsPerPage: number;
+  onPageChange?: (page: number) => void;
 }
 
 const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage, onPageChange }) => {
@@ -21,38 +21,38 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
     if (activePage) {
       setPage(activePage)
     }
-  }, [activePage])
+  }, [activePage]);
 
   const paginationElements = useMemo(() => {
     if (totalPage <= 5) {
-      return Array.from(Array(totalPage).keys()).map((value) => value + 1)
+      return Array.from(Array(totalPage).keys()).map((value) => value + 1);
     }
 
-    const result: number[] = [1]
-    const isFirstThreeItem = page <= 3
-    const isLastThreeItem = page > totalPage - 3
+    const result: number[] = [1];
+    const isFirstThreeItem = page <= 3;
+    const isLastThreeItem = page > totalPage - 3;
 
     // insert '...' base on current page position using array of number
     // if need to be ellipsis, then put NaN as value
     // only 3 condition, first (<=3), last (> total-3), and middle
     if (isFirstThreeItem) {
-      result.push(2, 3, NaN, totalPage)
+      result.push(2, 3, NaN, totalPage);
     } else if (isLastThreeItem) {
-      result.push(NaN, totalPage - 2, totalPage - 1, totalPage)
+      result.push(NaN, totalPage - 2, totalPage - 1, totalPage);
     } else {
-      result.push(NaN, page, NaN, totalPage)
+      result.push(NaN, page, NaN, totalPage);
     }
 
-    return result
-  }, [page, totalPage])
+    return result;
+  }, [page, totalPage]);
 
   const handlePageChange = (newPage: number) => {
     // not trigger func if click on the same page
-    if (page === newPage) return
+    if (page === newPage) return;
 
-    setPage(newPage)
-    onPageChange?.(newPage)
-  }
+    setPage(newPage);
+    onPageChange?.(newPage);
+  };
 
   return (
     <div className="flex items-center gap-2">
@@ -66,13 +66,21 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
 
       {paginationElements.map((pageElement, index) => {
         if (Number.isNaN(pageElement)) {
-          return <span key={index + Math.random() * 1000} className="px-2">...</span>
+          return (
+            <span key={index + Math.random() * 1000} className="px-2">
+              ...
+            </span>
+          );
         } else {
           return (
-            <Button key={pageElement + index} variant={page === Number(pageElement) ? 'default' : 'outline'} onClick={() => handlePageChange(pageElement)}>
+            <Button
+              key={pageElement + index}
+              variant={page === Number(pageElement) ? 'default' : 'outline'}
+              onClick={() => handlePageChange(pageElement)}
+            >
               {pageElement}
             </Button>
-          )
+          );
         }
       })}
 
@@ -84,44 +92,53 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
         Next
       </Button>
     </div>
-  )
-}
+  );
+};
 
-export default Pagination
+export default Pagination;
 
 interface PaginationGroupProps {
-  perPage: number
-  totalItems: number
-  activePage?: number
-  handlePagination?: (pageType: 'page' | 'per_page', value: string) => void
+  perPage: number;
+  totalItems: number;
+  activePage?: number;
+  handlePagination?: (pageType: 'page' | 'per_page', value: string) => void;
 }
 export const PaginationGroup: FC<PaginationGroupProps> = ({
   perPage,
   totalItems,
   activePage,
-  handlePagination
+  handlePagination,
 }) => {
   return (
     <div className="flex items-center justify-between py-3">
       <div className="max-w-44 flex gap-2 items-center">
         <span>View</span>
-        <Select onValueChange={(value) => handlePagination?.('per_page', value)}>
+        <Select
+          onValueChange={(value) => handlePagination?.('per_page', value)}
+        >
           <SelectTrigger>
             <SelectValue placeholder={perPage} defaultValue={perPage} />
           </SelectTrigger>
 
           <SelectContent>
-            {PER_PAGE_ITEMS.map((pageItem) => <SelectItem key={pageItem} value={pageItem}>{pageItem}</SelectItem>)}
+            {PER_PAGE_ITEMS.map((pageItem) => (
+              <SelectItem key={pageItem} value={pageItem}>
+                {pageItem}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
         <span>List</span>
       </div>
       <div className="space-x-2">
-        <Pagination activePage={activePage} itemsPerPage={perPage} totalItems={totalItems} onPageChange={(page) => handlePagination?.('page', page.toString())} />
+        <Pagination
+          activePage={activePage}
+          itemsPerPage={perPage}
+          totalItems={totalItems}
+          onPageChange={(page) => handlePagination?.('page', page.toString())}
+        />
       </div>
-
-      <div></div>
     </div>
-  )
-}
+  );
+};

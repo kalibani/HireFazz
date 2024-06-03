@@ -25,6 +25,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
+import { v4 as uuidv4 } from 'uuid';
 
 const FormSchema = z.object({
   timeRead: z.string().optional(),
@@ -52,7 +53,7 @@ const FormQuestion = () => {
   });
 
   useEffect(() => {
-    if (questionForm) {
+    if (!!questionForm?.title) {
       setVideoUrl(questionForm.videoUrl || null, 'question');
       form.setValue('title', questionForm.title);
       form.setValue('question', questionForm.question || '');
@@ -64,7 +65,7 @@ const FormQuestion = () => {
   }, [form, questionForm, setVideoUrl]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    if (questionForm) {
+    if (!!questionForm?.title) {
       const payload = {
         id: questionForm.id,
         title: data.title,
@@ -72,10 +73,12 @@ const FormQuestion = () => {
         timeAnswered: Number(data.timeAnswered) || 0,
         timeRead: Number(data.timeRead) || 0,
         videoUrl: questionVideoUrl,
+        idx: questionForm.idx,
       };
       setQuestion(payload);
     } else {
       setQuestion({
+        id: uuidv4(),
         title: data.title,
         question: data.question,
         timeAnswered: Number(data.timeAnswered) ?? durationTimeAnswered,
@@ -83,6 +86,10 @@ const FormQuestion = () => {
         videoUrl: questionVideoUrl,
       });
     }
+    setIsAddQuestion(false);
+  };
+
+  const closeHandler = () => {
     setIsAddQuestion(false);
   };
 
@@ -123,7 +130,7 @@ const FormQuestion = () => {
                       </Button>
                     </div>
                   </div>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -151,7 +158,7 @@ const FormQuestion = () => {
                         </SelectContent>
                       </Select>
 
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -176,7 +183,7 @@ const FormQuestion = () => {
                         </SelectContent>
                       </Select>
 
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -191,7 +198,7 @@ const FormQuestion = () => {
                   <FormControl>
                     <Textarea placeholder="" {...field} minRows={2.5} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -201,7 +208,7 @@ const FormQuestion = () => {
           <Button
             className="text-sm font-normal"
             variant="secondary"
-            onClick={() => setIsAddQuestion(false)}
+            onClick={closeHandler}
             type="button"
           >
             close
