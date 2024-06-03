@@ -168,3 +168,22 @@ export const truncateString = (str: string, maxLen: number) => {
 
   return isOverflow ? `${truncated}...` : str;
 };
+
+export function formatMoneyRMG(
+  amount: number | string | undefined,
+  currency = '',
+) {
+  if (!amount) return amount;
+  const symbol = currency;
+  const numberString = amount !== null ? amount.toString() : '0';
+  const split = numberString.split('.');
+  let decimal = split[1];
+  const formatted = split[0].replace(/(\d)(?=(\d{3})+$)/g, '$&.');
+
+  if (decimal === undefined) {
+    decimal = '00';
+  } else if (decimal[1] === undefined) {
+    decimal = `${decimal}`;
+  }
+  return `${symbol} ${formatted}${decimal !== '00' ? `,${decimal}` : ''}`;
+}

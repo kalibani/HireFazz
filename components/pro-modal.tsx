@@ -95,10 +95,8 @@ const ProModal = () => {
   const router = useRouter();
 
   const handleClickUpgrade = () => {
+    proModal.onClose();
     handleCheckout();
-    setTimeout(() => {
-      proModal.onClose();
-    }, 1000);
   };
 
   const handleUpdateSubscription = async () => {
@@ -142,13 +140,13 @@ const ProModal = () => {
           <DialogTitle className="flex flex-col items-center justify-center gap-y-4 pb-2">
             <div className="flex items-center gap-x-2 py-1 font-bold">
               {isQuotaLimited ? 'Re-subscribe to' : 'Upgrade to BerryLabs'}
-              <Badge className=" py-1 text-sm uppercase" variant="premium">
+              <Badge className="py-1 text-sm uppercase " variant="premium">
                 {plan}
               </Badge>
               Plan
             </div>
           </DialogTitle>
-          <DialogDescription className=" space-y-2 pt-2 text-center font-medium text-zinc-900">
+          <DialogDescription className="space-y-2 pt-2 text-center font-medium text-zinc-900">
             {tools.map((tool) => (
               <Card
                 key={tool.href}

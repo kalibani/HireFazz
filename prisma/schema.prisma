@@ -20,6 +20,31 @@ model User {
   userOrganization UserOrganization[]
 }
 
+
+model Topup {
+  id               String            @id @default(cuid())
+  status           TopupStatus       @default(CREATED)
+  orderId          String            @unique
+  amount           Int
+  token            Int
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  orgId            String
+  createdBy        String
+  histories        TopupHistory[]
+  
+}
+
+model TopupHistory {
+  id               String             @id @default(cuid())
+  topupId          String
+  topup            Topup    @relation(fields: [topupId], references: [id])
+  action           TopupStatus
+  createdAt        DateTime          @default(now())
+  additionalData   Json?
+}
+
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -90,8 +115,6 @@ model UserOrganization {
 model InterviewTemplate {
   id                   String       @id @default(cuid())
   title                String
-  description          String?
-  descriptionIntro     String?
   durationTimeRead     Int
   durationTimeAnswered Int
   questionRetake       Int?
@@ -101,6 +124,9 @@ model InterviewTemplate {
   farewellDescription  String?
   questions            Json
   organizationId       String
+  description          String?
+  descriptionIntro     String?
+  isDeleted            Boolean?     @default(false)
   organization         Organization @relation(fields: [organizationId], references: [id])
 }
 
@@ -110,12 +136,14 @@ model InvitedUser {
   email                 String
   phoneNumber           String?
   result                Json
-  status                invitedUserStatus   @default(INVITED)
+  status                InvitedUser_status  @default(INVITED)
   createdAt             DateTime            @default(now())
   expiredDate           DateTime
   organizationId        String
-  organization          Organization        @relation(fields: [organizationId], references: [id])
   interviewCandidatesId String
+  isUsed                Boolean             @default(false)
+  keyCode               String
+  organization          Organization        @relation(fields: [organizationId], references: [id])
   interviewCandidates   InterviewCandidates @relation(fields: [interviewCandidatesId], references: [id])
 }
 
@@ -123,11 +151,11 @@ model InterviewCandidates {
   id             String           @id @default(cuid())
   templateId     String
   batchJobId     String?
-  batchJob       BatchJob?        @relation(fields: [batchJobId], references: [id])
   organizationId String
-  organization   Organization     @relation(fields: [organizationId], references: [id])
   name           String
   status         STATUS_INTERVIEW @default(OPEN)
+  batchJob       BatchJob?        @relation(fields: [batchJobId], references: [id])
+  organization   Organization     @relation(fields: [organizationId], references: [id])
   candidates     InvitedUser[]
 }
 
@@ -304,12 +332,6 @@ enum ANALYSYS_STATUS {
   SHORTLISTED
 }
 
-enum invitedUserStatus {
-  INVITED
-  NO_RESPONSE
-  COMPLETED
-}
-
 enum UploadStatus {
   PENDING
   PROCESSING
@@ -321,4 +343,20 @@ enum State {
   created
   deleted
   processing
+}
+
+enum InvitedUser_status {
+  INVITED
+  OPEN
+  NO_RESPONSE
+  COMPLETED
+  EXPIRED
+}
+
+
+enum TopupStatus {
+  CREATED
+  PENDING
+  SETTLEMENT
+  EXPIRED
 }
