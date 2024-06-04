@@ -45,6 +45,7 @@ const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
     mediaRecorderRef,
     handleDataAvailable,
     setVideoUrl,
+    typeVideo,
   ]);
 
   const handleStopCaptureClick = useCallback(() => {

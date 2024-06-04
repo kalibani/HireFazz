@@ -62,3 +62,13 @@ export const formatFileSize = (sizeInBytes: number): string => {
 export const formatCapitalizeFirstLetter = (str: string): string => {
   return str.toLowerCase().charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
+
+export const formatSecondsToTime = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  const pad = (num: number) => num.toString().padStart(2, '0');
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
+};
