@@ -55,7 +55,7 @@ import { NextRequest, NextResponse } from 'next/server';
 //   "expiry_time": "2024-05-28 19:57:37"
 // }
 
-const accessToken = btoa(`${process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY}:`);
+const accessToken = btoa(`${process.env.MIDTRANS_SERVER_KEY}:`);
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
