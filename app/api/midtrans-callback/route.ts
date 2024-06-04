@@ -55,6 +55,7 @@ import { NextRequest, NextResponse } from 'next/server';
 //   "expiry_time": "2024-05-28 19:57:37"
 // }
 
+const accessToken = btoa(`${process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY}:`);
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -63,8 +64,7 @@ export async function POST(request: NextRequest) {
       url: `https://api.sandbox.midtrans.com/v2/${body.order_id}/status`,
       headers: {
         accept: 'application/json',
-        authorization:
-          'Basic U0ItTWlkLXNlcnZlci1ITTFCa2dsMTBLSnZzQlZjeWR4RElSSmc6',
+        authorization: `Basic ${accessToken}`,
       },
     };
     const { data } = await axios.request(options);
