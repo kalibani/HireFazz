@@ -135,6 +135,7 @@ model InterviewTemplate {
   organizationId       String
   description          String?
   descriptionIntro     String?
+  isDeleted            Boolean?     @default(false)
   organization         Organization @relation(fields: [organizationId], references: [id])
 }
 
