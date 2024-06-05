@@ -35,18 +35,19 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
     replace(`${pathname}?${params.toString()}`);
   };
 
-  // useEffect(() => {
-  //   if (thinkingTime <= 0) {
-  //     nextToAnswerHandle();
-  //     return;
-  //   }
+  useEffect(() => {
+    if (thinkingTime <= 0) {
+      nextToAnswerHandle();
+      return;
+    }
 
-  //   const interval = setInterval(() => {
-  //     setThinkingTime((prevTime) => prevTime - 1);
-  //   }, 1000);
+    const interval = setInterval(() => {
+      setThinkingTime((prevTime) => prevTime - 1);
+    }, 1000);
 
-  //   return () => clearInterval(interval);
-  // }, [thinkingTime]);
+    return () => clearInterval(interval);
+  }, [thinkingTime]);
+  
   return (
     <>
       <div

@@ -2,6 +2,7 @@ import { ListChecks } from 'lucide-react';
 import React, { FC } from 'react';
 import TimeDisplay from './time-display';
 import { formatSecondsToTime } from '@/helpers';
+import { title } from 'process';
 
 interface PropsQuestionContent {
   dataSource: {
@@ -20,7 +21,8 @@ const QuestionContent: FC<PropsQuestionContent> = ({
   questionIndex,
   totalQuestion,
 }) => {
-  const { title, question, timeAnswered, timeRead } = dataSource;
+  if (!dataSource) return null;
+  const { id, title, question, timeAnswered, timeRead } = dataSource;
   return (
     <>
       <h4 className="my-5 flex items-center gap-x-2 text-left text-xl font-semibold text-primary">

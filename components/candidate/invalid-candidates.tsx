@@ -16,11 +16,11 @@ const InvalidCandidate = () => {
       <div className="my-28 flex w-full flex-col ">
         <h1 className="animate-bounce text-center text-5xl font-extrabold lg:text-7xl 2xl:text-8xl">
           <span className="bg-gradient-to-br from-teal-500 via-indigo-500 to-sky-500 bg-clip-text text-transparent dark:from-teal-200 dark:via-indigo-300 dark:to-sky-500">
-            Oo
+            Unfort
           </span>
 
           <span className="bg-gradient-to-tr from-blue-500 via-pink-500 to-red-500 bg-clip-text text-transparent dark:from-sky-300 dark:via-pink-300 dark:to-red-500">
-            pss!
+            unately!
           </span>
         </h1>
         <h4 className="my-2 text-center text-xl font-bold text-primary">

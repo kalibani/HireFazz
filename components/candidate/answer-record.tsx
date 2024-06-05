@@ -95,7 +95,6 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({
   }, [mediaRecorderRef]);
 
   const handleNextQuestion = () => {
-    // console.log({ videoSrc, file: recordedChunks[0] }, '<<< SUBMIT');
     if (videoSrc && id) {
       startTransition(async () => {
         const formDataVideo: any = await blobToFormData(videoSrc, 'answered');
@@ -104,6 +103,7 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({
           questionId,
           url: uploadedVideo,
           id,
+          indexQuestion: Number(questionNumber),
         })
           .then((data: any) => {
             if (data?.error) {
@@ -112,13 +112,13 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({
             toast.success(data?.success);
           })
           .catch((error) => {
-            console.log(error);
+            toast.error(error.message);
           })
           .finally(() => {
             const params = new URLSearchParams(searchParams);
             const questionPart = Number(questionNumber);
             if (totalQuestion - 1 === questionPart) {
-              replace('/candidate/finish');
+              replace(`/candidate/finish?id=${id}`);
             } else {
               params.set('question', `${questionPart + 1}`);
               params.delete('answer');
@@ -241,7 +241,7 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({
           {recordedChunks?.length > 0 && (
             <Button onClick={handleNextQuestion} disabled={isPending}>
               {Number(questionNumber) === totalQuestion - 1
-                ? 'Finish'
+                ? 'Next to Save'
                 : 'Next Question'}
             </Button>
           )}

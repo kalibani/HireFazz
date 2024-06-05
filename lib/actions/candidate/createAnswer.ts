@@ -3,9 +3,7 @@
 import { errorHandler } from '@/helpers';
 import { z } from 'zod';
 import getCandidate from './getCandidate';
-import { blobToFormData } from '@/lib/utils';
 import prismadb from '@/lib/prismadb';
-import result from 'postcss/lib/result';
 import { revalidatePath } from 'next/cache';
 
 const candidateSchema = z.object({
@@ -17,11 +15,12 @@ const candidateSchema = z.object({
   }),
   questions: z.any(),
 });
-type TCandidateListSchema = z.infer<typeof candidateSchema>;
+
 const payloadCreateAnswer = z.object({
   id: z.string(),
   url: z.string(),
   questionId: z.string(),
+  indexQuestion: z.number(),
 });
 type TPayloadCreateAnswer = z.infer<typeof payloadCreateAnswer>;
 
@@ -29,41 +28,23 @@ export default async function createAnswer(payload: TPayloadCreateAnswer) {
   try {
     const safePayload = payloadCreateAnswer.parse(payload);
     if (!safePayload) return { error: 'please check the payload' + payload };
-    const { questionId, url, id } = safePayload;
+    const { questionId, url, id, indexQuestion } = safePayload;
     const candidateResult = await getCandidate(id);
 
     const validatedCandidate = candidateSchema.parse(candidateResult);
-    if (!validatedCandidate) return { error: 'somthing went wrong' };
+    if (!validatedCandidate) return { error: 'something went wrong' };
 
-    // const introVideo = await blobToFormData(url, 'answred');
-    console.log({ url });
-    let matchedQuestion;
-    matchedQuestion = validatedCandidate.questions.find(
+    const cekIdQuestion = validatedCandidate.questions.some(
       (question: any) => question.id === questionId,
     );
-    const existing = validatedCandidate.questions.filter(
-      (question: any) => questionId !== question.id,
-    );
-    if (matchedQuestion) {
-      matchedQuestion.answered = url;
-    }
+    if (!cekIdQuestion) return { error: 'data not valid' };
+    const newQuestion = validatedCandidate.questions;
+    newQuestion[indexQuestion] = { ...newQuestion[0], answered: url };
 
-    const questionsUpdate = [...existing, matchedQuestion];
     const payloadUpdate = {
       ...validatedCandidate,
-      questions: questionsUpdate,
+      questions: newQuestion,
     };
-    const candidateOne = await prismadb.invitedUser.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    console.log({
-      candidateResult,
-      payloadUpdate,
-      candidateOne,
-    });
 
     await prismadb.invitedUser.update({
       where: {
@@ -72,8 +53,7 @@ export default async function createAnswer(payload: TPayloadCreateAnswer) {
       data: { result: payloadUpdate },
     });
     revalidatePath('/candidate');
-    return {success:'recorded'}
-    // console.log({ candidateResult, validatedCandidate }, candidateResult);
+    return { success: 'recorded' };
   } catch (error) {
     return errorHandler(error);
   }

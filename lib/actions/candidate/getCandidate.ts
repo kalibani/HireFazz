@@ -11,14 +11,17 @@ export default async function getCandidate(id: string) {
       },
       select: {
         result: true,
+        status: true,
+        isUsed: true,
       },
     });
     if (!candidate) {
       return { error: 'Something went wrong' };
     }
-    return candidate.result;
+    return {
+      ...candidate,
+    };
   } catch (error) {
     errorHandler(error);
   }
 }
-

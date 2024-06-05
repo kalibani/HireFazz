@@ -9,6 +9,7 @@ export const publicRoutes = [
   '/api/midtrans-callback',
   '/candidate',
   '/candidate/finish',
+  '/candidate/invalid-candidate',
 ];
 
 /**

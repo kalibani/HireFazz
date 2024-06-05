@@ -9,9 +9,9 @@ export default async function checkCandidate(id: string) {
     const candidate = await prismadb.invitedUser.findUnique({
       where: {
         id,
-        isUsed: false,
       },
     });
+    
     if (!candidate) {
       return { error: 'candidate not valid' };
     }
