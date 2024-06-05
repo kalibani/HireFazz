@@ -32,6 +32,7 @@ const Questions: FC<{ id: string; question: string; answer: string }> = async ({
 }) => {
   const indexOfQuestion = Number(question);
   const candidate: any = await getCandidate(id);
+
   if (candidate?.error) {
     return redirect('/invalid-candidate');
   }
@@ -98,7 +99,6 @@ const Questions: FC<{ id: string; question: string; answer: string }> = async ({
       )}
     </>
   );
-  
 };
 
 export default Questions;

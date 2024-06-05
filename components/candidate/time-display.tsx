@@ -47,7 +47,7 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 
     return () => clearInterval(interval);
   }, [thinkingTime]);
-  
+
   return (
     <>
       <div

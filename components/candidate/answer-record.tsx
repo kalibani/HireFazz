@@ -24,6 +24,7 @@ import createAnswer from '@/lib/actions/candidate/createAnswer';
 import toast from 'react-hot-toast';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
+import updateStatus from '@/lib/actions/candidate/updateStatue';
 
 interface PropsAnswerRecord {
   timeAnswer: string;
@@ -83,7 +84,6 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({
 
   const handleDownload = useCallback(() => {
     const blob = new Blob(recordedChunks, { type: 'video/webm' });
-    const url = URL.createObjectURL(blob);
     setVideoSrc(blob);
   }, [recordedChunks, setVideoSrc]);
 
@@ -95,38 +95,48 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({
   }, [mediaRecorderRef]);
 
   const handleNextQuestion = () => {
-    if (videoSrc && id) {
-      startTransition(async () => {
+    startTransition(async () => {
+      if (!videoSrc || !id) {
+        toast.error('Video source or ID is missing');
+        return;
+      }
+      try {
         const formDataVideo: any = await blobToFormData(videoSrc, 'answered');
         const uploadedVideo = (await uploadVideo(formDataVideo)) as string;
-        createAnswer({
+
+        const response: any = await createAnswer({
           questionId,
           url: uploadedVideo,
           id,
           indexQuestion: Number(questionNumber),
-        })
-          .then((data: any) => {
-            if (data?.error) {
-              toast.error(data.error);
-            }
-            toast.success(data?.success);
-          })
-          .catch((error) => {
-            toast.error(error.message);
-          })
-          .finally(() => {
-            const params = new URLSearchParams(searchParams);
-            const questionPart = Number(questionNumber);
-            if (totalQuestion - 1 === questionPart) {
-              replace(`/candidate/finish?id=${id}`);
-            } else {
-              params.set('question', `${questionPart + 1}`);
-              params.delete('answer');
-              replace(`${pathname}?${params.toString()}`);
-            }
-          });
-      });
-    }
+        });
+
+        if (response?.error) {
+          toast.error(response.error);
+        } else {
+          toast.success(response?.success);
+        }
+
+        const params = new URLSearchParams(searchParams);
+        const questionPart = Number(questionNumber);
+
+        if (totalQuestion - 1 === questionPart) {
+          const updateResponse: any = await updateStatus(id);
+          if (updateResponse?.error) {
+            toast.error(updateResponse.error);
+          } else {
+            toast.success(updateResponse?.success);
+          }
+          replace('/candidate/finish');
+        } else {
+          params.set('question', `${questionPart + 1}`);
+          params.delete('answer');
+          replace(`${pathname}?${params.toString()}`);
+        }
+      } catch (error: any) {
+        toast.error(error.message);
+      }
+    });
   };
 
   useEffect(() => {

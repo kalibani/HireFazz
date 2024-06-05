@@ -29,9 +29,16 @@ export default async function createAnswer(payload: TPayloadCreateAnswer) {
     const safePayload = payloadCreateAnswer.parse(payload);
     if (!safePayload) return { error: 'please check the payload' + payload };
     const { questionId, url, id, indexQuestion } = safePayload;
-    const candidateResult = await getCandidate(id);
+    const candidateResult = await prismadb.invitedUser.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        result: true,
+      },
+    });
 
-    const validatedCandidate = candidateSchema.parse(candidateResult);
+    const validatedCandidate = candidateSchema.parse(candidateResult?.result);
     if (!validatedCandidate) return { error: 'something went wrong' };
 
     const cekIdQuestion = validatedCandidate.questions.some(
