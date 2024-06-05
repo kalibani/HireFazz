@@ -1,21 +1,48 @@
 'use client';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import Webcam from 'react-webcam';
 import { Button } from '../ui/button';
 import { PlayCircle, StopCircle } from 'lucide-react';
 import {
   audioConstraints,
+  blobToFormData,
   cn,
   secondsToTimeString,
   timeStringToSeconds,
   videoConstraints,
 } from '@/lib/utils';
+import getCandidate from '@/lib/actions/candidate/getCandidate';
+import { Loader } from '../share';
+import createAnswer from '@/lib/actions/candidate/createAnswer';
+import toast from 'react-hot-toast';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 
 interface PropsAnswerRecord {
   timeAnswer: string;
+  question: string;
+  questionId: string;
+  totalQuestion: number;
 }
 
-const AnswerRecord: FC<PropsAnswerRecord> = ({ timeAnswer }) => {
+const AnswerRecord: FC<PropsAnswerRecord> = ({
+  timeAnswer,
+  question,
+  questionId,
+  totalQuestion,
+}) => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const id = searchParams.get('id');
+  const questionNumber = searchParams.get('question');
   const webcamRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
@@ -26,7 +53,8 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({ timeAnswer }) => {
     timeStringToSeconds(timeAnswer),
   );
   const [countdown, setCountdown] = useState<number>(7);
-  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [videoSrc, setVideoSrc] = useState<Blob | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const handleDataAvailable = useCallback(
     ({ data }: { data: any }) => {
@@ -38,40 +66,74 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({ timeAnswer }) => {
   );
 
   const handleStartCapture = useCallback(() => {
-    setVideoSrc(null);
     setCapturing(true);
     setCountdown(0);
-    mediaRecorderRef.current = new MediaRecorder(webcamRef?.current?.stream, {
-      mimeType: 'video/webm',
-    });
-    mediaRecorderRef.current.addEventListener(
-      'dataavailable',
-      handleDataAvailable,
-    );
-    mediaRecorderRef.current.start();
-  }, [handleDataAvailable]);
+    const stream = webcamRef.current?.stream;
+    if (stream) {
+      mediaRecorderRef.current = new MediaRecorder(stream, {
+        mimeType: 'video/webm',
+      });
+      mediaRecorderRef.current.addEventListener(
+        'dataavailable',
+        handleDataAvailable,
+      );
+      mediaRecorderRef.current.start();
+    }
+  }, [handleDataAvailable, webcamRef, setCapturing, mediaRecorderRef]);
 
-  const handleDownload = useCallback(async () => {
+  const handleDownload = useCallback(() => {
     const blob = new Blob(recordedChunks, { type: 'video/webm' });
     const url = URL.createObjectURL(blob);
-    console.log({ blob, url });
-    setVideoSrc(url);
-  }, [recordedChunks]);
+    setVideoSrc(blob);
+  }, [recordedChunks, setVideoSrc]);
 
   const handleStopCapture = useCallback(() => {
     setCapturing(false);
     setIsTriggetStop(true);
     setAnswerTime(0);
     mediaRecorderRef.current?.stop();
-    handleDownload();
-  }, [handleDownload]);
+  }, [mediaRecorderRef]);
 
   const handleNextQuestion = () => {
-    console.log({ videoSrc });
-    // const params = new URLSearchParams(searchParams);
-    // params.set('answer', `open`);
-    // replace(`${pathname}?${params.toString()}`);
+    // console.log({ videoSrc, file: recordedChunks[0] }, '<<< SUBMIT');
+    if (videoSrc && id) {
+      startTransition(async () => {
+        const formDataVideo: any = await blobToFormData(videoSrc, 'answered');
+        const uploadedVideo = (await uploadVideo(formDataVideo)) as string;
+        createAnswer({
+          questionId,
+          url: uploadedVideo,
+          id,
+        })
+          .then((data: any) => {
+            if (data?.error) {
+              toast.error(data.error);
+            }
+            toast.success(data?.success);
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+          .finally(() => {
+            const params = new URLSearchParams(searchParams);
+            const questionPart = Number(questionNumber);
+            if (totalQuestion - 1 === questionPart) {
+              replace('/candidate/finish');
+            } else {
+              params.set('question', `${questionPart + 1}`);
+              params.delete('answer');
+              replace(`${pathname}?${params.toString()}`);
+            }
+          });
+      });
+    }
   };
+
+  useEffect(() => {
+    if (recordedChunks.length > 0) {
+      handleDownload();
+    }
+  }, [recordedChunks, handleDownload]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -99,82 +161,95 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({ timeAnswer }) => {
     } else if (answerTime === 0 && capturing && !isTriggerStop) {
       handleStopCapture();
     }
-  }, [capturing, answerTime, countdown, isTriggerStop]);
+  }, [capturing, answerTime, countdown, isTriggerStop, handleStopCapture]);
 
   if (!isMounted) return null;
 
-  console.log({ recordedChunks });
-
   return (
-    <div className="flex flex-col items-center justify-center p-10">
-      <div className="aspect-w-16 aspect-h-9 relative w-full max-w-4xl overflow-hidden rounded-3xl shadow-md">
-        {capturing && (
-          <div className="absolute right-0 top-0 z-10 flex flex-col items-end gap-y-2 rounded-bl-3xl p-4 shadow-sm backdrop-blur-lg">
-            <p className="flex items-center gap-x-2 text-xs text-white">
-              <span
-                className={cn(
-                  'size-3 rounded-full bg-primary',
-                  answerTime <= 10 ? 'animate-ping' : '',
-                )}
-              />
-              Recording...
-            </p>
-            <div className="flex items-center text-white">
-              <span className="font-bold">
-                {secondsToTimeString(answerTime)}
-              </span>
+    <div className="w-full max-w-4xl  overflow-hidden rounded-3xl border bg-slate-600 ">
+      <div className="bg-white p-4 text-center text-base font-semibold">
+        <h4 className="text-lg text-primary">Question</h4>
+        <p>{question}</p>
+      </div>
+
+      <div className="flex flex-col items-center justify-center overflow-hidden  p-4">
+        <div className="aspect-w-16 aspect-h-9 relative w-full max-w-4xl overflow-hidden rounded-3xl shadow-md">
+          {capturing && !videoSrc && (
+            <div className="absolute right-0 top-0 z-10 flex flex-col items-end gap-y-2 overflow-hidden rounded-bl-3xl rounded-tr-3xl p-4 shadow-sm backdrop-blur-lg">
+              <p className="flex items-center gap-x-2 text-xs text-white">
+                <span
+                  className={cn(
+                    'size-3 rounded-full bg-primary',
+                    answerTime <= 10 ? 'animate-ping' : '',
+                  )}
+                />
+                Recording...
+              </p>
+              <div className="flex items-center text-white">
+                <span className="font-bold">
+                  {secondsToTimeString(answerTime)}
+                </span>
+              </div>
             </div>
-          </div>
-        )}
-        {countdown > 0 && (
-          <div className="absolute right-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center p-4 text-center text-white backdrop-blur-lg backdrop-brightness-50">
-            <h4 className="text-7xl font-semibold ">{countdown}</h4>
-            <p className="text-sm">Get ready to record your moment!</p>
-            <p className="text-xs">
-              If the wait feels too long, you can jumpstart the process by
-              clicking the play button to begin recording.
-            </p>
-          </div>
-        )}
-        {videoSrc ? (
-          <video controls src={videoSrc} className="w-full rounded-md" />
-        ) : (
-          <Webcam
-            mirrored
-            ref={webcamRef}
-            muted
-            audioConstraints={audioConstraints}
-            videoConstraints={videoConstraints}
-            screenshotFormat="image/jpeg"
-          />
-        )}
+          )}
+          {countdown > 0 && (
+            <div className="absolute right-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center rounded-3xl p-4 text-center text-white backdrop-blur-lg backdrop-brightness-50">
+              <h4 className="text-7xl font-semibold ">{countdown}</h4>
+              <p className="text-sm">Get ready to record your moment!</p>
+              <p className="text-xs">
+                If the wait feels too long, you can jumpstart the process by
+                clicking the play button to begin recording.
+              </p>
+            </div>
+          )}
+          {!!videoSrc ? (
+            <video
+              controls
+              src={URL.createObjectURL(videoSrc)}
+              className="w-full rounded-md"
+            />
+          ) : (
+            <Webcam
+              mirrored
+              ref={webcamRef}
+              muted={true}
+              audioConstraints={audioConstraints}
+              videoConstraints={videoConstraints}
+              audio
+            />
+          )}
+        </div>
+        <div className="my-4 flex justify-center">
+          {countdown > 0 && !capturing && (
+            <Button
+              onClick={handleStartCapture}
+              className="h-auto w-fit rounded-full bg-white p-0 hover:bg-white"
+              variant="ghost"
+            >
+              <PlayCircle className="size-8 text-primary" />
+            </Button>
+          )}
+          {capturing && recordedChunks.length === 0 && (
+            <Button
+              onClick={handleStopCapture}
+              className="h-auto w-fit rounded-full bg-white p-0 hover:bg-white"
+              variant="ghost"
+            >
+              <StopCircle className="size-8 text-primary" />
+            </Button>
+          )}
+          {recordedChunks?.length > 0 && (
+            <Button onClick={handleNextQuestion} disabled={isPending}>
+              {Number(questionNumber) === totalQuestion - 1
+                ? 'Finish'
+                : 'Next Question'}
+            </Button>
+          )}
+        </div>
       </div>
-      <div className="my-4 flex justify-center">
-        {countdown > 0 && !capturing && (
-          <Button
-            onClick={handleStartCapture}
-            className="h-auto w-fit rounded-full bg-white p-0 hover:bg-white"
-            variant="ghost"
-          >
-            <PlayCircle className="size-8 text-primary" />
-          </Button>
-        )}
-        {capturing && recordedChunks.length === 0 && (
-          <Button
-            onClick={handleStopCapture}
-            className="h-auto w-fit rounded-full bg-white p-0 hover:bg-white"
-            variant="ghost"
-          >
-            <StopCircle className="size-8 text-primary" />
-          </Button>
-        )}
-        {recordedChunks?.length > 0 && (
-          <Button onClick={handleNextQuestion}>Next Question</Button>
-        )}
-      </div>
+      {isPending && <Loader />}
     </div>
   );
 };
 
 export default AnswerRecord;
-

@@ -1,6 +1,7 @@
 import React from 'react';
 import EmptyVideo from './empty-video';
 import BulletPointQuestion from './bullet-point-question';
+import { cn } from '@/lib/utils';
 
 const VideoQuestions = ({
   videoUrl,
@@ -14,7 +15,7 @@ const VideoQuestions = ({
   isQuestion: boolean;
 }) => {
   return (
-    <div className="my-2 ">
+    <div className={cn('my-2', !videoUrl && 'w-full')}>
       {!videoUrl ? (
         <EmptyVideo />
       ) : (

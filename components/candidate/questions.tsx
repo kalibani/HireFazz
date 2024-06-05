@@ -70,6 +70,9 @@ const Questions: FC<{ id: string; question: string; answer: string }> = async ({
               timeAnswer={formatSecondsToTime(
                 questions[indexOfQuestion].timeAnswered,
               )}
+              question={questions[indexOfQuestion].question}
+              questionId={questions[indexOfQuestion].id}
+              totalQuestion={questions?.length}
             />
           </Suspense>
         )}

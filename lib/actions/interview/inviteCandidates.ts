@@ -61,10 +61,11 @@ export default async function createInviteCandidates(
           intro: {
             videoUrl: template.introVideoUrl,
             templateName: template.title,
-            name:interviewCandidates.name,
+            name: interviewCandidates.name,
             description: template.descriptionIntro,
           },
-          questions: template.questions as Prisma.InputJsonValue,
+          // questions: template.questions as Prisma.InputJsonValue,
+          questions: template.questions,
         },
         isUsed: false,
         keyCode: cryptoCode as string,

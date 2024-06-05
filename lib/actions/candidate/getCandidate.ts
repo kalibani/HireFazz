@@ -1,3 +1,5 @@
+'use server';
+
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 
@@ -19,3 +21,4 @@ export default async function getCandidate(id: string) {
     errorHandler(error);
   }
 }
+

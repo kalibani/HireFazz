@@ -13,7 +13,7 @@ const WrapperQuestion: React.FC<WrapperQuestionProps> = ({
   mainContent,
 }) => {
   return (
-    <div className="flex max-w-6xl flex-col overflow-hidden rounded-lg shadow-md md:flex-row">
+    <div className="flex max-w-full flex-col overflow-hidden rounded-lg shadow-md md:min-w-[800px] md:max-w-6xl md:flex-row">
       <div className="w-full bg-primary p-6 md:w-1/2">
         <Image src={Logo} alt="logo" width={100} className="mb-4" />
         <div className="flex items-center gap-x-2 text-xs text-white">
