@@ -7,6 +7,9 @@ export const publicRoutes = [
   '/',
   '/auth/new-verification',
   '/api/midtrans-callback',
+  '/candidate',
+  '/candidate/finish',
+  '/candidate/invalid-candidate',
 ];
 
 /**

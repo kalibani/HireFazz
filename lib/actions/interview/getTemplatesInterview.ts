@@ -15,6 +15,7 @@ export default async function getTemplateInterview(
     const data = await prismadb.interviewTemplate.findMany({
       where: {
         ...safePayload,
+        isDeleted: false,
       },
     });
     return data;

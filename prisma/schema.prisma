@@ -21,11 +21,11 @@ model User {
 }
 
 model Referral {
-  code         String @id @unique
-  email        String
-  extraToken   Int
-  isActive     Boolean @default(true)
-  topup        Topup[]
+  code       String  @id @unique
+  email      String
+  extraToken Int
+  isActive   Boolean @default(true)
+  topup      Topup[]
 }
 
 model Topup {
@@ -38,9 +38,10 @@ model Topup {
   updatedAt    DateTime       @updatedAt
   orgId        String
   createdBy    String
-  histories    TopupHistory[]
   referralCode String?
+  histories    TopupHistory[]
   refferal     Referral?      @relation(fields: [referralCode], references: [code])
+
   @@unique([referralCode, orgId])
 }
 

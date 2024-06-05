@@ -186,3 +186,18 @@ export function formatMoneyRMG(
   }
   return `${symbol} ${formatted}${decimal !== '00' ? `,${decimal}` : ''}`;
 }
+
+// Helper function to convert HH:MM:SS to seconds
+export const timeStringToSeconds = (timeString: string): number => {
+  const [hours, minutes, seconds] = timeString?.split(':').map(Number);
+  return hours * 3600 + minutes * 60 + seconds;
+};
+
+// Helper function to convert seconds to HH:MM:SS
+export const secondsToTimeString = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  const pad = (num: number) => num.toString().padStart(2, '0');
+  return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
+};

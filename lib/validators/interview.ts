@@ -45,6 +45,7 @@ export const InterviewDataSchema = z.object({
   descriptionIntro: z.string().optional(),
   introVideoUrl: z.string().optional(),
   questions: Question.optional(),
+  isDeleted: z.boolean().optional(),
 });
 export type TInterview = z.infer<typeof InterviewDataSchema>;
 
