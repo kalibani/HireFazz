@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { useMidtransStore } from './use-midtrans-store';
@@ -37,13 +37,14 @@ export function useTopup() {
   } = useMidtransStore();
 
   const { subscriptionType } = useUser();
-
   const handleCheckout = async ({
     token,
     orgId,
+    referralCode,
   }: {
     token: number;
     orgId: string;
+    referralCode: string | null;
   }) => {
     const data = {
       id: subscriptionType + uuidv4(),
@@ -51,6 +52,7 @@ export function useTopup() {
       price: costPerToken * token,
       orgId,
       token,
+      referralCode,
     };
 
     try {

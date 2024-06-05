@@ -70,6 +70,17 @@ export async function POST(request: NextRequest) {
     const { data } = await axios.request(options);
     const topupDb = await prismadb.topup.findUniqueOrThrow({
       where: { orderId: data.order_id },
+      select: {
+        status: true,
+        orgId: true,
+        token: true,
+        id: true,
+        refferal: {
+          select: {
+            extraToken: true,
+          },
+        },
+      },
     });
     let type: TopupStatus | null = null;
     if (
@@ -96,6 +107,8 @@ export async function POST(request: NextRequest) {
         },
       });
     }
+
+    // settle status and update data
     if (
       data.transaction_status === 'Settlement' &&
       topupDb.status !== TopupStatus.SETTLEMENT
@@ -116,7 +129,8 @@ export async function POST(request: NextRequest) {
       await prismadb.organization.update({
         where: { id: org.id },
         data: {
-          limit: org.limit + topupDb.token,
+          limit:
+            org.limit + topupDb.token + (topupDb.refferal?.extraToken || 0),
         },
       });
     }
