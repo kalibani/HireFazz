@@ -19,6 +19,7 @@ export const getJobList = async (
   try {
     const jobNameQuery = query?.jobName || '';
     const locationQuery = query?.location || '';
+    const jobStatusQuery = query?.status || ''
 
     // all items in filter: orgId, name, location
     const totalCount = await prismadb.batchJob.count({
@@ -51,11 +52,8 @@ export const getJobList = async (
       include: {
         cvAnalysis: {
           where: {
-            status: 'SHORTLISTED',
-          },
-          select: {
-            status: true,
-          },
+            status: jobStatusQuery.toUpperCase() as ANALYSYS_STATUS
+          }
         },
       },
     });
@@ -133,15 +131,23 @@ export const getByIdJob = async (
   id: string,
   take = 10,
   skip = 0,
-  location?: string,
+  query?: Record<string, string>,
 ) => {
   try {
+    const analysisStatus = query?.status
+    const location = query?.location
     const cvAnalysisWhere: any = {};
     if (location) {
       cvAnalysisWhere.location = {
         contains: location,
         mode: 'insensitive', // Case-insensitive search
       };
+    }
+
+    if (analysisStatus) {
+      cvAnalysisWhere.status = {
+        equals: analysisStatus.toUpperCase()
+      }
     }
 
     const totalCountResult = await prismadb.batchJob.findUnique({

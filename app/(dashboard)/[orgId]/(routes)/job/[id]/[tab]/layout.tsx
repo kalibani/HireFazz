@@ -27,7 +27,7 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
       text: 'All Applicant',
       link: `/${orgId}/job/${jobId}/all-applicant`,
       icon: <User className="size-5" />,
-      notificationCount: cvAnalysis.length,
+      notificationCount: jobDetail.cvAnalysisPagination.totalItems,
       isActive: params.tab === 'all-applicant',
     },
     {
@@ -35,7 +35,7 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
       link: `/${orgId}/job/${jobId}/screened`,
       icon: <UserSearch className="size-5" />,
       notificationCount: cvAnalysis.filter(
-        (analysis) => analysis.status === ANALYSYS_STATUS.ANALYSYS,
+        (analysis) => !!analysis.reportOfAnalysis,
       ).length,
       isActive: params.tab === 'screened',
     },

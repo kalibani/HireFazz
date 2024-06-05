@@ -35,10 +35,7 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
   const { replace } = useRouter();
   const pathname = usePathname();
 
-  const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
-    (x) => x.status === ANALYSYS_STATUS.REJECTED,
-  );
-
+  const cvAnalysis = jobDetail?.data?.cvAnalysis
   const pagination = jobDetail?.cvAnalysisPagination;
   const perPage = Number(searchParams.get('per_page') || '10');
 
@@ -141,11 +138,11 @@ const DetailJobRejected: FC<TDetailJobTableProps> = ({
             .with(P.number.lt(60), () => 'low')
             .otherwise(() => '')}
           score={`${cv?.reportOfAnalysis?.matchedPercentage}%`}
-          name={`${cv?.reportOfAnalysis?.documentOwner}`}
+          name={cv.reportOfAnalysis?.documentOwner}
           skills={`${cv?.reportOfAnalysis?.skills}`}
-          location={cv?.reportOfAnalysis.location}
-          education={cv?.reportOfAnalysis.education}
-          experience={cv?.reportOfAnalysis.experience}
+          location={cv?.reportOfAnalysis?.location}
+          education={cv?.reportOfAnalysis?.education}
+          experience={cv?.reportOfAnalysis?.experience}
           cvLink={cv?.cv?.url}
           description={cv?.reportOfAnalysis?.reason}
         />
