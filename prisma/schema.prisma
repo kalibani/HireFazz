@@ -20,30 +20,38 @@ model User {
   userOrganization UserOrganization[]
 }
 
+model Referral {
+  code         String @id @unique
+  email        String
+  extraToken   Int
+  isActive     Boolean @default(true)
+  topup        Topup[]
+}
 
 model Topup {
-  id               String            @id @default(cuid())
-  status           TopupStatus       @default(CREATED)
-  orderId          String            @unique
-  amount           Int
-  token            Int
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  orgId            String
-  createdBy        String
-  histories        TopupHistory[]
-  
+  id           String         @id @default(cuid())
+  status       TopupStatus    @default(CREATED)
+  orderId      String         @unique
+  amount       Int
+  token        Int
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  orgId        String
+  createdBy    String
+  histories    TopupHistory[]
+  referralCode String?
+  refferal     Referral?      @relation(fields: [referralCode], references: [code])
+  @@unique([referralCode, orgId])
 }
 
 model TopupHistory {
-  id               String             @id @default(cuid())
-  topupId          String
-  topup            Topup    @relation(fields: [topupId], references: [id])
-  action           TopupStatus
-  createdAt        DateTime          @default(now())
-  additionalData   Json?
+  id             String      @id @default(cuid())
+  topupId        String
+  action         TopupStatus
+  createdAt      DateTime    @default(now())
+  additionalData Json?
+  topup          Topup       @relation(fields: [topupId], references: [id])
 }
-
 
 model Account {
   id                String  @id @default(cuid())
@@ -126,6 +134,7 @@ model InterviewTemplate {
   organizationId       String
   description          String?
   descriptionIntro     String?
+  isDeleted            Boolean?     @default(false)
   organization         Organization @relation(fields: [organizationId], references: [id])
 }
 
@@ -351,7 +360,6 @@ enum InvitedUser_status {
   COMPLETED
   EXPIRED
 }
-
 
 enum TopupStatus {
   CREATED

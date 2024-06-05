@@ -15,55 +15,65 @@ const snap = new Midtrans.Snap({
 });
 
 export async function POST(request: NextRequest) {
-  const user = await currentUser();
-  const {
-    id,
-    name,
-    price,
-    required,
-    start_time,
-    interval_unit,
-    orgId,
-    token: tokenParams,
-  } = await request.json();
-  const orderId = 'TOPUP-' + uuidv4();
-  const params = {
-    item_details: {
+  try {
+    const user = await currentUser();
+    const {
       id,
       name,
       price,
-      quantity: 1,
-    },
-    transaction_details: {
-      order_id: orderId,
-      gross_amount: price,
-    },
-    recurring: {
-      required: required,
-      start_time: start_time,
-      interval_unit: interval_unit,
-    },
-  };
-
-  const token = await snap.createTransactionToken(params);
-  await prismadb.topup.create({
-    data: {
-      createdBy: user?.id || '',
-      orderId: orderId,
-      amount: price,
+      required,
+      start_time,
+      interval_unit,
       orgId,
       token: tokenParams,
-      histories: {
-        create: {
-          action: TopupStatus.CREATED,
-          additionalData: {
-            token: tokenParams,
-            price,
-            createdBy: user?.id || '',
+      referralCode,
+    } = await request.json();
+    const orderId = 'TOPUP-' + uuidv4();
+    const params = {
+      item_details: {
+        id,
+        name,
+        price,
+        quantity: 1,
+      },
+      transaction_details: {
+        order_id: orderId,
+        gross_amount: price,
+      },
+      recurring: {
+        required: required,
+        start_time: start_time,
+        interval_unit: interval_unit,
+      },
+    };
+
+    const token = await snap.createTransactionToken(params);
+    await prismadb.topup.create({
+      data: {
+        createdBy: user?.id || '',
+        orderId: orderId,
+        amount: price,
+        orgId,
+        token: tokenParams,
+        referralCode: referralCode,
+        histories: {
+          create: {
+            action: TopupStatus.CREATED,
+            additionalData: {
+              token: tokenParams,
+              price,
+              createdBy: user?.id || '',
+            },
           },
         },
       },
-    },
-  });
-  return NextResponse.json({ token });
+    });
+    return NextResponse.json({ token });
+  } catch (error) {
+    console.log(error, '<<<<');
+    return NextResponse.json(
+      { error: 'opps, something went wrong' },
+      { status: 500 },
+    );
+  }
 }
