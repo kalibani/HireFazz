@@ -15,7 +15,7 @@ const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
   const perPage = Number(searchParams.per_page || '10');
   const page = Number(searchParams.page || '1');
   const query: Record<string, string> = {}
-  const status_list = ['shortlisted']
+  const status_list = ['shortlisted', 'rejected', 'screened']
   if (params.tab && status_list.includes(params.tab)) {
     query.status = params.tab
   }

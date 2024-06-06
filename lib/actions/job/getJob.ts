@@ -1,6 +1,6 @@
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
-import { ANALYSYS_STATUS, BatchJob, Cv } from '@prisma/client';
+import { ANALYSYS_STATUS, BatchJob, Cv, Prisma } from '@prisma/client';
 
 interface PaginationInfo {
   totalItems: number;
@@ -50,11 +50,7 @@ export const getJobList = async (
       take,
       skip,
       include: {
-        cvAnalysis: {
-          where: {
-            status: jobStatusQuery.toUpperCase() as ANALYSYS_STATUS
-          }
-        },
+        cvAnalysis: true,
       },
     });
 
@@ -145,8 +141,14 @@ export const getByIdJob = async (
     }
 
     if (analysisStatus) {
-      cvAnalysisWhere.status = {
-        equals: analysisStatus.toUpperCase()
+      if (analysisStatus !== 'screened') {
+        cvAnalysisWhere.status = {
+          equals: analysisStatus.toUpperCase()
+        }
+      } else {
+        cvAnalysisWhere.reportOfAnalysis = {
+          not: Prisma.DbNull,
+        }
       }
     }
 
