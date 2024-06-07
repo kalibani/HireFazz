@@ -14,10 +14,17 @@ const JobDetailPage = async ({ params, searchParams }: ParamsProps) => {
   const jobId = params.id || '';
   const perPage = Number(searchParams.per_page || '10');
   const page = Number(searchParams.page || '1');
+  const query: Record<string, string> = {}
+  const status_list = ['shortlisted', 'rejected', 'screened']
+  if (params.tab && status_list.includes(params.tab)) {
+    query.status = params.tab
+  }
+
   const jobDetail = (await getByIdJob(
     jobId,
     perPage,
     (page - 1) * perPage,
+    query
   )) as GetJobDetailResponse;
 
   return match(params.tab as string)

@@ -1,6 +1,6 @@
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
-import { ANALYSYS_STATUS, BatchJob, Cv } from '@prisma/client';
+import { ANALYSYS_STATUS, BatchJob, Cv, Prisma } from '@prisma/client';
 
 interface PaginationInfo {
   totalItems: number;
@@ -19,6 +19,7 @@ export const getJobList = async (
   try {
     const jobNameQuery = query?.jobName || '';
     const locationQuery = query?.location || '';
+    const jobStatusQuery = query?.status || ''
 
     // all items in filter: orgId, name, location
     const totalCount = await prismadb.batchJob.count({
@@ -49,14 +50,7 @@ export const getJobList = async (
       take,
       skip,
       include: {
-        cvAnalysis: {
-          where: {
-            status: 'SHORTLISTED',
-          },
-          select: {
-            status: true,
-          },
-        },
+        cvAnalysis: true,
       },
     });
 
@@ -131,17 +125,31 @@ export type TDetailJobTableProps = {
 
 export const getByIdJob = async (
   id: string,
-  take = 10,
+  take?: number,
   skip = 0,
-  location?: string,
+  query?: Record<string, string>,
 ) => {
   try {
+    const analysisStatus = query?.status
+    const location = query?.location
     const cvAnalysisWhere: any = {};
     if (location) {
       cvAnalysisWhere.location = {
         contains: location,
         mode: 'insensitive', // Case-insensitive search
       };
+    }
+
+    if (analysisStatus) {
+      if (analysisStatus !== 'screened') {
+        cvAnalysisWhere.status = {
+          equals: analysisStatus.toUpperCase()
+        }
+      } else {
+        cvAnalysisWhere.reportOfAnalysis = {
+          not: Prisma.DbNull,
+        }
+      }
     }
 
     const totalCountResult = await prismadb.batchJob.findUnique({
@@ -177,7 +185,7 @@ export const getByIdJob = async (
       cvAnalysisPagination: {
         totalItems: totalCount,
         totalPage: take ? Math.ceil(totalCount / take) : 1,
-        currentPage: Math.floor(skip / take) + 1,
+        currentPage: take ? Math.floor(skip / take) + 1 : 1,
       },
       data: jobDetail,
     };

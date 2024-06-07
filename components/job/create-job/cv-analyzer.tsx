@@ -71,6 +71,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { errorToast } from '@/components/toasterProvider';
+import axios, { AxiosProgressEvent } from 'axios';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -195,6 +196,11 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
     useStore(useFormStepStore, (state) => state);
 
   const createJobHandle = async () => {
+    const requestForm = new FormData()
+    formData.forEach((value, key) => {
+      requestForm.append(key, value)
+    })
+
     if (orgId) {
       const createPayload: z.infer<typeof PayloadAddJob> = {
         analyzeCv: form.watch('analyzeCv'),
@@ -212,9 +218,10 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
         matchPercentage: form.watch('matchPercentage'),
         keyFocus: form.watch('keyFocus'),
       };
+      requestForm.append('createPayload', JSON.stringify(createPayload))
 
       try {
-        const job = await createJob(createPayload, formData)
+        const job = await (await axios.post('/api/job/create', requestForm)).data
         setJobId(job?.id);
         setIsErrorCreate(false)
       } catch (error) {
@@ -225,30 +232,6 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   };
 
   const router = useRouter();
-
-  useEffect(() => {
-    if (jobId) {
-      const interval = setInterval(() => {
-        if (uploadPercentage < 100) {
-          setUploadPercentage((prev) => (prev < 100 ? prev + 1 : prev));
-        } else {
-          clearInterval(interval);
-        }
-      }, 100);
-      return () => clearInterval(interval);
-    }
-  }, [jobId]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (analyzeAIPercentage < 100 && uploadPercentage === 100) {
-        setAnalyzeAIPercentage((prev) => (prev < 100 ? prev + 1 : prev));
-      } else {
-        clearInterval(interval);
-      }
-    }, 200);
-    return () => clearInterval(interval);
-  }, [uploadPercentage, analyzeAIPercentage, jobId]);
 
   // handle files list in pagination
   useEffect(() => {
@@ -535,8 +518,8 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                 Upload Process{' '}
                 {form.watch('analyzeCv') && 'and AI Matching Score'}
               </h1>
-              <p className="text-sm font-medium text-black">
-                You can wait cvs being processed, or you can close this dialog.
+              <p className="text-sm font-medium text-black text-center">
+                CV yang kamu pilih sedang dalam proses upload dan analisa. Kamu dapat menutup popup ini dengan klik "Finish" di paling bawah untuk lihat hasil analisa di halaman detail
               </p>
             </div>
 
@@ -578,24 +561,16 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                       </TableCell>
                       <TableCell className="text-center text-slate-400">
                         <div className="flex w-full items-center gap-x-4">
-                          <Progress
-                            value={uploadPercentage}
-                            className="h-3 w-full"
-                          />
                           <span className="w-full text-xs font-semibold text-slate-400">
-                            {uploadPercentage}% Uploading
+                            DIPROSES
                           </span>
                         </div>
                       </TableCell>
                       {form.watch('analyzeCv') && (
                         <TableCell className="text-center text-green-500">
                           <div className="flex w-full items-center gap-x-4">
-                            <Progress
-                              value={analyzeAIPercentage}
-                              className="h-3 w-full"
-                            />
                             <span className="w-full text-xs font-semibold text-slate-400">
-                              {analyzeAIPercentage}% Analyzing
+                              DIPROSES
                             </span>
                           </div>
                         </TableCell>

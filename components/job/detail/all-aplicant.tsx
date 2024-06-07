@@ -48,15 +48,14 @@ import {
 import { useState } from 'react';
 import { TCV, TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import axios from 'axios';
-import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
-import { useStoreEmail } from '@/zustand/useStoreEmail';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { match } from 'ts-pattern';
+import StatusAction from './status-action';
 
 const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
   jobDetail,
@@ -68,9 +67,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
   const params = useParams();
   const { replace, refresh, push } = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [selectedAction, setSelectedAction] = useState('SHORTLISTED');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const { setIds } = useStoreEmail((state) => state);
 
   const [isLoading, setIsLoading] = useState(false);
   const cvAnalysis = jobDetail?.data?.cvAnalysis;
@@ -279,36 +276,6 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
     return selectedRow.map((row) => row.original.id);
   };
 
-  const handleAction = () => {
-    if (!confirm(`${selectedAction} all selected items?`)) {
-      return;
-    }
-
-    setIsLoading(true);
-    if (selectedAction === 'DELETE') {
-      axios
-        .delete('/api/cv-analysis', {
-          data: {
-            selectedIds: getSelectedRowIds(),
-          },
-        })
-        .finally(handleFinally);
-    } else if (selectedAction === 'Send Email') {
-      setIds(getSelectedRowIds());
-      push(`/${params?.orgId}/job/${params?.id}/send-email`);
-    } else {
-      axios
-        .patch(`/api/cv-analysis`, {
-          actionName: selectedAction,
-          selectedIds: getSelectedRowIds(),
-        })
-        .finally(handleFinally);
-      push(
-        `/${params?.orgId}/job/${params?.id}/${selectedAction.toLowerCase()}`,
-      );
-    }
-  };
-
   const analyzeButton = (() => {
     const selectedIds = getSelectedRowIds();
 
@@ -333,14 +300,6 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
     );
   })();
 
-  // todo: handle action list for delete & send email
-  const actionList = [
-    ANALYSYS_STATUS.SHORTLISTED,
-    ANALYSYS_STATUS.REJECTED,
-    ANALYSYS_STATUS.INTERVIEW,
-    'DELETE',
-    'Send Email',
-  ];
   return (
     <div className="mt-4">
       <div className="flex justify-between">
@@ -349,7 +308,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
             <FileSearchIcon className="size-4 text-red-500" />
             <p>
               There {(cvAnalysis?.length || 0) > 1 ? 'are' : 'is'}{' '}
-              <b>{cvAnalysis?.length} applicants</b> on{' '}
+              <b>{jobDetail?.cvAnalysisPagination.totalItems} applicants</b> on{' '}
               <b>“{jobDetail?.data?.jobName}”</b>
             </p>
           </div>
@@ -393,25 +352,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
             />
             <ChevronDown className="size-4" />
           </div>
-          <Select onValueChange={(v) => setSelectedAction(v)}>
-            <SelectTrigger className="h-[30px] w-fit text-xs capitalize">
-              <SelectValue
-                placeholder="Shortlisted"
-                defaultValue="SHORTLISTED"
-              />
-            </SelectTrigger>
-
-            <SelectContent>
-              {actionList.map((action) => (
-                <SelectItem key={action} value={action} className="capitalize">
-                  {action.toLowerCase()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button className="h-[30px] px-2 text-xs" onClick={handleAction}>
-            Action
-          </Button>
+          <StatusAction getSelectedRowIds={getSelectedRowIds} onApiEnd={handleFinally} setIsLoading={setIsLoading} />
         </div>
 
         {/* <div className="w-full bg-rose-100 flex justify-center items-center py-3 text-xs">

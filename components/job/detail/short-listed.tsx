@@ -14,14 +14,7 @@ import {
   MessageSquare,
   Trash2,
 } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import Pagination from '@/components/ui/pagination';
+import Pagination, { PaginationGroup } from '@/components/ui/pagination';
 import { PER_PAGE_ITEMS } from '@/constant';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -48,18 +41,17 @@ import axios from 'axios';
 import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
 import { P, match } from 'ts-pattern';
+import StatusAction from './status-action';
 
 const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
   jobDetail,
 }) => {
   const searchParams = useSearchParams();
   const perPage = Number(searchParams.get('per_page') || '10');
+  const currPage = Number(searchParams.get('page'));
   const pathname = usePathname();
-  const params = useParams();
-  const router = useRouter();
   const { replace, refresh } = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [selectedAction, setSelectedAction] = useState('SHORTLISTED');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -114,9 +106,10 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
         );
       },
       cell: ({ row }) => {
+        const percentage = row.original.reportOfAnalysis?.matchedPercentage
         return (
           <p className="capitalize text-slate-400">
-            {row.original.reportOfAnalysis?.matchedPercentage}%
+            {percentage ?  percentage + '%' : '-'}
           </p>
         );
       },
@@ -193,7 +186,7 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
   }
 
   const table = useReactTable({
-    data: cvAnalysis || [],
+    data: jobDetail?.data?.cvAnalysis || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -221,31 +214,6 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
     return selectedRow.map((row) => row.original.id);
   };
 
-  const handleAction = () => {
-    if (!confirm(`${selectedAction} all selected items?`)) {
-      return;
-    }
-    setIsLoading(true);
-    if (selectedAction === 'DELETE') {
-      axios
-        .delete('/api/cv-analysis', {
-          data: {
-            selectedIds: getSelectedRowIds(),
-          },
-        })
-        .finally(handleFinally);
-    } else if (selectedAction === 'Send Email') {
-      router.push(`/${params?.orgId}/job/${params?.id}/send-email`);
-    } else {
-      axios
-        .patch(`/api/cv-analysis`, {
-          actionName: selectedAction,
-          selectedIds: getSelectedRowIds(),
-        })
-        .finally(handleFinally);
-    }
-  };
-
   const interviewButton = (() => {
     const selectedIds = getSelectedRowIds();
     const onClickInterview = () => {
@@ -271,36 +239,8 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
   })();
 
   // todo: handle action list for delete & send email
-  const actionList = [
-    ANALYSYS_STATUS.SHORTLISTED,
-    ANALYSYS_STATUS.REJECTED,
-    ANALYSYS_STATUS.INTERVIEW,
-    'DELETE',
-    'Send Email',
-  ];
   return (
     <div className="mt-4">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-2 text-sm">
-          <div className="flex items-center gap-2">
-            <FileSearchIcon className="size-4 text-red-500" />
-            <p>
-              There {(cvAnalysis?.length || 0) > 1 ? 'are' : 'is'}{' '}
-              <b>{cvAnalysis?.length} applicants</b> on{' '}
-              <b>“{jobDetail?.data?.jobName}”</b>
-            </p>
-          </div>
-
-          {/* <span className="pl-6 mt-4">
-                        Status: <span className="text-blue-700">3/5 Uploading...</span>
-                    </span> */}
-        </div>
-
-        <div className="flex-co flex items-end justify-center">
-          {interviewButton}
-        </div>
-      </div>
-
       <div className="mt-4 w-full rounded-t-md border">
         <div className="flex items-center gap-2 px-4 py-2">
           <div className="mr-3 flex items-center gap-1">
@@ -313,25 +253,7 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
             />
             <ChevronDown className="size-4" />
           </div>
-          <Select onValueChange={(v) => setSelectedAction(v)}>
-            <SelectTrigger className="h-[30px] w-fit text-xs capitalize">
-              <SelectValue
-                placeholder="Shortlisted"
-                defaultValue="SHORTLISTED"
-              />
-            </SelectTrigger>
-
-            <SelectContent>
-              {actionList.map((action) => (
-                <SelectItem key={action} value={action} className="capitalize">
-                  {action.toLowerCase()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button className="h-[30px] px-2 text-xs" onClick={handleAction}>
-            Action
-          </Button>
+          <StatusAction getSelectedRowIds={getSelectedRowIds} onApiEnd={handleFinally} setIsLoading={setIsLoading} />
         </div>
       </div>
 
@@ -381,36 +303,14 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
         </TableBody>
       </Table>
 
-      <div className="mt-5 flex items-center justify-between">
-        <div className="flex max-w-44 items-center gap-2">
-          <span>View</span>
-          <Select
-            onValueChange={(value) => handlePagination('per_page', value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={perPage} defaultValue={perPage} />
-            </SelectTrigger>
 
-            <SelectContent>
-              {PER_PAGE_ITEMS.map((pageItem) => (
-                <SelectItem key={pageItem} value={pageItem}>
-                  {pageItem}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <span>List</span>
-        </div>
-        <div className="space-x-2">
-          <Pagination
-            itemsPerPage={perPage}
-            totalItems={cvAnalysis?.length || 0}
-            onPageChange={(page) => handlePagination('page', page.toString())}
-          />
-        </div>
-        <div></div>
-      </div>
+      <PaginationGroup
+        perPage={perPage}
+        totalItems={jobDetail?.cvAnalysisPagination.totalItems || 0}
+        handlePagination={handlePagination}
+        activePage={Number.isNaN(currPage) ? undefined : currPage}
+      />
+      
 
       {isLoading && (
         <div className="fixed left-0 top-0 z-50 h-full w-full items-start justify-center rounded-lg bg-black bg-opacity-40">

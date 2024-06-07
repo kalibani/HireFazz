@@ -73,7 +73,7 @@ export const ScreenedItem: FC<ScreenedItemProps> = ({
             </div>
 
             <p className="text-xs font-medium text-slate-500">
-              {description.length > 250 ? (
+              {description?.length > 250 ? (
                 <>
                   {description.trim().slice(0, 249).trim() + '...'}
                   <Info className="inline-block size-[14px] text-blue-800" />

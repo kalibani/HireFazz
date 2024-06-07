@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import TrackingStep from './tracking-step';
 import CreateJobDetail from './create-job-detail';
 import { useFormStepStore } from '@/zustand/useCreateJob';
@@ -10,7 +10,18 @@ import { useStore } from 'zustand';
 import CVAnalyzer from './cv-analyzer';
 
 const CreateStep = () => {
-  const step = useStore(useFormStepStore, (state) => state.step);
+  const { step, resetFormCreateJob, resetFormDetailJob, setFiles, setStep } = useStore(useFormStepStore, (state) => state);
+
+  useEffect(() => {
+    
+    return () => {
+      resetFormCreateJob()
+      resetFormDetailJob()
+      setFiles([])
+      setStep(0)
+    }
+  }, [])
+
   return (
     <div className="flex h-full flex-col space-y-3">
       <TrackingStep step={step} />

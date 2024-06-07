@@ -201,3 +201,30 @@ export const secondsToTimeString = (seconds: number): string => {
   const pad = (num: number) => num.toString().padStart(2, '0');
   return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
 };
+export const safeParseJSON = <T>(json: string) => {
+  try {
+    const jsonValue: T = JSON.parse(json);
+    return jsonValue;
+  } catch {
+    return undefined;
+  }
+}
+
+interface ConcurentPromises<T>{
+  data: T[]
+  onCall: (data: T) => Promise<any>
+  limit: number
+}
+
+export const concurentPromises = async <T>({ data, onCall, limit }: ConcurentPromises<T>) => {
+  const promises: Promise<T>[][] = []
+  const len = Math.ceil(data.length / limit)
+  for (let i = 0; i < len; i++) {
+    promises.push(data.splice(0, limit).map((item) => onCall(item)))
+  }
+
+  let count = 1
+  for (const promiseArray of promises) {
+    await Promise.allSettled(promiseArray)
+  }
+} 

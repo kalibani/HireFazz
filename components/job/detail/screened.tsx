@@ -12,7 +12,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { ANALYSYS_STATUS } from '@prisma/client';
 import { ChevronDown, Search, FileSearchIcon } from 'lucide-react';
-import React, { FC, ReactElement } from 'react';
+import React, { FC, ReactElement, useState } from 'react';
 import { ScreenedItem } from './detail-job-item';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import { P, match } from 'ts-pattern';
@@ -24,6 +24,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const pathname = usePathname();
+  const [matchPercentage, setMatchPercentage] = useState([80])
 
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.ANALYSYS,
@@ -144,7 +145,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
 
         <div className="flex items-center gap-2">
           <label className="text-sm">Filter by score</label>
-          <Slider className="w-[170px]" min={0} max={100} defaultValue={[80]} />
+          <Slider className="w-[170px]" min={0} max={100} defaultValue={[80]} value={matchPercentage} onValueChange={(value) => setMatchPercentage(value)} />
         </div>
       </div>
 
@@ -176,7 +177,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
         <PaginationGroup
           perPage={perPage}
           totalItems={pagination?.totalItems || 0}
-          handlePagination={(page) => handlePagination('page', page.toString())}
+          handlePagination={handlePagination}
         />
       )}
     </div>
