@@ -177,7 +177,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
         <PaginationGroup
           perPage={perPage}
           totalItems={pagination?.totalItems || 0}
-          handlePagination={(page) => handlePagination('page', page.toString())}
+          handlePagination={handlePagination}
         />
       )}
     </div>

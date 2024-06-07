@@ -125,7 +125,7 @@ export type TDetailJobTableProps = {
 
 export const getByIdJob = async (
   id: string,
-  take = 10,
+  take?: number,
   skip = 0,
   query?: Record<string, string>,
 ) => {
@@ -185,7 +185,7 @@ export const getByIdJob = async (
       cvAnalysisPagination: {
         totalItems: totalCount,
         totalPage: take ? Math.ceil(totalCount / take) : 1,
-        currentPage: Math.floor(skip / take) + 1,
+        currentPage: take ? Math.floor(skip / take) + 1 : 1,
       },
       data: jobDetail,
     };

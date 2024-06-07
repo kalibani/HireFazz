@@ -27,7 +27,7 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
       text: 'All Applicant',
       link: `/${orgId}/job/${jobId}/all-applicant`,
       icon: <User className="size-5" />,
-      notificationCount: jobDetail.cvAnalysisPagination.totalItems,
+      notificationCount: jobDetail?.cvAnalysisPagination?.totalItems,
       isActive: params.tab === 'all-applicant',
     },
     {
