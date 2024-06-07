@@ -101,6 +101,7 @@ export const ResponseInvitedUser = z.object({
   interviewCandidatesId: z.string(),
   isUsed: z.boolean(),
   keyCode: z.string(),
+  scor: z.number().optional(),
 });
 export type TResponseInvitedUser = z.infer<typeof ResponseInvitedUser>;
 

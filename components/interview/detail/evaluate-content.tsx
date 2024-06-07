@@ -9,7 +9,7 @@ const EvaluateContent: FC<{ candidates: TResponseAllCandidates }> = ({
   return (
     <>
       <SearchFilter />
-      <TableDetail title="Invited" dataSource={candidates} isEvaluate />
+      <TableDetail title="Evaluate" dataSource={candidates} isEvaluate />
     </>
   );
 };

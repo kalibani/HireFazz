@@ -2,14 +2,14 @@ import getTemplateInterview from '@/lib/actions/interview/getTemplatesInterview'
 import { ParamsProps } from '@/types/types';
 import FilterListInterview from '@/components/interview/filter-list-interview';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import QuestionCard from '@/components/interview/question-card';
 import { Banner, SectionWrap } from '@/components/share';
 import dashboard from '@/public/icon/icon-banner-dashboard.svg';
 import { TCandidateListSchema, TInterview } from '@/lib/validators/interview';
 import getInvitedCandidates from '@/lib/actions/interview/getInvitedCandidates';
-import CandidatesCard from '@/components/interview/candidate-card';
 import { FC } from 'react';
 import TriggerTab from '@/components/interview/trigger-tab';
+import CandidatesCard from '@/components/interview/candidate-card';
+import QuestionCard from '@/components/interview/question-card';
 
 const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
   const interviews = (await getTemplateInterview({
@@ -19,7 +19,7 @@ const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
     id: params.orgId,
   })) as TCandidateListSchema[];
   return (
-    <SectionWrap isScroll>
+    <>
       <Banner
         title="Automatic Interview"
         desc="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book."
@@ -70,7 +70,7 @@ const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
           )}
         </TabsContent>
       </Tabs>
-    </SectionWrap>
+    </>
   );
 };
 

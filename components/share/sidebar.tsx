@@ -4,10 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import {
-  Banknote,
-  HandCoins,
-  DollarSignIcon,
-  Scale,
   Home,
   ListChecks,
   FileText,
@@ -27,7 +23,7 @@ import {
 } from '../ui/tooltip';
 import { UserButton } from '../auth';
 
-const routes = [
+export const routes = [
   { label: 'Dashboard', icon: Home, href: '/dashboard' },
   { label: 'Job list', icon: ListChecks, href: '/job' },
   { label: 'Video', icon: Video, href: '/video' },
@@ -40,6 +36,7 @@ const routes = [
 const Sidebar = () => {
   const pathname = usePathname();
   const { orgId } = useParams();
+
   return (
     <aside className="fixed z-20 flex h-dvh max-w-[76px] flex-col bg-white">
       <div className="flex items-center justify-center border-b border-r py-1">

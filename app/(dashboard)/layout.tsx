@@ -12,7 +12,7 @@ const DashboardLayout: FC<PropsWithChildren> = async ({
       <TopupModal />
       <SideBar />
       <Navbar orgs={org} />
-      <main className="h-full w-full overflow-y-auto pt-[60px] pl-[80px]">
+      <main className="h-full w-full overflow-y-auto pl-[80px] pt-[60px]">
         {children}
       </main>
     </div>

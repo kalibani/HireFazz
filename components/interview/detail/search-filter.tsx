@@ -10,17 +10,23 @@ const SearchFilter = () => {
   const { replace } = useRouter();
   const pathname = usePathname();
   const query = searchParams.get('q');
+  const [search, setSearch] = useState(query || '');
 
-  // need improvement bounce
-  const handleSearch = (term: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (term) {
-      params.set('q', term);
-    } else {
-      params.delete('q');
-    }
-    replace(`${pathname}?${params.toString()}`);
-  };
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      const params = new URLSearchParams(searchParams);
+
+      if (search) {
+        params.set('q', search);
+      } else {
+        params.delete('q');
+      }
+      replace(`${pathname}?${params.toString()}`);
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [search, query, searchParams, pathname]);
+
   return (
     <div className="flex items-center justify-between">
       <h2 className="text-lg font-semibold">Invited</h2>
@@ -29,8 +35,8 @@ const SearchFilter = () => {
         <Input
           type="text"
           placeholder="Search by name or email"
-          value={query || ''}
-          onChange={(e) => handleSearch(e.target.value)}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           className="paragraph-regular  no-focus placeholder border-none bg-transparent text-slate-400 shadow-none outline-none focus-visible:ring-0"
         />
       </div>
