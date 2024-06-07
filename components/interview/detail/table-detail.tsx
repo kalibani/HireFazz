@@ -225,7 +225,7 @@ const TableDetail: FC<TableDetailProps> = ({
   ];
 
   const table = useReactTable({
-    data: dataSource.invitedUsers || [],
+    data: dataSource?.invitedUsers || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
