@@ -1,5 +1,7 @@
 'use server';
 
+import pagination from '@/components/ui/pagination';
+import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 import { INVITED_USER_STATUS } from '@prisma/client';
 
@@ -23,26 +25,30 @@ export default async function getAllCandidates(
     ...(status && { status }),
     ...(search && {
       OR: [
-        { candidateName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
+        { candidateName: { contains: search } },
+        { email: { contains: search } },
       ],
     }),
   };
 
-  // Fetch the invited users with the given criteria and pagination
-  const invitedUsers = await prismadb.invitedUser.findMany({
-    where: whereClause,
-    skip: skip,
-    take: pageSize,
-  });
+  try {
+    //Fetch the invited users with the given criteria and pagination
+    const invitedUsers = await prismadb.invitedUser.findMany({
+      where: whereClause,
+      skip: skip,
+      take: pageSize,
+    });
 
-  // Fetch the total count of records matching the criteria
-  const totalCount = await prismadb.invitedUser.count({
-    where: whereClause,
-  });
+    // Fetch the total count of records matching the criteria
+    const totalCount = await prismadb.invitedUser.count({
+      where: whereClause,
+    });
 
-  return {
-    invitedUsers,
-    totalCount,
-  };
+    return {
+      invitedUsers,
+      totalCount,
+    };
+  } catch (error) {
+    errorHandler(error);
+  }
 }

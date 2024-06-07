@@ -1,8 +1,7 @@
 'use client';
 
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   flexRender,
@@ -13,12 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  HoverCard,
-  HoverCardTrigger,
-  HoverCardContent,
-} from '@/components/ui/hover-card';
-import { ArrowUpDown, ChevronDown, Delete } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import {
   useSearchParams,
@@ -34,13 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  TResponseAllCandidates,
-  TResponseInvitedUser,
-} from '@/lib/validators/interview';
-import { formatDateDMY } from '@/helpers';
-import { cn } from '@/lib/utils';
-import { match } from 'ts-pattern';
+import { TResponseAllCandidates } from '@/lib/validators/interview';
 import {
   Select,
   SelectContent,
@@ -49,6 +37,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { INVITED_USER_STATUS } from '@prisma/client';
+import columnsTable from './columns';
+import Pagination from '@/components/ui/pagination';
+import { PER_PAGE_ITEMS } from '@/constant';
 
 // name, email added on statu scoring
 type TColumn = {
@@ -70,153 +61,14 @@ const TableDetail: FC<TableDetailProps> = ({
 }) => {
   const pathname = usePathname();
   const params = useParams();
+  const tab = params.tab;
   const searchParams = useSearchParams();
-  const { replace, refresh, push } = useRouter();
+  const { replace } = useRouter();
   const perPage = Number(searchParams.get('per_page') || '10');
   const activePage = Number(searchParams.get('page') || '1');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [selectedAction, setSelectedAction] = useState('SHORTLISTED');
-
-  const columns: ColumnDef<TResponseInvitedUser>[] = useMemo(
-    () => [
-      {
-        accessorKey: 'check',
-        header: () => <p></p>,
-        size: 10,
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            disabled={!row.getCanSelect()}
-            onClick={row.getToggleSelectedHandler()}
-          />
-        ),
-      },
-      {
-        accessorKey: 'name',
-        header: ({ column }) => {
-          return (
-            <Button
-              className="w-auto px-4 pl-0 hover:bg-transparent"
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
-              }
-            >
-              Name
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          );
-        },
-        cell: ({ row }) => (
-          <p className="w-auto truncate text-sm capitalize">
-            {row.original.candidateName}
-          </p>
-        ),
-      },
-      {
-        accessorKey: 'email',
-        header: ({ column }) => {
-          return (
-            <Button
-              className="w-auto px-4 pl-0 hover:bg-transparent"
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
-              }
-            >
-              Email
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          );
-        },
-        cell: ({ row }) => (
-          <p className="w-auto truncate text-xs text-slate-400">
-            {row.original.email}
-          </p>
-        ),
-      },
-      {
-        accessorKey: 'createdAt',
-        header: ({ column }) => {
-          return (
-            <Button
-              className="w-auto px-4 pl-0 hover:bg-transparent"
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
-              }
-            >
-              Adden on
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          );
-        },
-        cell: ({ row }) => (
-          <p className="w-auto truncate text-xs text-slate-400">
-            {formatDateDMY(row.original.createdAt.toString())}
-          </p>
-        ),
-      },
-      isEvaluate
-        ? {
-            accessorKey: 'score',
-            header: ({ column }) => {
-              return (
-                <Button
-                  className="w-auto px-4 pl-0 hover:bg-transparent"
-                  variant="ghost"
-                  onClick={() =>
-                    column.toggleSorting(column.getIsSorted() === 'asc')
-                  }
-                >
-                  score
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              );
-            },
-            cell: ({ row }) => (
-              <p className="w-auto truncate text-sm capitalize text-primary">
-                {80}%
-              </p>
-            ),
-          }
-        : {
-            accessorKey: 'status',
-            header: ({ column }) => {
-              return (
-                <Button
-                  className="w-auto px-4 pl-0 hover:bg-transparent"
-                  variant="ghost"
-                  onClick={() =>
-                    column.toggleSorting(column.getIsSorted() === 'asc')
-                  }
-                >
-                  Status
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-              );
-            },
-            cell: ({ row }) => (
-              <p
-                className={cn(
-                  'w-auto truncate text-xs capitalize text-slate-400',
-                  match(row.original.status)
-                    .with(INVITED_USER_STATUS.INVITED, () => 'text-blue-500')
-                    .with(
-                      INVITED_USER_STATUS.SHORTLISTED,
-                      () => 'text-green-500',
-                    )
-                    .otherwise(() => 'text-primary'),
-                )}
-              >
-                {row.original.status.toLowerCase()}
-              </p>
-            ),
-          },
-    ],
-    [isEvaluate],
-  );
 
   const actionList = [
     INVITED_USER_STATUS.SHORTLISTED,
@@ -225,8 +77,8 @@ const TableDetail: FC<TableDetailProps> = ({
   ];
 
   const table = useReactTable({
-    data: dataSource.invitedUsers || [],
-    columns,
+    data: dataSource?.invitedUsers || [],
+    columns: columnsTable(isEvaluate),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -242,6 +94,34 @@ const TableDetail: FC<TableDetailProps> = ({
       },
     },
   });
+
+  const handlePagination = (query: 'per_page' | 'page', value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set('page', '1');
+      params.set(query, value);
+    } else {
+      params.delete(query);
+    }
+    replace(`${pathname}?${params.toString()}`);
+  };
+
+  const handleAction = () => {
+    if (isEvaluate) {
+      console.log('action');
+    } else {
+      console.log('delete');
+    }
+  };
+
+  const handleDetail = (
+    e: React.MouseEvent<HTMLTableCellElement, MouseEvent>,
+    id: string,
+  ) => {
+    e.stopPropagation();
+    console.log(id);
+  };
+
   return (
     <>
       <div className="mt-4 flex w-full items-center justify-between rounded-t-md border px-4">
@@ -250,14 +130,13 @@ const TableDetail: FC<TableDetailProps> = ({
             <Checkbox
               aria-label="Select all"
               className="border-slate-400 bg-white text-black"
-              // disabled={true}
               checked={table.getIsAllRowsSelected()}
               onClick={table.getToggleAllRowsSelectedHandler()}
             />
-            {!isEvaluate && <p className="text-xs">Select All</p>}
+            {!isEvaluate && <p className="ml-3 text-xs">Select All</p>}
           </div>
           {isEvaluate && (
-            <Select onValueChange={(v) => setSelectedAction(v)}>
+            <Select onValueChange={(select) => setSelectedAction(select)}>
               <SelectTrigger className="h-[30px] w-fit text-xs capitalize">
                 <SelectValue
                   placeholder="Shortlisted"
@@ -279,20 +158,36 @@ const TableDetail: FC<TableDetailProps> = ({
             </Select>
           )}
           <Button
-            className="h-[30px] px-2 text-xs"
-            onClick={() => console.log('action', isEvaluate)}
+            className="h-[30px] px-4 text-xs"
+            disabled={!table.getSelectedRowModel().flatRows.length}
+            onClick={() => handleAction()}
           >
             {!isEvaluate ? 'Delete' : 'Action'}
           </Button>
         </div>
-        <Button
-          className="h-[30px] px-2 text-xs"
-          onClick={() => console.log('ADD MORE CANDIDATE LINK ROUTE')}
-        >
-          Add More Candidates
-        </Button>
+        {tab === 'invited' && (
+          <Button
+            className="h-[30px] px-2 text-xs"
+            onClick={() => console.log('ADD MORE CANDIDATE LINK ROUTE')}
+          >
+            Add More Candidates
+          </Button>
+        )}
       </div>
-
+      {table.getSelectedRowModel().flatRows.length > 0 && (
+        <div className="bg-rose-100 py-2 text-center text-xs transition-all delay-100 ease-in-out">
+          <p className="text-slate-400">
+            {table.getSelectedRowModel().flatRows.length} Candidates Selected,
+            or{' '}
+            <span
+              className="cursor-pointer font-semibold text-slate-900 hover:text-blue-500"
+              onClick={table.getToggleAllRowsSelectedHandler()}
+            >
+              select all candidates on this page
+            </span>
+          </p>
+        </div>
+      )}
       <Table className="border border-solid border-slate-200">
         <TableHeader className="bg-slate-200">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -327,8 +222,8 @@ const TableDetail: FC<TableDetailProps> = ({
                   <TableCell
                     style={{ width: `${cell.column.getSize()}px !important` }}
                     key={cell.id}
-                    className="py-2"
-                    onClick={() => console.log('each row' + row.original.id)}
+                    className="py-2 hover:cursor-pointer"
+                    onClick={(e) => handleDetail(e, row.original.id)}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
@@ -337,13 +232,50 @@ const TableDetail: FC<TableDetailProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columnsTable().length}
+                className="h-24 text-center"
+              >
                 No results.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
+      {dataSource.invitedUsers.length > 0 && (
+        <div className="mt-5 flex items-center justify-between">
+          <div className="flex max-w-44 items-center gap-2">
+            <span>View</span>
+            <Select
+              onValueChange={(value) => handlePagination('per_page', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={perPage} defaultValue={perPage} />
+              </SelectTrigger>
+
+              <SelectContent>
+                {PER_PAGE_ITEMS.map((pageItem) => (
+                  <SelectItem key={pageItem} value={pageItem}>
+                    {pageItem}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <span>List</span>
+          </div>
+          <div className="space-x-2">
+            <Pagination
+              activePage={activePage}
+              itemsPerPage={perPage}
+              totalItems={dataSource.invitedUsers.length || 0}
+              onPageChange={(page) => handlePagination('page', page.toString())}
+            />
+          </div>
+
+          <div></div>
+        </div>
+      )}
     </>
   );
 };
