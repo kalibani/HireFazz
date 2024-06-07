@@ -1,4 +1,4 @@
-import { TypeOf, z } from 'zod';
+import { z } from 'zod';
 
 export const idProps = z.object({
   id: z.string(),
@@ -87,3 +87,25 @@ export const DetailCandidate = z.object({
   status: z.string(),
 });
 export type TDetailCandidate = z.infer<typeof DetailCandidate>;
+
+export const ResponseInvitedUser = z.object({
+  id: z.string(),
+  candidateName: z.string(),
+  email: z.string().email(),
+  phoneNumber: z.string().optional(),
+  result: z.any(),
+  status: z.enum(['INVITED', 'COMPLETED', 'SHORTLISTED', 'REJECTED']),
+  createdAt: z.date(),
+  expiredDate: z.date(),
+  organizationId: z.string(),
+  interviewCandidatesId: z.string(),
+  isUsed: z.boolean(),
+  keyCode: z.string(),
+});
+export type TResponseInvitedUser = z.infer<typeof ResponseInvitedUser>;
+
+export const ResponseAllCandidates = z.object({
+  invitedUsers: z.array(ResponseInvitedUser),
+  totalCount: z.number(),
+});
+export type TResponseAllCandidates = z.infer<typeof ResponseAllCandidates>;

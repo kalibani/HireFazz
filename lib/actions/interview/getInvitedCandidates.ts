@@ -4,7 +4,9 @@ import prismadb from '@/lib/prismadb';
 import { idProps } from '@/lib/validators/interview';
 import z from 'zod';
 
-export default async function getCandidates(orgId: z.infer<typeof idProps>) {
+export default async function getInvitedCandidates(
+  orgId: z.infer<typeof idProps>,
+) {
   try {
     const safePayload = idProps.parse(orgId);
     const { id } = safePayload;
@@ -19,6 +21,9 @@ export default async function getCandidates(orgId: z.infer<typeof idProps>) {
         name: true,
         status: true,
         candidates: true,
+      },
+      orderBy: {
+        id: 'desc', // Ensure the newest results are always on top
       },
     });
 
@@ -52,3 +57,4 @@ export default async function getCandidates(orgId: z.infer<typeof idProps>) {
     return errorHandler(error);
   }
 }
+

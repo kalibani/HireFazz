@@ -145,7 +145,7 @@ model InvitedUser {
   email                 String
   phoneNumber           String?
   result                Json
-  status                InvitedUser_status  @default(INVITED)
+  status                INVITED_USER_STATUS @default(INVITED)
   createdAt             DateTime            @default(now())
   expiredDate           DateTime
   organizationId        String
@@ -354,12 +354,15 @@ enum State {
   processing
 }
 
-enum InvitedUser_status {
+enum INVITED_USER_STATUS {
   INVITED
   OPEN
   NO_RESPONSE
   COMPLETED
   EXPIRED
+  SHORTLISTED
+  REJECTED
+  EVALUATE
 }
 
 enum TopupStatus {
