@@ -54,7 +54,7 @@ const CandidatesCard = ({
     <>
       <div
         className="my-4 flex min-h-36 flex-col justify-between rounded-md border p-4 hover:cursor-pointer hover:border-primary"
-        onClick={() => replace(`${pathname}/${dataSource.id}`)}
+        onClick={() => replace(`${pathname}/${dataSource.id}/invited`)}
       >
         <div className="flex items-center justify-between">
           <h4 className="text-2xl font-semibold">
