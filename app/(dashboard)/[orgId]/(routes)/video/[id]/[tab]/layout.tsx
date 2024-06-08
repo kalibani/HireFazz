@@ -44,9 +44,12 @@ const videoDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
     },
   ];
 
+  console.log({ params });
+
   return (
     <SectionWrap>
       <HeaderNavigation
+        urlPath={'/'}
         isLabel
         tagLine="There is automatic has been created."
         title="Detail Interview"
