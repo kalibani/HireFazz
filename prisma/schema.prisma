@@ -154,6 +154,8 @@ model InvitedUser {
   keyCode               String
   organization          Organization        @relation(fields: [organizationId], references: [id])
   interviewCandidates   InterviewCandidates @relation(fields: [interviewCandidatesId], references: [id])
+
+  @@unique([id]) // Ensures uniqueness based on the 'id' field
 }
 
 model InterviewCandidates {
@@ -370,3 +372,4 @@ enum INVITED_USER_STATUS {
   SHORTLISTED
   REJECTED
 }
+

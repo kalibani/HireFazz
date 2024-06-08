@@ -13,7 +13,7 @@ const page = async ({ params, searchParams }: ParamsProps) => {
   const candidate = await getOneCandidate({ id: searchParams.idInvite });
   return (
     <>
-      <HeaderNavigation />
+      <HeaderNavigation urlPath={`/${params.orgId}/video`} />
       <InviteCandidates
         orgId={params.orgId}
         interviews={interviews}

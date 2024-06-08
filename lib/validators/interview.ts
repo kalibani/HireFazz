@@ -1,3 +1,4 @@
+import { INVITED_USER_STATUS } from '@prisma/client';
 import { z } from 'zod';
 
 export const idProps = z.object({
@@ -110,3 +111,11 @@ export const ResponseAllCandidates = z.object({
   totalCount: z.number(),
 });
 export type TResponseAllCandidates = z.infer<typeof ResponseAllCandidates>;
+
+export const SchemaUpdateStatusCandidate = z.object({
+  id: z.string().array(),
+  status: z.string(),
+});
+export type TSchemaUpdateStatusCandidate = z.infer<
+  typeof SchemaUpdateStatusCandidate
+>;

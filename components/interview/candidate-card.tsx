@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import updateStatusCandidate from '@/lib/actions/interview/updateStatusCandidates';
+import updateStatusCandidate from '@/lib/actions/interview/updateStatusInvitedCandidates';
 import { Loader } from '../share';
 import { cn } from '@/lib/utils';
 import { useRouter, usePathname, notFound } from 'next/navigation';
