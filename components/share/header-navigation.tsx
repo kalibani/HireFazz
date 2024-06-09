@@ -17,9 +17,12 @@ const HeaderNavigation: FC<Props> = ({
   urlPath,
 }) => {
   return (
-    <div className="flex w-full items-center justify-between rounded-md bg-primary bg-white px-4 py-3 text-black">
+    <div className="flex w-full items-center justify-between rounded-md bg-primary bg-white px-4 py-2 text-black">
       <Link href={urlPath}>
-        <Button variant="ghost" className="flex items-center gap-x-2">
+        <Button
+          variant="ghost"
+          className="w-tit flex h-auto items-center gap-x-2 p-0 hover:bg-transparent"
+        >
           <Undo2 className="text-primary" />
           Back
         </Button>

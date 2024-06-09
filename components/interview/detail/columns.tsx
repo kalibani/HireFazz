@@ -100,7 +100,7 @@ const columnsTable = (isEvaluate: boolean = false) => {
                   column.toggleSorting(column.getIsSorted() === 'asc')
                 }
               >
-                score
+                Score
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
             );
