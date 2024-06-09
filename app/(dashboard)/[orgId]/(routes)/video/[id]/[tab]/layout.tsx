@@ -45,8 +45,9 @@ const videoDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
   ];
 
   return (
-    <SectionWrap>
+    <>
       <HeaderNavigation
+        urlPath={`/${orgId}/video`}
         isLabel
         tagLine="There is automatic has been created."
         title="Detail Interview"
@@ -55,7 +56,7 @@ const videoDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
         <SidebarDetailPage items={sidebarItems} title="Status" />
         <div className=" h-fit flex-1 rounded-lg bg-white p-3">{children}</div>
       </div>
-    </SectionWrap>
+    </>
   );
 };
 

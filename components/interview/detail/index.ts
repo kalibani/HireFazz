@@ -1,4 +1,13 @@
-import EvaluateContent from './evaluate-content';
-import InvitedContent from './invited-content';
+import DetailListContent from './detail-list-content';
+import columnsTable from './columns';
+import TableDetail from './table-detail';
+import SearchFilter from './search-filter';
+import InterviewAnswer from './interview-answer';
 
-export { EvaluateContent, InvitedContent };
+export {
+  DetailListContent,
+  columnsTable,
+  TableDetail,
+  SearchFilter,
+  InterviewAnswer,
+};

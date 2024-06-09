@@ -3,7 +3,7 @@ import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 import { revalidatePath } from 'next/cache';
 
-export default async function updateStatusCandidate(
+export default async function updateStatusInvitedCandidate(
   id: string,
   status: 'OPEN' | 'CLOSE',
 ) {

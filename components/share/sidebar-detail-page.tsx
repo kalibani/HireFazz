@@ -32,7 +32,7 @@ export const SidebarDetailPage: FC<TSidebarDetailPage> = ({
             )}
             key={key}
           >
-            <div className="flex gap-x-3">
+            <div className="flex gap-x-3 px-4">
               <span
                 className={clsx('size-4', {
                   'text-white': item.isActive,

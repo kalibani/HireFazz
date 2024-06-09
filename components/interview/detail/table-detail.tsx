@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useState } from 'react';
+import React, { FC, startTransition, useState, useTransition } from 'react';
 import {
   ColumnFiltersState,
   SortingState,
@@ -28,7 +28,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { TResponseAllCandidates } from '@/lib/validators/interview';
+import {
+  TResponseAllCandidates,
+  TSchemaUpdateStatusCandidate,
+} from '@/lib/validators/interview';
 import {
   Select,
   SelectContent,
@@ -40,8 +43,13 @@ import { INVITED_USER_STATUS } from '@prisma/client';
 import columnsTable from './columns';
 import Pagination from '@/components/ui/pagination';
 import { PER_PAGE_ITEMS } from '@/constant';
+import updateStatusCandidate from '@/lib/actions/interview/updateStatusCandidate';
+import toast from 'react-hot-toast';
+import { Loader } from '@/components/share';
+import deleteCandidates from '@/lib/actions/interview/deleteCandidates';
+import { cn } from '@/lib/utils';
 
-// name, email added on statu scoring
+// name, email added on status scoring
 type TColumn = {
   candidateName: string;
   email: string;
@@ -61,7 +69,9 @@ const TableDetail: FC<TableDetailProps> = ({
 }) => {
   const pathname = usePathname();
   const params = useParams();
+  const id = params?.id || '';
   const tab = params.tab;
+  const orgId = params.orgId;
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const perPage = Number(searchParams.get('per_page') || '10');
@@ -69,6 +79,7 @@ const TableDetail: FC<TableDetailProps> = ({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [selectedAction, setSelectedAction] = useState('SHORTLISTED');
+  const [isPending, startTransition] = useTransition();
 
   const actionList = [
     INVITED_USER_STATUS.SHORTLISTED,
@@ -105,12 +116,52 @@ const TableDetail: FC<TableDetailProps> = ({
     }
     replace(`${pathname}?${params.toString()}`);
   };
-
+  const handlerAction = (status: string) => {
+    startTransition(async () => {
+      const payload: TSchemaUpdateStatusCandidate = {
+        id: getSelectedRowIds(),
+        status,
+      };
+      try {
+        const updated = (await updateStatusCandidate(payload)) as {
+          success?: string;
+          error?: string;
+        };
+        if (updated.success) {
+          toast.success(updated.success);
+          replace(`/${orgId}/video/${id}/${status.toLowerCase()}`);
+        }
+        if (updated.error) toast.error(updated.error);
+      } catch (error: any) {
+        toast.error(error?.message);
+      }
+    });
+  };
+  const handlerDelete = () => {
+    startTransition(async () => {
+      const payload = {
+        id: getSelectedRowIds(),
+      };
+      try {
+        const deleted = (await deleteCandidates(payload)) as {
+          success?: string;
+          error?: string;
+        };
+        if (deleted.success) {
+          toast.success(deleted.success);
+          replace(`/${orgId}/video/${id}/invited`);
+        }
+        if (deleted.error) toast.error(deleted.error);
+      } catch (error: any) {
+        toast.error(error?.message);
+      }
+    });
+  };
   const handleAction = () => {
     if (isEvaluate) {
-      console.log('action');
+      handlerAction(selectedAction);
     } else {
-      console.log('delete');
+      handlerDelete();
     }
   };
 
@@ -119,9 +170,14 @@ const TableDetail: FC<TableDetailProps> = ({
     id: string,
   ) => {
     e.stopPropagation();
-    console.log(id);
+    if (isPending || !isEvaluate) return null;
+    replace(`/${orgId}/video/${id}/detail?candidateId=${id}`);
   };
 
+  const getSelectedRowIds = () => {
+    const selectedRow = table.getSelectedRowModel().flatRows;
+    return selectedRow.map((row) => row.original.id);
+  };
   return (
     <>
       <div className="mt-4 flex w-full items-center justify-between rounded-t-md border px-4">
@@ -159,10 +215,10 @@ const TableDetail: FC<TableDetailProps> = ({
           )}
           <Button
             className="h-[30px] px-4 text-xs"
-            disabled={!table.getSelectedRowModel().flatRows.length}
+            disabled={!table.getSelectedRowModel().flatRows.length || isPending}
             onClick={() => handleAction()}
           >
-            {!isEvaluate ? 'Delete' : 'Action'}
+            {!isEvaluate || selectedAction === 'DELETE' ? 'Delete' : 'Action'}
           </Button>
         </div>
         {tab === 'invited' && (
@@ -222,7 +278,7 @@ const TableDetail: FC<TableDetailProps> = ({
                   <TableCell
                     style={{ width: `${cell.column.getSize()}px !important` }}
                     key={cell.id}
-                    className="py-2 hover:cursor-pointer"
+                    className={cn('py-2', isEvaluate && 'hover:cursor-pointer')}
                     onClick={(e) => handleDetail(e, row.original.id)}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -276,6 +332,7 @@ const TableDetail: FC<TableDetailProps> = ({
           <div></div>
         </div>
       )}
+      {isPending && <Loader />}
     </>
   );
 };
