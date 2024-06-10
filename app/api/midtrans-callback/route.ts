@@ -123,14 +123,13 @@ export async function POST(request: NextRequest) {
           status: TopupStatus.SETTLEMENT,
         },
       });
-      const org = await prismadb.organization.findUniqueOrThrow({
-        where: { id: topupDb.orgId },
-      });
+      const addToken = topupDb.token + (topupDb.refferal?.extraToken || 0);
       await prismadb.organization.update({
-        where: { id: org.id },
+        where: { id: topupDb.orgId },
         data: {
-          limit:
-            org.limit + topupDb.token + (topupDb.refferal?.extraToken || 0),
+          limit: {
+            increment: addToken,
+          },
         },
       });
     }

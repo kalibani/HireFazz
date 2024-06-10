@@ -11,7 +11,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
 import { useTopupModal } from '@/hooks/use-topup-modal';
-
+import { Badge } from '../ui/badge';
+import { useQuery } from '@tanstack/react-query';
+import { getTokens } from '@/lib/actions/token/consumeToken';
 type TNavbar = {
   orgs:
     | {
@@ -31,9 +33,19 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
   const selectedOrganization = props.orgs
     ?.filter((x) => x.organization.id === params.orgId)
     .at(0);
+  const { data } = useQuery({
+    queryKey: ['available Token'],
+    queryFn: async () => await getTokens({ orgId: params.orgId as string }),
+    refetchInterval: 10000,
+  });
   return (
     <nav className="fixed z-10 flex w-full items-center justify-between gap-x-4 border-b bg-white px-3 py-[7.5px] pl-[90px]">
-      <span className="w-full text-sm font-medium">{currentDate}</span>
+      <span className="flex-1 text-sm font-medium">{currentDate}</span>
+      {!!data && (
+        <Badge className="text-xs opacity-90">
+          {data?.availableTokens || 0} tokens
+        </Badge>
+      )}
       <Button onClick={onOpen} size="sm">
         Topup
       </Button>

@@ -21,31 +21,31 @@ import { Input } from './ui/input';
 import { validateRefferalCode } from '@/lib/actions/topup/validateRefferalCode';
 import { Loader } from './share';
 
-export const costPerToken = 3000;
+export const costPerToken = 1000;
 const amountList = [
   {
     id: '1',
-    token: 50,
-  },
-  {
-    id: '2',
-    token: 100,
-  },
-  {
-    id: '3',
-    token: 200,
-  },
-  {
-    id: '4',
-    token: 300,
-  },
-  {
-    id: '5',
     token: 500,
   },
   {
-    id: '6',
+    id: '2',
+    token: 750,
+  },
+  {
+    id: '3',
     token: 1000,
+  },
+  {
+    id: '4',
+    token: 1500,
+  },
+  {
+    id: '5',
+    token: 2000,
+  },
+  {
+    id: '6',
+    token: 3000,
   },
 ];
 

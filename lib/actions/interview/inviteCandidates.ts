@@ -10,6 +10,7 @@ import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
 import { sendInviteCandidate } from '../sendEmail/send-invite-candidates';
+import { consumeToken } from '../token/consumeToken';
 
 export default async function createInviteCandidates(
   payload: TCreateInviteCandidateSchema,
@@ -98,7 +99,7 @@ export default async function createInviteCandidates(
         throw error;
       }
     }
-
+    await consumeToken({ orgId: orgId, amount: importedCandidates.length });
     // // // Step 4: Send invitation emails
     // for (const user of invitedUsersdata) {
     //   const from = 'teams@berrylabs.io';
