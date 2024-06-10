@@ -18,6 +18,7 @@ model User {
   secretIv         String?
   accounts         Account[]
   userOrganization UserOrganization[]
+  reviewers        Score[]
 }
 
 model Referral {
@@ -139,13 +140,29 @@ model InterviewTemplate {
   organization         Organization @relation(fields: [organizationId], references: [id])
 }
 
+model Score {
+  id                    String      @id @default(cuid())
+  comment               String      @db.Text
+  createdAt             DateTime    @default(now())
+  point                 Int
+  orgId                 String
+  interviewCandidatesId String
+  invitedUserId         String
+  InvitedUser           InvitedUser @relation(fields: [invitedUserId], references: [id])
+  questionId            String
+  reviewerId            String
+  reviewer              User        @relation(fields: [reviewerId], references: [id])
+
+  @@unique([invitedUserId, questionId, interviewCandidatesId])
+}
+
 model InvitedUser {
   id                    String              @id @default(cuid())
   candidateName         String
   email                 String
   phoneNumber           String?
   result                Json
-  status                INVITED_USER_STATUS  @default(INVITED)
+  status                INVITED_USER_STATUS @default(INVITED)
   createdAt             DateTime            @default(now())
   expiredDate           DateTime
   organizationId        String
@@ -154,8 +171,7 @@ model InvitedUser {
   keyCode               String
   organization          Organization        @relation(fields: [organizationId], references: [id])
   interviewCandidates   InterviewCandidates @relation(fields: [interviewCandidatesId], references: [id])
-
-  @@unique([id]) // Ensures uniqueness based on the 'id' field
+  scores                Score[]
 }
 
 model InterviewCandidates {
@@ -372,4 +388,3 @@ enum INVITED_USER_STATUS {
   SHORTLISTED
   REJECTED
 }
-

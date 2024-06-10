@@ -119,3 +119,33 @@ export const SchemaUpdateStatusCandidate = z.object({
 export type TSchemaUpdateStatusCandidate = z.infer<
   typeof SchemaUpdateStatusCandidate
 >;
+
+export const ResponseDetailInterview = z.object({
+  id: z.string(),
+  candidateName: z.string(),
+  email: z.string().email(),
+  result: z.object({
+    intro: z.object({
+      name: z.string(),
+      videoUrl: z.string(),
+      description: z.string(),
+      templateName: z.string(),
+    }),
+    questions: z.any().array(),
+  }),
+  status: z.string(),
+  scores: z.any().array(),
+});
+
+export type TResponseDetailInterview = z.infer<typeof ResponseDetailInterview>;
+
+export const SchemaAddScoring = z.object({
+  point: z.number(),
+  orgId: z.string(),
+  reviewerId: z.string(),
+  comment: z.string(),
+  interviewCandidatesId: z.string(),
+  invitedUserId: z.string(),
+  questionId: z.string(),
+});
+export type TSchemaAddScoring = z.infer<typeof SchemaAddScoring>;

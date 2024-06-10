@@ -13,7 +13,7 @@ const SectionWrap = ({
   return (
     <section
       className={cn(
-        'space-y-3 p-3',
+        'space-y-2 p-2',
         isScroll ? 'h-full min-h-screen overflow-y-auto' : '',
         className,
       )}

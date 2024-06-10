@@ -2,7 +2,6 @@
 
 import { errorHandler } from '@/helpers';
 import { z } from 'zod';
-import getCandidate from './getCandidate';
 import prismadb from '@/lib/prismadb';
 import { revalidatePath } from 'next/cache';
 
