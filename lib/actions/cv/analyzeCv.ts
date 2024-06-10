@@ -11,6 +11,7 @@ import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
+import { consumeToken } from '../token/consumeToken';
 
 export const analyzeCv = async ({
   cvAnalysisId,
@@ -139,6 +140,7 @@ export const analyzeCv = async ({
             id: cvAnalysisId,
           },
         });
+        await consumeToken({ orgId: job.orgId });
       }
     }
   } catch (error) {
