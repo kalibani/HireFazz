@@ -140,7 +140,8 @@ export const ResponseDetailInterview = z.object({
 export type TResponseDetailInterview = z.infer<typeof ResponseDetailInterview>;
 
 export const SchemaAddScoring = z.object({
-  point: z.number(),
+  point: z.number().int(),
+  questionIndex: z.number().nonnegative(),
   orgId: z.string(),
   reviewerId: z.string(),
   comment: z.string(),

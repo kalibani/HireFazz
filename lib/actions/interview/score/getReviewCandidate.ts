@@ -20,10 +20,17 @@ export default async function getReviewCandidate(
         email: true,
         result: true,
         status: true,
+        interviewCandidates: {
+          select: {
+            templateId: true,
+          },
+        },
         scores: {
           select: {
             id: true,
             point: true,
+            questionId: true,
+            comment: true,
             reviewer: {
               select: {
                 id: true,
@@ -37,7 +44,17 @@ export default async function getReviewCandidate(
     if (!candidate || !candidate.result) {
       return { error: 'candidate not found' };
     }
-    return candidate;
+
+    const templateName = await prismadb.interviewTemplate.findUnique({
+      where: {
+        id: candidate.interviewCandidates.templateId,
+      },
+      select: {
+        title: true,
+      },
+    });
+    
+    return { ...candidate, templateName: templateName?.title };
   } catch (error) {
     throw new Error('Failed to fetch candidate data');
   }

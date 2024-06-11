@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import React, { FC, useState, useTransition } from 'react';
+import React, { FC, Fragment, useState, useTransition } from 'react';
 import { cn } from '@/lib/utils';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,10 +20,11 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import addScoring from '@/lib/actions/interview/score/addScoring';
 import { Loader } from '@/components/share';
 import HoverComment from './hover-comment';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import questions from '@/components/candidate/questions';
 
 interface ICandidate {
-  candidate: TResponseDetailInterview;
-  questionIndex: number;
+  candidate: any;
   orgId: string;
   invitedUserId: string;
   interviewCandidateId: string;
@@ -31,22 +32,25 @@ interface ICandidate {
 
 const InterviewAnswer: FC<ICandidate> = ({
   candidate,
-  questionIndex,
   orgId,
   invitedUserId,
   interviewCandidateId,
 }) => {
   const user = useCurrentUser();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { push } = useRouter();
   const [isPending, startTransition] = useTransition();
   const [score, setScore] = useState<number[]>([0]);
   const [comment, setComment] = useState<string>('');
 
+  const questionIndex = Number(searchParams.get('question'));
   const questions = candidate?.result.questions;
 
   const handleActionStatus = (type: 'SHORTLISTED' | 'REJECTED') => {};
 
   const handlerSaveReview = () => {
-    if (!score || !comment) toast.error('Scoring failed');
+    if (!score || !comment || !questionIndex) toast.error('Scoring failed');
     startTransition(async () => {
       try {
         const payload: TSchemaAddScoring = {
@@ -57,10 +61,11 @@ const InterviewAnswer: FC<ICandidate> = ({
           interviewCandidatesId: interviewCandidateId,
           questionId: questions[questionIndex].id,
           reviewerId: user?.id!,
+          questionIndex,
         };
         const response = await addScoring(payload);
 
-        if (response.success) toast.success(response.success);
+        if (response?.success) toast.success(response.success);
       } catch (error: any) {
         toast.error(error);
       }
@@ -68,10 +73,28 @@ const InterviewAnswer: FC<ICandidate> = ({
   };
 
   const handleNavQuestion = (type: 'next' | 'prev') => {
-    if(type === 'next'){
-      
+    const params = new URLSearchParams(searchParams);
+    params.set('candidateId', `${invitedUserId}`);
+
+    if (type === 'next') {
+      params.set('question', `${questionIndex + 1}`);
+    } else {
+      params.set('question', `${questionIndex - 1}`);
+    }
+
+    if (type === 'next' && questionIndex + 1 === questions.length) {
+      params.delete('question');
+      push(
+        `/${orgId}/video/${interviewCandidateId}/evaluation-summary?${params.toString()}`,
+        {
+          scroll: false,
+        },
+      );
+    } else {
+      push(`${pathname}?${params.toString()}`, { scroll: false });
     }
   };
+
   return (
     <>
       <div className="flex w-full flex-col-reverse  gap-y-3 overflow-hidden lg:flex-row lg:gap-x-3">
@@ -86,7 +109,7 @@ const InterviewAnswer: FC<ICandidate> = ({
                 Email: {candidate?.email}
               </p>
             </div>
-            <div className="mb-4 flex justify-between">
+            {/* <div className="mb-4 flex justify-between">
               <Button
                 className="h-0 p-4 text-xs"
                 onClick={() => handleActionStatus('SHORTLISTED')}
@@ -100,10 +123,10 @@ const InterviewAnswer: FC<ICandidate> = ({
               >
                 Rejected
               </Button>
-            </div>
+            </div> */}
           </div>
 
-          {!candidate?.scores.length && (
+          {!candidate?.scores[questionIndex] && (
             <div className=" flex flex-col gap-y-4 rounded-md bg-white p-4">
               <h3 className="text-lg font-semibold text-primary">
                 Your Review
@@ -137,28 +160,48 @@ const InterviewAnswer: FC<ICandidate> = ({
           <div className=" flex flex-col gap-y-4 rounded-md  bg-white p-4">
             <h3 className="text-lg font-semibold text-primary">Team Review</h3>
             <div className="flex max-h-[138px] flex-col gap-y-2 overflow-y-auto ">
-              {candidate?.scores.length > 0 ? (
-                candidate?.scores.map((score) => (
-                  <>
-                    <div className="flex items-center justify-between">
-                      <p className="w-1/2 truncate text-sm font-semibold text-gray-700">
-                        {score.reviewer.id === user?.id
-                          ? 'You'
-                          : score.reviewer.name}
-                      </p>
-                      <div className="flex gap-x-2">
-                        <span className=" text-xs font-semibold text-red-600">
-                          {score.point}%
-                        </span>
-                        <HoverComment />
-                      </div>
-                    </div>
-                  </>
-                ))
+              {candidate?.scores[questionIndex] ? (
+                <div className="flex items-center justify-between">
+                  <p className="w-1/2 truncate text-sm font-semibold text-gray-700">
+                    You
+                  </p>
+                  <div className="flex items-center gap-x-2">
+                    <p className="text-xs font-semibold text-red-600">
+                      {candidate?.scores[questionIndex].point}%
+                    </p>
+                    <HoverComment
+                      comment={candidate?.scores[questionIndex].comment}
+                    />
+                  </div>
+                </div>
               ) : (
                 <p>empty no reviews</p>
               )}
             </div>
+            {/* {candidate?.scores[questionIndex] ? (
+                candidate?.scores.map((score) => (
+                  <div
+                    className="flex items-center justify-between"
+                    key={score.id}
+                  >
+                    {JSON.stringify(score)}
+                    <p className="w-1/2 truncate text-sm font-semibold text-gray-700">
+                      {score.reviewer.id === user?.id
+                        ? 'You'
+                        : score.reviewer.name}
+                    </p>
+                    <div className="flex items-center gap-x-2">
+                      <p className="text-xs font-semibold text-red-600">
+                        {score.point}%
+                      </p>
+                      <HoverComment comment={score.comment} />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>empty no reviews</p>
+              )}
+            </div> */}
           </div>
         </div>
 
@@ -182,7 +225,7 @@ const InterviewAnswer: FC<ICandidate> = ({
                 {questionIndex + 1} of {questions?.length}
               </p>
               <h3 className="text-2xl font-semibold text-primary">
-                {questions[questionIndex].title} #{questionIndex + 1}
+                {questions[questionIndex]?.title} #{questionIndex + 1}
               </h3>
             </div>
 
@@ -194,7 +237,7 @@ const InterviewAnswer: FC<ICandidate> = ({
               onClick={() => handleNavQuestion('next')}
             >
               <span className="hidden xl:block">
-                {questionIndex === questions.length
+                {questionIndex + 1 !== questions.length
                   ? 'Next Question'
                   : 'Next Result'}
               </span>
@@ -205,11 +248,12 @@ const InterviewAnswer: FC<ICandidate> = ({
           <div className="flex gap-x-3 ">
             <div className="aspect-video w-full rounded-md bg-white p-4">
               <video
+                key={questionIndex}
                 className="mx-auto aspect-video size-full rounded-md shadow-lg"
                 controls
               >
                 <source
-                  src={questions[questionIndex].videoUrl}
+                  src={questions[questionIndex].answered}
                   type="video/mp4"
                 />
               </video>

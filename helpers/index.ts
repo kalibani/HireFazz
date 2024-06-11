@@ -72,3 +72,14 @@ export const formatSecondsToTime = (seconds: number): string => {
 
   return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
 };
+
+export const calculateAverage = (numbers: number[]): number => {
+  if (numbers.length === 0) {
+    throw new Error('Array must contain at least one number');
+  }
+
+  const sum = numbers.reduce((acc, curr) => acc + curr, 0);
+  const average = sum / numbers.length;
+
+  return average;
+};
