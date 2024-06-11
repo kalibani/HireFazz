@@ -120,6 +120,7 @@ model UserOrganization {
   user           User         @relation(fields: [userId], references: [id])
   organization   Organization @relation(fields: [organizationId], references: [id])
   role           Role         @relation(fields: [roleId], references: [id])
+  @@unique([userId, organizationId, roleId])
 }
 
 model InterviewTemplate {
@@ -148,9 +149,9 @@ model Score {
   orgId                 String
   interviewCandidatesId String
   invitedUserId         String
-  InvitedUser           InvitedUser @relation(fields: [invitedUserId], references: [id])
   questionId            String
   reviewerId            String
+  InvitedUser           InvitedUser @relation(fields: [invitedUserId], references: [id])
   reviewer              User        @relation(fields: [reviewerId], references: [id])
 
   @@unique([invitedUserId, questionId, interviewCandidatesId])
