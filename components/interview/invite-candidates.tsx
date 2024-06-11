@@ -86,7 +86,6 @@ const InviteCandidates = ({
   const [title, setTitle] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [invalidData, setInvalidData] = useState<any[]>([]);
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -217,6 +216,7 @@ const InviteCandidates = ({
             title: data.title,
             orgId,
             templateId: selectedTemplate.id,
+            interviewCandidateId: id || '',
           };
           createInviteCandidates(payload)
             .then(async (data) => toast.success(data?.success || 'success'))
@@ -228,7 +228,6 @@ const InviteCandidates = ({
       }
     }
   };
-
   const handleFormSubmit = (updatedData: any) => {
     const validCandidates: any[] = [];
     const invalidCandidates: any[] = [];

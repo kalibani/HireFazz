@@ -1,12 +1,10 @@
 'use server';
-
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 import {
   CreateInviteCandidateSchema,
   type TCreateInviteCandidateSchema,
 } from '@/lib/validators/interview';
-import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
 import { sendInviteCandidate } from '../sendEmail/send-invite-candidates';
@@ -17,7 +15,13 @@ export default async function createInviteCandidates(
 ) {
   try {
     const safedParams = CreateInviteCandidateSchema.parse(payload);
-    const { importedCandidates, title, orgId, templateId } = safedParams;
+    const {
+      importedCandidates,
+      title,
+      orgId,
+      templateId,
+      interviewCandidateId,
+    } = safedParams;
 
     // Step 1: Find the template from InterviewTemplate based on templateId
     const template = await prismadb.interviewTemplate.findUnique({
@@ -34,18 +38,22 @@ export default async function createInviteCandidates(
       throw new Error('Template not found');
     }
 
-    // Step 2: Create InterviewCandidates
-    const interviewCandidates = await prismadb.interviewCandidates.create({
-      data: {
-        templateId,
-        organizationId: orgId,
-        name: title,
-        status: 'OPEN',
-      },
-    });
+    // Step 2: Use existing InterviewCandidates or create a new one
+    const interviewCandidates = interviewCandidateId
+      ? await prismadb.interviewCandidates.findUnique({
+          where: { id: interviewCandidateId },
+        })
+      : await prismadb.interviewCandidates.create({
+          data: {
+            templateId,
+            organizationId: orgId,
+            name: title,
+            status: 'OPEN',
+          },
+        });
 
     if (!interviewCandidates) {
-      throw new Error('Failed to create InterviewCandidates');
+      throw new Error('Failed to create or find InterviewCandidates');
     }
 
     // Step 3: Create InvitedUser records
@@ -76,50 +84,40 @@ export default async function createInviteCandidates(
     // Ensure all records are created successfully
     for (const userData of invitedUsersdata) {
       try {
-        const from = 'teams@berrylabs.io';
-        const subject = 'Interview Invitation';
-        await prismadb.invitedUser.create({
-          data: userData,
-        });
-
-        const responseEmail = await sendInviteCandidate(
-          userData.candidateName,
-          userData.email,
-          userData.id,
-          title,
-          from,
-          subject,
-          userData.keyCode,
-        );
-        if (responseEmail.error) {
-          return { error: responseEmail.error.message };
-        }
+        await createAndNotifyInvitedUser(userData, title);
       } catch (error) {
         console.error(`Failed to insert user: ${userData.email}`, error);
         throw error;
       }
     }
     await consumeToken({ orgId: orgId, amount: importedCandidates.length });
-    // // // Step 4: Send invitation emails
-    // for (const user of invitedUsersdata) {
-    //   const from = 'teams@berrylabs.io';
-    //   const subject = 'Interview Invitation';
 
-    //   const responseEmail = await sendInviteCandidate(
-    //     user.candidateName,
-    //     user.email,
-    //     user.id,
-    //     from,
-    //     subject,
-    //     user.keyCode,
-    //   );
-    //   if (responseEmail.error) {
-    //     return { error: responseEmail.error.message };
-    //   }
-    // }
-    revalidatePath('/');
+    revalidatePath('/[orgId]/video');
     return { success: 'Candidates Invited', invitedUsersdata };
   } catch (error) {
     errorHandler(error);
+  }
+}
+
+async function createAndNotifyInvitedUser(userData: any, title: string) {
+  const from = 'teams@berrylabs.io';
+  const subject = 'Interview Invitation';
+
+  await prismadb.invitedUser.create({
+    data: userData,
+  });
+
+  const responseEmail = await sendInviteCandidate(
+    userData.candidateName,
+    userData.email,
+    userData.id,
+    title,
+    from,
+    subject,
+    userData.keyCode,
+  );
+
+  if (responseEmail.error) {
+    throw new Error(responseEmail.error.message);
   }
 }
