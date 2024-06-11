@@ -35,9 +35,6 @@ export async function updateJobCvs(
       uploadCv({ cv, source: 'UPLOAD', orgId: payload.orgId }, onSuccess);
     });
 
-    cvLinkedin.forEach((cv) => {
-      uploadCv({ cv, source: 'LINKEDIN', orgId: payload.orgId }, onSuccess);
-    });
   } catch (error) {
     throw errorHandler(error);
   }

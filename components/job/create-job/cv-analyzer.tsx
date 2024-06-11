@@ -40,7 +40,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Progress } from '@/components/ui/progress';
 import { PayloadAddJob } from '@/lib/actions/job/createJob';
 import { z } from 'zod';
 import {
@@ -51,7 +50,6 @@ import {
 import { TagInput } from '@/components/share/multi-tag-input';
 import { useParams, useRouter } from 'next/navigation';
 import { createJob } from '@/lib/actions/job/create-job-server';
-import { formatDate } from 'date-fns';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -71,7 +69,8 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { errorToast } from '@/components/toasterProvider';
-import axios, { AxiosProgressEvent } from 'axios';
+import { useUploadThing } from '@/lib/upload-thing';
+import { utapiUpload } from '@/lib/actions/cv/utapiUploadOnly';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -173,6 +172,7 @@ const schema = z.object({
 const percentages = [10, 20, 30, 40, 50, 60, 70, 80];
 
 const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
+  const uploader = useUploadThing('imageUploader')
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -183,8 +183,6 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
 
   const { orgId, id } = useParams();
 
-  const [analyzeAIPercentage, setAnalyzeAIPercentage] = useState<number>(0);
-  const [uploadPercentage, setUploadPercentage] = useState<number>(0);
   const [tags, setTags] = useState<string[]>([]);
   // pagination state
   const [perPage, setPerPage] = useState(10);
@@ -218,10 +216,25 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
         matchPercentage: form.watch('matchPercentage'),
         keyFocus: form.watch('keyFocus'),
       };
-      requestForm.append('createPayload', JSON.stringify(createPayload))
 
       try {
-        const job = await (await axios.post('/api/job/create', requestForm)).data
+        const cvData = formData.getAll('UPLOAD') as File[];
+        const totalCV = cvData.length
+
+        const uploadResult: string[] = []
+        const splicedCV = []
+        for (let i = 0; i < Math.ceil(totalCV / 5); i++) {
+          splicedCV.push(cvData.splice(0,5))
+        }
+
+        for (const cvArr of splicedCV) {
+          const uploaded = await utapiUpload(cvArr)
+          uploaded?.forEach((url) => {
+            uploadResult.push(url)
+          })
+        }
+
+        const job = await createJob(createPayload, uploadResult)
         setJobId(job?.id);
         setIsErrorCreate(false)
       } catch (error) {
@@ -259,6 +272,18 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
     setStep(0)
     router.push(`${jobId}/all-applicant`)
   }
+
+  const isDialogOpen = (() => {
+    if (isErrorCreate) {
+      return false
+    }
+
+    if (uploader.isUploading) {
+      return true
+    }
+
+    return
+  })()
 
   return (
     <section className="flex flex-1 flex-col gap-y-3 overflow-y-scroll">
@@ -477,7 +502,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
       </div>
 
       {/* Prevent open if there is error creating job */}
-      <Dialog open={isErrorCreate ? false : undefined}>
+      <Dialog open={isDialogOpen}>
         <div className="flex w-full justify-between rounded-lg bg-white px-8 py-4">
           <Button onClick={() => setStep(2)} variant="outline">
             Previous
@@ -519,7 +544,11 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                 {form.watch('analyzeCv') && 'and AI Matching Score'}
               </h1>
               <p className="text-sm font-medium text-black text-center">
-                CV yang kamu pilih sedang dalam proses upload dan analisa. Kamu dapat menutup popup ini dengan klik "Finish" di paling bawah untuk lihat hasil analisa di halaman detail
+                {uploader.isUploading ? 
+                  'Sedang meng-upload cv...'
+                 : 
+                  'CV yang kamu pilih sedang dalam proses upload dan analisa. Kamu dapat menutup popup ini dengan klik "Finish" di paling bawah untuk lihat hasil analisa di halaman detail'
+                }
               </p>
             </div>
 
@@ -561,8 +590,8 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                       </TableCell>
                       <TableCell className="text-center text-slate-400">
                         <div className="flex w-full items-center gap-x-4">
-                          <span className="w-full text-xs font-semibold text-slate-400">
-                            DIPROSES
+                          <span className={`w-full text-xs font-semibold ${uploader.isUploading ? 'text-slate-400' : 'text-green-700'}`}>
+                            {uploader.isUploading ?  'DIPROSES' : 'DIUPLOAD'}
                           </span>
                         </div>
                       </TableCell>
@@ -590,7 +619,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
           </div>
           <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">
             <DialogTrigger asChild>
-              <Button onClick={navigateToAllApplicant}>
+              <Button disabled={uploader.isUploading} onClick={navigateToAllApplicant}>
                 Finish / Close
               </Button>
             </DialogTrigger>

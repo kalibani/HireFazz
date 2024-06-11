@@ -24,12 +24,9 @@ type TReturnType = {
 
 export async function createJob(
   payload: z.infer<typeof PayloadAddJob>,
-  cv: FormData,
+  cvUrls: string[]
 ): Promise<TReturnType> {
   try {
-    const cvData = cv.getAll('UPLOAD') as File[];
-    const cvLinkedin = cv.getAll('LINKEDIN') as string[];
-
     const { analyzeCv, ...safePayload } = PayloadAddJob.parse(payload);
     const job = await prismadb.batchJob.create({
       data: {
@@ -48,12 +45,9 @@ export async function createJob(
         analyzeCvEnabled: analyzeCv,
       });
     };
-    cvData.forEach((cv) => {
-      uploadCv({ cv, source: 'UPLOAD', orgId: payload.orgId }, onSuccess);
-    });
-    cvLinkedin.forEach((cv) => {
-      uploadCv({ cv, source: 'LINKEDIN', orgId: payload.orgId }, onSuccess);
-    });
+    cvUrls.forEach((cv) => {
+      uploadCv({ cv, source: 'UPLOAD', orgId: safePayload.orgId }, onSuccess)
+    })
     return job;
   } catch (error) {
     throw errorHandler(error);

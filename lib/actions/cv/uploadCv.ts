@@ -8,7 +8,7 @@ export const uploadCv = async (
     cv,
     source,
     orgId,
-  }: { cv: File | string; source: CV_SOURCE; orgId: string },
+  }: { cv: string | File; source: CV_SOURCE; orgId: string },
   onSuccess: (props: {
     id: string;
     url: string;
