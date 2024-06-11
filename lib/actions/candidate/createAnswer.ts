@@ -2,7 +2,6 @@
 
 import { errorHandler } from '@/helpers';
 import { z } from 'zod';
-import getCandidate from './getCandidate';
 import prismadb from '@/lib/prismadb';
 import { revalidatePath } from 'next/cache';
 
@@ -46,13 +45,14 @@ export default async function createAnswer(payload: TPayloadCreateAnswer) {
     );
     if (!cekIdQuestion) return { error: 'data not valid' };
     const newQuestion = validatedCandidate.questions;
-    newQuestion[indexQuestion] = { ...newQuestion[0], answered: url };
-
+    newQuestion[indexQuestion] = {
+      ...newQuestion[indexQuestion],
+      answered: url,
+    };
     const payloadUpdate = {
       ...validatedCandidate,
       questions: newQuestion,
     };
-
     await prismadb.invitedUser.update({
       where: {
         id,

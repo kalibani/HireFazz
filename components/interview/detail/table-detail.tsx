@@ -69,7 +69,7 @@ const TableDetail: FC<TableDetailProps> = ({
 }) => {
   const pathname = usePathname();
   const params = useParams();
-  const id = params?.id || '';
+  const invitedId = params?.id || '';
   const tab = params.tab;
   const orgId = params.orgId;
   const searchParams = useSearchParams();
@@ -129,7 +129,7 @@ const TableDetail: FC<TableDetailProps> = ({
         };
         if (updated.success) {
           toast.success(updated.success);
-          replace(`/${orgId}/video/${id}/${status.toLowerCase()}`);
+          replace(`/${orgId}/video/${invitedId}/${status.toLowerCase()}`);
         }
         if (updated.error) toast.error(updated.error);
       } catch (error: any) {
@@ -149,7 +149,7 @@ const TableDetail: FC<TableDetailProps> = ({
         };
         if (deleted.success) {
           toast.success(deleted.success);
-          replace(`/${orgId}/video/${id}/invited`);
+          replace(`/${orgId}/video/${invitedId}/invited`);
         }
         if (deleted.error) toast.error(deleted.error);
       } catch (error: any) {
@@ -171,7 +171,7 @@ const TableDetail: FC<TableDetailProps> = ({
   ) => {
     e.stopPropagation();
     if (isPending || !isEvaluate) return null;
-    replace(`/${orgId}/video/${id}/detail?candidateId=${id}`);
+    replace(`/${orgId}/video/${invitedId}/detail?candidateId=${id}&question=0`);
   };
 
   const getSelectedRowIds = () => {
@@ -298,7 +298,7 @@ const TableDetail: FC<TableDetailProps> = ({
           )}
         </TableBody>
       </Table>
-      {dataSource.invitedUsers.length > 0 && (
+      {dataSource?.invitedUsers.length > 0 && (
         <div className="mt-5 flex items-center justify-between">
           <div className="flex max-w-44 items-center gap-2">
             <span>View</span>
