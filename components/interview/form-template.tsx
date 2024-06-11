@@ -106,6 +106,8 @@ const FormTemplate = ({
   );
 
   useEffect(() => {
+    form.reset();
+
     if (dataTemplate && orgId) {
       const {
         title,
@@ -114,18 +116,19 @@ const FormTemplate = ({
         durationTimeRead,
         durationTimeAnswered,
         introVideoUrl,
-        questions,
       } = dataTemplate;
-      setQuestionFromDb(questions);
+      setQuestionFromDb(dataTemplate.questions);
       setVideoUrl(introVideoUrl, 'intro');
       form.setValue('title', title);
       form.setValue('description', description || '');
       form.setValue('descriptionIntro', descriptionIntro || '');
-      form.setValue('durationTimeRead', String(durationTimeRead) || '');
-      form.setValue('durationTimeAnswered', String(durationTimeAnswered) || '');
+      form.setValue('durationTimeRead', durationTimeRead.toString());
+      form.setValue(
+        'durationTimeAnswered',
+        durationTimeAnswered.toString() || '',
+      );
     } else {
       setQuestionFromDb([]);
-      form.reset();
       setVideoUrl('', 'intro');
     }
   }, [dataTemplate, form, setQuestionFromDb, setVideoUrl, orgId]);
@@ -294,7 +297,6 @@ const FormTemplate = ({
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
                         value={field.value}
                       >
                         <FormControl className="w-36">
@@ -322,12 +324,14 @@ const FormTemplate = ({
                   render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="w-fit text-xs">
+                        Time to Answer{' '}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        value={field.value}
+                        value={
+                          field.value || form.getValues('durationTimeAnswered')
+                        }
                       >
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">
@@ -367,11 +371,12 @@ const FormTemplate = ({
                     question={item.question}
                     title={item.title}
                     id={item.id}
-                    videoUrl={
-                      typeof item.videoUrl === 'string'
-                        ? item.videoUrl
-                        : undefined
-                    }
+                    videoUrl={item.videoUrl}
+                    // videoUrl={
+                    //   typeof item.videoUrl === 'string'
+                    //     ? item.videoUrl
+                    //     : undefined
+                    // }
                     type="questions"
                     dataSource={dataTemplate}
                   />

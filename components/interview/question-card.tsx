@@ -1,7 +1,7 @@
 'use client';
 
-import { FileSpreadsheet, Search, Redo, Trash2 } from 'lucide-react';
-import React, { FC, startTransition, useCallback, useTransition } from 'react';
+import { FileSpreadsheet, Redo, Trash2 } from 'lucide-react';
+import React, { FC, useCallback, useTransition } from 'react';
 import { Button } from '../ui/button';
 import deleteTemplate from '@/lib/actions/interview/deleteById';
 import { useRecorderStore } from '@/zustand/recordedStore';
@@ -14,18 +14,16 @@ import {
 } from 'next/navigation';
 import deleteQuestion from '@/lib/actions/interview/deleteQuestion';
 import PopupPreviewQuestions from './popup-preview';
-import { DeleteDataSchema, idProps } from '@/lib/validators/interview';
+import { DeleteDataSchema } from '@/lib/validators/interview';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { type } from 'os';
-import { title } from 'process';
 
 interface QuestionCardProp {
   title: string;
   question: string;
   idx?: number;
   id?: string;
-  videoUrl?: string | undefined;
+  videoUrl?: any;
   type: 'template' | 'questions';
   isCandidates?: boolean;
   dataSource?: any;
@@ -46,9 +44,8 @@ const QuestionCard: FC<QuestionCardProp> = ({
   const queryId = searchParams.get('id');
   const idInvite = searchParams.get('idInvite');
   const { push, refresh } = useRouter();
-  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-  const { setIsAddQuestion, setQuestionForm, removeQuestion } =
+  const { setIsAddQuestion, setQuestionForm, removeQuestion, questions } =
     useRecorderStore();
 
   const deleteTemplateOne = useCallback(
@@ -81,16 +78,16 @@ const QuestionCard: FC<QuestionCardProp> = ({
     [isPending, refresh],
   );
 
-  const deleteHandler = (idx: number) => {
+  const deleteHandler = (index: number) => {
     setIsAddQuestion(false);
     startTransition(() => {
       if (type == 'template' && id) {
         deleteTemplateOne(id);
       } else {
-        if (id && queryId) {
-          deleteOneQuestion({ id, queryId });
-        }
-        removeQuestion(idx);
+        // if (id && queryId) {
+        //   deleteOneQuestion({ id, queryId });
+        // }
+        removeQuestion(index);
       }
     });
   };
@@ -122,12 +119,12 @@ const QuestionCard: FC<QuestionCardProp> = ({
         {videoUrl && (
           <div className="h-auto w-[250px] overflow-hidden rounded-md">
             <video controls className="aspect-video size-full rounded-md">
-              <source src={videoUrl} />
+              <source src={videoUrl || URL.createObjectURL(videoUrl)} />
             </video>
           </div>
         )}
         <div className="flex w-full items-end justify-between ">
-          <div className="flex flex-col">
+          <div className="flex w-2/3 flex-col">
             <div className="flex items-center gap-x-2">
               <FileSpreadsheet className="size-4 text-primary" />
               <h4 className="text-xl font-semibold capitalize">
@@ -135,7 +132,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
               </h4>
             </div>
             <h4 className="my-2 text-xl font-semibold">{title}</h4>
-            <p className="line-clamp-2 max-w-4xl p-0 text-sm">{question}</p>
+            <p className="line-clamp-1 max-w-4xl p-0 text-sm">{question}</p>
             {!!dataSource?.questions && isCandidates && (
               <p className="line-clamp-2 max-w-4xl p-0 text-sm">
                 total questions : {dataSource.questions.length}
