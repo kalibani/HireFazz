@@ -61,6 +61,7 @@ export const CreateInviteCandidateSchema = z.object({
   title: z.string(),
   orgId: z.string(),
   templateId: z.string(),
+  interviewCandidateId: z.string(),
 });
 
 export type TCreateInviteCandidateSchema = z.infer<

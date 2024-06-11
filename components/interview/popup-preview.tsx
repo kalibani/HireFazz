@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface PropsDataSource {
   description?: string;
@@ -74,13 +74,13 @@ const PopupPreviewQuestions = ({
           Preview
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-5xl">
+      <DialogContent className="w-full max-w-5xl ">
         <DialogHeader className="border-b py-4">
           <DialogTitle className="text-center text-xl font-semibold">
             Preview Interview Question
           </DialogTitle>
         </DialogHeader>
-        <div className="flex  w-full justify-between space-x-2">
+        <div className="flex justify-between space-x-2">
           <div className="flex flex-col gap-y-2">
             <h4 className="flex items-center gap-x-2 text-xl font-semibold text-primary">
               <MessageCircleQuestion />
@@ -170,23 +170,27 @@ const PopupPreviewQuestions = ({
             </div>
           )}
 
-          <div className="size-full w-1/4">
-            {indexOfVideoQuestion && (
+          <div className="size-full w-96">
+            {indexOfVideoQuestion ? (
               <div className="flex aspect-video overflow-hidden rounded-md">
                 <video
                   key={indexOfVideoQuestion}
                   controls
-                  className="rounded-md"
+                  className="aspect-video rounded-md"
                 >
                   <source src={indexOfVideoQuestion} />
                 </video>
+              </div>
+            ) : (
+              <div className="flex size-full items-center justify-center rounded-md border">
+                <p className="text-xs  text-second-text">no video</p>
               </div>
             )}
           </div>
         </div>
 
         <DialogFooter className="mt-4 sm:justify-start">
-          <DialogClose asChild>
+          <DialogClose>
             <Button type="button" variant="secondary" size="sm">
               Close
             </Button>

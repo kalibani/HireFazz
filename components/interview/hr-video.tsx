@@ -4,12 +4,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '../ui/button';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import Webcam from 'react-webcam';
+
 import {
   videoConstraints,
   audioConstraints,
   blobToFile,
   blobToFormData,
 } from '@/lib/utils';
+import { DialogClose } from '../ui/dialog';
 
 const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
   const webcamRef = useRef<any>(null);
@@ -70,7 +72,7 @@ const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
 
   return (
     <div className="mb-8 flex flex-col  items-center justify-center rounded-md bg-white  p-4">
-      <div className="relative w-full overflow-hidden rounded-lg border-2">
+      <div className="relative min-h-20 w-full overflow-hidden rounded-lg border-2">
         {capturing && (
           <p className="absolute right-2 top-2 z-10 text-xs text-white">
             Recording...
@@ -86,9 +88,11 @@ const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
         />
       </div>
       {capturing ? (
-        <Button className="mt-10" onClick={handleStopCaptureClick}>
-          Stop
-        </Button>
+        <DialogClose asChild>
+          <Button className="mt-10" onClick={handleStopCaptureClick}>
+            Stop
+          </Button>
+        </DialogClose>
       ) : (
         <Button className="mt-10" onClick={handleStartCaptureClick}>
           Start

@@ -1,6 +1,4 @@
-'use client';
-
-import React from 'react';
+import React, { Suspense } from 'react';
 import PopupRecord from './popup-record';
 import { cn } from '@/lib/utils';
 
@@ -34,7 +32,6 @@ const VideoRecord = ({
           </video>
         </div>
       )}
-
       <PopupRecord
         type={type}
         title="Interview Intro"

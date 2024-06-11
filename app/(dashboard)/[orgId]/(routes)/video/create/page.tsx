@@ -7,7 +7,7 @@ const page = async ({ params, searchParams }: ParamsProps) => {
   const dataTemplate = await getOneTemplateInterview(searchParams?.id);
   return (
     <>
-      <HeaderNavigation />
+      <HeaderNavigation urlPath={`/${params.orgId}/video?tab=template`} />
       <div className="rounded-md bg-white p-4">
         <h3 className="text-2xl font-semibold">{`${searchParams?.id ? 'Edit' : 'Create'} Automatic Interview`}</h3>
         <p className="text-sm font-normal text-slate-400">

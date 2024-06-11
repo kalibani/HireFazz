@@ -10,7 +10,9 @@ const page = async ({ params, searchParams }: ParamsProps) => {
     organizationId: params.orgId,
   })) as TInterview[];
 
-  const candidate = await getOneCandidate({ id: searchParams.idInvite });
+  const interviewCandidateId = searchParams.idInvite;
+
+  const candidate = await getOneCandidate({ id: interviewCandidateId });
   return (
     <>
       <HeaderNavigation urlPath={`/${params.orgId}/video`} />

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, startTransition, useState, useTransition } from 'react';
+import React, { FC, useState, useTransition } from 'react';
 import {
   ColumnFiltersState,
   SortingState,
@@ -49,14 +49,6 @@ import { Loader } from '@/components/share';
 import deleteCandidates from '@/lib/actions/interview/deleteCandidates';
 import { cn } from '@/lib/utils';
 
-// name, email added on status scoring
-type TColumn = {
-  candidateName: string;
-  email: string;
-  createdDate: string;
-  status?: string;
-  score?: number;
-};
 interface TableDetailProps {
   isEvaluate?: boolean;
   title: string;

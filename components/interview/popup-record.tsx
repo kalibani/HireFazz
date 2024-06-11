@@ -26,7 +26,7 @@ const PopupRecord = ({
         {triggerName}
         <Video className="size-4" />
       </DialogTrigger>
-      <DialogContent className="h-fit w-fit">
+      <DialogContent className="h-fit w-full max-w-5xl">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

@@ -79,14 +79,11 @@ const InviteCandidates = ({
   }>();
   const searchParam = useSearchParams();
   const id = searchParam.get('idInvite');
-  const pathname = usePathname();
   const { push } = useRouter();
   const [isPending, startTransition] = useTransition();
   const [importedCandidates, setImportedCandidates] = useState<any[]>([]);
-  const [title, setTitle] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [invalidData, setInvalidData] = useState<any[]>([]);
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -217,6 +214,7 @@ const InviteCandidates = ({
             title: data.title,
             orgId,
             templateId: selectedTemplate.id,
+            interviewCandidateId: id || '',
           };
           createInviteCandidates(payload)
             .then(async (data) => toast.success(data?.success || 'success'))
@@ -228,7 +226,6 @@ const InviteCandidates = ({
       }
     }
   };
-
   const handleFormSubmit = (updatedData: any) => {
     const validCandidates: any[] = [];
     const invalidCandidates: any[] = [];
