@@ -42,6 +42,7 @@ const InterviewAnswer: FC<ICandidate> = ({
 
   const questionIndex = Number(searchParams.get('question'));
   const questions = candidate?.result.questions;
+  const scores = candidate.scores;
 
   const handleActionStatus = (type: 'SHORTLISTED' | 'REJECTED') => {};
 
@@ -90,9 +91,12 @@ const InterviewAnswer: FC<ICandidate> = ({
       push(`${pathname}?${params.toString()}`, { scroll: false });
     }
   };
-
-  console.log({ candidate, orgId, invitedUserId, interviewCandidateId });
-
+  const isYou = scores.some(
+    (score: any) =>
+      score.questionId === questions[questionIndex].id &&
+      score.reviewer.id === user?.id,
+  );
+  console.log(candidate.scores, questions, questions[questionIndex].id);
   return (
     <>
       <div className="flex w-full flex-col-reverse  gap-y-3 overflow-hidden lg:flex-row lg:gap-x-3">
@@ -124,7 +128,7 @@ const InterviewAnswer: FC<ICandidate> = ({
             </div> */}
           </div>
 
-          {!candidate?.scores[questionIndex] && (
+          {!isYou && (
             <div className=" flex flex-col gap-y-4 rounded-md bg-white p-4">
               <h3 className="text-lg font-semibold text-primary">
                 Your Review
@@ -155,51 +159,39 @@ const InterviewAnswer: FC<ICandidate> = ({
             </div>
           )}
 
+          {/* {scores.map((eachScore) => {
+            return <p>ada</p>;
+          })} */}
+
           <div className=" flex flex-col gap-y-4 rounded-md  bg-white p-4">
             <h3 className="text-lg font-semibold text-primary">Team Review</h3>
             <div className="flex max-h-[138px] flex-col gap-y-2 overflow-y-auto ">
-              {candidate?.scores[questionIndex] ? (
-                <div className="flex items-center justify-between">
-                  <p className="w-1/2 truncate text-sm font-semibold text-gray-700">
-                    You
-                  </p>
-                  <div className="flex items-center gap-x-2">
-                    <p className="text-xs font-semibold text-red-600">
-                      {candidate?.scores[questionIndex].point}%
-                    </p>
-                    <HoverComment
-                      comment={candidate?.scores[questionIndex].comment}
-                    />
-                  </div>
-                </div>
+              {scores.length > 0 ? (
+                scores.map((eachScore: any) => {
+                  return (
+                    <div key={eachScore.id}>
+                      {eachScore.questionId === questions[questionIndex].id && (
+                        <div className="flex items-center justify-between">
+                          <p className="w-1/2 truncate text-sm font-semibold text-gray-700">
+                            {eachScore.reviewer.id === user?.id
+                              ? 'You'
+                              : eachScore.reviewer.name}
+                          </p>
+                          <div className="flex items-center gap-x-2">
+                            <p className="text-xs font-semibold text-red-600">
+                              {eachScore.point}%
+                            </p>
+                            <HoverComment comment={eachScore.comment} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
               ) : (
                 <p>empty no reviews</p>
               )}
             </div>
-            {/* {candidate?.scores[questionIndex] ? (
-                candidate?.scores.map((score) => (
-                  <div
-                    className="flex items-center justify-between"
-                    key={score.id}
-                  >
-                    {JSON.stringify(score)}
-                    <p className="w-1/2 truncate text-sm font-semibold text-gray-700">
-                      {score.reviewer.id === user?.id
-                        ? 'You'
-                        : score.reviewer.name}
-                    </p>
-                    <div className="flex items-center gap-x-2">
-                      <p className="text-xs font-semibold text-red-600">
-                        {score.point}%
-                      </p>
-                      <HoverComment comment={score.comment} />
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>empty no reviews</p>
-              )}
-            </div> */}
           </div>
         </div>
 
