@@ -305,7 +305,10 @@ const InviteCandidates = ({
                           {interviews.length === 0 && (
                             <div className="flex flex-col justify-center gap-y-1 p-1 text-sm">
                               <p>you don't have template</p>
-                              <Button className="h-auto p-1">
+                              <Button
+                                className="h-auto p-1"
+                                onClick={() => push(`/${orgId}/video/create`)}
+                              >
                                 Create Template
                               </Button>
                             </div>
