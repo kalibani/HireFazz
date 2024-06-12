@@ -2,6 +2,7 @@
 
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
+import { revalidatePath } from 'next/cache';
 
 export const consumeToken = async ({
   orgId,
@@ -20,6 +21,13 @@ export const consumeToken = async ({
       },
     });
 
+    await prismadb.organization.findUnique({
+      where: {
+        id: orgId,
+      },
+    });
+
+    revalidatePath('/', 'layout');
     return org;
   } catch (error) {
     errorHandler(error);

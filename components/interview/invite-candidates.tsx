@@ -79,7 +79,7 @@ const InviteCandidates = ({
   }>();
   const searchParam = useSearchParams();
   const id = searchParam.get('idInvite');
-  const { push } = useRouter();
+  const { push, refresh } = useRouter();
   const [isPending, startTransition] = useTransition();
   const [importedCandidates, setImportedCandidates] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -217,7 +217,10 @@ const InviteCandidates = ({
             interviewCandidateId: id || '',
           };
           createInviteCandidates(payload)
-            .then(async (data) => toast.success(data?.success || 'success'))
+            .then(async (data) => {
+              refresh();
+              toast.success(data?.success || 'success');
+            })
             .catch((error) => toast.error(error))
             .finally(() => {
               push(`/${orgId}/video?tab=candidates`);
