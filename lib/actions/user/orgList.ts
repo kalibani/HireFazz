@@ -4,6 +4,7 @@ import { errorHandler } from '@/helpers';
 import { currentUser } from '@/lib/auth';
 
 import prismadb from '@/lib/prismadb';
+import { revalidatePath } from 'next/cache';
 
 export const orgList = async () => {
   try {
@@ -47,7 +48,7 @@ export const inviteOrg = async ({ organizationId, email }: InviteOrgProps) => {
         roleId: 'MEMBER',
       },
     });
-
+    revalidatePath('/[orgId]/users');
     return data;
   } catch (error) {
     errorHandler(error);
@@ -68,6 +69,13 @@ export const getOrgMember = async ({
         role: {
           select: {
             name: true,
+          },
+        },
+        organization: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
           },
         },
         user: {
