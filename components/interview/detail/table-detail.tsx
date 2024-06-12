@@ -216,7 +216,9 @@ const TableDetail: FC<TableDetailProps> = ({
         {tab === 'invited' && (
           <Button
             className="h-[30px] px-2 text-xs"
-            onClick={() => console.log('ADD MORE CANDIDATE LINK ROUTE')}
+            onClick={() =>
+              replace(`/${orgId}/video/invite-candidates?idInvite=${invitedId}`)
+            }
           >
             Add More Candidates
           </Button>

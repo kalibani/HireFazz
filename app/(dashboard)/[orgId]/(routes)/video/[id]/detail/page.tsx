@@ -13,6 +13,7 @@ const page: FC<ParamsProps> = async ({ params, searchParams }) => {
     invitedUserId,
     interviewCandidateId,
   );
+
   return (
     <>
       <HeaderNavigation

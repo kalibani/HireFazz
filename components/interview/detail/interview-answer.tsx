@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import React, { FC, Fragment, useState, useTransition } from 'react';
+import React, { FC, useState, useTransition } from 'react';
 import { cn } from '@/lib/utils';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,17 +11,13 @@ import {
   LockKeyhole,
   MessageSquareText,
 } from 'lucide-react';
-import {
-  type TResponseDetailInterview,
-  type TSchemaAddScoring,
-} from '@/lib/validators/interview';
+import { type TSchemaAddScoring } from '@/lib/validators/interview';
 import toast from 'react-hot-toast';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import addScoring from '@/lib/actions/interview/score/addScoring';
 import { Loader } from '@/components/share';
 import HoverComment from './hover-comment';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import questions from '@/components/candidate/questions';
 
 interface ICandidate {
   candidate: any;
@@ -94,6 +90,8 @@ const InterviewAnswer: FC<ICandidate> = ({
       push(`${pathname}?${params.toString()}`, { scroll: false });
     }
   };
+
+  console.log({ candidate, orgId, invitedUserId, interviewCandidateId });
 
   return (
     <>

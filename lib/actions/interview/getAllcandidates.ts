@@ -4,6 +4,7 @@ import pagination from '@/components/ui/pagination';
 import { errorHandler } from '@/helpers';
 import prismadb from '@/lib/prismadb';
 import { INVITED_USER_STATUS } from '@prisma/client';
+import { Select } from '@radix-ui/react-select';
 
 export default async function getAllCandidates(
   interviewCandidatesId: string,
@@ -37,6 +38,9 @@ export default async function getAllCandidates(
       where: whereClause,
       skip: skip,
       take: pageSize,
+      include: {
+        scores: true,
+      },
     });
 
     // Fetch the total count of records matching the criteria
