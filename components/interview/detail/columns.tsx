@@ -1,8 +1,9 @@
 'use client';
 
+import header from '@/components/auth/header';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { formatDateDMY } from '@/helpers';
+import { calculateAverage, formatDateDMY } from '@/helpers';
 import { cn } from '@/lib/utils';
 import { TResponseInvitedUser } from '@/lib/validators/interview';
 import { INVITED_USER_STATUS } from '@prisma/client';
@@ -84,7 +85,7 @@ const columnsTable = (isEvaluate: boolean = false) => {
       },
       cell: ({ row }) => (
         <p className="w-auto truncate text-xs text-slate-400">
-          {formatDateDMY(row.original.createdAt.toString())}
+          {formatDateDMY(row.original?.createdAt?.toString())}
         </p>
       ),
     },
@@ -105,11 +106,16 @@ const columnsTable = (isEvaluate: boolean = false) => {
               </Button>
             );
           },
-          cell: ({ row }) => (
-            <p className="w-auto truncate text-sm capitalize text-primary">
-              {row.original?.score || 0}%
-            </p>
-          ),
+          cell: ({ row }) => {
+            //@ts-ignore
+            const scores = row.original?.scores || [];
+            const points = scores.map((item: any) => item.point) as number[];
+            return (
+              <p className="w-auto truncate text-sm capitalize text-primary">
+                {calculateAverage(points) || 0}%
+              </p>
+            );
+          },
         }
       : {
           accessorKey: 'status',

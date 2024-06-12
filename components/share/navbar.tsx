@@ -62,7 +62,7 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
             ))}
           </span>
         </DropdownMenuContent>
-        <DropdownMenuTrigger className="h-fit w-1/6 min-w-fit" disabled>
+        <DropdownMenuTrigger className="h-fit w-1/6 min-w-fit">
           <div className="flex h-fit min-w-fit items-center justify-end rounded-xl bg-slate-100 px-3">
             <span className="w-full text-left text-sm font-normal">
               {selectedOrganization?.organization?.name}

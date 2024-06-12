@@ -46,7 +46,7 @@ export const formatDateDMY = (time: number | string): string => {
     month: 'short',
     day: 'numeric',
   };
-  return new Intl.DateTimeFormat('en-US', options).format(date);
+  return new Intl.DateTimeFormat('en-US', options)?.format(date);
 };
 
 export const formatFileSize = (sizeInBytes: number): string => {
@@ -79,7 +79,7 @@ export const calculateAverage = (numbers: number[]): number => {
   }
 
   const sum = numbers.reduce((acc, curr) => acc + curr, 0);
-  const average = sum / numbers.length;
+  const average = Math.round(sum / numbers.length);
 
   return average;
 };

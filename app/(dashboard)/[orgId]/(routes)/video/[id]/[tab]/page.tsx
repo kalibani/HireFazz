@@ -20,6 +20,7 @@ const page: FC<ParamsProps> = async ({ params, searchParams }) => {
     tab as INVITED_USER_STATUS,
     search,
   )) as TResponseAllCandidates;
+
   return (
     <DetailListContent
       candidates={candidates}
