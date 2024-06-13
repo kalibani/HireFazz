@@ -1,12 +1,13 @@
+import { TFunction } from '@/i18n';
 import { WORK_MODEL } from '@prisma/client';
 import { z } from 'zod';
 
-export const formSchemaCreateJob = z.object({
+export const getFormSchemaCreateJob = (t: TFunction) =>  z.object({
   title: z.string().min(2, {
-    message: 'Title must be at least 2 characters.',
+    message: t('error_jobTitle'),
   }),
   location: z.string().min(2, {
-    message: 'Location must be at least 2 characters.',
+    message: t('error_location'),
   }),
   fromNominal: z.string().optional(),
   toNominal: z.string().optional(),

@@ -3,6 +3,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Button } from './button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 import { PER_PAGE_ITEMS } from '@/constant'
+import { useTranslations } from 'next-intl'
 
 interface PaginationProps {
   activePage?: number;
@@ -13,6 +14,7 @@ interface PaginationProps {
 
 const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage, onPageChange }) => {
   const [page, setPage] = useState(1)
+  const t = useTranslations('Pagination')
   const totalPage = Math.ceil(totalItems / itemsPerPage)
   const prevDisable = page === 1 || totalPage === 0
   const nextDisable = page === totalPage || totalPage === 0
@@ -61,7 +63,7 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
         disabled={prevDisable}
         onClick={() => handlePageChange(page - 1)}
       >
-        Prev
+        {t('prev_btn')}
       </Button>
 
       {paginationElements.map((pageElement, index) => {
@@ -89,7 +91,7 @@ const Pagination: FC<PaginationProps> = ({ activePage, totalItems, itemsPerPage,
         disabled={nextDisable}
         onClick={() => handlePageChange(page + 1)}
       >
-        Next
+        {t('next_btn')}
       </Button>
     </div>
   );
@@ -109,10 +111,11 @@ export const PaginationGroup: FC<PaginationGroupProps> = ({
   activePage,
   handlePagination,
 }) => {
+  const t = useTranslations('Pagination')
   return (
     <div className="flex items-center justify-between py-3">
       <div className="max-w-44 flex gap-2 items-center">
-        <span>View</span>
+        <span>{t('see')}</span>
         <Select
           onValueChange={(value) => handlePagination?.('per_page', value)}
         >
@@ -129,7 +132,7 @@ export const PaginationGroup: FC<PaginationGroupProps> = ({
           </SelectContent>
         </Select>
 
-        <span>List</span>
+        <span>{t('list')}</span>
       </div>
       <div className="space-x-2">
         <Pagination

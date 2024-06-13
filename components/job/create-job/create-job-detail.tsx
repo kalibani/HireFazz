@@ -23,6 +23,7 @@ import dynamic from 'next/dynamic';
 import { Loader } from '@/components/share';
 import { Checkbox } from '@/components/ui/checkbox';
 import { errorToast } from '@/components/toasterProvider';
+import { useTranslations } from 'next-intl';
 
 const ReactQuill = dynamic(
   () => import('react-quill'),
@@ -38,9 +39,9 @@ const initialState = {
 };
 
 const dataAccordion: dataAccordionType[] = [
-  { name: 'Skills', type: 'skill' },
-  { name: 'Responsibilities', type: 'responsibilities' },
-  { name: 'Requirements', type: 'requirement' },
+  { name: 'skills', type: 'skill' },
+  { name: 'responsibilities', type: 'responsibilities' },
+  { name: 'requirements', type: 'requirement' },
 ];
 
 type dataAccordionType = {
@@ -87,6 +88,7 @@ const CreateJobDetail = () => {
   const { setStep, setFormDetailJob, dataCreateJob, dataDetailJob } = useFormStepStore(
     (state) => state,
   );
+  const t = useTranslations('CreateJob')
 
   const [value, setValue] = useState('');
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -398,8 +400,7 @@ const CreateJobDetail = () => {
                     <Info className="h-6 w-6 text-green-600" />
                   </span>
                   <p className="text-sm font-normal text-second-text">
-                    Directly Paste your Job Description here or create new with
-                    our AI generated suggestions
+                    {t('description_label')}
                   </p>
                 </div>
               </div>
@@ -411,7 +412,7 @@ const CreateJobDetail = () => {
               >
                 <AccordionItem value="item-1" className="bg-slate-200 p-2">
                   <AccordionTrigger className="h-auto p-0 py-2 text-sm font-normal hover:no-underline">
-                    Job Summary
+                    {t('job_summary')}
                   </AccordionTrigger>
                   <AccordionContent>
                     {loadingState['jobDescription'] ? (
@@ -434,7 +435,7 @@ const CreateJobDetail = () => {
                         disabled={isPending}
                       >
                         {' '}
-                        Regenerate
+                        {t('regenerate')}
                       </Button>
                       <Button
                         variant="ghost"
@@ -442,7 +443,7 @@ const CreateJobDetail = () => {
                         onClick={() => addToEditor('jobDescription')}
                         disabled={isPending}
                       >
-                        Add to Editor <ArrowRight className="ml-1 h-4 w-4" />
+                        {t('addToEditor')} <ArrowRight className="ml-1 h-4 w-4" />
                       </Button>
                     </div>
                   </AccordionContent>
@@ -457,7 +458,7 @@ const CreateJobDetail = () => {
                       className="h-auto py-2 text-sm font-normal hover:no-underline"
                       onClick={() => handleAccordionOpen(type)}
                     >
-                      {name}
+                      {t(name)}
                     </AccordionTrigger>
                     <AccordionContent>
                       {loadingState[type] ? (
@@ -472,7 +473,7 @@ const CreateJobDetail = () => {
                           onClick={() => autoGenerate(type)}
                           disabled={isPending}
                         >
-                          Regenerate
+                          {t('regenerate')}
                         </Button>
                         {type !== 'skill' && (
                           <Button
@@ -481,7 +482,7 @@ const CreateJobDetail = () => {
                             onClick={() => addToEditor(type)}
                             disabled={isPending}
                           >
-                            Add to Editor{' '}
+                            {t('addToEditor')}{' '}
                             <ArrowRight className="ml-1 h-4 w-4" />
                           </Button>
                         )}
@@ -505,10 +506,10 @@ const CreateJobDetail = () => {
             </div>
             <div className="flex justify-between">
               <Button variant="outline" className="min-w-32" onClick={prevStep}>
-                Previous
+                {t('cta_prev')}
               </Button>
               <Button className="min-w-32" disabled={!(value || dataDetailJob)} onClick={nextStep}>
-                Next
+                {t('cta_next')}
               </Button>
             </div>
           </div>

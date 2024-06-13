@@ -1,20 +1,19 @@
 import { Button } from '@/components/ui/button';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
-export const BannerJob = ({ orgId }: { orgId: string }) => {
+export const BannerJob = async ({ orgId }: { orgId: string }) => {
+  const t = await getTranslations('JobList')
   return (
     <div className="flex items-center justify-between rounded-lg bg-gradient-to-r from-[#E11D48] to-[#4E3ABA] px-11 py-4 text-white">
       <div className="flex-1 ">
-        <h1 className="mb-5 text-3xl">Create New Job!</h1>
+        <h1 className="mb-5 text-3xl">{t('banner_title')}</h1>
         <p className="max-w-[883px] text-sm">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book.
+          {t('banner_description')}
         </p>
         <Link href={`/${orgId}/job/create`}>
           <Button variant="secondary" className="mt-3">
-            Create Job
+            {t('banner_cta')}
           </Button>
         </Link>
       </div>

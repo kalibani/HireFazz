@@ -25,6 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn, formatDateStringToDate } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 const data: Payment[] = [
   {
@@ -51,107 +52,8 @@ export type Payment = {
   candidates: number;
 };
 
-export const columns: ColumnDef<Payment>[] = [
-  {
-    accessorKey: 'listJob',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-        >
-          List Job
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('listJob')}</div>
-    ),
-  },
-  {
-    accessorKey: 'candidates',
-    header: ({ column }) => {
-      return (
-        <Button
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Candidates
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <p className="capitalize text-slate-400">
-        {row.getValue('candidates')} candidates
-      </p>
-    ),
-  },
-  {
-    accessorKey: 'createdAt',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-        >
-          Created at
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="font-normal capitalize text-slate-400">
-        {formatDateStringToDate(row.getValue('createdAt'))}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="w-fit px-4 pl-0 hover:bg-transparent"
-        >
-          Status
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const status: string = row.getValue('status');
-      return (
-        <p
-          className={cn(
-            'text-sm font-normal capitalize',
-            status === 'Active' ? 'text-[#069A1E]' : 'text-primary',
-          )}
-        >
-          {status}
-        </p>
-      );
-    },
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      return (
-        <Button variant="link" className="text-sm font-normal">
-          View Job
-        </Button>
-      );
-    },
-  },
-];
-
 const DashboardTable = () => {
+  const t = useTranslations('Home')
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -159,6 +61,107 @@ const DashboardTable = () => {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+
+  const columns: ColumnDef<Payment>[] = [
+    {
+      accessorKey: 'listJob',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+          >
+            {t('table_jobList')}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue('listJob')}</div>
+      ),
+    },
+    {
+      accessorKey: 'candidates',
+      header: ({ column }) => {
+        return (
+          <Button
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            {t('table_candidates')}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <p className="capitalize text-slate-400">
+          {row.getValue('candidates')} {t('table_candidates')}
+        </p>
+      ),
+    },
+    {
+      accessorKey: 'createdAt',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+          >
+            {t('table_createdAt')}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="font-normal capitalize text-slate-400">
+          {formatDateStringToDate(row.getValue('createdAt'))}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'status',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="w-fit px-4 pl-0 hover:bg-transparent"
+          >
+            {t('table_status')}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const status: string = row.getValue('status');
+        return (
+          <p
+            className={cn(
+              'text-sm font-normal capitalize',
+              status === 'Active' ? 'text-[#069A1E]' : 'text-primary',
+            )}
+          >
+            {status}
+          </p>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        return (
+          <Button variant="link" className="text-sm font-normal">
+            {t('table_viewJob')}
+          </Button>
+        );
+      },
+    },
+  ];
 
   const table = useReactTable({
     data,

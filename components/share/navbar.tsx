@@ -14,6 +14,8 @@ import { useTopupModal } from '@/hooks/use-topup-modal';
 import { Badge } from '../ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { getTokens } from '@/lib/actions/token/consumeToken';
+import { useTranslate } from '@/hooks/use-translate';
+
 type TNavbar = {
   orgs:
     | {
@@ -28,6 +30,7 @@ type TNavbar = {
 
 const Navbar: FC<TNavbar> = (props): ReactElement => {
   const { onOpen } = useTopupModal();
+  const { language, setLanguage } = useTranslate()
   const params = useParams();
   const { replace } = useRouter();
   const selectedOrganization = props.orgs
@@ -81,9 +84,33 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
         </DropdownMenuTrigger>
       </DropdownMenu>
 
-      <div className="flex items-center gap-x-1 text-xs text-slate-400">
-        <ChevronDown size="16" />
-        <span>EN</span>
+      <div className="flex items-center gap-x-1 text-xs text-slate-400 mx-2">
+        <DropdownMenu>
+        <DropdownMenuContent className="w-20" align="start">
+          <span className="cursor-pointer">
+            
+              <DropdownMenuItem
+                key="lang-id"
+                onClick={() => setLanguage('id')}
+              >
+                ID
+              </DropdownMenuItem>
+            
+              <DropdownMenuItem
+                key="lang-en"
+                onClick={() => setLanguage('en')}
+              >
+                EN
+              </DropdownMenuItem>
+          </span>
+        </DropdownMenuContent>
+          <DropdownMenuTrigger className="h-fit w-16 flex items-center justify-center min-w-fit">
+            <div className="flex gap-2 items-center cursor-pointer">
+              <span>{language.toUpperCase()}</span>
+              <ChevronDown />
+            </div>
+        </DropdownMenuTrigger>
+        </DropdownMenu>
       </div>
 
       <MoonIcon className="text-xs text-slate-400" />

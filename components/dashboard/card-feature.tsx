@@ -10,8 +10,10 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { url } from 'inspector';
+import { getTranslations } from 'next-intl/server';
 
-const CardFeature = ({ orgId }: { orgId: string }) => {
+const CardFeature = async ({ orgId }: { orgId: string }) => {
+  const t = await getTranslations('Home')
   return (
     <div className="flex gap-x-4">
       {dataFeature.map((item) => (
@@ -20,7 +22,7 @@ const CardFeature = ({ orgId }: { orgId: string }) => {
           key={item.id}
         >
           <item.icon className="h-8 w-8 text-rose-600" />
-          <p className="text-sm font-normal text-slate-400">{item.desc}</p>
+          <p className="text-sm font-normal text-slate-400">{t(item.descKey)}</p>
           <Link href={`/${orgId}/${item.url}`} passHref legacyBehavior>
             <div className="flex flex-col items-end justify-end gap-y-2">
               {item.isComing && (
@@ -35,7 +37,7 @@ const CardFeature = ({ orgId }: { orgId: string }) => {
                     'border border-[#5D5FEF] bg-transparent text-[#5D5FEF]',
                 )}
               >
-                {item.btnTitle}
+                {t(item.btnTitleKey)}
                 <ArrowUpRight className="w-4" />
               </Button>
             </div>
@@ -53,33 +55,33 @@ const dataFeature = [
   {
     id: 1,
     icon: ListChecks,
-    desc: 'Beautifully designed components built with Radix UI and Tailwind CSS.',
+    descKey: 'feat_createJob',
     url: '/job/create',
     isComing: false,
-    btnTitle: 'Create Job',
+    btnTitleKey: 'feat_createJobCta',
   },
   {
     id: 2,
     icon: Handshake,
-    desc: 'Beautifully designed components built with Radix UI and Tailwind CSS.',
+    descKey: 'feat_integration',
     url: '/dashboard',
     isComing: false,
-    btnTitle: 'Integration',
+    btnTitleKey: 'feat_integrationCta',
   },
   {
     id: 3,
     icon: FileText,
-    desc: 'Beautifully designed components built with Radix UI and Tailwind CSS.',
+    descKey: 'feat_candidates',
     url: '/dashboard',
     isComing: false,
-    btnTitle: 'Upload of Candidates',
+    btnTitleKeyKey: 'feat_candidatesCta',
   },
   {
     id: 4,
     icon: MessagesSquare,
-    desc: 'Beautifully designed components built with Radix UI and Tailwind CSS.',
+    descKey: 'feat_interview',
     url: '/coming',
     isComing: true,
-    btnTitle: 'Automatic Interview',
+    btnTitleKey: 'feat_interviewCta',
   },
 ];

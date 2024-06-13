@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
 type TitleMap = Record<number, { title: string; subTitle: string }>
@@ -11,22 +12,23 @@ interface TrackingStepProps {
 }
 
 const TrackingStep = ({ step, withTitle = true, customTitle, customSubTitle }: TrackingStepProps) => {
+  const t = useTranslations('CreateJob')
   const titleMap: TitleMap = {
     0: {
-      title: 'Create New Job',
+      title: t('step1_title'),
       subTitle: ''
     },
     1: {
-      title: 'Job Description',
+      title: t('step2_title'),
       subTitle: ''
     },
     2: {
-      title: 'Upload CV',
-      subTitle: 'Please add CV Candidates to add your job list.'
+      title: t('step3_title'),
+      subTitle: t('step3_subTitle')
     },
     3: {
-      title: 'CV Analyzer',
-      subTitle: 'Try to upload and analyze to see our magic'
+      title: t('step4_title'),
+      subTitle: t('step4_subTitle')
     }
   }
 
@@ -44,7 +46,7 @@ const TrackingStep = ({ step, withTitle = true, customTitle, customSubTitle }: T
         )}
       </div>
       <div className="flex-1 flex gap-2">
-        <p>Job Details</p>
+        <p>{t('job_detail')}</p>
         <div className="flex items-center justify-center">
           <div className="h-5 w-5 rounded-full bg-red-600" />
           <div
@@ -63,7 +65,7 @@ const TrackingStep = ({ step, withTitle = true, customTitle, customSubTitle }: T
             )}
           />
         </div>
-        <p>Job Description</p>
+        <p>{t('job_description')}</p>
       </div>
 
       <div className="flex-1"></div>
