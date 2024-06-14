@@ -27,6 +27,8 @@ interface QuestionCardProp {
   type: 'template' | 'questions';
   isCandidates?: boolean;
   dataSource?: any;
+  timeAnswered: number;
+  timeRead: number;
 }
 
 const QuestionCard: FC<QuestionCardProp> = ({
@@ -38,6 +40,8 @@ const QuestionCard: FC<QuestionCardProp> = ({
   type,
   isCandidates = false,
   dataSource,
+  timeAnswered,
+  timeRead,
 }) => {
   const searchParams = useSearchParams();
   const params = useParams();
@@ -110,6 +114,8 @@ const QuestionCard: FC<QuestionCardProp> = ({
         title,
         question,
         idx,
+        timeAnswered,
+        timeRead,
       });
     }
   };
@@ -128,7 +134,9 @@ const QuestionCard: FC<QuestionCardProp> = ({
             <div className="flex items-center gap-x-2">
               <FileSpreadsheet className="size-4 text-primary" />
               <h4 className="text-xl font-semibold capitalize">
-                {idx ? `${type} #${idx + 1}` : type}
+                {!!String(idx) && type !== 'template'
+                  ? `${type} #${(idx as number) + 1}`
+                  : type}
               </h4>
             </div>
             <h4 className="my-2 text-xl font-semibold">{title}</h4>

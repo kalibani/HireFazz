@@ -12,12 +12,14 @@ import {
   blobToFormData,
 } from '@/lib/utils';
 import { DialogClose } from '../ui/dialog';
+import { Clapperboard, Loader2, StopCircle } from 'lucide-react';
 
 const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
   const webcamRef = useRef<any>(null);
   const mediaRecorderRef = useRef<any>(null);
   const [capturing, setCapturing] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
+  const [isMounted, setMounted] = useState(false);
   const { setVideoUrl, title } = useRecorderStore();
 
   const handleDataAvailable = useCallback(
@@ -71,8 +73,14 @@ const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
   }, [recordedChunks, handleDownload]);
 
   return (
-    <div className="mb-8 flex flex-col  items-center justify-center rounded-md bg-white  p-4">
-      <div className="relative min-h-20 w-full overflow-hidden rounded-lg border-2">
+    <div className="flex flex-col  items-center justify-center rounded-md bg-white">
+      <div className="relative min-h-20 w-full overflow-hidden rounded-lg  drop-shadow-md">
+        {!isMounted && (
+          <div className="mb-8 flex flex-col  items-center justify-center rounded-md bg-white">
+            <Loader2 className="size-96 animate-spin text-red-500/20" />
+          </div>
+        )}
+
         {capturing && (
           <p className="absolute right-2 top-2 z-10 text-xs text-white">
             Recording...
@@ -84,19 +92,26 @@ const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
           muted={true}
           audioConstraints={audioConstraints}
           videoConstraints={videoConstraints}
+          onUserMedia={(val) => setMounted(val.active)}
+          hidden={!isMounted}
           audio
         />
       </div>
-      {capturing ? (
-        <DialogClose asChild>
-          <Button className="mt-10" onClick={handleStopCaptureClick}>
-            Stop
-          </Button>
-        </DialogClose>
-      ) : (
-        <Button className="mt-10" onClick={handleStartCaptureClick}>
-          Start
-        </Button>
+      {isMounted && (
+        <>
+          {capturing ? (
+            <DialogClose asChild>
+              <Button className="my-4 gap-2" onClick={handleStopCaptureClick}>
+                <StopCircle />
+                Stop
+              </Button>
+            </DialogClose>
+          ) : (
+            <Button className="my-4 gap-2" onClick={handleStartCaptureClick}>
+              <Clapperboard /> Record
+            </Button>
+          )}
+        </>
       )}
     </div>
   );

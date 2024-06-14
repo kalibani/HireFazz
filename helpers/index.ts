@@ -75,7 +75,7 @@ export const formatSecondsToTime = (seconds: number): string => {
 
 export const calculateAverage = (numbers: number[]): number => {
   if (numbers.length === 0) {
-    throw new Error('Array must contain at least one number');
+    return 0;
   }
 
   const sum = numbers.reduce((acc, curr) => acc + curr, 0);

@@ -1,10 +1,5 @@
 'use client';
-import React, {
-  startTransition,
-  useCallback,
-  useEffect,
-  useTransition,
-} from 'react';
+import React, { useCallback, useEffect, useTransition } from 'react';
 import VideoRecord from './video-record';
 import { useRecorderStore } from '@/zustand/recordedStore';
 import { Button } from '../ui/button';
@@ -12,7 +7,7 @@ import { Save, Video } from 'lucide-react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { HeaderNavigation, Loader } from '@/components/share';
+import { Loader } from '@/components/share';
 
 import {
   Form,
@@ -36,7 +31,6 @@ import { errorHandler } from '@/helpers';
 import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 import { blobToFormData } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
 import FormQuestion from './form-question';
 import updateTemplateInterview from '@/lib/actions/interview/updateTemplateInterview';
 import createTemplateInterview from '@/lib/actions/interview/createTemplateInterview';
@@ -212,7 +206,7 @@ const FormTemplate = ({
         <h4 className="mb-4 text-xl font-semibold">Template</h4>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex items-end justify-between gap-x-10 ">
+            <div className="flex items-center justify-between gap-x-10 ">
               <div className="flex w-1/2 flex-col gap-y-4 p-0">
                 <FormField
                   control={form.control}
@@ -295,10 +289,7 @@ const FormTemplate = ({
                         Time to Thinking{' '}
                         <span className="text-destructive">*</span>{' '}
                       </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <Select {...field}>
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">
                             <SelectValue placeholder="Select duration" />
@@ -327,19 +318,14 @@ const FormTemplate = ({
                         Time to Answer{' '}
                         <span className="text-destructive">*</span>
                       </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={
-                          field.value || form.getValues('durationTimeAnswered')
-                        }
-                      >
+                      <Select {...field}>
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">
                             <SelectValue placeholder="Select duration" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="text-xs">
-                          <SelectItem value="60">1 minutes</SelectItem>
+                          <SelectItem value="60">1 minute</SelectItem>
                           <SelectItem value="120">2 minutes</SelectItem>
                           <SelectItem value="180">3 minutes</SelectItem>
                           <SelectItem value="240">4 minutes</SelectItem>
@@ -372,6 +358,8 @@ const FormTemplate = ({
                     title={item.title}
                     id={item.id}
                     videoUrl={item.videoUrl}
+                    timeAnswered={item?.timeAnswered || 0}
+                    timeRead={item?.timeRead || 0}
                     // videoUrl={
                     //   typeof item.videoUrl === 'string'
                     //     ? item.videoUrl

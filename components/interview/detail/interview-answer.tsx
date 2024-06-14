@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import React, { FC, useState, useTransition } from 'react';
+import React, { FC, useRef, useState, useTransition } from 'react';
 import { cn } from '@/lib/utils';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,6 +18,9 @@ import addScoring from '@/lib/actions/interview/score/addScoring';
 import { Loader } from '@/components/share';
 import HoverComment from './hover-comment';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+// import ReactPlayer from 'react-player';
+import dynamic from 'next/dynamic';
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
 interface ICandidate {
   candidate: any;
@@ -32,6 +35,7 @@ const InterviewAnswer: FC<ICandidate> = ({
   invitedUserId,
   interviewCandidateId,
 }) => {
+  const videoRef = useRef(null);
   const user = useCurrentUser();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -96,7 +100,6 @@ const InterviewAnswer: FC<ICandidate> = ({
       score.questionId === questions[questionIndex].id &&
       score.reviewer.id === user?.id,
   );
-  console.log(candidate.scores, questions, questions[questionIndex].id);
   return (
     <>
       <div className="flex w-full flex-col-reverse  gap-y-3 overflow-hidden lg:flex-row lg:gap-x-3">
@@ -158,10 +161,6 @@ const InterviewAnswer: FC<ICandidate> = ({
               </div>
             </div>
           )}
-
-          {/* {scores.map((eachScore) => {
-            return <p>ada</p>;
-          })} */}
 
           <div className=" flex flex-col gap-y-4 rounded-md  bg-white p-4">
             <h3 className="text-lg font-semibold text-primary">Team Review</h3>
@@ -237,7 +236,7 @@ const InterviewAnswer: FC<ICandidate> = ({
 
           <div className="flex gap-x-3 ">
             <div className="aspect-video w-full rounded-md bg-white p-4">
-              <video
+              {/* <video
                 key={questionIndex}
                 className="mx-auto aspect-video size-full rounded-md shadow-lg"
                 controls
@@ -246,7 +245,15 @@ const InterviewAnswer: FC<ICandidate> = ({
                   src={questions[questionIndex].answered}
                   type="video/mp4"
                 />
-              </video>
+              </video> */}
+              <ReactPlayer
+                url={questions[questionIndex]?.answered}
+                className="aspect-video"
+                width="100%"
+                height="100%"
+                controls
+                playing={true}
+              />
             </div>
             <div className="flex w-[600px] flex-col rounded-md bg-white p-4">
               <h4 className="text-lg font-bold text-primary">

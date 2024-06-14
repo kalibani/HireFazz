@@ -9,6 +9,7 @@ import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
 import { sendInviteCandidate } from '../sendEmail/send-invite-candidates';
 import { consumeToken } from '../token/consumeToken';
+import { currentUser } from '@/lib/auth';
 
 export default async function createInviteCandidates(
   payload: TCreateInviteCandidateSchema,
@@ -21,7 +22,10 @@ export default async function createInviteCandidates(
       orgId,
       templateId,
       interviewCandidateId,
+      companyName,
     } = safedParams;
+
+    const user = await currentUser();
 
     // Step 1: Find the template from InterviewTemplate based on templateId
     const template = await prismadb.interviewTemplate.findUnique({
@@ -49,6 +53,7 @@ export default async function createInviteCandidates(
             organizationId: orgId,
             name: title,
             status: 'OPEN',
+            companyName,
           },
         });
 
@@ -66,6 +71,8 @@ export default async function createInviteCandidates(
         expiredDate: new Date(new Date().setDate(new Date().getDate() + 7)), // Example: setting expiration date to 7 days from now
         organizationId: orgId,
         interviewCandidatesId: interviewCandidates.id,
+        emailFrom: user?.email,
+        nameFrom: user?.name,
         result: {
           intro: {
             videoUrl: template.introVideoUrl,
@@ -84,14 +91,13 @@ export default async function createInviteCandidates(
     // Ensure all records are created successfully
     for (const userData of invitedUsersdata) {
       try {
-        await createAndNotifyInvitedUser(userData, title);
+        await createAndNotifyInvitedUser(userData, companyName);
       } catch (error) {
         console.error(`Failed to insert user: ${userData.email}`, error);
         throw error;
       }
     }
     await consumeToken({ orgId: orgId, amount: importedCandidates.length });
-
     revalidatePath('/[orgId]/video');
     return { success: 'Candidates Invited', invitedUsersdata };
   } catch (error) {
@@ -99,10 +105,9 @@ export default async function createInviteCandidates(
   }
 }
 
-async function createAndNotifyInvitedUser(userData: any, title: string) {
+async function createAndNotifyInvitedUser(userData: any, companyName: string) {
   const from = 'teams@berrylabs.io';
   const subject = 'Interview Invitation';
-
   await prismadb.invitedUser.create({
     data: userData,
   });
@@ -111,7 +116,7 @@ async function createAndNotifyInvitedUser(userData: any, title: string) {
     userData.candidateName,
     userData.email,
     userData.id,
-    title,
+    companyName,
     from,
     subject,
     userData.keyCode,

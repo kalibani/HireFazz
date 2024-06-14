@@ -25,6 +25,8 @@ import toast from 'react-hot-toast';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { uploadVideo } from '@/lib/actions/interview/uploadVideo';
 import updateStatus from '@/lib/actions/candidate/updateStatue';
+import checkCandidate from '@/lib/actions/candidate/checkCandidate';
+import { sendFromCandidateCompleted } from '@/lib/mail';
 
 interface PropsAnswerRecord {
   timeAnswer: string;
@@ -124,9 +126,15 @@ const AnswerRecord: FC<PropsAnswerRecord> = ({
           const updateResponse: any = await updateStatus(id);
           if (updateResponse?.error) {
             toast.error(updateResponse.error);
-          } else {
-            toast.success(updateResponse?.success);
           }
+          const candidate = await checkCandidate(id);
+          if (candidate?.error) toast.error(candidate.error);
+
+          await sendFromCandidateCompleted(
+            candidate?.data?.emailFrom!,
+            candidate?.data?.candidateName!,
+          );
+          toast.success(updateResponse?.success);
           replace('/candidate/finish');
         } else {
           params.set('question', `${questionPart + 1}`);

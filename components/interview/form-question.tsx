@@ -33,6 +33,7 @@ const FormSchema = z.object({
   question: z.string(),
   timeAnswered: z.string().optional(),
 });
+type TFormSchema = z.input<typeof FormSchema>;
 
 const FormQuestion = () => {
   const [isSettings, setIsSettings] = useState<boolean>(false);
@@ -48,12 +49,18 @@ const FormQuestion = () => {
     setIsAddQuestion,
   } = useRecorderStore();
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<TFormSchema>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      question: '',
+      timeAnswered: '',
+      timeRead: '',
+      title: '',
+    },
   });
 
   useEffect(() => {
-    if (!!questionForm?.title) {
+    if (!!questionForm?.id) {
       setVideoUrl(questionForm.videoUrl || null, 'question');
       form.setValue('title', questionForm.title);
       form.setValue('question', questionForm.question || '');
@@ -65,7 +72,7 @@ const FormQuestion = () => {
   }, [form, questionForm, setVideoUrl]);
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    if (!!questionForm?.title) {
+    if (!!questionForm?.id) {
       const payload = {
         id: questionForm.id,
         title: data.title,
@@ -106,7 +113,10 @@ const FormQuestion = () => {
             <div className="flex items-center gap-x-2">
               <FileSpreadsheet className="size-4 text-primary" />
               <h4 className="text-xl font-semibold">
-                Question #{questions.length + 1}
+                Question #
+                {!!questionForm?.title
+                  ? (questionForm?.idx as number) + 1
+                  : (questions.length ?? 0) + 1}
               </h4>
             </div>
             <FormField
@@ -114,11 +124,12 @@ const FormQuestion = () => {
               name="title"
               render={({ field }) => (
                 <FormItem className="w-full space-y-0">
-                  <FormLabel className="text-xs">Title Question</FormLabel>
+                  <FormLabel className="text-xs">
+                    Title Question
+                    <span className="text-destructive">*</span>
+                  </FormLabel>
                   <div className="flex items-center gap-x-4">
-                    <FormControl>
-                      <Input placeholder="" {...field} className="w-full" />
-                    </FormControl>
+                    <Input placeholder="" {...field} className="w-full" />
                     <div className="flex flex-col gap-y-6">
                       <Button
                         variant="ghost"
@@ -134,31 +145,47 @@ const FormQuestion = () => {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="question"
+              render={({ field }) => (
+                <FormItem className="mt-4 space-y-0">
+                  <FormLabel className="text-xs">
+                    Question
+                    <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <Textarea placeholder="" {...field} minRows={2.5} />
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
             {isSettings && (
-              <div className="flex gap-x-4">
+              <div className="mt-4 flex gap-4">
                 <FormField
                   control={form.control}
                   name="timeRead"
-                  render={({ field }: { field: any }) => (
+                  render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="text-xs capitalize">
-                        Candidate Thinking Time
+                        Time to Thinking
                       </FormLabel>
-                      <Select {...field}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select duration" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
+                      <Select
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="text-xs">
+                          <SelectValue placeholder="Select duration" />
+                        </SelectTrigger>
+                        <SelectContent className="text-xs">
                           <SelectItem value="0">none</SelectItem>
                           <SelectItem value="15">15 seconds</SelectItem>
                           <SelectItem value="30">30 seconds</SelectItem>
                           <SelectItem value="60">1 minutes</SelectItem>
+                          <SelectItem value="120">2 minutes</SelectItem>
+                          <SelectItem value="180">3 minutes</SelectItem>
                         </SelectContent>
                       </Select>
-
-                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -167,19 +194,20 @@ const FormQuestion = () => {
                   name="timeAnswered"
                   render={({ field }) => (
                     <FormItem className="space-y-0">
-                      <FormLabel className="text-xs">
-                        Candidtae Max Answer length per Question
-                      </FormLabel>
-                      <Select {...field}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select duration" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="60">1 minutes</SelectItem>
+                      <FormLabel className="text-xs">Time to Answare</FormLabel>
+                      <Select
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="text-xs">
+                          <SelectValue placeholder="Select time" />
+                        </SelectTrigger>
+                        <SelectContent className="text-xs">
+                          <SelectItem value="60">1 minute</SelectItem>
                           <SelectItem value="120">2 minutes</SelectItem>
                           <SelectItem value="180">3 minutes</SelectItem>
+                          <SelectItem value="240">4 minutes</SelectItem>
+                          <SelectItem value="300">5 minutes</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -189,19 +217,6 @@ const FormQuestion = () => {
                 />
               </div>
             )}
-            <FormField
-              control={form.control}
-              name="question"
-              render={({ field }) => (
-                <FormItem className="mt-4 space-y-0">
-                  <FormLabel className="text-xs">Question</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="" {...field} minRows={2.5} />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
           </div>
         </div>
         <div className="my-4 flex w-full justify-between">

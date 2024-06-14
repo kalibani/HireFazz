@@ -15,13 +15,10 @@ export default async function getInvitedCandidates(
       where: {
         organizationId: id,
       },
-      select: {
-        id: true,
-        templateId: true,
-        name: true,
-        status: true,
+      include: {
         candidates: true,
       },
+
       orderBy: {
         id: 'desc', // Ensure the newest results are always on top
       },
@@ -57,4 +54,3 @@ export default async function getInvitedCandidates(
     return errorHandler(error);
   }
 }
-

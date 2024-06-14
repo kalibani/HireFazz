@@ -10,6 +10,7 @@ import {
 import React from 'react';
 import HrVideo from './hr-video';
 import { Video } from 'lucide-react';
+import { Button } from '../ui/button';
 
 const PopupRecord = ({
   title,
@@ -22,9 +23,14 @@ const PopupRecord = ({
 }) => {
   return (
     <Dialog>
-      <DialogTrigger className="flex items-center gap-x-2 text-sm text-slate-400">
-        {triggerName}
-        <Video className="size-4" />
+      <DialogTrigger
+        className="flex items-center gap-x-2 text-sm text-slate-400"
+        asChild
+      >
+        <Button className="gap-x-2" variant="secondary" size="sm">
+          {triggerName}
+          <Video className="size-4" />
+        </Button>
       </DialogTrigger>
       <DialogContent className="h-fit w-full max-w-5xl">
         <DialogHeader>
