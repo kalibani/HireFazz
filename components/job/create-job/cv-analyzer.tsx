@@ -72,6 +72,7 @@ import {
 } from '@/components/ui/accordion';
 import { errorToast } from '@/components/toasterProvider';
 import axios, { AxiosProgressEvent } from 'axios';
+import { queryClient } from '@/components/Providers';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -190,16 +191,25 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   const [perPage, setPerPage] = useState(10);
   const [itemsInPage, setItemsInPage] = useState<FormStepState['files']>([]);
   const [activePage, setActivePage] = useState(1);
-  const [isErrorCreate, setIsErrorCreate] = useState(false)
+  const [isErrorCreate, setIsErrorCreate] = useState(false);
 
-  const { step, dataCreateJob, dataDetailJob, setStep, setFiles, files, formData, resetFormCreateJob, resetFormDetailJob } =
-    useStore(useFormStepStore, (state) => state);
+  const {
+    step,
+    dataCreateJob,
+    dataDetailJob,
+    setStep,
+    setFiles,
+    files,
+    formData,
+    resetFormCreateJob,
+    resetFormDetailJob,
+  } = useStore(useFormStepStore, (state) => state);
 
   const createJobHandle = async () => {
-    const requestForm = new FormData()
+    const requestForm = new FormData();
     formData.forEach((value, key) => {
-      requestForm.append(key, value)
-    })
+      requestForm.append(key, value);
+    });
 
     if (orgId) {
       const createPayload: z.infer<typeof PayloadAddJob> = {
@@ -218,15 +228,17 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
         matchPercentage: form.watch('matchPercentage'),
         keyFocus: form.watch('keyFocus'),
       };
-      requestForm.append('createPayload', JSON.stringify(createPayload))
+      requestForm.append('createPayload', JSON.stringify(createPayload));
 
       try {
-        const job = await (await axios.post('/api/job/create', requestForm)).data
+        const job = await (
+          await axios.post('/api/job/create', requestForm)
+        ).data;
         setJobId(job?.id);
-        setIsErrorCreate(false)
+        setIsErrorCreate(false);
       } catch (error) {
-        setIsErrorCreate(true)
-        return errorToast(typeof error === 'string' ? error : undefined)
+        setIsErrorCreate(true);
+        return errorToast(typeof error === 'string' ? error : undefined);
       }
     }
   };
@@ -246,19 +258,20 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
   const handlePagination = (type: 'per_page' | 'page', value: string) => {
     if (type === 'per_page') {
       setPerPage(Number(value));
-      setActivePage(1)
+      setActivePage(1);
     } else {
       setActivePage(Number(value));
     }
   };
 
   const navigateToAllApplicant = () => {
-    resetFormCreateJob()
-    resetFormDetailJob()
-    setFiles([])
-    setStep(0)
-    router.push(`${jobId}/all-applicant`)
-  }
+    resetFormCreateJob();
+    resetFormDetailJob();
+    setFiles([]);
+    setStep(0);
+    router.push(`${jobId}/all-applicant`);
+  };
+  const tokenData = queryClient.getQueryData(['available-Token']);
 
   return (
     <section className="flex flex-1 flex-col gap-y-3 overflow-y-scroll">
@@ -306,8 +319,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
 
                 <div className="flex items-center gap-x-4">
                   <div className="flex flex-col text-right text-sm text-white">
-                    <p>44 / 50 Free Generations</p>
-                    <p>100 Token Available</p>
+                    <p>{tokenData.availableTokens} Token Available</p>
                   </div>
                   <IconBolt />
                 </div>
@@ -503,8 +515,8 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
           </DialogTrigger>
         </div>
         <DialogContent className="flex h-[90%] min-h-[90%] w-[90%] min-w-[90%] flex-col items-center justify-between overflow-y-auto p-0">
-          <div className="flex w-full h-full flex-col items-center -translate-y-[32px]">
-            <div className="flex w-full flex-col sticky top-[35px] z-40">
+          <div className="flex h-full w-full -translate-y-[32px] flex-col items-center">
+            <div className="sticky top-[35px] z-40 flex w-full flex-col">
               <TrackingStep
                 step={step}
                 customTitle={dataCreateJob.title}
@@ -518,14 +530,16 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                 Upload Process{' '}
                 {form.watch('analyzeCv') && 'and AI Matching Score'}
               </h1>
-              <p className="text-sm font-medium text-black text-center">
-                CV yang kamu pilih sedang dalam proses upload dan analisa. Kamu dapat menutup popup ini dengan klik "Finish" di paling bawah untuk lihat hasil analisa di halaman detail
+              <p className="text-center text-sm font-medium text-black">
+                CV yang kamu pilih sedang dalam proses upload dan analisa. Kamu
+                dapat menutup popup ini dengan klik "Finish" di paling bawah
+                untuk lihat hasil analisa di halaman detail
               </p>
             </div>
 
             <div className="mt-8 h-full w-full flex-1 overflow-y-auto px-8">
               <Table className="border border-solid border-slate-200">
-                <TableHeader className="bg-slate-200 sticky -top-[1px] z-10">
+                <TableHeader className="sticky -top-[1px] z-10 bg-slate-200">
                   <TableRow>
                     <TableHead className="text-center">Name of file</TableHead>
                     <TableHead className="text-center">Source</TableHead>
@@ -590,9 +604,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
           </div>
           <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">
             <DialogTrigger asChild>
-              <Button onClick={navigateToAllApplicant}>
-                Finish / Close
-              </Button>
+              <Button onClick={navigateToAllApplicant}>Finish / Close</Button>
             </DialogTrigger>
           </DialogFooter>
         </DialogContent>
