@@ -83,10 +83,8 @@ export async function POST(request: NextRequest) {
       },
     });
     let type: TopupStatus | null = null;
-    if (
-      data.transaction_status === 'pending' &&
-      topupDb.status !== TopupStatus.PENDING
-    ) {
+    const trxStatus = (data.transaction_status || '').toLowerCase();
+    if (trxStatus === 'pending' && topupDb.status !== TopupStatus.PENDING) {
       type = TopupStatus.PENDING;
       await prismadb.topup.update({
         where: { orderId: data.order_id },
@@ -95,10 +93,7 @@ export async function POST(request: NextRequest) {
         },
       });
     }
-    if (
-      data.transaction_status === 'Expired' &&
-      topupDb.status !== TopupStatus.EXPIRED
-    ) {
+    if (trxStatus === 'expired' && topupDb.status !== TopupStatus.EXPIRED) {
       type = TopupStatus.EXPIRED;
       await prismadb.topup.update({
         where: { orderId: data.order_id },
@@ -110,7 +105,7 @@ export async function POST(request: NextRequest) {
 
     // settle status and update data
     if (
-      data.transaction_status === 'Settlement' &&
+      trxStatus === 'settlement' &&
       topupDb.status !== TopupStatus.SETTLEMENT
     ) {
       type = TopupStatus.SETTLEMENT;

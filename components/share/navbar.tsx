@@ -34,7 +34,7 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
     ?.filter((x) => x.organization.id === params.orgId)
     .at(0);
   const { data } = useQuery({
-    queryKey: ['available Token'],
+    queryKey: ['available-Token'],
     queryFn: async () => await getTokens({ orgId: params.orgId as string }),
     refetchInterval: 10000,
   });
