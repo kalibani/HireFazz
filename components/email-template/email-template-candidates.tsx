@@ -44,15 +44,8 @@ const EmailTemplateCandidates: React.FC<EmailTemplateCandidatesProps> = ({
               Halo {name},
             </Text>
             <Text className="text-[14px] leading-[24px] text-black">
-              Kami dari <strong>{title}</strong>
-              {/* <Link
-                href={`mailto:teams@berrylabs.io`}
-                className="text-blue-600 no-underline"
-              >
-                teams@berrylabs.io
-              </Link>
-              */}
-              mengundang anda untuk interview. Silahkan klik tombol di bawah ini
+              Kami dari <strong>{title}</strong> mengundang anda untuk
+              interview. Silahkan klik tombol di bawah ini
             </Text>
 
             <Section className="mb-[32px] mt-[32px] text-center">

@@ -62,6 +62,7 @@ export const CreateInviteCandidateSchema = z.object({
   orgId: z.string(),
   templateId: z.string(),
   interviewCandidateId: z.string(),
+  companyName: z.string(),
 });
 
 export type TCreateInviteCandidateSchema = z.infer<
@@ -73,6 +74,7 @@ export const CandidateListSchema = z.object({
   id: z.string(),
   templateId: z.string(),
   name: z.string(),
+  companyName: z.string(),
   status: z.string(),
   candidates: z.any().array(),
   candidatesCount: z.number(),
@@ -85,6 +87,7 @@ export const DetailCandidate = z.object({
   templateId: z.string(),
   batchJobId: z.string().optional().nullable(),
   organizationId: z.string(),
+  companyName: z.string().optional(),
   name: z.string(),
   status: z.string(),
 });

@@ -163,6 +163,8 @@ model InvitedUser {
   candidateName         String
   email                 String
   phoneNumber           String?
+  emailFrom             String?
+  nameFrom              String?
   result                Json
   status                INVITED_USER_STATUS @default(INVITED)
   createdAt             DateTime            @default(now())
@@ -182,6 +184,7 @@ model InterviewCandidates {
   batchJobId     String?
   organizationId String
   name           String
+  companyName    String?
   status         STATUS_INTERVIEW @default(OPEN)
   batchJob       BatchJob?        @relation(fields: [batchJobId], references: [id])
   organization   Organization     @relation(fields: [organizationId], references: [id])
