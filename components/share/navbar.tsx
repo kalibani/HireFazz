@@ -31,12 +31,13 @@ type TNavbar = {
 
 const Navbar: FC<TNavbar> = (props): ReactElement => {
   const { onOpen } = useTopupModal();
-  const { language, setLanguage } = useTranslate()
+  const { language, setLanguage } = useTranslate();
   const params = useParams();
   const { replace } = useRouter();
   const selectedOrganization = props.orgs
     ?.filter((x) => x.organization.id === params.orgId)
     .at(0);
+
   const { data } = useQuery({
     queryKey: ['available-Token'],
     queryFn: async () => await getTokens({ orgId: params.orgId as string }),
@@ -44,9 +45,9 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
   });
 
   const locale: Record<Locale, string> = {
-    'en': 'en-US',
-    'id': 'id-ID',
-  }
+    en: 'en-US',
+    id: 'id-ID',
+  };
 
   const currentDate = new Date().toLocaleDateString(locale[language], {
     weekday: 'long',
@@ -54,7 +55,7 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
     day: 'numeric',
     year: 'numeric',
   });
-  
+
   return (
     <nav className="fixed z-10 flex w-full items-center justify-between gap-x-4 border-b bg-white px-3 py-[7.5px] pl-[90px]">
       <span className="flex-1 text-sm font-medium">{currentDate}</span>
@@ -98,32 +99,25 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
         </DropdownMenuTrigger>
       </DropdownMenu>
 
-      <div className="flex items-center gap-x-1 text-xs text-slate-400 mx-2">
+      <div className="mx-2 flex items-center gap-x-1 text-xs text-slate-400">
         <DropdownMenu>
-        <DropdownMenuContent className="w-20" align="start">
-          <span className="cursor-pointer">
-            
-              <DropdownMenuItem
-                key="lang-id"
-                onClick={() => setLanguage('id')}
-              >
+          <DropdownMenuContent className="w-20" align="start">
+            <span className="cursor-pointer">
+              <DropdownMenuItem key="lang-id" onClick={() => setLanguage('id')}>
                 ID
               </DropdownMenuItem>
-            
-              <DropdownMenuItem
-                key="lang-en"
-                onClick={() => setLanguage('en')}
-              >
+
+              <DropdownMenuItem key="lang-en" onClick={() => setLanguage('en')}>
                 EN
               </DropdownMenuItem>
-          </span>
-        </DropdownMenuContent>
-          <DropdownMenuTrigger className="h-fit w-16 flex items-center justify-center min-w-fit">
-            <div className="flex gap-2 items-center cursor-pointer">
+            </span>
+          </DropdownMenuContent>
+          <DropdownMenuTrigger className="flex h-fit w-16 min-w-fit items-center justify-center">
+            <div className="flex cursor-pointer items-center gap-2">
               <span>{language.toUpperCase()}</span>
               <ChevronDown />
             </div>
-        </DropdownMenuTrigger>
+          </DropdownMenuTrigger>
         </DropdownMenu>
       </div>
 

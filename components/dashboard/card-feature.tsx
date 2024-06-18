@@ -5,15 +5,15 @@ import {
   Handshake,
   FileText,
   MessagesSquare,
+  Video,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { url } from 'inspector';
 import { getTranslations } from 'next-intl/server';
 
 const CardFeature = async ({ orgId }: { orgId: string }) => {
-  const t = await getTranslations('Home')
+  const t = await getTranslations('Home');
   return (
     <div className="flex gap-x-4">
       {dataFeature.map((item) => (
@@ -22,7 +22,9 @@ const CardFeature = async ({ orgId }: { orgId: string }) => {
           key={item.id}
         >
           <item.icon className="h-8 w-8 text-rose-600" />
-          <p className="text-sm font-normal text-slate-400">{t(item.descKey)}</p>
+          <p className="text-sm font-normal text-slate-400">
+            {t(item.descKey)}
+          </p>
           <Link href={`/${orgId}/${item.url}`} passHref legacyBehavior>
             <div className="flex flex-col items-end justify-end gap-y-2">
               {item.isComing && (
@@ -31,6 +33,7 @@ const CardFeature = async ({ orgId }: { orgId: string }) => {
                 </div>
               )}
               <Button
+                variant={item.isComing ? 'outline' : 'default'}
                 className={cn(
                   'flex h-fit w-fit bg-rose-600 px-4 py-1 text-sm font-normal',
                   item.isComing &&
@@ -47,7 +50,6 @@ const CardFeature = async ({ orgId }: { orgId: string }) => {
     </div>
   );
 };
-// <Link href={`/${orgId}/job/create`}>
 
 export default CardFeature;
 
@@ -61,27 +63,27 @@ const dataFeature = [
     btnTitleKey: 'feat_createJobCta',
   },
   {
+    id: 4,
+    icon: Video,
+    descKey: 'feat_interview',
+    url: '/video',
+    isComing: false,
+    btnTitleKey: 'feat_interviewCta',
+  },
+  {
     id: 2,
     icon: Handshake,
     descKey: 'feat_integration',
-    url: '/dashboard',
-    isComing: false,
+    url: '/integrations',
+    isComing: true,
     btnTitleKey: 'feat_integrationCta',
   },
   {
     id: 3,
     icon: FileText,
     descKey: 'feat_candidates',
-    url: '/dashboard',
-    isComing: false,
-    btnTitleKeyKey: 'feat_candidatesCta',
-  },
-  {
-    id: 4,
-    icon: MessagesSquare,
-    descKey: 'feat_interview',
-    url: '/coming',
+    url: '/true',
     isComing: true,
-    btnTitleKey: 'feat_interviewCta',
+    btnTitleKey: 'feat_candidatesCta',
   },
 ];

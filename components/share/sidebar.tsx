@@ -30,7 +30,7 @@ export const routes = [
   { label: 'Candidates', icon: FileText, href: '/candidates' },
   { label: 'Integration', icon: Handshake, href: '/integrations' },
   { label: 'Users', icon: Users, href: '/users' },
-  { label: 'User', icon: User, href: '/interview' },
+  // { label: 'User', icon: User, href: '/interview' },
 ];
 
 const Sidebar = () => {
