@@ -42,11 +42,14 @@ import { ANALYSYS_STATUS } from '@prisma/client';
 import { Loader } from '@/components/share';
 import { P, match } from 'ts-pattern';
 import StatusAction from './status-action';
+import { TFunction } from '@/i18n';
+import { useTranslations } from 'next-intl';
 
 const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
   jobDetail,
 }) => {
   const searchParams = useSearchParams();
+  const t = useTranslations('JobDetail')
   const perPage = Number(searchParams.get('per_page') || '10');
   const currPage = Number(searchParams.get('page'));
   const pathname = usePathname();
@@ -60,120 +63,120 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
     (x) => x.status === ANALYSYS_STATUS.SHORTLISTED,
   );
 
-  const columns: ColumnDef<TCV>[] = [
-    {
-      accessorKey: 'check',
-      header: () => <p></p>,
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          disabled={!row.getCanSelect()}
-          onClick={row.getToggleSelectedHandler()}
-        />
-      ),
-    },
-    {
-      accessorKey: 'name',
-      header: ({ column }) => {
-        return (
-          <Button
-            className="w-auto px-4 pl-0 hover:bg-transparent"
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+  const columns:ColumnDef<TCV>[] = [
+      {
+        accessorKey: 'check',
+        header: () => <p></p>,
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            disabled={!row.getCanSelect()}
+            onClick={row.getToggleSelectedHandler()}
+          />
+        ),
       },
-      cell: ({ row }) => (
-        <p className="w-2/3 truncate capitalize">{row.original.cv.name}</p>
-      ),
-    },
-    {
-      id: 'scoreMatch',
-      enableHiding: false,
-      header: ({ column }) => {
-        return (
-          <Button
-            className="w-fit px-4 pl-0 hover:bg-transparent"
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            Score Match
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const percentage = row.original.reportOfAnalysis?.matchedPercentage
-        return (
-          <p className="capitalize text-slate-400">
-            {percentage ?  percentage + '%' : '-'}
-          </p>
-        );
-      },
-    },
-    {
-      id: 'status',
-      enableHiding: false,
-      header: ({ column }) => {
-        return (
-          <Button
-            className="w-fit px-4 pl-0 text-center hover:bg-transparent"
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            Status
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return (
-          <p
-            className={match(row.original.reportOfAnalysis?.matchedPercentage)
-              .with(P.number.gt(80), () => 'text-green-500')
-              .with(P.number.gt(60), () => 'text-blue-500')
-              .with(P.number.lt(60), () => 'text-red-500')
-              .otherwise(() => 'text-red-500')}
-          >
-            {match(row.original.reportOfAnalysis?.matchedPercentage)
-              .with(P.number.gt(80), () => 'High Candidate')
-              .with(P.number.gt(60), () => 'Medium Candidate')
-              .with(P.number.lt(60), () => 'Low Candidate')
-              .otherwise(() => 'Low Candidate')}
-          </p>
-        );
-      },
-    },
-    {
-      id: 'action',
-      enableHiding: false,
-      cell: ({ row, table }) => {
-        const onDelete = () => {
-          if (!confirm(`Delete ${row.original.cv.name}`)) {
-            return;
-          }
-          setIsLoading(true);
-          axios
-            .delete(`/api/cv-analysis/${row.original.id}`)
-            .finally(handleFinally);
-        };
-        return (
-          <div className="flex items-center gap-2">
+      {
+        accessorKey: 'name',
+        header: ({ column }) => {
+          return (
             <Button
-              disabled={!!table.getSelectedRowModel().rows.length}
+              className="w-auto px-4 pl-0 hover:bg-transparent"
               variant="ghost"
-              onClick={onDelete}
+              onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             >
-              <Trash2 width={18} className="text-rose-600" />
+              {t('columnName')}
+              <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
-          </div>
-        );
+          );
+        },
+        cell: ({ row }) => (
+          <p className="w-2/3 truncate capitalize">{row.original.cv.name}</p>
+        ),
       },
-    },
-  ];
+      {
+        id: 'scoreMatch',
+        enableHiding: false,
+        header: ({ column }) => {
+          return (
+            <Button
+              className="w-fit px-4 pl-0 hover:bg-transparent"
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            >
+              {t('scoreMatch')}
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
+        cell: ({ row }) => {
+          const percentage = row.original.reportOfAnalysis?.matchedPercentage
+          return (
+            <p className="capitalize text-slate-400">
+              {percentage ?  percentage + '%' : '-'}
+            </p>
+          );
+        },
+      },
+      {
+        id: 'status',
+        enableHiding: false,
+        header: ({ column }) => {
+          return (
+            <Button
+              className="w-fit px-4 pl-0 text-center hover:bg-transparent"
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            >
+              {t('columnStatus')}
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
+        cell: ({ row }) => {
+          return (
+            <p
+              className={match(row.original.reportOfAnalysis?.matchedPercentage)
+                .with(P.number.gt(80), () => 'text-green-500')
+                .with(P.number.gt(60), () => 'text-blue-500')
+                .with(P.number.lt(60), () => 'text-red-500')
+                .otherwise(() => 'text-red-500')}
+            >
+              {match(row.original.reportOfAnalysis?.matchedPercentage)
+                .with(P.number.gt(80), () => t('goodCandidate'))
+                .with(P.number.gt(60), () => t('averageCandidate'))
+                .with(P.number.lt(60), () => t('badCandidate'))
+                .otherwise(() => t('badCandidate'))}
+            </p>
+          );
+        },
+      },
+      {
+        id: 'action',
+        enableHiding: false,
+        cell: ({ row, table }) => {
+          const onDelete = () => {
+            if (!confirm(`Delete ${row.original.cv.name}`)) {
+              return;
+            }
+            setIsLoading(true);
+            axios
+              .delete(`/api/cv-analysis/${row.original.id}`)
+              .finally(handleFinally);
+          };
+          return (
+            <div className="flex items-center gap-2">
+              <Button
+                disabled={!!table.getSelectedRowModel().rows.length}
+                variant="ghost"
+                onClick={onDelete}
+              >
+                <Trash2 width={18} className="text-rose-600" />
+              </Button>
+            </div>
+          );
+        },
+      },
+    ]
 
   function handlePagination(query: 'per_page' | 'page', value: string) {
     const params = new URLSearchParams(searchParams);
@@ -187,7 +190,7 @@ const DetailJobShortListed: React.FC<TDetailJobTableProps> = ({
 
   const table = useReactTable({
     data: jobDetail?.data?.cvAnalysis || [],
-    columns,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),

@@ -15,6 +15,7 @@ import { Badge } from '../ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { getTokens } from '@/lib/actions/token/consumeToken';
 import { useTranslate } from '@/hooks/use-translate';
+import { Locale } from '@/i18n';
 
 type TNavbar = {
   orgs:
@@ -41,6 +42,19 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
     queryFn: async () => await getTokens({ orgId: params.orgId as string }),
     refetchInterval: 10000,
   });
+
+  const locale: Record<Locale, string> = {
+    'en': 'en-US',
+    'id': 'id-ID',
+  }
+
+  const currentDate = new Date().toLocaleDateString(locale[language], {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  
   return (
     <nav className="fixed z-10 flex w-full items-center justify-between gap-x-4 border-b bg-white px-3 py-[7.5px] pl-[90px]">
       <span className="flex-1 text-sm font-medium">{currentDate}</span>
@@ -119,10 +133,3 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
 };
 
 export default Navbar;
-
-const currentDate = new Date().toLocaleDateString('en-US', {
-  weekday: 'long',
-  month: 'long',
-  day: 'numeric',
-  year: 'numeric',
-});

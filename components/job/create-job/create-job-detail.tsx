@@ -24,6 +24,7 @@ import { Loader } from '@/components/share';
 import { Checkbox } from '@/components/ui/checkbox';
 import { errorToast } from '@/components/toasterProvider';
 import { useTranslations } from 'next-intl';
+import { useTranslate } from '@/hooks/use-translate';
 
 const ReactQuill = dynamic(
   () => import('react-quill'),
@@ -77,11 +78,12 @@ interface DetailItem {
   hidden?: boolean;
 }
 
+// list of key for translation
 const headerMap: Record<AutoGenerateType, string> = {
-  jobDescription: 'Job Summary',
-  skill: 'Skills',
-  responsibilities: 'Responsibilites',
-  requirement: 'Requirements',
+  jobDescription: 'job_summary',
+  skill: 'skills',
+  responsibilities: 'responsibilities',
+  requirement: 'requirement',
 };
 
 const CreateJobDetail = () => {
@@ -89,6 +91,7 @@ const CreateJobDetail = () => {
     (state) => state,
   );
   const t = useTranslations('CreateJob')
+  const { language } = useTranslate()
 
   const [value, setValue] = useState('');
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -108,7 +111,7 @@ const CreateJobDetail = () => {
     const genrate = () => {
       setLoadingState((value) => ({ ...value, jobDescription: true }));
       startTransition(async () => {
-        const { result } = await genereteJobDescription(dataCreateJob).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
+        const { result } = await genereteJobDescription(dataCreateJob, language).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
         handleChange('jobDescription', result);
         setLoadingState((value) => ({ ...value, jobDescription: false }));
       });
@@ -137,6 +140,7 @@ const CreateJobDetail = () => {
         case 'skill':
           const { result: skillResult } = await generateSkill(
             dataCreateJob.title,
+            language
           ).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
           let skillSet: string[] = [];
 
@@ -163,7 +167,7 @@ const CreateJobDetail = () => {
           break;
         case 'responsibilities':
           const { result: responsibilitiesResult } =
-            await generateResponsibilities(dataCreateJob).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
+            await generateResponsibilities(dataCreateJob, language).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
           // make it as array of object, so we can utilize checkbox functionality
           const preparedResponsibilitiesResult = responsibilitiesResult.map(
             (responsibility: string) => ({
@@ -176,7 +180,7 @@ const CreateJobDetail = () => {
           break;
         case 'requirement':
           const { result: requirementResult } =
-            await generateRequirement(dataCreateJob).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
+            await generateRequirement(dataCreateJob, language).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
           // make it as array of object, so we can utilize checkbox functionality
           const preparedRequirementResult = requirementResult.map(
             (requirement: string) => ({
@@ -190,7 +194,7 @@ const CreateJobDetail = () => {
           break;
         case 'jobDescription':
           const { result: jobDescriptionResult } =
-            await genereteJobDescription(dataCreateJob).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
+            await genereteJobDescription(dataCreateJob, language).catch((err) => errorToast(typeof err === 'string' ? err : undefined))
           handleChange('jobDescription', jobDescriptionResult);
           setLoadingState((value) => ({ ...value, jobDescription: false }));
           break;
@@ -201,7 +205,7 @@ const CreateJobDetail = () => {
   };
 
   const addToEditor = (type: AutoGenerateType) => {
-    const htmlDescription = `<p><strong>${headerMap[type]} :</strong></p><p>${state[type]}</p><br/>`;
+    const htmlDescription = `<p><strong>${t(headerMap[type])} :</strong></p><p>${state[type]}</p><br/>`;
     setListOfEditor((prev) => {
       const newListOfEditor = [...prev];
       switch (type) {
@@ -219,7 +223,7 @@ const CreateJobDetail = () => {
             checkedResponsibilities,
           );
           if (listOfResponsiblities.length) {
-            newListOfEditor[2] = `<p><strong>${headerMap[type]} :</strong></p>${listOfResponsiblities}<br/>`;
+            newListOfEditor[2] = `<p><strong>${t(headerMap[type])} :</strong></p>${listOfResponsiblities}<br/>`;
           } else {
             newListOfEditor[2] = '';
           }
@@ -230,7 +234,7 @@ const CreateJobDetail = () => {
             .map((item: DetailItem) => item.value);
           const listOfRequirement = generateHtmlList(checkedRequirements);
           if (listOfRequirement.length) {
-            newListOfEditor[3] = `<p><strong>${headerMap[type]} :</strong></p>${listOfRequirement}<br/>`;
+            newListOfEditor[3] = `<p><strong>${t(headerMap[type])} :</strong></p>${listOfRequirement}<br/>`;
           } else {
             newListOfEditor[3] = '';
           }
@@ -307,7 +311,7 @@ const CreateJobDetail = () => {
       const newListOfEditor = [...prev];
       const checkedSkills = skill;
       const listOfSkill = generateHtmlList(checkedSkills);
-      const skillHtml = `<p><strong>${headerMap['skill']} :</strong></p>${listOfSkill}<br/>`;
+      const skillHtml = `<p><strong>${t(headerMap['skill'])} :</strong></p>${listOfSkill}<br/>`;
       if (listOfSkill.length) {
         newListOfEditor[1] = skillHtml;
       } else {

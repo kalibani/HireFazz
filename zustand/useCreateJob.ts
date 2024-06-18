@@ -1,10 +1,10 @@
-import { formSchemaCreateJob } from '@/lib/validators/createJob';
+import { FormSchemaCreateJob } from '@/lib/validators/createJob';
 import { z } from 'zod';
 import { create } from 'zustand';
 
 export interface FormStepState {
   step: number;
-  dataCreateJob: z.infer<typeof formSchemaCreateJob>;
+  dataCreateJob: z.infer<FormSchemaCreateJob>;
   dataDetailJob: string;
   totalSize: number;
   files: {
@@ -13,7 +13,7 @@ export interface FormStepState {
   }[];
   formData: FormData;
   setStep: (step: number) => void;
-  setFormCreateJob: (data: z.infer<typeof formSchemaCreateJob>) => void;
+  setFormCreateJob: (data: z.infer<FormSchemaCreateJob>) => void;
   setFormDetailJob: (data: string) => void;
   setTotalSize: (total: number) => void;
   resetFormCreateJob: () => void
@@ -27,7 +27,7 @@ export interface FormStepState {
   handleUploadButtonClick: () => void;
 }
 
-const defaultDataCreateJob: z.infer<typeof formSchemaCreateJob> =  {
+const defaultDataCreateJob: z.infer<FormSchemaCreateJob> =  {
   title: '',
   companyName: '',
   workModel: 'REMOTE',

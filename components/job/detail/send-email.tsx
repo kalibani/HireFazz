@@ -11,10 +11,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useTranslate } from '@/hooks/use-translate';
 import { TEmail, sendingEmail } from '@/lib/actions/email';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import { useStoreEmail } from '@/zustand/useStoreEmail';
 import { Mails } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -27,20 +29,32 @@ const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
   const selectedCv = jobDetail?.data?.cvAnalysis?.filter((x) =>
     ids.includes(x.id),
   );
+  const t = useTranslations('JobDetail')
+  const { language } = useTranslate()
   const form = useForm<
     TEmail & { cc?: string; bcc?: string; attachJobDescription?: string }
   >();
   const cc = form.watch('cc');
   const bcc = form.watch('bcc');
   const emailContent = useMemo(
-    () => `
-Dear {{CANDIDATE_FIRST_NAME}}, We hope this email finds you well. We are pleased to inform you that after careful consideration of your application and interview performance, you have been shortlisted for the {{JOB_TITLE}} position at {{JOB_COMPANY}}. Your qualifications and experience stood out and we believe that your skills align well with the requirements of the role. We feel confident that your contributions would greatly benefit our team. Congratulations on reaching this stage, and we look forward to the possibility of welcoming you to our team. Best regards, Skima Team
-<br/>
-${cc ? `CC: ${cc}` : ''}
-<br/>
-${bcc ? `BCC: ${bcc}` : ''}
-`,
-    [cc, bcc],
+    () => {
+      if (language === 'en') {
+        console.log('LANFFF', language)
+        return `
+        Dear {{CANDIDATE_FIRST_NAME}}, <br/> We hope this email finds you well. We are pleased to inform you that after careful consideration of your application and interview performance, you have been shortlisted for the {{JOB_TITLE}} position at {{JOB_COMPANY}}. Your qualifications and experience stood out and we believe that your skills align well with the requirements of the role. We feel confident that your contributions would greatly benefit our team. Congratulations on reaching this stage, and we look forward to the possibility of welcoming you to our team. Best regards,
+        <br/>
+        ${cc ? `CC: ${cc}` : ''}
+        <br/>
+        ${bcc ? `BCC: ${bcc}` : ''}
+        `
+      } else {
+
+        return `Kepada {{CANDIDATE_FIRST_NAME}}, <br/><br/>
+  
+        Kami berharap email ini menemukan Anda dalam keadaan baik. Kami dengan senang hati menginformasikan bahwa setelah mempertimbangkan dengan cermat aplikasi dan kinerja wawancara Anda, Anda telah terpilih untuk posisi {{JOB_TITLE}} di {{JOB_COMPANY}}. Kualifikasi dan pengalaman Anda menonjol dan kami percaya bahwa keterampilan Anda sangat sesuai dengan persyaratan peran ini. Kami yakin bahwa kontribusi Anda akan sangat bermanfaat bagi tim kami.`
+      }
+    },
+    [cc, bcc, language],
   );
   const receiver = selectedCv?.map((x) => x.reportOfAnalysis?.email) || [,];
   const [value, setValue] = useState(emailContent);
@@ -56,13 +70,13 @@ ${bcc ? `BCC: ${bcc}` : ''}
   });
   useEffect(() => {
     setValue(emailContent);
-  }, [cc, bcc]);
+  }, [cc, bcc, language]);
   return (
     <section className="flex flex-col gap-y-12 py-6">
       <div className="flex flex-col gap-y-2">
-        <h1 className="text-[16px] font-semibold text-black">Send Email</h1>
+        <h1 className="text-[16px] font-semibold text-black">{t('actionSendEmail')}</h1>
         <div className="flex gap-x-2">
-          <p className="text-sm text-black">Send to: </p>
+          <p className="text-sm text-black">{t('sendTo')}: </p>
           {receiver.map((receiver, index) => (
             <div
               key={index}
@@ -75,7 +89,7 @@ ${bcc ? `BCC: ${bcc}` : ''}
       </div>
       <div className="flex flex-col gap-y-6">
         <h1 className="text-[16px] font-semibold text-black">
-          Configure Email
+          {t('configureEmail')}
         </h1>
         <div className="flex w-full gap-x-4">
           <ReactQuill
@@ -97,7 +111,7 @@ ${bcc ? `BCC: ${bcc}` : ''}
                     name="from"
                     render={({ field }) => (
                       <FormItem className="w-1/2">
-                        <FormLabel>From *</FormLabel>
+                        <FormLabel>{t('emailFrom')} *</FormLabel>
                         <FormControl>
                           <Input required placeholder="From" {...field} />
                         </FormControl>
@@ -110,7 +124,7 @@ ${bcc ? `BCC: ${bcc}` : ''}
                     name="to"
                     render={({ field }) => (
                       <FormItem className="w-1/2">
-                        <FormLabel>Reply to :</FormLabel>
+                        <FormLabel>{t('emailReply')} :</FormLabel>
                         <FormControl>
                           <Input required placeholder="Reply to" {...field} />
                         </FormControl>
@@ -152,7 +166,7 @@ ${bcc ? `BCC: ${bcc}` : ''}
                   name="subject"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Subject Email</FormLabel>
+                      <FormLabel>{t('emailSubject')}</FormLabel>
                       <FormControl>
                         <Input placeholder="Subject Email" {...field} />
                       </FormControl>
@@ -166,7 +180,7 @@ ${bcc ? `BCC: ${bcc}` : ''}
                   render={({ field }) => (
                     <FormItem className="flex items-center gap-x-4">
                       <FormLabel className="mt-2">
-                        Attach Job Description* ?
+                        {t('emailAttachDescJob')}
                       </FormLabel>
                       <FormControl>
                         <RadioGroup
@@ -180,7 +194,7 @@ ${bcc ? `BCC: ${bcc}` : ''}
                               <RadioGroupItem value={'Yes'} />
                             </FormControl>
                             <span className="!mt-0 text-xs font-normal">
-                              Yes
+                              {t('yes')}
                             </span>
                           </FormItem>
                           <FormItem className="flex items-center justify-center gap-x-2">
@@ -188,7 +202,7 @@ ${bcc ? `BCC: ${bcc}` : ''}
                               <RadioGroupItem value="No" />
                             </FormControl>
                             <span className="!mt-0 text-xs font-normal">
-                              No
+                              {t('no')}
                             </span>
                           </FormItem>
                         </RadioGroup>
@@ -230,13 +244,13 @@ ${bcc ? `BCC: ${bcc}` : ''}
                 */}
                 <div className="mt-6 flex items-center gap-x-4">
                   <Button type="submit" className="flex gap-x-2">
-                    <Mails /> Send Email
+                    <Mails /> {t('actionSendEmail')}
                   </Button>
                   <span
                     onClick={() => form.reset()}
                     className="text-xs font-medium text-black underline"
                   >
-                    Reset
+                    {t('reset')}
                   </span>
                 </div>
               </form>

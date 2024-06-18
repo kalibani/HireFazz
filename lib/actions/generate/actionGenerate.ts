@@ -1,5 +1,5 @@
 import { checkValidJSON } from '@/lib/utils';
-import { formSchemaCreateJob } from '@/lib/validators/createJob';
+import { FormSchemaCreateJob } from '@/lib/validators/createJob';
 import { z } from 'zod';
 import {
   actionDescription,
@@ -7,12 +7,14 @@ import {
   actionResponsibility,
   actionRequirement,
 } from './jobDescription';
+import { Locale } from '@/i18n';
 
 export const genereteJobDescription = async (
-  data: z.infer<typeof formSchemaCreateJob>,
+  data: z.infer<FormSchemaCreateJob>,
+  lang: Locale
 ) => {
   try {
-    const result: any = await actionDescription(JSON.stringify(data));
+    const result: any = await actionDescription(JSON.stringify(data), lang);
 
     const isValidJSON = checkValidJSON(result);
     if (isValidJSON) {
@@ -24,9 +26,9 @@ export const genereteJobDescription = async (
   }
 };
 
-export const generateSkill = async (title: string) => {
+export const generateSkill = async (title: string, lang: Locale) => {
   try {
-    const result: any = await actionSkill(title);
+    const result: any = await actionSkill(title, lang);
     const isValidJSON = checkValidJSON(result);
     if (isValidJSON) {
       const res = JSON.parse(result);
@@ -38,12 +40,14 @@ export const generateSkill = async (title: string) => {
 };
 
 export const generateResponsibilities = async (
-  data: z.infer<typeof formSchemaCreateJob>,
+  data: z.infer<FormSchemaCreateJob>,
+  lang: Locale
 ) => {
   const { title, experiences, workModel } = data;
   try {
     const result: any = await actionResponsibility(
       JSON.stringify({ title, experiences, workModel }),
+      lang
     );
 
     const isValidJSON = checkValidJSON(result);
@@ -61,9 +65,9 @@ export const generateRequirement = async (data: {
   location: string;
   workModel: string;
   companyName: string;
-}) => {
+}, lang: Locale) => {
   try {
-    const result: any = await actionRequirement(JSON.stringify(data));
+    const result: any = await actionRequirement(JSON.stringify(data), lang);
     const isValidJSON = checkValidJSON(result);
     if (isValidJSON) {
       const res = JSON.parse(result);

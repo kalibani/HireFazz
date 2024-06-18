@@ -22,7 +22,7 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { useFormStepStore } from '@/zustand/useCreateJob';
-import { getFormSchemaCreateJob } from '@/lib/validators/createJob';
+import { FormSchemaCreateJob, getFormSchemaCreateJob } from '@/lib/validators/createJob';
 import { removeNonDigit, separateThousand } from '@/lib/utils';
 import { WORK_MODEL } from '@prisma/client';
 import { useTranslations } from 'next-intl';
@@ -46,7 +46,7 @@ const FormCreate = () => {
     values: dataCreateJob,
   });
 
-  const onSubmit = (values: z.infer<typeof formSchemaCreateJob>) => {
+  const onSubmit = (values: z.infer<FormSchemaCreateJob>) => {
     // remove separator for submit form
     if (values.fromNominal) {
       values.fromNominal =  removeNonDigit(values.fromNominal)
@@ -222,13 +222,13 @@ const FormCreate = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={WORK_MODEL.ONSITE}>{t('option_jobTypeOnSite')}</SelectItem>
-                        <SelectItem value={WORK_MODEL.REMOTE}>{t('option_jobTypeRemote')}</SelectItem>
-                        <SelectItem value={WORK_MODEL.HYBRID}>{t('option_jobTypeHybrid')}</SelectItem>
-                        <SelectItem value={WORK_MODEL.PART_TIME}>{t('option_jobTypePartTime')}</SelectItem>
-                        <SelectItem value={WORK_MODEL.FREELANCE}>{t('option_jobTypeFreelance')}</SelectItem>
-                        <SelectItem value={WORK_MODEL.CONTRACT}>{t('option_jobTypeContract')}</SelectItem>
-                        <SelectItem value={WORK_MODEL.INTERNSHIP}>{t('option_jobTypeIntern')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.ONSITE}>{t('jobTypeOnSite')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.REMOTE}>{t('jobTypeRemote')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.HYBRID}>{t('jobTypeHybrid')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.PART_TIME}>{t('jobTypePartTime')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.FREELANCE}>{t('jobTypeFreelance')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.CONTRACT}>{t('jobTypeContract')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.INTERNSHIP}>{t('jobTypeIntern')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

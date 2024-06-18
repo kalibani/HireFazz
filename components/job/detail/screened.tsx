@@ -17,6 +17,9 @@ import { ScreenedItem } from './detail-job-item';
 import { TDetailJobTableProps } from '@/lib/actions/job/getJob';
 import { P, match } from 'ts-pattern';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import StatusAction from './status-action';
+import { CheckedState } from '@radix-ui/react-checkbox';
 
 const DetailJobScreened: FC<TDetailJobTableProps> = ({
   jobDetail,
@@ -25,6 +28,8 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
   const { replace } = useRouter();
   const pathname = usePathname();
   const [matchPercentage, setMatchPercentage] = useState([80])
+  const t = useTranslations('JobDetail')
+  const [selectedIds, setSelectedIds] = useState(new Set<string>())
 
   const cvAnalysis = jobDetail?.data?.cvAnalysis.filter(
     (x) => x.status === ANALYSYS_STATUS.ANALYSYS,
@@ -45,7 +50,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
     'Send Email',
   ];
   // Adjust filter in integration
-  const filterBy = ['Name'];
+  const filterBy = [{ value: 'Name', label: t('sortName')}];
   const totalItems = cvAnalysis?.length ? cvAnalysis?.length : 0;
   const totalOnAnalysisItems = cvOnAnalysis?.length ? cvOnAnalysis?.length : 0;
   const jobName = jobDetail?.data?.jobName;
@@ -60,6 +65,20 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
     replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
+  const getSelectedRowIds = () => {
+    const selectedRow: string[] = []
+    selectedIds.forEach((item) => selectedRow.push(item))
+    return selectedRow
+  };
+
+  const handleCheck = (checked: CheckedState, id: string) => {
+    if (!checked) {
+      selectedIds.delete(id)
+    } else {
+      selectedIds.add(id)
+    }
+  }
+
   return (
     <div className="mt-5 flex h-auto flex-col gap-3">
       <div className="flex min-h-20 justify-between">
@@ -67,8 +86,8 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
           <div className="flex items-center gap-2">
             <FileSearchIcon className="size-4 text-red-500" />
             <p className="text-sm">
-              There {totalItems > 1 ? 'are' : 'is'}{' '}
-              <b>{totalItems} applicants</b> on <b>“{jobName}”</b>
+            {t.rich('tableAmount', { amount: cvAnalysis?.length || 0, job: jobDetail?.data?.jobName, b: (chunks) => <b>{chunks}</b> })}
+
             </p>
           </div>
           {totalOnAnalysisItems > 0 && (
@@ -81,7 +100,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
           )}
         </div>
 
-        <Button className="mt-auto">+ Add to Shortlisted</Button>
+        <Button className="mt-auto">+ {t('addToShortlisted')}</Button>
       </div>
 
       {/* FILTERS */}
@@ -94,49 +113,29 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
           <ChevronDown className="size-4" />
 
           <div className="ml-4 flex items-center gap-2">
-            <Select>
-              <SelectTrigger className="h-[30px] w-fit text-xs capitalize">
-                <SelectValue
-                  placeholder="Shortlisted"
-                  defaultValue="SHORTLISTED"
-                />
-              </SelectTrigger>
-
-              <SelectContent>
-                {actionList.map((action) => (
-                  <SelectItem
-                    key={action}
-                    value={action}
-                    className="capitalize"
-                  >
-                    {action.toLowerCase()}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button className="h-[30px] px-2 text-xs">Action</Button>
+            <StatusAction getSelectedRowIds={getSelectedRowIds} />
           </div>
         </div>
 
         <div className="flex h-[28px] max-w-[200px] items-center gap-1 rounded-sm border border-slate-300 px-3">
           <input
-            placeholder="Search Location"
+            placeholder={t('searchLocation')}
             className="w-28 text-sm outline-none"
           />
           <Search className="size-4 shrink-0 text-slate-300" />
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm">Sort by</label>
+          <label className="text-sm">{t('sort')}</label>
           <Select>
             <SelectTrigger className="h-[30px] w-fit text-xs capitalize">
-              <SelectValue placeholder="Name" defaultValue="Name" />
+              <SelectValue placeholder={t('sortName')} defaultValue="Name" />
             </SelectTrigger>
 
             <SelectContent>
               {filterBy.map((action) => (
-                <SelectItem key={action} value={action} className="capitalize">
-                  {action.toLowerCase()}
+                <SelectItem key={action.value} value={action.value} className="capitalize">
+                  {action.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -144,7 +143,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm">Filter by score</label>
+          <label className="text-sm">{t('filterByScore')}</label>
           <Slider className="w-[170px]" min={0} max={100} defaultValue={[80]} value={matchPercentage} onValueChange={(value) => setMatchPercentage(value)} />
         </div>
       </div>
@@ -152,6 +151,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
       {cvAnalysis?.map((cv, index) => (
         <ScreenedItem
           key={index}
+          id={cv.id}
           isChecked={false}
           flag={match(cv?.reportOfAnalysis?.matchedPercentage)
             .with(P.number.gt(80), () => 'high')
@@ -166,6 +166,7 @@ const DetailJobScreened: FC<TDetailJobTableProps> = ({
           experience={cv?.reportOfAnalysis.experience}
           cvLink={cv?.cv?.url}
           description={cv?.reportOfAnalysis?.reason}
+          handleCheck={handleCheck}
         />
       ))}
 

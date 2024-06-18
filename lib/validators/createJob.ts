@@ -16,3 +16,5 @@ export const getFormSchemaCreateJob = (t: TFunction) =>  z.object({
   companyName: z.string(),
   currency: z.string(),
 });
+
+export type FormSchemaCreateJob = ReturnType<typeof getFormSchemaCreateJob>
