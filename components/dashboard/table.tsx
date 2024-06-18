@@ -24,36 +24,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { cn, formatDateStringToDate } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+import { formatDateDMY } from '@/helpers';
 
-const data: Payment[] = [
-  {
-    id: 'm5gr84i9',
-    listJob: 'Senior Software Engineer',
-    candidates: 143,
-    createdAt: '1712200652349',
-    status: 'Active',
-  },
-  {
-    id: '3u1reuv4',
-    listJob: 'Senior Software Engineer',
-    candidates: 20,
-    createdAt: '1712200652349',
-    status: 'Not Active',
-  },
-];
+import { usePathname, useRouter } from 'next/navigation';
 
-export type Payment = {
-  id: string;
-  listJob: string;
-  status: 'Active' | 'Not Active';
-  createdAt: string;
-  candidates: number;
-};
+const DashboardTable = ({ dataSource, orgId }: any) => {
+  const t = useTranslations('Home');
+  const pathname = usePathname();
+  const { push } = useRouter();
 
-const DashboardTable = () => {
-  const t = useTranslations('Home')
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -62,10 +43,9 @@ const DashboardTable = () => {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-
-  const columns: ColumnDef<Payment>[] = [
+  const columns: ColumnDef<any>[] = [
     {
-      accessorKey: 'listJob',
+      accessorKey: 'jobName',
       header: ({ column }) => {
         return (
           <Button
@@ -79,11 +59,11 @@ const DashboardTable = () => {
         );
       },
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('listJob')}</div>
+        <div className="capitalize">{row.getValue('jobName')}</div>
       ),
     },
     {
-      accessorKey: 'candidates',
+      accessorKey: 'cvAnalysis',
       header: ({ column }) => {
         return (
           <Button
@@ -98,7 +78,7 @@ const DashboardTable = () => {
       },
       cell: ({ row }) => (
         <p className="capitalize text-slate-400">
-          {row.getValue('candidates')} {t('table_candidates')}
+          {row.original?.cvAnalysis.length} {t('table_candidates')}
         </p>
       ),
     },
@@ -118,7 +98,7 @@ const DashboardTable = () => {
       },
       cell: ({ row }) => (
         <div className="font-normal capitalize text-slate-400">
-          {formatDateStringToDate(row.getValue('createdAt'))}
+          {formatDateDMY(row.getValue('createdAt'))}
         </div>
       ),
     },
@@ -142,7 +122,7 @@ const DashboardTable = () => {
           <p
             className={cn(
               'text-sm font-normal capitalize',
-              status === 'Active' ? 'text-[#069A1E]' : 'text-primary',
+              // status === 'Active' ? 'text-[#069A1E]' : 'text-primary',
             )}
           >
             {status}
@@ -155,7 +135,13 @@ const DashboardTable = () => {
       enableHiding: false,
       cell: ({ row }) => {
         return (
-          <Button variant="link" className="text-sm font-normal">
+          <Button
+            variant="link"
+            className="text-sm font-normal"
+            onClick={() =>
+              push(`/${orgId}/job/${row.original.id}/all-applicant`)
+            }
+          >
             {t('table_viewJob')}
           </Button>
         );
@@ -164,7 +150,7 @@ const DashboardTable = () => {
   ];
 
   const table = useReactTable({
-    data,
+    data: dataSource ?? [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

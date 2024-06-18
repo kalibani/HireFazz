@@ -2,8 +2,7 @@ import { Button } from '@/components/ui/button';
 import dashboard from '@/public/icon/icon-banner-dashboard.svg';
 import { Banner, SectionWrap } from '@/components/share';
 import { CardFeature, CardTotal, DashboardTable } from '@/components/dashboard';
-import { CardTotalProp } from '@/components/dashboard/card-total';
-import {getTranslations} from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import {
   ListChecks,
   FileText,
@@ -13,9 +12,12 @@ import {
 } from 'lucide-react';
 import { currentUser } from '@/lib/auth';
 import { ParamsProps } from '@/types/types';
+import getTotals from '@/lib/actions/dashboard/getTotal';
+import Link from 'next/link';
 
 const DashboardPage = async ({ params }: ParamsProps) => {
   const user = await currentUser();
+  const totals = await getTotals(params.orgId);
   const t = await getTranslations('Home');
   return (
     <SectionWrap isScroll>
@@ -26,12 +28,13 @@ const DashboardPage = async ({ params }: ParamsProps) => {
         src={dashboard}
       />
       <div className="flex gap-x-32 rounded-lg bg-white px-11 py-3">
-        {dummyTotal.map((item) => (
+        {totalData.map((item) => (
           <CardTotal
             key={item.title}
             title={t(item.title)}
             link={item.link}
-            total={item.total}
+            // @ts-ignore
+            total={totals[item.total] ?? 0}
             linkTitle={t(item.linkTitle)}
             icon={item.icon}
           />
@@ -45,10 +48,12 @@ const DashboardPage = async ({ params }: ParamsProps) => {
             {t('table_latestJobDescription')}
           </p>
         </div>
-        <DashboardTable />
-        <Button variant="link" className="h-fit p-0 text-sm font-normal">
-          {t('table_viewMoreJob')} <ArrowUpRight className="w-4" />
-        </Button>
+        <DashboardTable dataSource={totals?.latesJobs} orgId={params.orgId} />
+        <Link href={`/${params.orgId}/job`}>
+          <Button variant="link" className="h-fit p-0 text-sm font-normal">
+            {t('table_viewMoreJob')} <ArrowUpRight className="w-4" />
+          </Button>
+        </Link>
       </div>
     </SectionWrap>
   );
@@ -56,33 +61,26 @@ const DashboardPage = async ({ params }: ParamsProps) => {
 
 export default DashboardPage;
 
-const dummyTotal: CardTotalProp[] = [
+const totalData = [
   {
     title: 'overview_totalJob',
     link: '/total-job',
     linkTitle: 'overview_seeTotalJob',
-    total: 2,
+    total: 'totalJobs',
     icon: <ListChecks />,
   },
   {
     title: 'overview_totalApply',
     link: '/total-job',
     linkTitle: 'overview_seeTotalApply',
-    total: 146,
+    total: 'totalCandidates',
     icon: <FileText />,
   },
   {
     title: 'overview_totalScreening',
     link: '/total-job',
     linkTitle: 'overview_seeTotalScreening',
-    total: 50,
+    total: 'totalAnalyzed',
     icon: <SearchCheck />,
-  },
-  {
-    title: 'overview_totalMember',
-    link: '/total-job',
-    linkTitle: 'overview_seeTotalMember',
-    total: 1,
-    icon: <Users />,
   },
 ];

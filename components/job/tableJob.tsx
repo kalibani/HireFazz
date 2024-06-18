@@ -41,7 +41,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
   const { replace } = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const t = useTranslations('JobList')
+  const t = useTranslations('JobList');
 
   const pageSize = Number(perPage || 10);
 
@@ -217,7 +217,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
 
       // set page to 1 if change item in page
       if (query === 'per_page') {
-        params.set('page', '1')
+        params.set('page', '1');
       }
     } else {
       params.delete(query);
