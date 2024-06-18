@@ -22,12 +22,15 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { useFormStepStore } from '@/zustand/useCreateJob';
-import { formSchemaCreateJob } from '@/lib/validators/createJob';
+import { FormSchemaCreateJob, getFormSchemaCreateJob } from '@/lib/validators/createJob';
 import { removeNonDigit, separateThousand } from '@/lib/utils';
 import { WORK_MODEL } from '@prisma/client';
+import { useTranslations } from 'next-intl';
 
 const FormCreate = () => {
   const { setStep, setFormCreateJob, dataCreateJob } = useFormStepStore((state) => state);
+  const t = useTranslations('CreateJob')
+  const formSchemaCreateJob = getFormSchemaCreateJob(t)
   const form = useForm<z.infer<typeof formSchemaCreateJob>>({
     resolver: zodResolver(formSchemaCreateJob),
     defaultValues: {
@@ -43,7 +46,7 @@ const FormCreate = () => {
     values: dataCreateJob,
   });
 
-  const onSubmit = (values: z.infer<typeof formSchemaCreateJob>) => {
+  const onSubmit = (values: z.infer<FormSchemaCreateJob>) => {
     // remove separator for submit form
     if (values.fromNominal) {
       values.fromNominal =  removeNonDigit(values.fromNominal)
@@ -74,10 +77,10 @@ const FormCreate = () => {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-normal">Title *</FormLabel>
+                  <FormLabel className="text-sm font-normal">{t('form_jobTitle')} *</FormLabel>
                   <FormControl className="tex-slate-400">
                     <Input
-                      placeholder="Job title"
+                      placeholder={t('form_job')}
                       {...field}
                       className="h-auto w-full text-sm "
                     />
@@ -92,11 +95,11 @@ const FormCreate = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-normal">
-                    Location *
+                    {t('form_location')} *
                   </FormLabel>
                   <FormControl className="tex-slate-400">
                     <Input
-                      placeholder="Location"
+                      placeholder={t('form_candidateLocation')}
                       {...field}
                       className="h-auto w-full text-sm "
                     />
@@ -112,7 +115,7 @@ const FormCreate = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-normal">
-                      Average Salary (per month)
+                      {t('form_monthlySalary')}
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -138,11 +141,11 @@ const FormCreate = () => {
                 render={({ field }) => (
                   <FormItem className="flex-1">
                     <FormLabel className="text-sm font-normal">
-                      (optional)
+                      {t('form_optional')}
                     </FormLabel>
                     <FormControl className="tex-slate-400">
                       <Input
-                        placeholder="From"
+                        placeholder={t('form_startFrom')}
                         {...field}
                         onChange={(e) => onSalaryInputChange(e, field.onChange)}
                         className="h-auto w-full text-sm "
@@ -161,7 +164,7 @@ const FormCreate = () => {
                     <FormLabel className="text-sm font-normal"></FormLabel>
                     <FormControl className="tex-slate-400">
                       <Input
-                        placeholder="To"
+                        placeholder={t('form_endTo')}
                         {...field}
                         onChange={(e) => onSalaryInputChange(e, field.onChange)}
                         className="h-auto w-full text-sm "
@@ -181,7 +184,7 @@ const FormCreate = () => {
                 render={({ field }) => (
                   <FormItem className="w-1/2">
                     <FormLabel className="text-sm font-normal">
-                      Minimum Experience (years)
+                      {t('form_experience')}
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -193,7 +196,7 @@ const FormCreate = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Array.from(Array(21).keys()).map((item) => <SelectItem value={item.toString()} key={item}>{item} {item < 2 ? 'year' : 'years'}</SelectItem>)}
+                        {Array.from(Array(21).keys()).map((item) => <SelectItem value={item.toString()} key={item}>{item} {t('year')}</SelectItem>)}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -207,7 +210,7 @@ const FormCreate = () => {
                 render={({ field }) => (
                   <FormItem className="w-1/2">
                     <FormLabel className="text-sm font-normal">
-                      Work Model
+                      {t('form_jobType')}
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -219,13 +222,13 @@ const FormCreate = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={WORK_MODEL.ONSITE}>On Site</SelectItem>
-                        <SelectItem value={WORK_MODEL.REMOTE}>Remote</SelectItem>
-                        <SelectItem value={WORK_MODEL.HYBRID}>Hybrid</SelectItem>
-                        <SelectItem value={WORK_MODEL.PART_TIME}>Part-time</SelectItem>
-                        <SelectItem value={WORK_MODEL.FREELANCE}>Freelance</SelectItem>
-                        <SelectItem value={WORK_MODEL.CONTRACT}>Contract</SelectItem>
-                        <SelectItem value={WORK_MODEL.INTERNSHIP}>Internship</SelectItem>
+                        <SelectItem value={WORK_MODEL.ONSITE}>{t('jobTypeOnSite')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.REMOTE}>{t('jobTypeRemote')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.HYBRID}>{t('jobTypeHybrid')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.PART_TIME}>{t('jobTypePartTime')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.FREELANCE}>{t('jobTypeFreelance')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.CONTRACT}>{t('jobTypeContract')}</SelectItem>
+                        <SelectItem value={WORK_MODEL.INTERNSHIP}>{t('jobTypeIntern')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -240,11 +243,11 @@ const FormCreate = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-normal">
-                    Company Name
+                    {t('form_company')}
                   </FormLabel>
                   <FormControl className="tex-slate-400">
                     <Input
-                      placeholder="Company Name"
+                      placeholder={t('form_company')}
                       {...field}
                       className="h-auto w-full text-sm "
                     />
@@ -255,7 +258,7 @@ const FormCreate = () => {
             />
 
             <div className="flex justify-end">
-              <Button type="submit">Next</Button>
+              <Button type="submit">{t('cta_next')}</Button>
             </div>
           </form>
         </Form>

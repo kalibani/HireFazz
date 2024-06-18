@@ -3,6 +3,7 @@ import dashboard from '@/public/icon/icon-banner-dashboard.svg';
 import { Banner, SectionWrap } from '@/components/share';
 import { CardFeature, CardTotal, DashboardTable } from '@/components/dashboard';
 import { CardTotalProp } from '@/components/dashboard/card-total';
+import {getTranslations} from 'next-intl/server';
 import {
   ListChecks,
   FileText,
@@ -15,22 +16,23 @@ import { ParamsProps } from '@/types/types';
 
 const DashboardPage = async ({ params }: ParamsProps) => {
   const user = await currentUser();
+  const t = await getTranslations('Home');
   return (
     <SectionWrap isScroll>
       <Banner
-        title={user?.name!}
-        desc="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book."
-        btnTitle="Check it out !"
+        title={t('banner_title', { name: user?.name || 'User' })}
+        desc={t('banner_description')}
+        btnTitle={t('banner_cta')}
         src={dashboard}
       />
       <div className="flex gap-x-32 rounded-lg bg-white px-11 py-3">
         {dummyTotal.map((item) => (
           <CardTotal
             key={item.title}
-            title={item.title}
+            title={t(item.title)}
             link={item.link}
             total={item.total}
-            linkTitle={item.linkTitle}
+            linkTitle={t(item.linkTitle)}
             icon={item.icon}
           />
         ))}
@@ -38,14 +40,14 @@ const DashboardPage = async ({ params }: ParamsProps) => {
       <CardFeature orgId={params.orgId} />
       <div className="h-full space-y-4 rounded-lg bg-white px-3 py-2">
         <div className="px-2">
-          <h4 className="text-xl font-semibold">Latest Job</h4>
+          <h4 className="text-xl font-semibold">{t('table_latestJob')}</h4>
           <p className="text-sm text-slate-400">
-            Latest Job that you added on Job List
+            {t('table_latestJobDescription')}
           </p>
         </div>
         <DashboardTable />
         <Button variant="link" className="h-fit p-0 text-sm font-normal">
-          View More Job <ArrowUpRight className="w-4" />
+          {t('table_viewMoreJob')} <ArrowUpRight className="w-4" />
         </Button>
       </div>
     </SectionWrap>
@@ -56,30 +58,30 @@ export default DashboardPage;
 
 const dummyTotal: CardTotalProp[] = [
   {
-    title: 'total job',
+    title: 'overview_totalJob',
     link: '/total-job',
-    linkTitle: 'view job',
+    linkTitle: 'overview_seeTotalJob',
     total: 2,
     icon: <ListChecks />,
   },
   {
-    title: 'total candidates',
+    title: 'overview_totalApply',
     link: '/total-job',
-    linkTitle: 'view bank CV',
+    linkTitle: 'overview_seeTotalApply',
     total: 146,
     icon: <FileText />,
   },
   {
-    title: 'total screening',
+    title: 'overview_totalScreening',
     link: '/total-job',
-    linkTitle: 'view Quota',
+    linkTitle: 'overview_seeTotalScreening',
     total: 50,
     icon: <SearchCheck />,
   },
   {
-    title: 'total member',
+    title: 'overview_totalMember',
     link: '/total-job',
-    linkTitle: 'view member',
+    linkTitle: 'overview_seeTotalMember',
     total: 1,
     icon: <Users />,
   },

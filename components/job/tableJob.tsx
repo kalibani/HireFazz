@@ -26,6 +26,7 @@ import { formatDateDMY } from '@/helpers';
 import { useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { GetJobListData } from '@/lib/actions/job/getJob';
+import { useTranslations } from 'next-intl';
 
 interface TableJobProps {
   orgId: string;
@@ -40,6 +41,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
   const { replace } = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const t = useTranslations('JobList')
 
   const pageSize = Number(perPage || 10);
 
@@ -53,7 +55,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Job Name
+            {t('table_jobLabel')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -71,7 +73,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Candidates
+            {t('table_candidateLabel')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -91,7 +93,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Created at
+            {t('table_createdAtLabel')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -111,7 +113,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Shortlisted
+            {t('table_shortlistedLabel')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -133,7 +135,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            From
+            {t('table_companyLabel')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -156,7 +158,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Status
+            {t('table_statusLabel')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -179,7 +181,7 @@ export const TableJob: React.FC<TableJobProps> = ({ orgId, jobData }) => {
               href={`/${orgId}/job/${row.original.id}/all-applicant`}
               className="font-medium text-red-500 underline"
             >
-              View Job
+              {t('table_seeMoreCta')}
             </Link>
             <MoreVertical />
           </div>

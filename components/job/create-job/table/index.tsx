@@ -28,6 +28,7 @@ import InputFilter from '@/components/table/input-filter';
 import { useFormStepStore } from '@/zustand/useCreateJob';
 import { PaginationGroup } from '@/components/ui/pagination';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface TableCVProps<T> {
   data: T[];
@@ -43,6 +44,7 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
   const query = searchParams.get('search');
   const pathname = usePathname();
   const { replace } = useRouter();
+  const t = useTranslations('CreateJob')
   const { data, columns, dataFrom = 'Candidates' } = props;
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -93,14 +95,9 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
       <div className="mx-5 flex items-center gap-2">
         <FileSearchIcon className="text-red-500" />
         {!!props.totalItems && jobTitle ? (
-          <p>
-            There is <b>{props.totalItems} CVs</b> has been added with job tittle{' '}
-            <b>
-              “{jobTitle}” from {dataFrom}
-            </b>{' '}
-          </p>
+          <p>{t.rich('cvAmountListDevice', { amount: props.totalItems, b: (chunks) => <b>{chunks}</b> })}</p>
         ) : (
-          <p>There is no CV has been added.</p>
+          <p>{t('noCV')}</p>
         )}
       </div>
 
@@ -155,7 +152,7 @@ const TableCV = <T,>(props: TableCVProps<T>) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {t('noCVShort')}
                 </TableCell>
               </TableRow>
             )}

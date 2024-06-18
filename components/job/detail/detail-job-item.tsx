@@ -1,15 +1,19 @@
+'use client'
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import { clsx } from 'clsx';
 import { BotIcon, Flag, Info, MapPinIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { FC, ReactElement } from 'react';
 import { match } from 'ts-pattern';
 
 interface ScreenedItemProps {
   isChecked?: boolean;
-  handleCheck?: (id: CheckedState) => void;
+  id: string;
+  handleCheck?: (checked: CheckedState, id: string) => void;
   flag?: string;
   score: string;
   name: string;
@@ -21,9 +25,10 @@ interface ScreenedItemProps {
   cvLink?: string;
 }
 
-export const ScreenedItem: FC<ScreenedItemProps> = ({
+export const ScreenedItem: FC<ScreenedItemProps> = async ({
   isChecked,
   handleCheck,
+  id,
   cvLink,
   flag,
   score,
@@ -33,11 +38,12 @@ export const ScreenedItem: FC<ScreenedItemProps> = ({
   experience,
   skills,
   location,
-}): ReactElement => {
+}): Promise<ReactElement> => {
+  const t =  useTranslations('JobDetail')
   return (
     <div className="w-full overflow-hidden rounded-md border border-slate-300">
       <div className="flex gap-2">
-        <Checkbox className="ml-2 mt-4" />
+        <Checkbox className="ml-2 mt-4" onCheckedChange={(checked) => handleCheck?.(checked, id)} />
 
         <div className="flex-1 py-3">
           <div className="flex justify-between">
@@ -53,9 +59,9 @@ export const ScreenedItem: FC<ScreenedItemProps> = ({
                 <Flag className="size-[14px]" />
                 <span>
                   {match(flag)
-                    .with('high', () => 'High Candidates')
-                    .with('medium', () => 'Medium Candidates')
-                    .with('low', () => 'Low Candidates')
+                    .with('high', () => t('goodCandidate'))
+                    .with('medium', () => t('averageCandidate'))
+                    .with('low', () => t('badCandidate'))
                     .otherwise(() => '')}
                 </span>
               </div>
@@ -86,9 +92,9 @@ export const ScreenedItem: FC<ScreenedItemProps> = ({
         </div>
 
         <div className="flex w-[76px] flex-col justify-center border-l border-slate-300 bg-slate-200 px-4 py-2">
-          <span className="text-sm">Score</span>
+          <span className="text-sm">{t('score')}</span>
           <span className="text-lg font-semibold">{score}</span>
-          <span className="text-sm">Match</span>
+          <span className="text-sm">{t('match')}</span>
         </div>
       </div>
 
@@ -96,21 +102,21 @@ export const ScreenedItem: FC<ScreenedItemProps> = ({
         <div>
           <div className="flex items-start gap-2">
             <div className="w-fit rounded-sm border bg-white px-2 py-1 text-xs text-slate-500">
-              Experience: {experience}
+              {t('experience')}: {experience}
             </div>
             <div className="w-fit rounded-sm border bg-white px-2 py-1 text-xs text-slate-500">
-              Education: {education}
+              {t('education')}: {education}
             </div>
           </div>
 
           <div className="mt-2 w-fit rounded-sm border bg-white px-2 py-1 text-xs">
-            Skills: {skills}
+            {t('skills')}: {skills}
           </div>
         </div>
 
         <Link href={`${cvLink}`} rel="noopener noreferrer" target={'_blank'}>
           <Button className="h-fit w-[80px] p-2 text-xs">
-            <span>View CV</span>
+            <span>{t('viewCV')}</span>
           </Button>
         </Link>
       </div>

@@ -73,6 +73,7 @@ import {
 import { errorToast } from '@/components/toasterProvider';
 import axios, { AxiosProgressEvent } from 'axios';
 import { queryClient } from '@/components/Providers';
+import { useTranslations } from 'next-intl';
 
 const IconRobot: FC = (): ReactElement => (
   <svg
@@ -181,6 +182,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
     },
   });
   const [jobId, setJobId] = useState<string>('');
+  const t = useTranslations('CreateJob')
 
   const { orgId, id } = useParams();
 
@@ -309,17 +311,18 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                   <IconRobot />
                   <div className="flex w-full flex-col gap-y-1 text-white">
                     <h1 className="text-lg font-medium">
-                      Automatic CV Analyzer
+                      {t('automaticCVAnalyzer')}
                     </h1>
                     <p className="text-sm">
-                      {files.length} CV Will be analyze with our AI suggestion
+                      {t('amountToAnalyze', { amount: files.length })}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-x-4">
                   <div className="flex flex-col text-right text-sm text-white">
-                    <p>{tokenData.availableTokens} Token Available</p>
+                    {/* <p>{t('freeProcessAmount', { process: '44 / 50' })}</p> */}
+                    <p>{t('tokenRemaining', { amount: tokenData.availableTokens })}</p>
                   </div>
                   <IconBolt />
                 </div>
@@ -333,8 +336,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
             >
               <AccordionItem value="customCriteria" className="border-b-0">
                 <AccordionTrigger className="h-0 text-sm font-normal hover:no-underline ">
-                  Custom Criteria ( You can reshape Custom criteria on AI CV
-                  analyzer )
+                  {t('criteria')}
                 </AccordionTrigger>
                 <AccordionContent className="mt-4">
                   <div className="flex w-full flex-col gap-y-4">
@@ -344,7 +346,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <FormLabel className="flex items-center gap-x-2 py-2">
-                            Key Focus
+                            {t('keyFocus')}
                           </FormLabel>
                           <FormControl>
                             <TagInput
@@ -372,14 +374,14 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <FormLabel className="flex items-center gap-x-2 py-2">
-                            Language AI{' '}
+                            {t('languageAI')}{' '}
                             <HoverCard>
                               <HoverCardTrigger>
                                 <IconQuestionMark />
                               </HoverCardTrigger>
                               <HoverCardContent className="h-fit w-[160px] rounded-lg border border-slate-400 p-3">
                                 <span className="text-left text-xs text-slate-400">
-                                  Language to use on the reason of the CV Score
+                                  {t('languageAITooltip')}
                                 </span>
                               </HoverCardContent>
                             </HoverCard>
@@ -412,15 +414,14 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <FormLabel className="flex items-center gap-x-2 py-2">
-                            Set Match Percentage{' '}
+                            {t('setMatchPercentage')}{' '}
                             <HoverCard>
                               <HoverCardTrigger>
                                 <IconQuestionMark />
                               </HoverCardTrigger>
                               <HoverCardContent className="h-fit w-[160px] rounded-lg border border-slate-400 p-3">
                                 <span className="text-left text-xs text-slate-400">
-                                  Minimum required percentage match between the
-                                  CV and job specifications
+                                  {t('setMatchPercentageTooltip')}
                                 </span>
                               </HoverCardContent>
                             </HoverCard>
@@ -479,7 +480,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                 <div className="flex items-center gap-x-4">
                   <IconFolderUp />
                   <p className="text-sm text-black">
-                    or <strong>Just Upload</strong>
+                    {t.rich('justUpload', { b: (chunks) => <b>{chunks}</b>} )}
                   </p>
                 </div>
               </div>
@@ -492,7 +493,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
       <Dialog open={isErrorCreate ? false : undefined}>
         <div className="flex w-full justify-between rounded-lg bg-white px-8 py-4">
           <Button onClick={() => setStep(2)} variant="outline">
-            Previous
+            {t('cta_prev')}
           </Button>
           <DialogTrigger asChild>
             <Button
@@ -510,7 +511,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                   : createJobHandle();
               }}
             >
-              Create
+              {t('cta_create')}
             </Button>
           </DialogTrigger>
         </div>
@@ -527,13 +528,10 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
 
             <div className="mt-8 flex w-1/2 flex-col items-center gap-y-4">
               <h1 className="text-2xl font-bold">
-                Upload Process{' '}
-                {form.watch('analyzeCv') && 'and AI Matching Score'}
+                {t('analyzeTitle')}
               </h1>
-              <p className="text-center text-sm font-medium text-black">
-                CV yang kamu pilih sedang dalam proses upload dan analisa. Kamu
-                dapat menutup popup ini dengan klik "Finish" di paling bawah
-                untuk lihat hasil analisa di halaman detail
+              <p className="text-sm font-medium text-black text-center">
+                {t('analyzeSubTitle')}
               </p>
             </div>
 
@@ -571,12 +569,12 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                         </TooltipProvider>
                       </TableCell>
                       <TableCell className="text-center text-slate-400">
-                        From Device
+                        {t('fromDevice')}
                       </TableCell>
                       <TableCell className="text-center text-slate-400">
                         <div className="flex w-full items-center gap-x-4">
                           <span className="w-full text-xs font-semibold text-slate-400">
-                            DIPROSES
+                            {t('processing')}
                           </span>
                         </div>
                       </TableCell>
@@ -584,7 +582,7 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
                         <TableCell className="text-center text-green-500">
                           <div className="flex w-full items-center gap-x-4">
                             <span className="w-full text-xs font-semibold text-slate-400">
-                              DIPROSES
+                              {t('processing')}
                             </span>
                           </div>
                         </TableCell>
@@ -604,7 +602,9 @@ const CVAnalyzer: FC<{ isUpdate: boolean }> = ({ isUpdate }): ReactElement => {
           </div>
           <DialogFooter className="mt-4 flex w-full justify-end gap-x-3 p-4">
             <DialogTrigger asChild>
-              <Button onClick={navigateToAllApplicant}>Finish / Close</Button>
+              <Button onClick={navigateToAllApplicant}>
+                {t('cta_finish')}
+              </Button>
             </DialogTrigger>
           </DialogFooter>
         </DialogContent>

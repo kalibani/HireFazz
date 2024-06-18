@@ -27,6 +27,7 @@ import {
   TooltipTrigger,
 } from '@radix-ui/react-tooltip';
 import { Tooltip } from '@/components/ui/tooltip';
+import { useTranslations } from 'next-intl';
 
 const UploadCv: FC = (): ReactElement => {
   const {
@@ -36,6 +37,7 @@ const UploadCv: FC = (): ReactElement => {
     handleUploadButtonClick,
     setStep,
   } = useFormStepStore((state) => state);
+  const t = useTranslations('CreateJob')
   const { setIsModalOpen } = usePopupModal();
   const [tableItems, setTableItems] = useState<FormStepState['files']>([]);
   const searchParams = useSearchParams();
@@ -100,7 +102,7 @@ const UploadCv: FC = (): ReactElement => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            File Name
+            {t('columnName')}
             <ArrowUpDown className="ml-2 size-4" />
           </Button>
         );
@@ -135,7 +137,7 @@ const UploadCv: FC = (): ReactElement => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Added On
+            {t('columnCreatedAt')}
             <ArrowUpDown className="ml-2 size-4" />
           </Button>
         );
@@ -155,7 +157,7 @@ const UploadCv: FC = (): ReactElement => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Size
+            {t('columnSize')}
             <ArrowUpDown className="ml-2 size-4" />
           </Button>
         );
@@ -176,7 +178,7 @@ const UploadCv: FC = (): ReactElement => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            From
+            {t('columnSource')}
             <ArrowUpDown className="ml-2 size-4" />
           </Button>
         );
@@ -224,7 +226,7 @@ const UploadCv: FC = (): ReactElement => {
             onClick={handleUploadButtonClick}
           >
             <MonitorUp className="mr-2 size-4" />
-            From Device
+            {t('fromDevice')}
           </Button>
           <TooltipProvider delayDuration={0}>
             <Tooltip>
@@ -236,8 +238,7 @@ const UploadCv: FC = (): ReactElement => {
                     // temporary disabled, while focus on upload from device
                     disabled
                   >
-                    <FileStack className="mr-2 size-4" /> From Bank CV
-                    (Candidates)
+                    <FileStack className="mr-2 size-4" /> {t('fromBankCV')}
                   </Button>
                 </div>
               </TooltipTrigger>
@@ -260,7 +261,7 @@ const UploadCv: FC = (): ReactElement => {
                     disabled
                   >
                     <SelectTrigger className="w-[180px] text-sm font-normal">
-                      <SelectValue placeholder="Select Platform" />
+                      <SelectValue placeholder={t('selectPlatform')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
@@ -280,7 +281,7 @@ const UploadCv: FC = (): ReactElement => {
                     // temporary disabled, while focus on upload from device
                     disabled
                   >
-                    Import
+                    {t('import')}
                   </Button>
                 </div>
               </TooltipTrigger>
@@ -309,13 +310,13 @@ const UploadCv: FC = (): ReactElement => {
           variant="outline"
           className="min-w-32"
         >
-          Previous
+          {t('cta_prev')}
         </Button>
         <Button
           className="min-w-32"
           onClick={handleNext}
         >
-          Next
+          {t('cta_next')}
         </Button>
       </div>
       <ModalBankCv />

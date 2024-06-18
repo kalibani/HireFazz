@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import Pagination from '@/components/ui/pagination';
+import Pagination, { PaginationGroup } from '@/components/ui/pagination';
 import { PER_PAGE_ITEMS } from '@/constant';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -56,11 +56,13 @@ import {
 } from '@/components/ui/hover-card';
 import { match } from 'ts-pattern';
 import StatusAction from './status-action';
+import { useTranslations } from 'next-intl';
 
 const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
   jobDetail,
 }) => {
   const searchParams = useSearchParams();
+  const t = useTranslations('JobDetail')
   const perPage = Number(searchParams.get('per_page') || '10');
   const activePage = Number(searchParams.get('page') || '1');
   const pathname = usePathname();
@@ -95,7 +97,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Name
+            {t('columnName')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -123,7 +125,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Added On
+            {t('columnCreatedAt')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -144,7 +146,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Upload
+            {t('columnUpload')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -179,7 +181,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Status
+            {t('columnStatus')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -197,13 +199,13 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
               .otherwise(() => 'text-red-500')}
           >
             {match(row.original.status)
-              .with('ANALYSYS', () => 'Analyzed!')
-              .with('ON_ANALYSYS', () => 'Analyzing...')
+              .with('ANALYSYS', () => t('analyzed'))
+              .with('ON_ANALYSYS', () => t('analyzing'))
               .with('PENDING', () => 'Pending')
               .with('SHORTLISTED', () => 'Shortlisted')
               .with('REJECTED', () => 'Rejected')
               .with('INTERVIEW', () => 'Interview')
-              .otherwise(() => 'Failed.')}{' '}
+              .otherwise(() => t('failed'))}{' '}
           </p>
         );
       },
@@ -294,8 +296,8 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
         onClick={onClickAnalyze}
       >
         <Airplay className="size-6" />
-        Analyze AI{' '}
-        {selectedIds.length ? `(${selectedIds.length}CV selected)` : ''}
+        {t('cta_analyze')}{' '}
+        {selectedIds.length ? t('selectedCV', { amount: selectedIds.length }) : ''}
       </Button>
     );
   })();
@@ -307,9 +309,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
           <div className="flex items-center gap-2">
             <FileSearchIcon className="size-4 text-red-500" />
             <p>
-              There {(cvAnalysis?.length || 0) > 1 ? 'are' : 'is'}{' '}
-              <b>{jobDetail?.cvAnalysisPagination.totalItems} applicants</b> on{' '}
-              <b>“{jobDetail?.data?.jobName}”</b>
+              {t.rich('tableAmount', { amount: cvAnalysis?.length || 0, job: jobDetail?.data?.jobName, b: (chunks) => <b>{chunks}</b> })}
             </p>
           </div>
 
@@ -325,7 +325,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
             <div className="flex items-center gap-1">
               <Zap className="size-4 text-rose-500" />
               <span>
-                <b>6 Quotas</b> Remaining
+                {t.rich('remainingQuota', { b: (chunks) => <b>{chunks}</b>, quota: 6 })}
               </span>
             </div>
 
@@ -334,7 +334,7 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
               className="flex items-center gap-1 px-0 font-bold text-rose-500 hover:bg-transparent hover:text-rose-500"
             >
               <ShieldPlus className="size-4" />
-              Topup
+              {t('topup')}
             </Button>
           </div>
         </div>
@@ -412,39 +412,13 @@ const DetailJobAllApplicant: React.FC<TDetailJobTableProps> = ({
           )}
         </TableBody>
       </Table>
-
-      <div className="mt-5 flex items-center justify-between">
-        <div className="flex max-w-44 items-center gap-2">
-          <span>View</span>
-          <Select
-            onValueChange={(value) => handlePagination('per_page', value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={perPage} defaultValue={perPage} />
-            </SelectTrigger>
-
-            <SelectContent>
-              {PER_PAGE_ITEMS.map((pageItem) => (
-                <SelectItem key={pageItem} value={pageItem}>
-                  {pageItem}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <span>List</span>
-        </div>
-        <div className="space-x-2">
-          <Pagination
-            activePage={activePage}
-            itemsPerPage={perPage}
-            totalItems={pagination?.totalItems || 0}
-            onPageChange={(page) => handlePagination('page', page.toString())}
-          />
-        </div>
-
-        <div></div>
-      </div>
+        
+        <PaginationGroup
+          activePage={activePage}
+          perPage={perPage}
+          handlePagination={handlePagination}
+          totalItems={pagination?.totalItems || 0}
+        />
 
       {isLoading && (
         <div className="fixed left-0 top-0 z-50 h-full w-full items-start justify-center rounded-lg bg-black bg-opacity-40">

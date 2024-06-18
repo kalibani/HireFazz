@@ -9,6 +9,7 @@ import {
   Banknote,
   Puzzle,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 
 import { type FC } from 'react';
@@ -32,6 +33,7 @@ export const HeaderDetailJob: FC<TDetailHeaderJob> = ({
 }) => {
   const router = useRouter();
   const params = useParams();
+  const t = useTranslations('JobDetail')
   return (
     <header className="mt-2 flex w-full flex-col rounded-lg bg-white bg-gradient-to-r from-[#E11D48] to-[#4E3ABA] p-6">
       <section className="flex w-full justify-between">
@@ -134,7 +136,7 @@ export const HeaderDetailJob: FC<TDetailHeaderJob> = ({
             }
           >
             <UploadCloud className="size-4 text-sm" />
-            Upload CV
+            {t('bannerUpload')}
           </Button>
         </div>
       </section>

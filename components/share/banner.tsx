@@ -29,7 +29,7 @@ const Banner: FC<BannerProps> = ({
             className="mt-3 w-fit text-sm font-medium"
             variant="secondary"
           >
-            Wellcome {btnTitle}
+            {btnTitle}
           </Button>
         )}
       </div>

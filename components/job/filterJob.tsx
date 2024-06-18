@@ -16,10 +16,12 @@ import {
   useRouter,
   useSearchParams,
 } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export const FilterJob = () => {
   const { orgId } = useParams();
   const searchParams = useSearchParams();
+  const t = useTranslations('JobList')
 
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -41,37 +43,37 @@ export const FilterJob = () => {
   return (
     <div className="flex items-end justify-between">
       <div className="max-w-[200px] flex-1">
-        <label className="mb-1 ml-4 text-sm">Search</label>
+        <label className="mb-1 ml-4 text-sm">{t('filter_find')}</label>
         <Input
-          placeholder="Location"
+          placeholder={t('filter_location')}
           defaultValue={searchParams.get('location') || ''}
           onChange={(e) => handleSearch('location', e.target.value)}
         />
       </div>
       <div className="max-w-[200px] flex-1">
-        <label className="mb-1 ml-4 text-sm">Search</label>
+        <label className="mb-1 ml-4 text-sm">{t('filter_find')}</label>
         <Input
-          placeholder="Search Job"
+          placeholder={t('filter_job')}
           defaultValue={searchParams.get('jobName') || ''}
           onChange={(e) => handleSearch('jobName', e.target.value)}
         />
       </div>
       <div className="max-w-[200px] flex-1">
-        <label className="mb-1 ml-4 text-sm">Status</label>
+        <label className="mb-1 ml-4 text-sm">{t('table_statusLabel')}</label>
         <Select onValueChange={(value) => handleSearch('status', value)}>
           <SelectTrigger>
-            <SelectValue placeholder="Active" />
+            <SelectValue placeholder={t('filter_statusActive')} />
           </SelectTrigger>
 
           <SelectContent>
-            <SelectItem value="Active">Active</SelectItem>
-            <SelectItem value="Not_Analyzed">Not Analyzed</SelectItem>
+            <SelectItem value="Active">{t('filter_statusActive')}</SelectItem>
+            <SelectItem value="Not_Analyzed">{t('filter_statusNotAnalyzed')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <Link href={`/${orgId}/job/create`}>
-        <Button>+ Create New Job</Button>
+        <Button>+ {t('table_createJobCta')}</Button>
       </Link>
     </div>
   );

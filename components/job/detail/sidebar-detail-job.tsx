@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { FC, ReactElement } from 'react';
 
@@ -12,12 +13,13 @@ type TSidebarDetailJob = {
   }>;
 };
 
-export const SidebarDetailJob: FC<TSidebarDetailJob> = (
+export const SidebarDetailJob: FC<TSidebarDetailJob> = async (
   props,
-): ReactElement => {
+): Promise<ReactElement> => {
+  const t = await getTranslations('JobDetail')
   return (
     <aside className="mt-3 flex h-fit w-[220px] flex-col gap-5 rounded-lg bg-white py-6 pb-[218px]">
-      <h2 className="px-3 text-lg font-semibold">List Candidate</h2>
+      <h2 className="px-3 text-lg font-semibold">{t('listCandidate')}</h2>
       <ul className="flex flex-col gap-y-3">
         {props.items.map((item, key) => (
           <Link

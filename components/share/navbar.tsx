@@ -14,6 +14,9 @@ import { useTopupModal } from '@/hooks/use-topup-modal';
 import { Badge } from '../ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { getTokens } from '@/lib/actions/token/consumeToken';
+import { useTranslate } from '@/hooks/use-translate';
+import { Locale } from '@/i18n';
+
 type TNavbar = {
   orgs:
     | {
@@ -28,6 +31,7 @@ type TNavbar = {
 
 const Navbar: FC<TNavbar> = (props): ReactElement => {
   const { onOpen } = useTopupModal();
+  const { language, setLanguage } = useTranslate()
   const params = useParams();
   const { replace } = useRouter();
   const selectedOrganization = props.orgs
@@ -38,6 +42,19 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
     queryFn: async () => await getTokens({ orgId: params.orgId as string }),
     refetchInterval: 10000,
   });
+
+  const locale: Record<Locale, string> = {
+    'en': 'en-US',
+    'id': 'id-ID',
+  }
+
+  const currentDate = new Date().toLocaleDateString(locale[language], {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  
   return (
     <nav className="fixed z-10 flex w-full items-center justify-between gap-x-4 border-b bg-white px-3 py-[7.5px] pl-[90px]">
       <span className="flex-1 text-sm font-medium">{currentDate}</span>
@@ -81,9 +98,33 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
         </DropdownMenuTrigger>
       </DropdownMenu>
 
-      <div className="flex items-center gap-x-1 text-xs text-slate-400">
-        <ChevronDown size="16" />
-        <span>EN</span>
+      <div className="flex items-center gap-x-1 text-xs text-slate-400 mx-2">
+        <DropdownMenu>
+        <DropdownMenuContent className="w-20" align="start">
+          <span className="cursor-pointer">
+            
+              <DropdownMenuItem
+                key="lang-id"
+                onClick={() => setLanguage('id')}
+              >
+                ID
+              </DropdownMenuItem>
+            
+              <DropdownMenuItem
+                key="lang-en"
+                onClick={() => setLanguage('en')}
+              >
+                EN
+              </DropdownMenuItem>
+          </span>
+        </DropdownMenuContent>
+          <DropdownMenuTrigger className="h-fit w-16 flex items-center justify-center min-w-fit">
+            <div className="flex gap-2 items-center cursor-pointer">
+              <span>{language.toUpperCase()}</span>
+              <ChevronDown />
+            </div>
+        </DropdownMenuTrigger>
+        </DropdownMenu>
       </div>
 
       <MoonIcon className="text-xs text-slate-400" />
@@ -92,10 +133,3 @@ const Navbar: FC<TNavbar> = (props): ReactElement => {
 };
 
 export default Navbar;
-
-const currentDate = new Date().toLocaleDateString('en-US', {
-  weekday: 'long',
-  month: 'long',
-  day: 'numeric',
-  year: 'numeric',
-});

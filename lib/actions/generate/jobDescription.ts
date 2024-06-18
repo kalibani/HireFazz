@@ -2,12 +2,15 @@
 
 import { openai } from '@/lib/openai';
 import { errorHandler } from '@/helpers';
+import { Locale } from '@/i18n';
 
 const generateDescription = async (
   data: string,
   type: 'desc' | 'skill set' | 'responsibilities' | 'requirement job',
+  language: Locale,
 ) => {
   try {
+    const lang = language === 'en' ? 'English' : 'Indonesian'
     const typeSpecificInstruction = {
       desc: 'Generate a general description based on the data provided.',
       'skill set':
@@ -27,7 +30,7 @@ const generateDescription = async (
       2. Create a clear and concise ${type}.
      ${typeSpecificInstruction[type] || ''}
 
-      Return the output as a JSON object in the following format:
+      Return the output as a JSON object, the language should be ${lang}, in the following format:
        {
         "result": ${
           type === 'requirement job' ||
@@ -60,14 +63,14 @@ const generateDescription = async (
   }
 };
 
-export const actionDescription = async (data: string) =>
-  generateDescription(data, 'desc');
+export const actionDescription = async (data: string, lang: Locale) =>
+  generateDescription(data, 'desc', lang);
 
-export const actionSkill = async (title: string) =>
-  generateDescription(title, 'skill set');
+export const actionSkill = async (title: string, lang: Locale) =>
+  generateDescription(title, 'skill set', lang);
 
-export const actionResponsibility = async (data: string) =>
-  generateDescription(data, 'responsibilities');
+export const actionResponsibility = async (data: string, lang: Locale) =>
+  generateDescription(data, 'responsibilities', lang);
 
-export const actionRequirement = async (data: string) =>
-  generateDescription(data, 'requirement job');
+export const actionRequirement = async (data: string, lang: Locale) =>
+  generateDescription(data, 'requirement job', lang);

@@ -12,6 +12,7 @@ import {
 import { GetJobDetailResponse, getByIdJob } from '@/lib/actions/job/getJob';
 import { ParamsProps } from '@/types/types';
 import { ANALYSYS_STATUS } from '@prisma/client';
+import { getTranslations } from 'next-intl/server';
 
 const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
   children,
@@ -19,19 +20,20 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
 }) => {
   const jobId = params.id || '';
   const orgId = params.orgId || '';
+  const t = await getTranslations('JobDetail')
   const jobDetail = (await getByIdJob(jobId)) as GetJobDetailResponse;
   const jobData = jobDetail.data;
   const cvAnalysis = jobData?.cvAnalysis || [];
   const sidebarItems = [
     {
-      text: 'All Applicant',
+      text: t('menuAll'),
       link: `/${orgId}/job/${jobId}/all-applicant`,
       icon: <User className="size-5" />,
       notificationCount: jobDetail?.cvAnalysisPagination?.totalItems,
       isActive: params.tab === 'all-applicant',
     },
     {
-      text: 'Screened',
+      text: t('menuScreened'),
       link: `/${orgId}/job/${jobId}/screened`,
       icon: <UserSearch className="size-5" />,
       notificationCount: cvAnalysis.filter(
@@ -40,7 +42,7 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
       isActive: params.tab === 'screened',
     },
     {
-      text: 'Shortlisted',
+      text: t('menuShortlisted'),
       link: `/${orgId}/job/${jobId}/shortlisted`,
       icon: <UserCheck className="size-5" />,
       notificationCount: cvAnalysis.filter(
@@ -49,7 +51,7 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
       isActive: params.tab === 'shortlisted',
     },
     {
-      text: 'Interviewed',
+      text: t('menuInterviewed'),
       link: `/${orgId}/job/${jobId}/interviewed`,
       icon: <Users className="size-5" />,
       notificationCount: cvAnalysis.filter(
@@ -58,7 +60,7 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
       isActive: params.tab === 'interviewed',
     },
     {
-      text: 'Rejected',
+      text: t('menuRejected'),
       link: `/${orgId}/job/${jobId}/rejected`,
       icon: <UserX className="size-5" />,
       notificationCount: cvAnalysis.filter(
@@ -92,7 +94,7 @@ const JobDetailTemplate: FC<ParamsProps & PropsWithChildren> = async ({
         <div className="mt-3 h-fit flex-1 rounded-lg bg-white p-3">
           <div className="flex w-full items-center justify-center gap-2 rounded-md bg-rose-200 py-3 text-xs">
             <span>
-              Dont forget to Analyze your CV for better results on candidates
+              {t('menuTableAlert')}
             </span>
             <ShieldAlert />
           </div>
