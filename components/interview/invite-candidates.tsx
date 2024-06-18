@@ -25,6 +25,9 @@ import {
   SelectItem,
   SelectValue,
   SelectTrigger,
+  SelectGroup,
+  SelectLabel,
+  SelectSeparator,
 } from '../ui/select';
 import { LINK_TEMPLATE_CSV } from '@/constant';
 import QuestionCard from './question-card';
@@ -326,11 +329,31 @@ const InviteCandidates = ({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="w-full">
-                            {interviews?.map((item) => (
-                              <SelectItem value={item.id} key={item.id}>
-                                {item.title}
-                              </SelectItem>
-                            ))}
+                            <SelectGroup>
+                              <SelectLabel className="text-md text-slate-600">
+                                Select Template
+                              </SelectLabel>
+                              <SelectSeparator />
+                              {interviews?.map((item) => (
+                                <SelectItem value={item.id} key={item.id}>
+                                  {item.title}
+                                </SelectItem>
+                              ))}
+                              <SelectSeparator />
+                            </SelectGroup>
+                            <SelectGroup>
+                              <SelectLabel className="text-md text-slate-600">
+                                Create New Template
+                              </SelectLabel>
+                              <SelectSeparator />
+                              <div className="flex w-full flex-col justify-center text-sm">
+                                <Button
+                                  onClick={() => push(`/${orgId}/video/create`)}
+                                >
+                                  Create Template
+                                </Button>
+                              </div>
+                            </SelectGroup>
                           </SelectContent>
                         </Select>
                       )}

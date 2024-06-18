@@ -27,8 +27,8 @@ interface QuestionCardProp {
   type: 'template' | 'questions';
   isCandidates?: boolean;
   dataSource?: any;
-  timeAnswered: number;
-  timeRead: number;
+  timeAnswered?: number;
+  timeRead?: number;
 }
 
 const QuestionCard: FC<QuestionCardProp> = ({

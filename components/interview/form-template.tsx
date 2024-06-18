@@ -202,10 +202,10 @@ const FormTemplate = ({
   };
   return (
     <>
-      <div className="mt-5">
-        <h4 className="mb-4 text-xl font-semibold">Template</h4>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+          <div className="rounded-md bg-white p-4">
+            <h4 className="mb-4 text-xl font-semibold">Template</h4>
             <div className="flex items-center justify-between gap-x-10 ">
               <div className="flex w-1/2 flex-col gap-y-4 p-0">
                 <FormField
@@ -339,7 +339,9 @@ const FormTemplate = ({
                 />
               </div>
             </div>
+          </div>
 
+          <div className="rounded-md bg-white p-4">
             {isAddQuestion && (
               <div className="my-4">
                 <h4 className="text-xl font-semibold">Add Question</h4>
@@ -349,7 +351,7 @@ const FormTemplate = ({
 
             <div className="my-4">
               <h4 className="text-xl font-semibold">Questions</h4>
-              {Array.isArray(questions) &&
+              {questions.length > 0 ? (
                 questions.map((item, index) => (
                   <QuestionCard
                     key={index}
@@ -368,32 +370,41 @@ const FormTemplate = ({
                     type="questions"
                     dataSource={dataTemplate}
                   />
-                ))}
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-4">
+                  <p>No Question</p>
+                  <Button type="button" onClick={handleAddQuestion}>
+                    + Add Question
+                  </Button>
+                </div>
+              )}
             </div>
-
-            <div className="my-4">
-              <div className="flex items-center justify-between">
+            {questions.length > 0 && (
+              <div className="my-3">
                 <Button
-                  className="p-0 text-sm font-normal text-black"
-                  variant="link"
+                  className=" text-sm font-normal text-black"
+                  variant="outline"
                   type="button"
                   onClick={handleAddQuestion}
                 >
                   + Add Question
                 </Button>
-                <Button
-                  className="gap-2 px-4 py-2 text-sm font-normal"
-                  type="submit"
-                  disabled={questions?.length === 0}
-                >
-                  <Save className="size-4" />
-                  Save Template
-                </Button>
               </div>
-            </div>
-          </form>
-        </Form>
-      </div>
+            )}
+          </div>
+          <div className="my-3 flex w-full justify-end">
+            <Button
+              className="gap-2 px-4 py-2 text-sm font-normal"
+              type="submit"
+              disabled={questions?.length === 0}
+            >
+              <Save className="size-4" />
+              Save Template
+            </Button>
+          </div>
+        </form>
+      </Form>
 
       {isPending && (
         <div className="fixed left-0 top-0 z-50 h-full w-full items-start justify-center rounded-lg bg-black bg-opacity-40">

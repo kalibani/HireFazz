@@ -17,7 +17,7 @@ const Banner: FC<BannerProps> = ({
   desc,
   btnTitle,
   title,
-  isButton = true,
+  isButton = false,
 }): ReactElement => {
   return (
     <div className="flex items-center justify-between rounded-lg bg-gradient-to-r from-rose-600 via-[#A24688] to-[#4E3ABA] px-11 py-4">
