@@ -50,7 +50,7 @@ const DashboardPage = async ({ params }: ParamsProps) => {
         </div>
         <DashboardTable dataSource={totals?.latesJobs} orgId={params.orgId} />
         <Link href={`/${params.orgId}/job`}>
-          <Button variant="link" className="h-fit p-0 text-sm font-normal">
+          <Button variant="link" className="my-4 h-fit p-0 text-sm font-normal">
             {t('table_viewMoreJob')} <ArrowUpRight className="w-4" />
           </Button>
         </Link>

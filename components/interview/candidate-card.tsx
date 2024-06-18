@@ -57,7 +57,7 @@ const CandidatesCard = ({
         onClick={() => replace(`${pathname}/${dataSource.id}/invited`)}
       >
         <div className="flex items-center justify-between">
-          <h4 className="text-2xl font-semibold">{dataSource.companyName}</h4>
+          <h4 className="text-2xl font-semibold">{dataSource.templateName}</h4>
           <div
             className={cn(
               'flex items-center gap-x-2 text-sm font-bold ',
@@ -69,8 +69,15 @@ const CandidatesCard = ({
           </div>
         </div>
         <div className="flex items-start  justify-between">
-          <div className="space-y-2">
-            <p className="text-sm text-slate-400">{dataSource.templateName}</p>
+          <div className="my-2 space-y-2">
+            <div>
+              <p className="text-sm font-semibold text-slate-400">
+                {dataSource.companyName || 'Empty Company Name'}
+              </p>
+              <p className="text-sm text-slate-400">
+                {dataSource.templateName}
+              </p>
+            </div>
             <div className="w-fit rounded-md border p-1.5 text-xs">
               {dataSource.candidatesCount} Candidates
             </div>

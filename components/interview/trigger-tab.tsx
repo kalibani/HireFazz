@@ -15,18 +15,19 @@ const TriggerTab = () => {
     }
     replace(`${pathname}?${params.toString()}`);
   };
+  console.log(searchParams.get('tab'));
   return (
     <TabsList className="h-auto rounded-none p-0">
       <TabsTrigger
         value="candidates"
-        className="rounded-none rounded-tr-md py-3 focus-visible:ring-0 focus-visible:ring-offset-0"
+        className="rounded-none rounded-tr-md bg-slate-300 py-3 text-slate-700 focus-visible:ring-0 focus-visible:ring-offset-0"
         onClick={() => tabsTriggerHandler('candidates')}
       >
         Interview Candidates
       </TabsTrigger>
       <TabsTrigger
         value="template"
-        className="rounded-none rounded-tr-md py-3"
+        className="rounded-none rounded-tr-md bg-slate-300 py-3  text-slate-700"
         onClick={() => tabsTriggerHandler('template')}
       >
         Template Interview

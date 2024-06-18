@@ -53,7 +53,7 @@ const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
           <FilterListInterview orgId={params.orgId} isTemplate />
           {interviews.length > 0 ? (
             interviews?.map((interview, idx) => (
-              <QuestionCard
+              <QuestionCard 
                 key={interview.id}
                 title={interview.title}
                 id={interview.id}
