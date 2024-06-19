@@ -1,4 +1,5 @@
 import { FormSchemaCreateJob } from '@/lib/validators/createJob';
+import toast from 'react-hot-toast';
 import { z } from 'zod';
 import { create } from 'zustand';
 
@@ -16,8 +17,8 @@ export interface FormStepState {
   setFormCreateJob: (data: z.infer<FormSchemaCreateJob>) => void;
   setFormDetailJob: (data: string) => void;
   setTotalSize: (total: number) => void;
-  resetFormCreateJob: () => void
-  resetFormDetailJob: () => void
+  resetFormCreateJob: () => void;
+  resetFormDetailJob: () => void;
   setFiles: (data: any[]) => void;
   handleFileChange: (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -27,7 +28,7 @@ export interface FormStepState {
   handleUploadButtonClick: () => void;
 }
 
-const defaultDataCreateJob: z.infer<FormSchemaCreateJob> =  {
+const defaultDataCreateJob: z.infer<FormSchemaCreateJob> = {
   title: '',
   companyName: '',
   workModel: 'REMOTE',
@@ -36,7 +37,7 @@ const defaultDataCreateJob: z.infer<FormSchemaCreateJob> =  {
   fromNominal: '',
   toNominal: '',
   location: '',
-}
+};
 
 export const useFormStepStore = create<FormStepState>((set) => ({
   step: 0,
@@ -60,7 +61,13 @@ export const useFormStepStore = create<FormStepState>((set) => ({
   handleFileChange: (event, from: string) => {
     let totalFileSize = 0;
     const selectedFiles = event.target.files
-      ? Array.from(event.target.files)
+      ? Array.from(event.target.files).filter((file) => {
+          if (file.size >= 4 * 1024 * 1024) {
+            toast.error(`${file.name} File size must be less than 4MB.`);
+            return false;
+          }
+          return true;
+        })
       : [];
 
     selectedFiles.forEach((file) => {
