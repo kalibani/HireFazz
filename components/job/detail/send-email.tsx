@@ -29,33 +29,28 @@ const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
   const selectedCv = jobDetail?.data?.cvAnalysis?.filter((x) =>
     ids.includes(x.id),
   );
-  const t = useTranslations('JobDetail')
-  const { language } = useTranslate()
+  const t = useTranslations('JobDetail');
+  const { language } = useTranslate();
   const form = useForm<
     TEmail & { cc?: string; bcc?: string; attachJobDescription?: string }
   >();
   const cc = form.watch('cc');
   const bcc = form.watch('bcc');
-  const emailContent = useMemo(
-    () => {
-      if (language === 'en') {
-        console.log('LANFFF', language)
-        return `
+  const emailContent = useMemo(() => {
+    if (language === 'en') {
+      return `
         Dear {{CANDIDATE_FIRST_NAME}}, <br/> We hope this email finds you well. We are pleased to inform you that after careful consideration of your application and interview performance, you have been shortlisted for the {{JOB_TITLE}} position at {{JOB_COMPANY}}. Your qualifications and experience stood out and we believe that your skills align well with the requirements of the role. We feel confident that your contributions would greatly benefit our team. Congratulations on reaching this stage, and we look forward to the possibility of welcoming you to our team. Best regards,
         <br/>
         ${cc ? `CC: ${cc}` : ''}
         <br/>
         ${bcc ? `BCC: ${bcc}` : ''}
-        `
-      } else {
-
-        return `Kepada {{CANDIDATE_FIRST_NAME}}, <br/><br/>
+        `;
+    } else {
+      return `Kepada {{CANDIDATE_FIRST_NAME}}, <br/><br/>
   
-        Kami berharap email ini menemukan Anda dalam keadaan baik. Kami dengan senang hati menginformasikan bahwa setelah mempertimbangkan dengan cermat aplikasi dan kinerja wawancara Anda, Anda telah terpilih untuk posisi {{JOB_TITLE}} di {{JOB_COMPANY}}. Kualifikasi dan pengalaman Anda menonjol dan kami percaya bahwa keterampilan Anda sangat sesuai dengan persyaratan peran ini. Kami yakin bahwa kontribusi Anda akan sangat bermanfaat bagi tim kami.`
-      }
-    },
-    [cc, bcc, language],
-  );
+        Kami berharap email ini menemukan Anda dalam keadaan baik. Kami dengan senang hati menginformasikan bahwa setelah mempertimbangkan dengan cermat aplikasi dan kinerja wawancara Anda, Anda telah terpilih untuk posisi {{JOB_TITLE}} di {{JOB_COMPANY}}. Kualifikasi dan pengalaman Anda menonjol dan kami percaya bahwa keterampilan Anda sangat sesuai dengan persyaratan peran ini. Kami yakin bahwa kontribusi Anda akan sangat bermanfaat bagi tim kami.`;
+    }
+  }, [cc, bcc, language]);
   const receiver = selectedCv?.map((x) => x.reportOfAnalysis?.email) || [,];
   const [value, setValue] = useState(emailContent);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,7 +69,9 @@ const DetailJobSendEmail: FC<TDetailJobTableProps> = ({ jobDetail }) => {
   return (
     <section className="flex flex-col gap-y-12 py-6">
       <div className="flex flex-col gap-y-2">
-        <h1 className="text-[16px] font-semibold text-black">{t('actionSendEmail')}</h1>
+        <h1 className="text-[16px] font-semibold text-black">
+          {t('actionSendEmail')}
+        </h1>
         <div className="flex gap-x-2">
           <p className="text-sm text-black">{t('sendTo')}: </p>
           {receiver.map((receiver, index) => (

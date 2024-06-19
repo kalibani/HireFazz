@@ -26,7 +26,7 @@ const DocumentInteraction = {
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(),
         fileId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { userId } = ctx;
@@ -154,12 +154,11 @@ const DocumentInteraction = {
       z.object({
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const { userId } = ctx;
       const user = await currentUser();
-      console.log(user, '???????');
 
       const limit = input.limit ?? 5;
       const { cursor } = input;

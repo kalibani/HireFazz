@@ -25,7 +25,6 @@ const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
   const [countdown, setCountdown] = useState(5);
   const { setVideoUrl, title } = useRecorderStore();
   const [isStarted, setStarted] = useState(false);
-  const [isBuffering, setIsBuffering] = useState(false);
   const videoRef = useRef(null);
 
   const handleDataAvailable = useCallback(
@@ -100,11 +99,6 @@ const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
     }
   }, [recordedChunks, handleDownload]);
 
-  const handleProgress = () => {
-    if (isBuffering) setIsBuffering(false); // Assume buffering ends when progress updates
-    // Update progress state with new data
-  };
-
   return (
     <div className="flex flex-col  items-center justify-center rounded-md bg-white">
       <div className="relative  overflow-hidden">
@@ -115,9 +109,11 @@ const HrVideo = ({ typeVideo }: { typeVideo: 'intro' | 'question' }) => {
         )}
 
         {capturing && !preStoreVideo && (
-          <p className="absolute right-2 top-2 z-10 text-xs text-white">
-            Recording...
-          </p>
+          <div className="justify- absolute flex w-full items-center   p-2">
+            <p className=" right-2 top-2 z-10 text-xs text-white">
+              Recording...
+            </p>
+          </div>
         )}
         {countdown > 0 && isMounted && (
           <div className="absolute z-10 flex size-full flex-col items-center justify-center text-center text-white backdrop-blur-lg backdrop-brightness-50">

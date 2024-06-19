@@ -31,7 +31,6 @@ export default async function deleteCandidates(payload: TSchemaPayloadDelete) {
     return { success: `${deleted.count} records deleted` };
   } catch (error) {
     errorHandler(error);
-    console.log(error);
     throw new Error('Delete operation failed' + error);
   }
 }
