@@ -32,6 +32,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { PaginationGroup } from '../ui/pagination';
 import { Loader } from '../share';
+import { useTranslations } from 'next-intl';
 
 type TColumn = {
   id: string;
@@ -48,6 +49,7 @@ const TableInvite = ({
 }) => {
   const { replace } = useRouter();
   const pathname = usePathname();
+  const t = useTranslations('Interview')
 
   const searchParams = useSearchParams();
   const perPage = searchParams.get('per_page') || '10';
@@ -77,7 +79,7 @@ const TableInvite = ({
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Name
+            {t('name')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -95,7 +97,7 @@ const TableInvite = ({
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Email
+            {t('email')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -211,7 +213,7 @@ const TableInvite = ({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {t('noResults')}
                 </TableCell>
               </TableRow>
             )}

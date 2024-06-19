@@ -10,6 +10,7 @@ import { FC } from 'react';
 import TriggerTab from '@/components/interview/trigger-tab';
 import CandidatesCard from '@/components/interview/candidate-card';
 import QuestionCard from '@/components/interview/question-card';
+import { getTranslations } from 'next-intl/server';
 
 const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
   const interviews = (await getTemplateInterview({
@@ -18,20 +19,22 @@ const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
   const candidates = (await getInvitedCandidates({
     id: params.orgId,
   })) as TCandidateListSchema[];
+  const t = await getTranslations('Interview')
+
   return (
     <>
       <Banner
-        title="Automatic Interview"
-        desc="Lorem Ipsum is simply dummy text of the printing and  typesetting industry. Lorem Ipsum has been the industry's standard dummy  text ever since the 1500s, when an unknown printer took a galley of  type and scrambled it to make a type specimen book."
+        title={t('title')}
+        desc={t('bannerSubTitle')}
         btnTitle="Check it out !"
         src={dashboard}
         isButton={false}
       />
       <Tabs defaultValue={searchParams.tab || 'candidates'}>
         <div className="mb-8 flex flex-col  rounded-md bg-white p-4">
-          <h3 className="text-2xl font-semibold">List Automatic Interview</h3>
+          <h3 className="text-2xl font-semibold">{t('interviewList')}</h3>
           <p className="text-sm font-normal text-slate-400">
-            There is automatic has been created.
+            {t("seeInterviewList")}
           </p>
         </div>
         <TriggerTab />
@@ -44,7 +47,7 @@ const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
               ))
             ) : (
               <div className="my-4 w-full text-center">
-                <p>No Data</p>
+                <p>{t('noData')}</p>
               </div>
             )}
           </div>
@@ -65,7 +68,7 @@ const Page: FC<ParamsProps> = async ({ params, searchParams }) => {
             ))
           ) : (
             <div className="my-4 w-full text-center">
-              <p>No Data</p>
+              <p>{t('noData')}</p>
             </div>
           )}
         </TabsContent>

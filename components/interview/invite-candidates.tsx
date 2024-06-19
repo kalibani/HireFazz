@@ -34,6 +34,7 @@ import { Loader } from '../share';
 
 import PopUpImportChecker from './popup-import-email';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 export const CandidateSchema = z.object({
   name: z.string().min(2),
@@ -88,6 +89,7 @@ const InviteCandidates = ({
   const [importedCandidates, setImportedCandidates] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [invalidData, setInvalidData] = useState<any[]>([]);
+  const t = useTranslations('Interview')
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -188,8 +190,8 @@ const InviteCandidates = ({
 
   const invitedHandler = (data: z.infer<typeof FormSchema>) => {
     if ((!data.email || !data.name) && importedCandidates.length === 0) {
-      form.setError('email', { message: 'Input your valid email' });
-      form.setError('name', { message: 'Input your valid email' });
+      form.setError('email', { message: t('inputValidEmail') });
+      form.setError('name', { message: t('inputName') });
     }
 
     if (!selectedTemplate && !watchTemplate) {
@@ -263,7 +265,7 @@ const InviteCandidates = ({
         <form onSubmit={form.handleSubmit(invitedHandler)}>
           <div className="rounded-md bg-white p-4">
             <h3 className="text-2xl font-semibold">
-              {id ? 'Edit ' : 'Create '}Interview Candidates
+              {id ? t('editCandidateInterview') : t('createCandidateInterview')}
             </h3>
             <div className="mt-4 ">
               <div className="flex w-full gap-x-2 ">
@@ -273,7 +275,7 @@ const InviteCandidates = ({
                   render={({ field }) => (
                     <FormItem className="w-full space-y-0">
                       <FormLabel className="m-0 w-full font-normal">
-                        Name Interview
+                        {t('interviewTitle')}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <Input
@@ -291,7 +293,7 @@ const InviteCandidates = ({
                   render={({ field }) => (
                     <FormItem className="w-full space-y-0">
                       <FormLabel className="m-0 w-full font-normal">
-                        Company Name<span className="text-destructive">*</span>
+                        {t('companyName')}<span className="text-destructive">*</span>
                       </FormLabel>
                       <Input
                         className="h-auto w-full border font-normal ring-0"
@@ -309,8 +311,8 @@ const InviteCandidates = ({
                     <FormItem className="w-full space-y-0">
                       <FormLabel className="m-0  w-full font-normal">
                         {!!interviews.length
-                          ? 'Select Template question'
-                          : "you don't have template"}
+                          ? t('selectTemplate')
+                          : t('noTemplate')}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       {!!interviews.length && (
@@ -339,7 +341,7 @@ const InviteCandidates = ({
                           <Button
                             onClick={() => push(`/${orgId}/video/create`)}
                           >
-                            Create Template
+                            {t('createTemplate')}
                           </Button>
                         </div>
                       )}
@@ -361,7 +363,7 @@ const InviteCandidates = ({
                 />
               )}
 
-              <h4 className="my-4 text-xl font-semibold">Invites Candidates</h4>
+              <h4 className="my-4 text-xl font-semibold">{t('inviteCandidates')}</h4>
 
               <div className="flex  w-full  gap-x-2">
                 <FormField
@@ -370,7 +372,7 @@ const InviteCandidates = ({
                   render={({ field }) => (
                     <FormItem className="w-full space-y-0">
                       <FormLabel className="m-0 font-normal">
-                        Full Name
+                        {t('fullName')}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <Input
@@ -388,7 +390,7 @@ const InviteCandidates = ({
                   render={({ field }) => (
                     <FormItem className="w-full space-y-0">
                       <FormLabel className="m-0 font-normal">
-                        Email
+                        {t('email')}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <div className="flex gap-x-2">
@@ -417,8 +419,7 @@ const InviteCandidates = ({
             </div>
             <div className=" my-4 items-center gap-x-2 rounded-md bg-yellow-100 p-2 text-center text-sm italic">
               <p>
-                Click the link bellow to download the template file and get
-                started easily.
+                {t('downloadFile')}
               </p>
               <Button
                 type="button"
@@ -426,12 +427,12 @@ const InviteCandidates = ({
                 variant="link"
                 className="h-0 p-0"
               >
-                Download CSV
+                {t('downloadCSV')}
               </Button>
             </div>
             <Button type="button" variant="secondary">
               <label className="cursor-pointer">
-                Import file
+                {t('importFile')}
                 <input
                   type="file"
                   accept=".csv"
@@ -447,7 +448,7 @@ const InviteCandidates = ({
           </div>
           <div className="mt-4 flex justify-end">
             <Button type="submit" disabled={!importedCandidates.length}>
-              Save
+              {t('save')}
             </Button>
           </div>
         </form>

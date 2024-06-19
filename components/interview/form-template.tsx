@@ -36,6 +36,7 @@ import updateTemplateInterview from '@/lib/actions/interview/updateTemplateInter
 import createTemplateInterview from '@/lib/actions/interview/createTemplateInterview';
 import { Textarea } from '../ui/textarea';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 const FormSchema = z.object({
   durationTimeRead: z.string({ message: 'select your duration time' }),
@@ -77,6 +78,7 @@ const FormTemplate = ({
     setQuestionForm,
   } = useRecorderStore();
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations('Interview')
 
   const templateHandler = useCallback(
     async (payload: any, id?: string) => {
@@ -203,7 +205,7 @@ const FormTemplate = ({
   return (
     <>
       <div className="mt-5">
-        <h4 className="mb-4 text-xl font-semibold">Template</h4>
+        <h4 className="mb-4 text-xl font-semibold">{t('template')}</h4>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex items-center justify-between gap-x-10 ">
@@ -214,7 +216,7 @@ const FormTemplate = ({
                   render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="m-0  w-full font-normal">
-                        Name Template{' '}
+                        {t('templateName')}{' '}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <Input
@@ -232,7 +234,7 @@ const FormTemplate = ({
                   render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="w-full font-normal">
-                        Description
+                        {t('description')}
                       </FormLabel>
                       <Textarea
                         minRows={5}
@@ -278,7 +280,7 @@ const FormTemplate = ({
             </div>
 
             <div className="my-4">
-              <h4 className="text-xl font-semibold">Time</h4>
+              <h4 className="text-xl font-semibold">{t('time')}</h4>
               <div className="mt-2 flex gap-x-4">
                 <FormField
                   control={form.control}
@@ -286,7 +288,7 @@ const FormTemplate = ({
                   render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="w-fit text-xs">
-                        Time to Thinking{' '}
+                        {t('thinkingTime')}{' '}
                         <span className="text-destructive">*</span>{' '}
                       </FormLabel>
                       <Select {...field}>
@@ -297,11 +299,11 @@ const FormTemplate = ({
                         </FormControl>
                         <SelectContent className="text-xs">
                           <SelectItem value="0">none</SelectItem>
-                          <SelectItem value="15">15 seconds</SelectItem>
-                          <SelectItem value="30">30 seconds</SelectItem>
-                          <SelectItem value="60">1 minutes</SelectItem>
-                          <SelectItem value="120">2 minutes</SelectItem>
-                          <SelectItem value="180">3 minutes</SelectItem>
+                          <SelectItem value="15">{t('amountSeconds', { count: 15 })}</SelectItem>
+                          <SelectItem value="30">{t('amountSeconds', { count: 30 })}</SelectItem>
+                          <SelectItem value="60">{t('amountMinute', { count: 1 })}</SelectItem>
+                          <SelectItem value="120">{t('amountMinute', { count: 2 })}</SelectItem>
+                          <SelectItem value="180">{t('amountMinute', { count: 3 })}</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -315,7 +317,7 @@ const FormTemplate = ({
                   render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="w-fit text-xs">
-                        Time to Answer{' '}
+                        {t('answerTime')}{' '}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <Select {...field}>
@@ -325,11 +327,11 @@ const FormTemplate = ({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="text-xs">
-                          <SelectItem value="60">1 minute</SelectItem>
-                          <SelectItem value="120">2 minutes</SelectItem>
-                          <SelectItem value="180">3 minutes</SelectItem>
-                          <SelectItem value="240">4 minutes</SelectItem>
-                          <SelectItem value="300">5 minutes</SelectItem>
+                          <SelectItem value="60">{t('amountMinute', { count: 1 })}</SelectItem>
+                          <SelectItem value="120">{t('amountMinute', { count: 2 })}</SelectItem>
+                          <SelectItem value="180">{t('amountMinute', { count: 3 })}</SelectItem>
+                          <SelectItem value="240">{t('amountMinute', { count: 4 })}</SelectItem>
+                          <SelectItem value="300">{t('amountMinute', { count: 5 })}</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -342,13 +344,13 @@ const FormTemplate = ({
 
             {isAddQuestion && (
               <div className="my-4">
-                <h4 className="text-xl font-semibold">Add Question</h4>
+                <h4 className="text-xl font-semibold">{t('addQuestion')}</h4>
                 <FormQuestion />
               </div>
             )}
 
             <div className="my-4">
-              <h4 className="text-xl font-semibold">Questions</h4>
+              <h4 className="text-xl font-semibold">{t('questions')}</h4>
               {Array.isArray(questions) &&
                 questions.map((item, index) => (
                   <QuestionCard
@@ -379,7 +381,7 @@ const FormTemplate = ({
                   type="button"
                   onClick={handleAddQuestion}
                 >
-                  + Add Question
+                  + {t('addQuestion')}
                 </Button>
                 <Button
                   className="gap-2 px-4 py-2 text-sm font-normal"
@@ -387,7 +389,7 @@ const FormTemplate = ({
                   disabled={questions?.length === 0}
                 >
                   <Save className="size-4" />
-                  Save Template
+                  {t('save')}
                 </Button>
               </div>
             </div>

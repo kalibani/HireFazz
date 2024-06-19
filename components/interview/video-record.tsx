@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import PopupRecord from './popup-record';
 import { cn } from '@/lib/utils';
 import ReactPlayer from 'react-player';
+import { useTranslations } from 'next-intl';
 
 const VideoRecord = ({
   videoUrl,
@@ -15,6 +16,7 @@ const VideoRecord = ({
   className?: string;
 }) => {
   const videoRef = useRef(null);
+  const t = useTranslations('Interview')
 
   return (
     <div
@@ -45,8 +47,8 @@ const VideoRecord = ({
       <div className="p-2">
         <PopupRecord
           type={type}
-          title="Interview Intro"
-          triggerName={videoUrl ? 'retake' : 'Add record video'}
+          title={videoUrl ? t('retakeVideo') : t('addVideo')}
+          triggerName={videoUrl ? t('retakeVideo') : t('addVideo')}
         />
       </div>
     </div>

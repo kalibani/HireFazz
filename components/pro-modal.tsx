@@ -139,7 +139,7 @@ const ProModal = () => {
         <DialogHeader>
           <DialogTitle className="flex flex-col items-center justify-center gap-y-4 pb-2">
             <div className="flex items-center gap-x-2 py-1 font-bold">
-              {isQuotaLimited ? 'Re-subscribe to' : 'Upgrade to BerryLabs'}
+              {isQuotaLimited ? 'Re-subscribe to' : 'Upgrade to HireFazz'}
               <Badge className="py-1 text-sm uppercase " variant="premium">
                 {plan}
               </Badge>

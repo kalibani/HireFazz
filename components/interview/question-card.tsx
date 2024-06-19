@@ -17,6 +17,7 @@ import PopupPreviewQuestions from './popup-preview';
 import { DeleteDataSchema } from '@/lib/validators/interview';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 interface QuestionCardProp {
   title: string;
@@ -51,6 +52,7 @@ const QuestionCard: FC<QuestionCardProp> = ({
   const [isPending, startTransition] = useTransition();
   const { setIsAddQuestion, setQuestionForm, removeQuestion, questions } =
     useRecorderStore();
+  const t = useTranslations('Interview')
 
   const deleteTemplateOne = useCallback(
     async (id: string) => {

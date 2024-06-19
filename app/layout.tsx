@@ -10,9 +10,9 @@ import { auth } from '@/auth';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'BerryLabs - AI-Powered Solutions, Human-Centered Results',
+  title: 'HireFazz - AI-Powered Solutions, Human-Centered Results',
   description:
-    'BerryLabs harnesses the power of artificial intelligence to revolutionize your document handling processes. Our platform offers a suite of tools designed to automate and optimize your repetitive tasks, from scanning CVs and analyzing bank statements to reviewing contracts and ensuring regulatory compliance. Transform your business operations with BerryLabs and make data-driven decisions faster and more accurately.',
+    'HireFazz harnesses the power of artificial intelligence to revolutionize your document handling processes. Our platform offers a suite of tools designed to automate and optimize your repetitive tasks, from scanning CVs and analyzing bank statements to reviewing contracts and ensuring regulatory compliance. Transform your business operations with BerryLabs and make data-driven decisions faster and more accurately.',
 };
 
 export default async function RootLayout({

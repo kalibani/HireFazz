@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { Button } from '../ui/button';
 import { Undo2 } from 'lucide-react';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 interface Props {
   isLabel?: boolean;
@@ -10,12 +11,13 @@ interface Props {
   urlPath: string;
 }
 
-const HeaderNavigation: FC<Props> = ({
+const HeaderNavigation: FC<Props> = async ({
   title,
   isLabel = false,
   tagLine,
   urlPath,
 }) => {
+  const t = await getTranslations('Interview')
   return (
     <div className="flex min-h-14 w-full items-center justify-between rounded-md bg-primary bg-white px-4 py-2 text-black">
       <Link href={urlPath}>
@@ -24,7 +26,7 @@ const HeaderNavigation: FC<Props> = ({
           className="w-tit flex h-auto items-center gap-x-2 p-0 hover:bg-transparent"
         >
           <Undo2 className="text-primary" />
-          Back
+          {t('back')}
         </Button>
       </Link>
       {isLabel && (

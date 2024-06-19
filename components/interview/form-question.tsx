@@ -26,6 +26,7 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { v4 as uuidv4 } from 'uuid';
+import { useTranslations } from 'next-intl';
 
 const FormSchema = z.object({
   timeRead: z.string().optional(),
@@ -37,6 +38,7 @@ type TFormSchema = z.input<typeof FormSchema>;
 
 const FormQuestion = () => {
   const [isSettings, setIsSettings] = useState<boolean>(false);
+  const t = useTranslations('Interview')
 
   const {
     setQuestion,
@@ -113,7 +115,7 @@ const FormQuestion = () => {
             <div className="flex items-center gap-x-2">
               <FileSpreadsheet className="size-4 text-primary" />
               <h4 className="text-xl font-semibold">
-                Question #
+                {t('question')} #
                 {!!questionForm?.title
                   ? (questionForm?.idx as number) + 1
                   : (questions.length ?? 0) + 1}
@@ -125,7 +127,7 @@ const FormQuestion = () => {
               render={({ field }) => (
                 <FormItem className="w-full space-y-0">
                   <FormLabel className="text-xs">
-                    Title Question
+                    {t('questionTitle')}
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <div className="flex items-center gap-x-4">
@@ -152,7 +154,7 @@ const FormQuestion = () => {
               render={({ field }) => (
                 <FormItem className="mt-4 space-y-0">
                   <FormLabel className="text-xs">
-                    Question
+                    {t('question')}
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <Textarea placeholder="" {...field} minRows={2.5} />
@@ -168,7 +170,7 @@ const FormQuestion = () => {
                   render={({ field }) => (
                     <FormItem className="space-y-0">
                       <FormLabel className="text-xs capitalize">
-                        Time to Thinking
+                        {t('thinkingTime')}
                       </FormLabel>
                       <Select
                         defaultValue={field.value}
@@ -179,11 +181,11 @@ const FormQuestion = () => {
                         </SelectTrigger>
                         <SelectContent className="text-xs">
                           <SelectItem value="0">none</SelectItem>
-                          <SelectItem value="15">15 seconds</SelectItem>
-                          <SelectItem value="30">30 seconds</SelectItem>
-                          <SelectItem value="60">1 minutes</SelectItem>
-                          <SelectItem value="120">2 minutes</SelectItem>
-                          <SelectItem value="180">3 minutes</SelectItem>
+                          <SelectItem value="15">{t('amountSeconds', { count: 15 })}</SelectItem>
+                          <SelectItem value="30">{t('amountSeconds', { count: 30 })}</SelectItem>
+                          <SelectItem value="60">{t('amountMinute', { count: 1 })}</SelectItem>
+                          <SelectItem value="120">{t('amountMinute', { count: 2 })}</SelectItem>
+                          <SelectItem value="180">{t('amountMinute', { count: 3 })}</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormItem>
@@ -194,7 +196,7 @@ const FormQuestion = () => {
                   name="timeAnswered"
                   render={({ field }) => (
                     <FormItem className="space-y-0">
-                      <FormLabel className="text-xs">Time to Answare</FormLabel>
+                      <FormLabel className="text-xs">{t('answerTime')}</FormLabel>
                       <Select
                         defaultValue={field.value}
                         onValueChange={field.onChange}
@@ -203,11 +205,11 @@ const FormQuestion = () => {
                           <SelectValue placeholder="Select time" />
                         </SelectTrigger>
                         <SelectContent className="text-xs">
-                          <SelectItem value="60">1 minute</SelectItem>
-                          <SelectItem value="120">2 minutes</SelectItem>
-                          <SelectItem value="180">3 minutes</SelectItem>
-                          <SelectItem value="240">4 minutes</SelectItem>
-                          <SelectItem value="300">5 minutes</SelectItem>
+                          <SelectItem value="60">{t('amountMinute', { count: 1 })}</SelectItem>
+                          <SelectItem value="120">{t('amountMinute', { count: 2 })}</SelectItem>
+                          <SelectItem value="180">{t('amountMinute', { count: 3 })}</SelectItem>
+                          <SelectItem value="240">{t('amountMinute', { count: 4 })}</SelectItem>
+                          <SelectItem value="300">{t('amountMinute', { count: 5 })}</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -226,7 +228,7 @@ const FormQuestion = () => {
             onClick={closeHandler}
             type="button"
           >
-            close
+            {t('close')}
           </Button>
           <Button
             className="gap-2 px-4 py-2 text-sm font-normal"
@@ -234,7 +236,7 @@ const FormQuestion = () => {
             onClick={form.handleSubmit(onSubmit)}
           >
             <Save className="size-4" />
-            Add Question
+            {t('addQuestion')}
           </Button>
         </div>
       </Form>
