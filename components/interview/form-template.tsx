@@ -217,10 +217,12 @@ const FormTemplate = ({
                         Name Template{' '}
                         <span className="text-destructive">*</span>
                       </FormLabel>
-                      <Input
-                        className="h-auto w-full border font-normal ring-0"
-                        {...field}
-                      />
+                      <FormControl>
+                        <Input
+                          className="h-auto w-full border font-normal ring-0"
+                          {...field}
+                        />
+                      </FormControl>
                       <FormMessage className="text-xs" />
                     </FormItem>
                   )}
@@ -234,11 +236,13 @@ const FormTemplate = ({
                       <FormLabel className="w-full font-normal">
                         Description
                       </FormLabel>
-                      <Textarea
-                        minRows={5}
-                        className="h-auto w-full border font-normal ring-0"
-                        {...field}
-                      />
+                      <FormControl>
+                        <Textarea
+                          minRows={5}
+                          className="h-auto w-full border font-normal ring-0"
+                          {...field}
+                        />
+                      </FormControl>
                       <FormMessage className="text-xs" />
                     </FormItem>
                   )}
@@ -289,7 +293,12 @@ const FormTemplate = ({
                         Time to Thinking{' '}
                         <span className="text-destructive">*</span>{' '}
                       </FormLabel>
-                      <Select {...field}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={
+                          field.value || String(dataTemplate?.durationTimeRead)
+                        }
+                      >
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">
                             <SelectValue placeholder="Select duration" />
@@ -318,7 +327,13 @@ const FormTemplate = ({
                         Time to Answer{' '}
                         <span className="text-destructive">*</span>
                       </FormLabel>
-                      <Select {...field}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={
+                          field.value ||
+                          String(dataTemplate?.durationTimeAnswered)
+                        }
+                      >
                         <FormControl className="w-36">
                           <SelectTrigger className="text-xs">
                             <SelectValue placeholder="Select duration" />
