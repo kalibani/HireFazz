@@ -39,7 +39,6 @@ export default async function addScoring(payload: TSchemaAddScoring) {
         error: 'Score already exists for this question by this reviewer',
       };
     }
-    console.log({ existingScore });
     await prismadb.score.create({
       data: {
         comment,

@@ -32,7 +32,7 @@ const PopupRecord = ({
           <Video className="size-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-fit w-full max-w-5xl">
+      <DialogContent className="">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

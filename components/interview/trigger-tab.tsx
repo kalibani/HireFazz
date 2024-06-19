@@ -15,7 +15,6 @@ const TriggerTab = () => {
     }
     replace(`${pathname}?${params.toString()}`);
   };
-  console.log(searchParams.get('tab'));
   return (
     <TabsList className="h-auto rounded-none p-0">
       <TabsTrigger
