@@ -1,12 +1,12 @@
-# BerryLabs: Revolutionizing document interaction, Document Chat, Convert text to speech and clone voices instantly in any language.
-
-![Image1](https://github.com/kalibani/Genio/blob/main/public/Screenshot-project.png)
+# HireFazz: Revolutionizing Hiring Process.
 
 ## Features:
 
-### 1. Document Interaction: - Upload your document then ask everything you wanted.
+### 1. Create Job Ads Seamlessly with AI help
 
-### 2. Speech Synthesis: - Unleash the power of our cutting-edge technology to generate realistic, captivating speech in a wide range of languages
+### 2. Screening Hundreds of CVs Automatically in just mere minutes
+
+### 3. One way Interview, Automatically Scoring Candidates Answer Like Magic
 
 ## Technologies Used:
 
@@ -17,8 +17,6 @@
 - **Langchain Framework**: Framework for developing applications powered by language models.
 - **Pinecone**: A vector database to provide long-term memory for high-performance AI applications
 - **Clerk**: Clerk provides authentication and user management functionalities to ensure a secure and customized user experience.
-- **Prisma**: Prisma acts as the database toolkit for connecting to and interacting with the application’s data storage.
-- **Stripe**: Integrates Stripe's secure payment processing system to facilitate subscription-based access to advanced features.
 
 ## Getting Started: Follow the instructions below to run this application on your local machine:
 
