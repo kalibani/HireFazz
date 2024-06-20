@@ -1,14 +1,12 @@
 import prismadb from '@/lib/prismadb';
 import { openai } from '@/lib/openai';
 import { pinecone } from '@/lib/pinecone';
-import { SendMessageValidator } from '@/lib/validators/sendMessageValidator';
-import { auth } from '@clerk/nextjs';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { checkValidJSON } from '@/lib/utils';
+import { currentUser } from '@/lib/auth';
 
 export const preferredRegion = 'sin1';
 export const maxDuration = 50;
@@ -19,12 +17,11 @@ export const POST = async (req: NextRequest) => {
     // endpoint for get the result of cv analyzer
 
     const body = await req.json();
+    const user = await currentUser();
 
     const { jobTitle, fileId, requirements, percentage } = body;
 
-    const { userId } = auth();
-
-    if (!userId) return new NextResponse('Unauthorized', { status: 401 });
+    if (!user?.id) return new NextResponse('Unauthorized', { status: 401 });
 
     if (!jobTitle) {
       return new NextResponse('Job Title are required', { status: 400 });
@@ -39,7 +36,7 @@ export const POST = async (req: NextRequest) => {
     const file = await prismadb.file.findFirst({
       where: {
         id: fileId,
-        userId,
+        userId: user?.id,
       },
     });
 
@@ -76,7 +73,7 @@ export const POST = async (req: NextRequest) => {
                 
                 Step 2: Analyze the CV document to identify information related to the job descriptions and requirements listed in Step 1. Extract all the relevant details.
                 
-                Step 3: Calculate the match percentage based on how many of the listed job description and requirements are met by the information found in the CV. The calculation should consider all aspects, with particular emphasis on relevant experience and skills. The match percentage should reflect the degree to which the CV meets the job descriptions and requirements.
+                Step 3: Calculate the match percentage based on how many of the listed requirements are met by the information found in the CV. The calculation should consider all aspects, with particular emphasis on experience and skills. The match percentage should reflect the degree to which the CV meets the job requirements.
                 
                 Step 4: Provide a brief reason for the match percentage, focusing on key areas where the CV aligns with or diverges from the job descriptions and requirements. This explanation should not exceed 100 words. If the job descriptions and requirement is not clear then return The requirements are not clearly defined.
 

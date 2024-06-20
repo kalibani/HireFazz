@@ -1,14 +1,10 @@
-"use client";
+'use client';
 
-import TypewriterComponent from "typewriter-effect";
-import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
+import TypewriterComponent from 'typewriter-effect';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 export const LandingHero = () => {
-  const { isSignedIn } = useAuth();
-
   return (
     <div className="text-white font-bold py-36 text-center space-y-5">
       <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
@@ -17,12 +13,12 @@ export const LandingHero = () => {
           <TypewriterComponent
             options={{
               strings: [
-                "Automatic CV Screener",
-                "Bank Statement Analyzer",
-                "Invoice Reviewer",
-                "Loan Application Processor",
-                "Regulatory Auditor",
-                "Contract Checker",
+                'Automatic CV Screener',
+                'Bank Statement Analyzer',
+                'Invoice Reviewer',
+                'Loan Application Processor',
+                'Regulatory Auditor',
+                'Contract Checker',
               ],
               autoStart: true,
               loop: true,
@@ -34,14 +30,14 @@ export const LandingHero = () => {
         Empower Your Workflow with AI Precision
       </div>
       <div>
-        <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
-          <Button
-            variant="premium2"
-            className="md:text-lg p-4 md:p-6 rounded-full font-semibold"
-          >
-            Start Generating For Free
-          </Button>
-        </Link>
+        {/* <Link href={isSignedIn ? "/dashboard" : "/sign-up"}> */}
+        <Button
+          variant="premium2"
+          className="md:text-lg p-4 md:p-6 rounded-full font-semibold"
+        >
+          Start Generating For Free
+        </Button>
+        {/* </Link> */}
       </div>
       <div className="text-white text-base md:text-base font-normal">
         Transform Your Repetitive Tasks into Effortless Actions!

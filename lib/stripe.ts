@@ -1,10 +1,10 @@
-import Stripe from "stripe";
-import { PLANS } from "@/constant";
-import prismadb from "@/lib/prismadb";
-import { auth } from "@clerk/nextjs";
+import Stripe from 'stripe';
+import { PLANS } from '@/constant';
+import prismadb from '@/lib/prismadb';
+import { auth } from '@clerk/nextjs';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16",
+  apiVersion: '2023-10-16',
   typescript: true,
 });
 
@@ -26,8 +26,6 @@ export async function getUserSubscriptionPlan() {
     },
   });
 
-  // console.log("--", dbUser);
-
   if (!dbUser) {
     return {
       ...PLANS[0],
@@ -40,7 +38,7 @@ export async function getUserSubscriptionPlan() {
   const isSubscribed = Boolean(
     dbUser.stripePriceId &&
       dbUser.stripeCurrentPeriodEnd && // 86400000 = 1 day
-      dbUser.stripeCurrentPeriodEnd.getTime() + 86_400_000 > Date.now()
+      dbUser.stripeCurrentPeriodEnd.getTime() + 86_400_000 > Date.now(),
   );
 
   const plan = isSubscribed
@@ -50,7 +48,7 @@ export async function getUserSubscriptionPlan() {
   let isCanceled = false;
   if (isSubscribed && dbUser.stripeSubscriptionId) {
     const stripePlan = await stripe.subscriptions.retrieve(
-      dbUser.stripeSubscriptionId
+      dbUser.stripeSubscriptionId,
     );
     isCanceled = stripePlan.cancel_at_period_end;
   }

@@ -4,6 +4,11 @@
 /node_modules
 /.pnp
 .pnp.js
+dump.rdb
+
+.nx
+
+shell.nix
 
 # testing
 /coverage

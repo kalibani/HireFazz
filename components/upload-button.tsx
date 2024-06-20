@@ -2,7 +2,7 @@
 
 import {
   JSXElementConstructor,
-  PromiseLikeOfReactNode,
+  // PromiseLikeOfReactNode,
   ReactElement,
   ReactNode,
   ReactPortal,
@@ -33,13 +33,14 @@ import {
 } from '@/components/ui/tooltip';
 
 import { useUploadThing } from '@/lib/upload-thing';
-import { trpc } from '@/app/_trpc/client';
 
 import { useAnalyzer } from '@/hooks/use-analyzer';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/hooks/use-user';
 import { useProModal } from '@/hooks/use-pro-modal';
 import { cn } from '@/lib/utils';
+import { getFileAction } from '@/lib/actions/cv-scanner';
+import { useMutation } from '@tanstack/react-query';
 
 const UploadDropzone = ({
   setIsOpen,
@@ -63,19 +64,34 @@ const UploadDropzone = ({
   const { apiLimitCount } = useProModal();
   const { maxFreeCount, subscriptionType } = useUser();
   // @ts-ignore
-  const { mutate: startPolling } = trpc.getFile.useMutation({
-    onSuccess: (file) => {
-      if (file.uploadStatus === 'SUCCESS') {
+  // const { mutate: startPolling } = trpc.getFile.useMutation({
+  //   onSuccess: (file) => {
+  //     if (file.uploadStatus === 'SUCCESS') {
+  //       refetch();
+  //       router.refresh();
+  //     }
+  //   },
+  //   retry: true,
+  //   onError(error, variables, context) {
+  //     console.log('e', error, 'v', variables, 'c', context);
+  //   },
+  //   retryDelay: 200,
+  //   networkMode: 'always',
+  // });
+
+  const { mutate: startPolling } = useMutation({
+    mutationFn: (val: string) => getFileAction({ key: val }),
+    onSuccess: (file: any) => {
+      if (file?.uploadStatus === 'SUCCESS') {
         refetch();
         router.refresh();
       }
     },
-    retry: true,
     onError(error, variables, context) {
       console.log('e', error, 'v', variables, 'c', context);
     },
     retryDelay: 200,
-    networkMode: 'always',
+    // networkMode: 'always',
   });
 
   const startSimulatedProgress = (idx: number) => {
@@ -100,6 +116,7 @@ const UploadDropzone = ({
 
   const handleUpload = async (file: File[], idx: number) => {
     const progressInterval = startSimulatedProgress(idx);
+
     // @ts-ignore
     const res = await startUpload([file]);
     if (!res) {
@@ -109,12 +126,11 @@ const UploadDropzone = ({
     const [fileResponse] = res;
 
     const key = fileResponse?.key;
-
     if (!key) {
       return toast.error('Something went wrong on file key');
     }
     clearInterval(progressInterval);
-    startPolling({ key });
+    startPolling(key);
   };
 
   const handleDropFiles = async (acceptedFiles: any[]) => {
@@ -124,7 +140,7 @@ const UploadDropzone = ({
           'Your files is more than remaining quota, please reduce some',
           {
             duration: 5000,
-          }
+          },
         );
         return;
       }
@@ -174,32 +190,32 @@ const UploadDropzone = ({
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
           {...getRootProps()}
-          className="border min-h-64 max-h-[400px] border-dashed mt-1 border-gray-300 rounded-lg overflow-auto relative"
+          className="relative mt-1 max-h-[400px] min-h-64 overflow-auto rounded-lg border border-dashed border-gray-300"
         >
           {isUploading && (
             <div className="sticky top-0">
-              <div className="absolute right-0 flex px-4 py-2 bg-white rounded-lg">
+              <div className="absolute right-0 flex rounded-lg bg-white px-4 py-2">
                 <span className="mr-2 text-gray-500">{`uploading ${orderUploading}/${uploadProgressArr.length}`}</span>
-                <Loader2 className="text-blue-500 animate-spin" />
+                <Loader2 className="animate-spin text-blue-500" />
               </div>
             </div>
           )}
-          <div className="flex items-center justify-center w-full h-full">
+          <div className="flex h-full w-full items-center justify-center">
             <div
               className={cn(
-                'flex flex-col items-center justify-center w-full h-full py-2 rounded-lg bg-gray-50 hover:bg-gray-100',
-                isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
+                'flex h-full w-full flex-col items-center justify-center rounded-lg bg-gray-50 py-2 hover:bg-gray-100',
+                isDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
               )}
             >
               <div
                 className={cn(
-                  'flex flex-col items-center justify-center pt-5 pb-6',
-                  isUploading ? 'mt-[18px]' : ''
+                  'flex flex-col items-center justify-center pb-6 pt-5',
+                  isUploading ? 'mt-[18px]' : '',
                 )}
               >
                 {!isUploading ? (
                   <>
-                    <Cloud className="w-6 h-6 mb-2 text-zinc-500" />
+                    <Cloud className="mb-2 h-6 w-6 text-zinc-500" />
                     <p className="mb-2 text-sm text-zinc-700">
                       <span className="font-semibold">Click to upload</span> or
                       drag and drop
@@ -207,7 +223,7 @@ const UploadDropzone = ({
                     <p className="text-xs text-zinc-500">
                       PDF, DOCX (up to {maxFileSize} MB)
                     </p>
-                    <p className="text-xs text-zinc-500 mt-1">
+                    <p className="mt-1 text-xs text-zinc-500">
                       Maximum {maxFiles} files per upload
                     </p>
                   </>
@@ -218,7 +234,7 @@ const UploadDropzone = ({
                         Please wait until the process is done.
                       </span>
                     </p>
-                    <p className="font-semibold text-sm text-zinc-700">
+                    <p className="text-sm font-semibold text-zinc-700">
                       Do not refresh the page!
                     </p>
                   </>
@@ -239,25 +255,25 @@ const UploadDropzone = ({
                             >
                           | Iterable<ReactNode>
                           | ReactPortal
-                          | PromiseLikeOfReactNode
+                          // | PromiseLikeOfReactNode
                           | null
                           | undefined;
                       },
-                      indx: number
+                      indx: number,
                     ) => (
                       <div
                         key={indx}
-                        className="w-[300px] bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200 mb-1"
+                        className="mb-1 flex w-[300px] items-center divide-x divide-zinc-200 overflow-hidden rounded-md bg-white outline outline-[1px] outline-zinc-200"
                       >
-                        <div className="grid h-full px-3 py-2 place-items-center">
-                          <File className="w-4 h-4 text-blue-500" />
+                        <div className="grid h-full place-items-center px-3 py-2">
+                          <File className="h-4 w-4 text-blue-500" />
                         </div>
-                        <div className="h-full px-3 py-2 text-sm truncate">
+                        <div className="h-full truncate px-3 py-2 text-sm">
                           {/* @ts-ignore */}
                           {file.path}
                           {/* @ts-ignore */}
                           {isUploading ? (
-                            <div className="w-full max-w-xs mx-auto my-2">
+                            <div className="mx-auto my-2 w-full max-w-xs">
                               <Progress
                                 indicatorColor={
                                   uploadProgressArr[indx] === 100
@@ -265,20 +281,20 @@ const UploadDropzone = ({
                                     : ''
                                 }
                                 value={uploadProgressArr[indx]}
-                                className="w-full h-1 bg-zinc-200"
+                                className="h-1 w-full bg-zinc-200"
                               />
                             </div>
                           ) : (
-                            <div className="w-full max-w-xs mx-auto my-2">
+                            <div className="mx-auto my-2 w-full max-w-xs">
                               <Progress
                                 value={0}
-                                className="w-full h-1 bg-zinc-200"
+                                className="h-1 w-full bg-zinc-200"
                               />
                             </div>
                           )}
                         </div>
                       </div>
-                    )
+                    ),
                   )
                 : null}
 
@@ -331,11 +347,11 @@ const UploadButton = ({
       </DialogTrigger>
 
       <DialogContent
-        className=" min-w-fit lg:min-w-[724px] max-h-screen overflow-y-auto"
+        className=" max-h-screen min-w-fit overflow-y-auto lg:min-w-[724px]"
         onInteractOutside={(e) => e.preventDefault()}
       >
         <div>
-          <div className="px-4 mb-2">
+          <div className="mb-2 px-4">
             <label className="text-lg font-semibold">
               Input Job Title <span className="text-red-400">*</span>
             </label>
@@ -348,16 +364,16 @@ const UploadButton = ({
               onChange={(e) => setJobTitle(e.target.value)}
             />
           </div>
-          <div className="px-4 mb-2">
+          <div className="mb-2 px-4">
             <TooltipProvider>
               <label className="text-lg font-semibold">
                 Input your requirements here{' '}
                 <span className="text-red-400">*</span>
                 <Tooltip delayDuration={300}>
-                  <TooltipTrigger className="cursor-default ml-1.5">
-                    <HelpCircle className="w-4 h-4 text-zinc-500" />
+                  <TooltipTrigger className="ml-1.5 cursor-default">
+                    <HelpCircle className="h-4 w-4 text-zinc-500" />
                   </TooltipTrigger>
-                  <TooltipContent className="p-2 w-80">
+                  <TooltipContent className="w-80 p-2">
                     <span className="text-xs">
                       Set your job requirements here, example:
                     </span>
@@ -384,7 +400,7 @@ const UploadButton = ({
               </label>
             </TooltipProvider>
             <Textarea
-              className="min-h-[150px] max-h-[350px] overflow-auto mt-2"
+              className="mt-2 max-h-[350px] min-h-[150px] overflow-auto"
               placeholder="Type your requirements here."
               rows={15}
               cols={40}
@@ -393,15 +409,15 @@ const UploadButton = ({
               onChange={(e) => setRequirements(e.target.value)}
             />
           </div>
-          <div className="flex items-center justify-between px-4 mt-6">
+          <div className="mt-6 flex items-center justify-between px-4">
             <TooltipProvider>
               <label className="mr-2 text-lg font-semibold">
                 Set Match Percentage
                 <Tooltip delayDuration={300}>
-                  <TooltipTrigger className="cursor-default ml-1.5">
-                    <HelpCircle className="w-4 h-4 text-zinc-500" />
+                  <TooltipTrigger className="ml-1.5 cursor-default">
+                    <HelpCircle className="h-4 w-4 text-zinc-500" />
                   </TooltipTrigger>
-                  <TooltipContent className="p-2 w-80">
+                  <TooltipContent className="w-80 p-2">
                     What percentage you wanted the candidates matched with
                     requirements.
                   </TooltipContent>
@@ -411,12 +427,12 @@ const UploadButton = ({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  className="gap-1.5 w-[250px] hover:bg-transparent"
+                  className="w-[250px] gap-1.5 hover:bg-transparent"
                   aria-label="zoom"
                   variant="outline"
                 >
                   {percentage}%
-                  <ChevronDown className="w-3 h-3 opacity-50" />
+                  <ChevronDown className="h-3 w-3 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-[250px]">
@@ -438,10 +454,10 @@ const UploadButton = ({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="px-4 mt-4">
+          <div className="mt-4 px-4">
             <label className="text-lg font-semibold">
               Upload Hundreds of CVs at Once to See the Magic
-              <span className="text-red-400 ml-1">*</span>
+              <span className="ml-1 text-red-400">*</span>
             </label>
             <UploadDropzone
               setIsOpen={setIsOpen}

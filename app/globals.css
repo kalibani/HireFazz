@@ -25,7 +25,7 @@ body,
     --border: 220 13% 91%;
     --input: 220 13% 91%;
 
-    --primary: 248 90% 66%;
+    --primary: 347, 77%, 50%, 1;
     --primary-foreground: 210 20% 98%;
 
     --secondary: 220 14.3% 95.9%;
@@ -106,3 +106,12 @@ body,
   width: var(--radix-popover-trigger-width);
   max-height: var(--radix-popover-content-available-height);
 }
+
+.ql-toolbar{
+  @apply bg-slate-200
+}
+.ql-container {
+    border-left: 1px solid red;
+    border-right: 1px solid red;
+    border-bottom: 1px solid red;
+  }

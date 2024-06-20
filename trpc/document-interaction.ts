@@ -1,10 +1,11 @@
-import { privateProcedure } from "./trpc";
-import { z } from "zod";
-import { TRPCError } from "@trpc/server";
-import { pinecone } from "@/lib/pinecone";
-import prismadb from "@/lib/prismadb";
-import { MAX_FREE_COUNTS } from "@/constant";
-import { utapi } from "@/lib/upload-thing-server";
+import { privateProcedure } from './trpc';
+import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
+import { pinecone } from '@/lib/pinecone';
+import prismadb from '@/lib/prismadb';
+import { MAX_FREE_COUNTS } from '@/constant';
+import { utapi } from '@/lib/upload-thing-server';
+import { currentUser } from '@/lib/auth';
 
 const DocumentInteraction = {
   // get User Files
@@ -25,7 +26,7 @@ const DocumentInteraction = {
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(),
         fileId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { userId } = ctx;
@@ -39,7 +40,7 @@ const DocumentInteraction = {
         },
       });
 
-      if (!file) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!file) throw new TRPCError({ code: 'NOT_FOUND' });
 
       const messages = await prismadb.message.findMany({
         take: limit + 1,
@@ -47,7 +48,7 @@ const DocumentInteraction = {
           fileId,
         },
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
         cursor: cursor ? { id: cursor } : undefined,
         select: {
@@ -81,7 +82,7 @@ const DocumentInteraction = {
         },
       });
 
-      if (!file) return { status: "PENDING" as const };
+      if (!file) return { status: 'PENDING' as const };
 
       return { status: file.uploadStatus };
     }),
@@ -99,7 +100,7 @@ const DocumentInteraction = {
         },
       });
 
-      if (!file) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!file) throw new TRPCError({ code: 'NOT_FOUND' });
 
       return file;
     }),
@@ -117,7 +118,7 @@ const DocumentInteraction = {
         },
       });
 
-      if (!file) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!file) throw new TRPCError({ code: 'NOT_FOUND' });
 
       return file;
     }),
@@ -135,7 +136,7 @@ const DocumentInteraction = {
         },
       });
 
-      if (!file) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!file) throw new TRPCError({ code: 'NOT_FOUND' });
       await utapi.deleteFiles(input.id);
       await prismadb.file.delete({
         where: {
@@ -153,20 +154,22 @@ const DocumentInteraction = {
       z.object({
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(), // <-- "cursor" needs to exist, but can be any type
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const { userId } = ctx;
+      const user = await currentUser();
+
       const limit = input.limit ?? 5;
       const { cursor } = input;
       const items = await prismadb.file.findMany({
         take: limit + 1, // get an extra item at the end which we'll use as next cursor
         where: {
-          userId,
+          userId: user?.id,
         },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
       });
       let nextCursor: typeof cursor | undefined = undefined;

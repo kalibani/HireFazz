@@ -49,6 +49,43 @@
 - Select the desired option and follow the prompts to customize and generate the content.
 - Once generated, users can save or export the content in their desired file format.
 
+
+## Translation (i18n) usage
+> Translation file is in `translations/{lang}.json`. you can modify by screen, please provide correct key and translation in usage, or it will return the raw key. <br>
+> cannot use `.` in key, so replace it with `_`
+
+### How to Use in Client Component
+```tsx
+    // ..
+    import { useTranslations } from 'next-intl';
+
+    const Component = () => {
+        // ...
+        const t = useTranslations()
+        // or
+        const t = useTranslations('Screen') // to use specific namespace
+
+        // ...
+            {t('key_here')}
+        // ...
+    }
+```
+
+### How to Use in Server Component
+```tsx
+    // ..
+    import { getTranslations } from 'next-intl/server';
+
+    const ServerComponent = async () => {
+        // ...
+        const t = await getTranslations('Home') // Home is namespace set in i18n file
+
+        // ...
+            {t('key_here')}
+        // ...
+    }
+```
+
 ## License: This project is licensed under the [MIT](LICENSE) license. Feel free to contribute, report issues, or suggest enhancements to make this application even better!
 
 ## Contact: For any inquiries or feedback, please reach out to the project maintainer at [kalibani.ka@gmail.com](maito:kalibani.ka@gmail.com)

@@ -1,7 +1,8 @@
-import { initTRPC } from "@trpc/server";
-import { auth } from "@clerk/nextjs";
+import { currentUser } from '@/lib/auth';
+import { initTRPC } from '@trpc/server';
+// import { auth } from '@clerk/nextjs';
 
-import { TRPCError } from "@trpc/server";
+import { TRPCError } from '@trpc/server';
 /**
  * Initialization of tRPC backend
  * Should be done only once per backend!
@@ -10,15 +11,13 @@ const t = initTRPC.create();
 const middleware = t.middleware;
 
 const isAuth = middleware(async (opts) => {
-  const { userId, user } = auth();
-
-  if (!userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+  const user = await currentUser();
+  if (!user?.id) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
-
   return opts.next({
     ctx: {
-      userId,
+      userId: user?.id,
       user,
     },
   });

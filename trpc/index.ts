@@ -1,16 +1,16 @@
-import { privateProcedure, router } from "./trpc";
-import { TRPCError } from "@trpc/server";
-import prismadb from "@/lib/prismadb";
-import { absoluteUrl } from "@/lib/utils";
-import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
-import { PLANS } from "@/constant";
+import { privateProcedure, router } from './trpc';
+import { TRPCError } from '@trpc/server';
+import prismadb from '@/lib/prismadb';
+import { absoluteUrl } from '@/lib/utils';
+import { getUserSubscriptionPlan, stripe } from '@/lib/stripe';
+import { PLANS } from '@/constant';
 import {
   deleteGeneratedVoices,
   getGeneratedVoices,
   saveGeneratedVoice,
   updateGeneratedVoiceStatus,
   getGeneratedVoice,
-} from "./text-to-speech";
+} from './text-to-speech';
 import {
   deleteFile,
   getFile,
@@ -19,8 +19,17 @@ import {
   getUserFiles,
   getFileById,
   infiniteFiles,
-} from "./document-interaction";
-import { updateLimit, saveTransactions, updateUserSubscription } from "./user";
+} from './document-interaction';
+// import {
+//   updateLimit,
+//   saveTransactions,
+//   updateUserSubscription,
+//   userRegister,
+//   userLogin,
+//   userNewVerification,
+//   userResetPassword,
+//   userNewPassword,
+// } from './user';
 
 export const appRouter = router({
   // Document Interaction
@@ -34,9 +43,9 @@ export const appRouter = router({
   createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
     const { userId } = ctx;
 
-    const billingUrl = absoluteUrl("/pricing");
+    const billingUrl = absoluteUrl('/pricing');
 
-    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
     const dbUser = await prismadb.userAPILimit.findFirst({
       where: {
@@ -44,7 +53,7 @@ export const appRouter = router({
       },
     });
 
-    if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!dbUser) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
     const subscriptionPlan = await getUserSubscriptionPlan();
 
@@ -60,12 +69,12 @@ export const appRouter = router({
     const stripeSession = await stripe.checkout.sessions.create({
       success_url: billingUrl,
       cancel_url: billingUrl,
-      payment_method_types: ["card", "paypal"],
-      mode: "subscription",
-      billing_address_collection: "auto",
+      payment_method_types: ['card', 'paypal'],
+      mode: 'subscription',
+      billing_address_collection: 'auto',
       line_items: [
         {
-          price: PLANS.find((plan) => plan.name === "Premium")?.price.priceIds
+          price: PLANS.find((plan) => plan.name === 'Premium')?.price.priceIds
             .test,
           quantity: 1,
         },
@@ -84,11 +93,16 @@ export const appRouter = router({
   deleteGeneratedVoices: deleteGeneratedVoices,
 
   // User
-  updateLimit: updateLimit,
-  saveTransactions: saveTransactions,
-  updateUserSubscription: updateUserSubscription,
-  updateGeneratedVoiceStatus: updateGeneratedVoiceStatus,
-  getGeneratedVoice: getGeneratedVoice,
+  // updateLimit: updateLimit,
+  // saveTransactions: saveTransactions,
+  // updateUserSubscription: updateUserSubscription,
+  // updateGeneratedVoiceStatus: updateGeneratedVoiceStatus,
+  // getGeneratedVoice: getGeneratedVoice,
+  // userRegister: userRegister,
+  // userLogin: userLogin,
+  // userNewVerification: userNewVerification,
+  // userResetPassword: userResetPassword,
+  // userNewPassword: userNewPassword,
 });
 // Export type router type signature,
 // NOT the router itself.
